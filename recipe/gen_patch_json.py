@@ -258,16 +258,19 @@ def _patch_repodata(repodata, subdir):
             depends = record["depends"]
             depends.append("_r-mutex 1.* anacondar_1")
             instructions["packages"][fn]["depends"] = depends
-        if record_name == "blas" and record["track_features"] == "blas_openblas":
-            instructions["packages"][fn]["track_features"] = None
-        if "features" in record:
-            if "blas_openblas" in record["features"]:
-                # remove blas_openblas feature
-                instructions["packages"][fn]["features"] = _extract_feature(record, "blas_openblas")
-                if not any(d.startswith("blas ") for d in record["depends"]):
-                    depends = record['depends']
-                    depends.append("blas 1.* openblas")
-                    instructions["packages"][fn]["depends"] = depends
+        # FIXME: disable patching-out blas_openblas feature
+        # because hotfixes are not applied to gcc7 label
+        # causing inconsistent behavior
+        # if record_name == "blas" and record["track_features"] == "blas_openblas":
+        #     instructions["packages"][fn]["track_features"] = None
+        # if "features" in record:
+            # if "blas_openblas" in record["features"]:
+            #     # remove blas_openblas feature
+            #     instructions["packages"][fn]["features"] = _extract_feature(record, "blas_openblas")
+            #     if not any(d.startswith("blas ") for d in record["depends"]):
+            #         depends = record['depends']
+            #         depends.append("blas 1.* openblas")
+            #         instructions["packages"][fn]["depends"] = depends
         if "track_features" in record:
             for feat in record["track_features"].split():
                 if feat.startswith(("rb2", "openjdk")):
