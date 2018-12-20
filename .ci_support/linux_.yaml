@@ -5,4 +5,9 @@ channel_sources:
 channel_targets:
 - conda-forge main
 docker_image:
-- condaforge/linux-anvil
+- condaforge/linux-anvil-comp7
+zip_keys:
+- - channel_sources
+  - channel_targets
+  - docker_image
+  - build_number_decrement
