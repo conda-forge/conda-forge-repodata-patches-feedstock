@@ -1,6 +1,6 @@
 package:
   name: conda-forge-repodata-patches
-  version: 20181205
+  version: 20190110
 
 source:
   path: .
