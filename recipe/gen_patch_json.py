@@ -276,6 +276,9 @@ def _patch_repodata(repodata, subdir):
                 if feat.startswith(("rb2", "openjdk")):
                     xtractd = record["track_features"] = _extract_track_feature(record, feat)
                     instructions["packages"][fn]["track_features"] = xtractd
+        deps = record.get("depends", ())
+        if "ntl" in deps and record_name != "sage":
+            rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
     return instructions
 
