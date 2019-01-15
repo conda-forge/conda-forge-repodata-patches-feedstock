@@ -239,6 +239,20 @@ def _patch_repodata(repodata, subdir):
             depends[dep_idx] = new_name + remainder
             instructions["packages"][fn]['depends'] = depends
 
+    def fix_libgfortran(fn, record):
+        depends = record.get("depends", ())
+        dep_idx = next(
+            (q for q, dep in enumerate(depends) if dep.split(' ')[0] == "libgfortran"),
+            None
+        )
+        if dep_idx:
+            # make sure respect minimum versions still there
+            # default to a min of 3.0.1 if none is given
+            if "3.0.1" in depends[dep_idx] or depends[dep_idx] == "libgfortran":
+                rename_dependency(fn, record, depends[dep_idx], "libgfortran >=3.0.1,<4.0.1")
+            else:
+                rename_dependency(fn, record, depends[dep_idx], "libgfortran >=3.0.0,<4.0.1")
+
     proj4_fixes = {"cartopy", "cdo", "gdal", "libspatialite", "pynio", "qgis"}
     for fn, record in index.items():
         record_name = record["name"]
@@ -279,11 +293,8 @@ def _patch_repodata(repodata, subdir):
         deps = record.get("depends", ())
         if "ntl" in deps and record_name != "sage":
             rename_dependency(fn, record, "ntl", "ntl 10.3.0")
-        # at some point the version number was bumped, so we are doing both cases
-        if "libgfortran >=3.0.0" in deps:
-            rename_dependency(fn, record, "libgfortran >=3.0.0", "libgfortran >=3.0.0,<4.0.1")
-        if "libgfortran >=3.0.1" in deps:
-            rename_dependency(fn, record, "libgfortran >=3.0.1", "libgfortran >=3.0.1,<4.0.1")
+        
+        fix_libgfortran(fn, record)  # make sure the libgfortran version is bound from 3 to 4
 
     return instructions
 
