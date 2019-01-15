@@ -250,6 +250,8 @@ def _patch_repodata(repodata, subdir):
             # default to a min of 3.0.1 if none is given
             if "3.0.1" in depends[dep_idx] or depends[dep_idx] == "libgfortran":
                 rename_dependency(fn, record, depends[dep_idx], "libgfortran >=3.0.1,<4.0.1")
+            elif "4" in depends[dep_idx]:
+                rename_dependency(fn, record, depends[dep_idx], "libgfortran >=4.0.0,<4.0.1")
             else:
                 rename_dependency(fn, record, depends[dep_idx], "libgfortran >=3.0.0,<4.0.1")
 
