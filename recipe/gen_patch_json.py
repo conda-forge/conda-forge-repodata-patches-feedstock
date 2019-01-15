@@ -279,6 +279,11 @@ def _patch_repodata(repodata, subdir):
         deps = record.get("depends", ())
         if "ntl" in deps and record_name != "sage":
             rename_dependency(fn, record, "ntl", "ntl 10.3.0")
+        # at some point the version number was bumped, so we are doing both cases
+        if "libgfortran >=3.0.0" in deps:
+            rename_dependency(fn, record, "libgfortran >=3.0.0", "libgfortran >=3.0.0,<4.0.1")
+        if "libgfortran >=3.0.1" in deps:
+            rename_dependency(fn, record, "libgfortran >=3.0.1", "libgfortran >=3.0.1,<4.0.1")
 
     return instructions
 
