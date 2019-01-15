@@ -295,8 +295,9 @@ def _patch_repodata(repodata, subdir):
         deps = record.get("depends", ())
         if "ntl" in deps and record_name != "sage":
             rename_dependency(fn, record, "ntl", "ntl 10.3.0")
-        
-        fix_libgfortran(fn, record)  # make sure the libgfortran version is bound from 3 to 4
+        if subdir == "osx-64":
+            # make sure the libgfortran version is bound from 3 to 4
+            fix_libgfortran(fn, record)
 
     return instructions
 
