@@ -252,18 +252,17 @@ def _patch_repodata(repodata, subdir):
             # 'libgfortran ==3.0.1' -> ==3.0.1
             # 'libgfortran >=3.0'   -> >=3.0,<4.0.0.a0
             # 'libgfortran >=3.0.1' -> >=3.0.1,<4.0.0.a0
-            if depends[dep_idx] == "libgfortran":
+            if ("==" in depends[dep_idx]) or ("<" in depends[dep_idx]):
+                pass
+            elif depends[dep_idx] == "libgfortran":
                 rename_dependency(fn, record, depends[dep_idx],
                                   "libgfortran >=3.0.1,<4.0.0.a0")
-            elif "==3.0.1" in depends[dep_idx]:
-                pass
-            elif (">=3.0" in depends[dep_idx] and
-                  "3.0.1" not in depends[dep_idx]):
-                rename_dependency(fn, record, depends[dep_idx],
-                                  "libgfortran >=3.0,<4.0.0.a0")
             elif ">=3.0.1" in depends[dep_idx]:
                 rename_dependency(fn, record, depends[dep_idx],
                                   "libgfortran >=3.0.1,<4.0.0.a0")
+            elif ">=3.0" in depends[dep_idx]:
+                rename_dependency(fn, record, depends[dep_idx],
+                                  "libgfortran >=3.0,<4.0.0.a0")
             elif ">=4" in depends[dep_idx]:
                 # catches all of 4.*
                 rename_dependency(fn, record, depends[dep_idx],
