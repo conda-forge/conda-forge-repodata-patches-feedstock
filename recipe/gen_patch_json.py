@@ -239,6 +239,35 @@ def _patch_repodata(repodata, subdir):
             depends[dep_idx] = new_name + remainder
             instructions["packages"][fn]['depends'] = depends
 
+    def fix_libgfortran(fn, record):
+        depends = record.get("depends", ())
+        dep_idx = next(
+            (q for q, dep in enumerate(depends)
+             if dep.split(' ')[0] == "libgfortran"),
+            None
+        )
+        if dep_idx:
+            # make sure respect minimum versions still there
+            # 'libgfortran'         -> >=3.0.1,<4.0.0.a0
+            # 'libgfortran ==3.0.1' -> ==3.0.1
+            # 'libgfortran >=3.0'   -> >=3.0,<4.0.0.a0
+            # 'libgfortran >=3.0.1' -> >=3.0.1,<4.0.0.a0
+            if ("==" in depends[dep_idx]) or ("<" in depends[dep_idx]):
+                pass
+            elif depends[dep_idx] == "libgfortran":
+                rename_dependency(fn, record, depends[dep_idx],
+                                  "libgfortran >=3.0.1,<4.0.0.a0")
+            elif ">=3.0.1" in depends[dep_idx]:
+                rename_dependency(fn, record, depends[dep_idx],
+                                  "libgfortran >=3.0.1,<4.0.0.a0")
+            elif ">=3.0" in depends[dep_idx]:
+                rename_dependency(fn, record, depends[dep_idx],
+                                  "libgfortran >=3.0,<4.0.0.a0")
+            elif ">=4" in depends[dep_idx]:
+                # catches all of 4.*
+                rename_dependency(fn, record, depends[dep_idx],
+                                  "libgfortran >=4.0.0,<5.0.0.a0")
+
     proj4_fixes = {"cartopy", "cdo", "gdal", "libspatialite", "pynio", "qgis"}
     for fn, record in index.items():
         record_name = record["name"]
@@ -279,6 +308,9 @@ def _patch_repodata(repodata, subdir):
         deps = record.get("depends", ())
         if "ntl" in deps and record_name != "sage":
             rename_dependency(fn, record, "ntl", "ntl 10.3.0")
+        if subdir == "osx-64":
+            # make sure the libgfortran version is bound from 3 to 4
+            fix_libgfortran(fn, record)
 
     return instructions
 
