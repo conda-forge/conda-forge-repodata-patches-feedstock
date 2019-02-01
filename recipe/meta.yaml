@@ -1,6 +1,6 @@
 package:
   name: conda-forge-repodata-patches
-  version: 20190115
+  version: 20190201
 
 source:
   path: .
@@ -30,20 +30,4 @@ about:
 
 extra:
   recipe-maintainers:
-    - msarahan
-    - jjhelmus
-    - jakirkham
-    - isuruf
-    - CJ-Wright
-    - scopatz
-    - ericdill
-    - mbargull
-    - ocefpaf
-    - loriab
-    - synapticarbors
-    - bgruening
-    - mariusvniekerk
-    - mwcraig
-    - pelson
-    - dougalsutherland
-    - patricksnape
+    - conda-forge/core
