@@ -255,18 +255,18 @@ def _patch_repodata(repodata, subdir):
             if ("==" in depends[dep_idx]) or ("<" in depends[dep_idx]):
                 pass
             elif depends[dep_idx] == "libgfortran":
-                rename_dependency(fn, record, depends[dep_idx],
-                                  "libgfortran >=3.0.1,<4.0.0.a0")
+                depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
+                instructions["packages"][fn]['depends'] = depends
             elif ">=3.0.1" in depends[dep_idx]:
-                rename_dependency(fn, record, depends[dep_idx],
-                                  "libgfortran >=3.0.1,<4.0.0.a0")
+                depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
+                instructions["packages"][fn]['depends'] = depends
             elif ">=3.0" in depends[dep_idx]:
-                rename_dependency(fn, record, depends[dep_idx],
-                                  "libgfortran >=3.0,<4.0.0.a0")
+                depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
+                instructions["packages"][fn]['depends'] = depends
             elif ">=4" in depends[dep_idx]:
                 # catches all of 4.*
-                rename_dependency(fn, record, depends[dep_idx],
-                                  "libgfortran >=4.0.0,<5.0.0.a0")
+                depends[dep_idx] = "libgfortran >=4.0.0,<5.0.0.a0"
+                instructions["packages"][fn]['depends'] = depends
 
     proj4_fixes = {"cartopy", "cdo", "gdal", "libspatialite", "pynio", "qgis"}
     for fn, record in index.items():
