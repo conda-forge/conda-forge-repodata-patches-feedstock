@@ -233,7 +233,7 @@ def _patch_repodata(repodata, subdir):
             (q for q, dep in enumerate(depends) if dep.split(' ')[0] == old_name),
             None
         )
-        if dep_idx:
+        if dep_idx is not None:
             parts = depends[dep_idx].split(" ")
             remainder = (" " + " ".join(parts[1:])) if len(parts) > 1 else ""
             depends[dep_idx] = new_name + remainder
@@ -246,7 +246,7 @@ def _patch_repodata(repodata, subdir):
              if dep.split(' ')[0] == "libgfortran"),
             None
         )
-        if dep_idx:
+        if dep_idx is not None:
             # make sure respect minimum versions still there
             # 'libgfortran'         -> >=3.0.1,<4.0.0.a0
             # 'libgfortran ==3.0.1' -> ==3.0.1
