@@ -381,9 +381,6 @@ def _extract_track_feature(record, feature_name):
 
 
 def main():
-    # not used, leaving because someone might have wanted it?
-    # base_dir = join(dirname(__file__), CHANNEL_NAME)
-
     # Step 1. Collect initial repodata for all subdirs.
     repodatas = {}
     for subdir in tqdm.tqdm(SUBDIRS, desc="Downloading repodata"):
