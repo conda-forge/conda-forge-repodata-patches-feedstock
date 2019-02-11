@@ -2,9 +2,10 @@
 from __future__ import absolute_import, division, print_function
 
 from collections import defaultdict
+import copy
 import json
 import os
-from os.path import join, dirname, isdir
+from os.path import join, isdir
 import sys
 import tqdm
 
@@ -184,8 +185,7 @@ REMOVALS = {
 }
 
 
-def _patch_repodata(repodata, subdir):
-    index = repodata["packages"]
+def _gen_patch_instructions(index, new_index, subdir):
     instructions = {
         "patch_instructions_version": 1,
         "packages": defaultdict(dict),
@@ -195,6 +195,27 @@ def _patch_repodata(repodata, subdir):
 
     instructions["remove"].extend(REMOVALS.get(subdir, ()))
 
+    # diff all items in the index and put any differences in the instructions
+    for fn in index:
+        assert fn in new_index
+        for key in index[fn]:
+            assert key in new_index[fn], (key, index[fn], new_index[fn])
+            if index[fn][key] != new_index[fn][key]:
+                instructions['packages'][fn][key] = new_index[fn][key]
+
+    return instructions
+
+
+def _gen_new_index(repodata, subdir):
+    """Make any changes to the index by adjusting the values directly.
+
+    This function returns the new index with the adjustments.
+    Finally, the new and old indices are then diff'ed to produce the repo
+    data patches.
+    """
+    index = copy.deepcopy(repodata["packages"])
+
+    # deal with windows vc features
     if subdir.startswith("win-"):
         python_vc_deps = {
             '2.6': 'vc 9.*',
@@ -210,109 +231,127 @@ def _patch_repodata(repodata, subdir):
             if record_name == 'python':
                 # remove the track_features key
                 if 'track_features' in record:
-                    instructions["packages"][fn]['track_features'] = None
+                    record['track_features'] = None
                 # add a vc dependency
                 if not any(d.startswith('vc') for d in record['depends']):
                     depends = record['depends']
                     depends.append(python_vc_deps[record['version'][:3]])
-                    instructions["packages"][fn]['depends'] = depends
+                    record['depends'] = depends
             elif 'vc' in record.get('features', ''):
                 # remove vc from the features key
                 vc_version = _extract_and_remove_vc_feature(record)
                 if vc_version:
-                    instructions["packages"][fn]['features'] = record.get('features', None)
                     # add a vc dependency
                     if not any(d.startswith('vc') for d in record['depends']):
                         depends = record['depends']
                         depends.append('vc %d.*' % vc_version)
-                        instructions["packages"][fn]['depends'] = depends
-
-    def rename_dependency(fn, record, old_name, new_name):
-        depends = record["depends"]
-        dep_idx = next(
-            (q for q, dep in enumerate(depends) if dep.split(' ')[0] == old_name),
-            None
-        )
-        if dep_idx:
-            parts = depends[dep_idx].split(" ")
-            remainder = (" " + " ".join(parts[1:])) if len(parts) > 1 else ""
-            depends[dep_idx] = new_name + remainder
-            instructions["packages"][fn]['depends'] = depends
-
-    def fix_libgfortran(fn, record):
-        depends = record.get("depends", ())
-        dep_idx = next(
-            (q for q, dep in enumerate(depends)
-             if dep.split(' ')[0] == "libgfortran"),
-            None
-        )
-        if dep_idx:
-            # make sure respect minimum versions still there
-            # 'libgfortran'         -> >=3.0.1,<4.0.0.a0
-            # 'libgfortran ==3.0.1' -> ==3.0.1
-            # 'libgfortran >=3.0'   -> >=3.0,<4.0.0.a0
-            # 'libgfortran >=3.0.1' -> >=3.0.1,<4.0.0.a0
-            if ("==" in depends[dep_idx]) or ("<" in depends[dep_idx]):
-                pass
-            elif depends[dep_idx] == "libgfortran":
-                rename_dependency(fn, record, depends[dep_idx],
-                                  "libgfortran >=3.0.1,<4.0.0.a0")
-            elif ">=3.0.1" in depends[dep_idx]:
-                rename_dependency(fn, record, depends[dep_idx],
-                                  "libgfortran >=3.0.1,<4.0.0.a0")
-            elif ">=3.0" in depends[dep_idx]:
-                rename_dependency(fn, record, depends[dep_idx],
-                                  "libgfortran >=3.0,<4.0.0.a0")
-            elif ">=4" in depends[dep_idx]:
-                # catches all of 4.*
-                rename_dependency(fn, record, depends[dep_idx],
-                                  "libgfortran >=4.0.0,<5.0.0.a0")
+                        record['depends'] = depends
 
     proj4_fixes = {"cartopy", "cdo", "gdal", "libspatialite", "pynio", "qgis"}
     for fn, record in index.items():
         record_name = record["name"]
+
+        # remove dependency from constrains for twisted
         if record_name == "twisted":
-            # remove dependency from constrains
             new_constrains = [dep for dep in record.get('constrains', ())
                               if not dep.startswith("pyobjc-framework-cococa")]
             if new_constrains != record.get('constrains', ()):
-                instructions["packages"][fn]['constrains'] = new_constrains
+                record['constrains'] = new_constrains
+
+        # fix deps with wrong names
         if record_name in proj4_fixes:
-            rename_dependency(fn, record, "proj.4", "proj4")
+            _rename_dependency(fn, record, "proj.4", "proj4")
+
         if record_name == "airflow-with-async":
-            rename_dependency(fn, record, "evenlet", "eventlet")
+            _rename_dependency(fn, record, "evenlet", "eventlet")
+
         if record_name == "iris":
-            rename_dependency(fn, record, "nc_time_axis", "nc-time-axis")
-        if record_name == "r-base" and not any(dep.startswith("_r-mutex ") for dep in record["depends"]):
+            _rename_dependency(fn, record, "nc_time_axis", "nc-time-axis")
+
+        if (record_name == "r-base" and
+                not any(dep.startswith("_r-mutex ")
+                        for dep in record["depends"])):
             depends = record["depends"]
             depends.append("_r-mutex 1.* anacondar_1")
-            instructions["packages"][fn]["depends"] = depends
+            record["depends"] = depends
+
+        deps = record.get("depends", ())
+        if "ntl" in deps and record_name != "sage":
+            _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
+
         # FIXME: disable patching-out blas_openblas feature
         # because hotfixes are not applied to gcc7 label
         # causing inconsistent behavior
-        # if record_name == "blas" and record["track_features"] == "blas_openblas":
+        # if (record_name == "blas" and
+        #         record["track_features"] == "blas_openblas"):
         #     instructions["packages"][fn]["track_features"] = None
         # if "features" in record:
             # if "blas_openblas" in record["features"]:
             #     # remove blas_openblas feature
-            #     instructions["packages"][fn]["features"] = _extract_feature(record, "blas_openblas")
+            #     instructions["packages"][fn]["features"] = _extract_feature(
+            #         record, "blas_openblas")
             #     if not any(d.startswith("blas ") for d in record["depends"]):
             #         depends = record['depends']
             #         depends.append("blas 1.* openblas")
             #         instructions["packages"][fn]["depends"] = depends
-        if "track_features" in record:
+
+        # remove features for openjdk and rb2
+        if ("track_features" in record and
+                record['track_features'] is not None):
             for feat in record["track_features"].split():
                 if feat.startswith(("rb2", "openjdk")):
-                    xtractd = record["track_features"] = _extract_track_feature(record, feat)
-                    instructions["packages"][fn]["track_features"] = xtractd
-        deps = record.get("depends", ())
-        if "ntl" in deps and record_name != "sage":
-            rename_dependency(fn, record, "ntl", "ntl 10.3.0")
-        if subdir == "osx-64":
-            # make sure the libgfortran version is bound from 3 to 4
-            fix_libgfortran(fn, record)
+                    record["track_features"] = _extract_track_feature(
+                        record, feat)
 
-    return instructions
+        # make sure the libgfortran version is bound from 3 to 4 for osx
+        if subdir == "osx-64":
+            _fix_libgfortran(fn, record)
+
+    return index
+
+
+def _rename_dependency(fn, record, old_name, new_name):
+    depends = record["depends"]
+    dep_idx = next(
+        (q for q, dep in enumerate(depends)
+         if dep.split(' ')[0] == old_name),
+        None
+    )
+    if dep_idx is not None:
+        parts = depends[dep_idx].split(" ")
+        remainder = (" " + " ".join(parts[1:])) if len(parts) > 1 else ""
+        depends[dep_idx] = new_name + remainder
+        record['depends'] = depends
+
+
+def _fix_libgfortran(fn, record):
+    depends = record.get("depends", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(depends)
+         if dep.split(' ')[0] == "libgfortran"),
+        None
+    )
+    if dep_idx is not None:
+        # make sure respect minimum versions still there
+        # 'libgfortran'         -> >=3.0.1,<4.0.0.a0
+        # 'libgfortran ==3.0.1' -> ==3.0.1
+        # 'libgfortran >=3.0'   -> >=3.0,<4.0.0.a0
+        # 'libgfortran >=3.0.1' -> >=3.0.1,<4.0.0.a0
+        if ("==" in depends[dep_idx]) or ("<" in depends[dep_idx]):
+            pass
+        elif depends[dep_idx] == "libgfortran":
+            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
+            record['depends'] = depends
+        elif ">=3.0.1" in depends[dep_idx]:
+            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
+            record['depends'] = depends
+        elif ">=3.0" in depends[dep_idx]:
+            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
+            record['depends'] = depends
+        elif ">=4" in depends[dep_idx]:
+            # catches all of 4.*
+            depends[dep_idx] = "libgfortran >=4.0.0,<5.0.0.a0"
+            record['depends'] = depends
 
 
 def _extract_and_remove_vc_feature(record):
@@ -325,7 +364,7 @@ def _extract_and_remove_vc_feature(record):
     if non_vc_features:
         record['features'] = ' '.join(non_vc_features)
     else:
-        del record['features']
+        record['features'] = None
     return vc_version
 
 
@@ -342,13 +381,11 @@ def _extract_track_feature(record, feature_name):
 
 
 def main():
-
-    base_dir = join(dirname(__file__), CHANNEL_NAME)
-
     # Step 1. Collect initial repodata for all subdirs.
     repodatas = {}
     for subdir in tqdm.tqdm(SUBDIRS, desc="Downloading repodata"):
-        repodata_url = "/".join((CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata.json"))
+        repodata_url = "/".join(
+            (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata.json"))
         response = requests.get(repodata_url)
         response.raise_for_status()
         repodatas[subdir] = response.json()
@@ -359,11 +396,21 @@ def main():
         prefix_subdir = join(prefix_dir, subdir)
         if not isdir(prefix_subdir):
             os.makedirs(prefix_subdir)
-        instructions = _patch_repodata(repodatas[subdir], subdir)
-        # output this to $PREFIX so that we bundle the JSON files
-        patch_instructions_path = join(prefix_subdir, "patch_instructions.json")
+
+        # Step 2a. Generate a new index.
+        new_index = _gen_new_index(repodatas[subdir], subdir)
+
+        # Step 2b. Generate the instructions by diff'ing the indices.
+        instructions = _gen_patch_instructions(
+            repodatas[subdir]['packages'], new_index, subdir)
+
+        # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
+        patch_instructions_path = join(
+            prefix_subdir, "patch_instructions.json")
         with open(patch_instructions_path, 'w') as fh:
-            json.dump(instructions, fh, indent=2, sort_keys=True, separators=(',', ': '))
+            json.dump(
+                instructions, fh, indent=2,
+                sort_keys=True, separators=(',', ': '))
 
 
 if __name__ == "__main__":
