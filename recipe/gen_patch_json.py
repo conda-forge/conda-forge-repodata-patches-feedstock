@@ -346,7 +346,7 @@ def _fix_libgfortran(fn, record):
             depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
             record['depends'] = depends
         elif ">=3.0" in depends[dep_idx]:
-            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
+            depends[dep_idx] = "libgfortran >=3.0,<4.0.0.a0"
             record['depends'] = depends
         elif ">=4" in depends[dep_idx]:
             # catches all of 4.*
