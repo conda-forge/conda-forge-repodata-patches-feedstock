@@ -279,10 +279,6 @@ def _gen_new_index(repodata, subdir):
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
-        deps = record.get("depends", ())
-        if "libspatialindex" in deps:
-            _rename_dependency(fn, record, "libspatialindex", "libspatialindex 1.8")
-
         # FIXME: disable patching-out blas_openblas feature
         # because hotfixes are not applied to gcc7 label
         # causing inconsistent behavior
@@ -329,35 +325,6 @@ def _rename_dependency(fn, record, old_name, new_name):
 
 
 def _fix_libgfortran(fn, record):
-    depends = record.get("depends", ())
-    dep_idx = next(
-        (q for q, dep in enumerate(depends)
-         if dep.split(' ')[0] == "libgfortran"),
-        None
-    )
-    if dep_idx is not None:
-        # make sure respect minimum versions still there
-        # 'libgfortran'         -> >=3.0.1,<4.0.0.a0
-        # 'libgfortran ==3.0.1' -> ==3.0.1
-        # 'libgfortran >=3.0'   -> >=3.0,<4.0.0.a0
-        # 'libgfortran >=3.0.1' -> >=3.0.1,<4.0.0.a0
-        if ("==" in depends[dep_idx]) or ("<" in depends[dep_idx]):
-            pass
-        elif depends[dep_idx] == "libgfortran":
-            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
-            record['depends'] = depends
-        elif ">=3.0.1" in depends[dep_idx]:
-            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
-            record['depends'] = depends
-        elif ">=3.0" in depends[dep_idx]:
-            depends[dep_idx] = "libgfortran >=3.0,<4.0.0.a0"
-            record['depends'] = depends
-        elif ">=4" in depends[dep_idx]:
-            # catches all of 4.*
-            depends[dep_idx] = "libgfortran >=4.0.0,<5.0.0.a0"
-            record['depends'] = depends
-
-def _fix_libnetcdf(fn, record):
     depends = record.get("depends", ())
     dep_idx = next(
         (q for q, dep in enumerate(depends)
