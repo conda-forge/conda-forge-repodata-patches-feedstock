@@ -1,7 +1,3 @@
-<!--
-# -*- mode: jinja -*-
--->
-
 About conda-forge-repodata-patches
 ==================================
 
@@ -18,8 +14,15 @@ Summary: generate tweaks to index metadata, hosted separately from anaconda.org 
 Current build status
 ====================
 
-All platforms:
-[![noarch](https://img.shields.io/circleci/project/github/conda-forge/conda-forge-repodata-patches-feedstock/master.svg?label=noarch)](https://circleci.com/gh/conda-forge/conda-forge-repodata-patches-feedstock)
+
+<table><tr><td>All platforms:</td>
+    <td>
+      <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=5520&branchName=master">
+        <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/conda-forge-repodata-patches-feedstock?branchName=master">
+      </a>
+    </td>
+  </tr>
+</table>
 
 Current release info
 ====================
