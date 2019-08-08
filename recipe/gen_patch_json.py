@@ -306,6 +306,7 @@ def _gen_new_index(repodata, subdir):
         # make sure the libgfortran version is bound from 3 to 4 for osx
         if subdir == "osx-64":
             _fix_libgfortran(fn, record)
+            _fix_libcxx(fn, record)
 
     return index
 
@@ -351,6 +352,24 @@ def _fix_libgfortran(fn, record):
         elif ">=4" in depends[dep_idx]:
             # catches all of 4.*
             depends[dep_idx] = "libgfortran >=4.0.0,<5.0.0.a0"
+            record['depends'] = depends
+
+
+def _fix_libcxx(fn, record):
+    record_name = record["name"]
+    if not record_name in ["cctools", "ld64", "llvm-lto-tapi"]:
+        return
+    depends = record.get("depends", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(depends)
+         if dep.split(' ')[0] == "libcxx"),
+        None
+    )
+    if dep_idx is not None:
+        dep_parts = depends[dep_idx].split(" ")
+        if len(dep_parts) >= 2 and dep_parts[1] == "4.0.1":
+            # catches all of 4.*
+            depends[dep_idx] = "libcxx >=4.0.1"
             record['depends'] = depends
 
 
