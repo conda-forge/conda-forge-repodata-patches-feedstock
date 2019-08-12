@@ -250,6 +250,7 @@ def _gen_new_index(repodata, subdir):
     proj4_fixes = {"cartopy", "cdo", "gdal", "libspatialite", "pynio", "qgis"}
     for fn, record in index.items():
         record_name = record["name"]
+        deps = record.get("depends", ())
 
         # remove dependency from constrains for twisted
         if record_name == "twisted":
@@ -259,24 +260,33 @@ def _gen_new_index(repodata, subdir):
                 record['constrains'] = new_constrains
 
         # fix deps with wrong names
-        if record_name in proj4_fixes:
+        elif record_name in proj4_fixes:
             _rename_dependency(fn, record, "proj.4", "proj4")
 
-        if record_name == "airflow-with-async":
+        elif record_name == "airflow-with-async":
             _rename_dependency(fn, record, "evenlet", "eventlet")
 
-        if record_name == "iris":
+        elif record_name == "iris":
             _rename_dependency(fn, record, "nc_time_axis", "nc-time-axis")
 
-        if (record_name == "r-base" and
+        elif (record_name == "r-base" and
                 not any(dep.startswith("_r-mutex ")
                         for dep in record["depends"])):
             depends = record["depends"]
             depends.append("_r-mutex 1.* anacondar_1")
             record["depends"] = depends
 
-        deps = record.get("depends", ())
-        if "ntl" in deps and record_name != "sage":
+        elif record_name == "conda-build" and record['version'].startswith('3.18'):
+            new_deps = []
+            for dep in record['depends']:
+                parts = dep.split()
+                if parts[0] == 'conda' and "4.3" in parts[1]:
+                    new_deps.append("conda >=4.5")
+                else:
+                    new_deps.append(dep)
+            record['depends'] = new_deps
+
+        elif "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
         # FIXME: disable patching-out blas_openblas feature
