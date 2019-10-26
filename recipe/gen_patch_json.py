@@ -379,11 +379,11 @@ def _fix_libcxx(fn, record):
             record['depends'] = depends
 
 
-def _relax_exact(fn, record, dep):
+def _relax_exact(fn, record, fix_dep):
     depends = record.get("depends", ())
     dep_idx = next(
         (q for q, dep in enumerate(depends)
-         if dep.split(' ')[0] == dep),
+         if dep.split(' ')[0] == fix_dep),
         None
     )
     if dep_idx is not None:
