@@ -17,6 +17,7 @@ SUBDIRS = (
     "noarch",
     "linux-64",
     "linux-armv7l",
+    "linux-aarch64",
     "linux-ppc64le",
     "osx-64",
     "win-32",
@@ -184,6 +185,8 @@ REMOVALS = {
     ),
 }
 
+OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
+
 
 def _gen_patch_instructions(index, new_index, subdir):
     instructions = {
@@ -274,6 +277,9 @@ def _gen_new_index(repodata, subdir):
             depends = record["depends"]
             depends.append("_r-mutex 1.* anacondar_1")
             record["depends"] = depends
+
+        if record_name == "gcc_impl_{}".format(subdir):
+            _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
 
         deps = record.get("depends", ())
         if "ntl" in deps and record_name != "sage":
@@ -370,6 +376,21 @@ def _fix_libcxx(fn, record):
         if len(dep_parts) >= 2 and dep_parts[1] == "4.0.1":
             # catches all of 4.*
             depends[dep_idx] = "libcxx >=4.0.1"
+            record['depends'] = depends
+
+
+def _relax_exact(fn, record, fix_dep):
+    depends = record.get("depends", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(depends)
+         if dep.split(' ')[0] == fix_dep),
+        None
+    )
+    if dep_idx is not None:
+        dep_parts = depends[dep_idx].split(" ")
+        if (len(dep_parts) == 3 and \
+                not any(dep_parts[1].startswith(op) for op in OPERATORS)):
+            depends[dep_idx] = "{} >={}".format(*dep_parts[:2])
             record['depends'] = depends
 
 
