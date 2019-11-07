@@ -402,7 +402,7 @@ def _relax_exact(fn, record, fix_dep, max_pin=None):
                 num_x = max_pin.count("x")
                 ver[num_x:] = ["0"]*(len(ver)-num_x)
                 ver[num_x-1] = str(int(ver[num_x-1])+1)
-                upper_bound="{}.a0".format(".".join(ver))
+                upper_bound="{}a0".format(".".join(ver))
                 depends[dep_idx] = "{} >={},<{}".format(*dep_parts[:2], upper_bound)
             else:
                 depends[dep_idx] = "{} >={}".format(*dep_parts[:2])
