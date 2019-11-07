@@ -309,6 +309,13 @@ def _gen_new_index(repodata, subdir):
                     record["track_features"] = _extract_track_feature(
                         record, feat)
 
+        llvm_pkgs = ["libclang", "clang", "clang-tools", "llvm", "llvm-tools", "llvmdev"]
+        for llvm in ["libllvm8", "libllvm9"]:
+            if any(dep.startswith(llvm) for dep in deps):
+                if record_name not in llvm_pkgs:
+                    _relax_exact(fn, record, llvm, max_pin="x.x")
+                else:
+                    _relax_exact(fn, record, llvm, max_pin="x.x.x")
         # make sure the libgfortran version is bound from 3 to 4 for osx
         if subdir == "osx-64":
             _fix_libgfortran(fn, record)
@@ -379,7 +386,7 @@ def _fix_libcxx(fn, record):
             record['depends'] = depends
 
 
-def _relax_exact(fn, record, fix_dep):
+def _relax_exact(fn, record, fix_dep, max_pin=None):
     depends = record.get("depends", ())
     dep_idx = next(
         (q for q, dep in enumerate(depends)
@@ -390,7 +397,15 @@ def _relax_exact(fn, record, fix_dep):
         dep_parts = depends[dep_idx].split(" ")
         if (len(dep_parts) == 3 and \
                 not any(dep_parts[1].startswith(op) for op in OPERATORS)):
-            depends[dep_idx] = "{} >={}".format(*dep_parts[:2])
+            if max_pin is not None:
+                ver = dep_parts[1].split(".")
+                num_x = max_pin.count("x")
+                ver[num_x:] = ["0"]*(len(ver)-num_x)
+                ver[num_x-1] = str(int(ver[num_x-1])+1)
+                upper_bound="{}.a0".format(".".join(ver))
+                depends[dep_idx] = "{} >={},<{}".format(*dep_parts[:2], upper_bound)
+            else:
+                depends[dep_idx] = "{} >={}".format(*dep_parts[:2])
             record['depends'] = depends
 
 
