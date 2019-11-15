@@ -380,7 +380,7 @@ def _add_osx_virt(fn, record):
     if dep_idx is None:
         run_constrained.append("__osx >=10.9")
     if run_constrained:
-        record['run_constrained'] = run_constrained
+        record['run_constrained'] = tuple(run_constrained)
 
 
 def _fix_libcxx(fn, record):
