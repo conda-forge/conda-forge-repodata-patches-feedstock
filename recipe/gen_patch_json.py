@@ -320,6 +320,7 @@ def _gen_new_index(repodata, subdir):
         if subdir == "osx-64":
             _fix_libgfortran(fn, record)
             _fix_libcxx(fn, record)
+            _add_osx_virt(fn, record)
 
     return index
 
@@ -366,6 +367,20 @@ def _fix_libgfortran(fn, record):
             # catches all of 4.*
             depends[dep_idx] = "libgfortran >=4.0.0,<5.0.0.a0"
             record['depends'] = depends
+
+
+def _add_osx_virt(fn, record):
+    rconst = record.get("run_constrained", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(rconst)
+         if dep.split(' ')[0] == "__osx"),
+        None
+    )
+    run_constrained = list(rconst)
+    if dep_idx is None:
+        run_constrained.append("__osx >=10.9")
+    if run_constrained:
+        record['run_constrained'] = run_constrained
 
 
 def _fix_libcxx(fn, record):
