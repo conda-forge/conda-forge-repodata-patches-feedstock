@@ -321,6 +321,9 @@ def _gen_new_index(repodata, subdir):
             _fix_libgfortran(fn, record)
             _fix_libcxx(fn, record)
 
+        # make sure fftw is bounded properly
+        _fix_fftw_3x_pins(fn, record)
+
     return index
 
 
@@ -336,6 +339,30 @@ def _rename_dependency(fn, record, old_name, new_name):
         remainder = (" " + " ".join(parts[1:])) if len(parts) > 1 else ""
         depends[dep_idx] = new_name + remainder
         record['depends'] = depends
+
+
+def _fix_fftw_3x_pins(fn, record):
+    """For fftw 3, we should add an upper bound of <4.0.0.a0"""
+    depends = record.get("depends", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(depends)
+         if dep.split(' ')[0] == "fftw"),
+        None
+    )
+    if dep_idx is not None:
+        if depends[dep_idx] == 'fftw':
+            # this case is ambiguous so pass on fixing
+            pass
+        elif '>=3' not in depends[dep_idx]:
+            # here we have some other version so pass again
+            pass
+        elif '<4' in depends[dep_idx]:
+            # already has an upper bound so pass again
+            pass
+        else:
+            # by here, we have a dep of fftw with >=3 in it and <4 not
+            depends[dep_idx] = depends[dep_idx] + ",<4.0.0.a0"
+            record['depends'] = depends
 
 
 def _fix_libgfortran(fn, record):
