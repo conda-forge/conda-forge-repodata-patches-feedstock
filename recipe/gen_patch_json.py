@@ -320,7 +320,16 @@ def _gen_new_index(repodata, subdir):
         if subdir == "osx-64":
             _fix_libgfortran(fn, record)
             _fix_libcxx(fn, record)
-            _add_osx_virt(fn, record)
+
+            if record_name in ['nodejs']:
+                _set_osx_virt_min(fn, record, "10.10")
+
+            if record_name in ['javafx-sdk']:
+                _set_osx_virt_min(fn, record, "10.11")
+
+            if record_name in ['qt', 'pyqt', 'freecad',
+                               'ldas-tools-al', 'reaktoro']:
+                _set_osx_virt_min(fn, record, "10.12")
 
     return index
 
@@ -369,7 +378,7 @@ def _fix_libgfortran(fn, record):
             record['depends'] = depends
 
 
-def _add_osx_virt(fn, record):
+def _set_osx_virt_min(fn, record, min_vers):
     rconst = record.get("run_constrained", ())
     dep_idx = next(
         (q for q, dep in enumerate(rconst)
@@ -378,7 +387,7 @@ def _add_osx_virt(fn, record):
     )
     run_constrained = list(rconst)
     if dep_idx is None:
-        run_constrained.append("__osx >=10.9")
+        run_constrained.append("__osx >=%s" % min_vers)
     if run_constrained:
         record['run_constrained'] = tuple(run_constrained)
 
