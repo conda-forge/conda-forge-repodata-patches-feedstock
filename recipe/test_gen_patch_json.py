@@ -6,12 +6,14 @@ def test_gen_patch_instructions():
         'a': {'depends': ['c', 'd'],
               'features': 'd'},
         'b': {'nane': 'blah'},
+        'c': {}
     }
 
     new_index = {
         'a': {'depends': ['c', 'd', 'e'],
               'features': None},
         'b': {'nane': 'blah'},
+        'c': {'addthis': 'yes'}
     }
 
     inst = _gen_patch_instructions(index, new_index, 'osx-64')
@@ -21,6 +23,7 @@ def test_gen_patch_instructions():
     assert 'packages' in inst
 
     assert inst['packages'] == {
-        'a': {'depends': ['c', 'd', 'e'], 'features': None}}
+        'a': {'depends': ['c', 'd', 'e'], 'features': None},
+        'c': {'addthis': 'yes'}}
 
     assert inst['remove'] == list(REMOVALS['osx-64'])
