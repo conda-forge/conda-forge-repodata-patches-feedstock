@@ -187,6 +187,96 @@ REMOVALS = {
 
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
+OSX_SDK_FIXES = {
+    'nodejs-12.8.0-hec2bf70_1': '10.10',
+    'nodejs-12.1.0-h6de7cb9_1': '10.10',
+    'nodejs-12.3.1-h6de7cb9_0': '10.10',
+    'nodejs-12.9.0-hec2bf70_0': '10.10',
+    'nodejs-12.9.1-hec2bf70_0': '10.10',
+    'nodejs-12.7.0-hec2bf70_1': '10.10',
+    'nodejs-12.10.0-hec2bf70_0': '10.10',
+    'nodejs-12.4.0-h6de7cb9_0': '10.10',
+    'nodejs-12.11.1-hec2bf70_0': '10.10',
+    'nodejs-12.7.0-h6de7cb9_0': '10.10',
+    'nodejs-12.3.0-h6de7cb9_0': '10.10',
+    'nodejs-10.16.3-hec2bf70_0': '10.10',
+    'nodejs-12.12.0-hfddbe92_0': '10.10',
+    'nodejs-12.8.1-hec2bf70_0': '10.10',
+    'javafx-sdk-11.0.4-h6dcaf97_1': '10.11',
+    'javafx-sdk-12.0.2-h6dcaf97_1': '10.11',
+    'javafx-sdk-12.0.2-h6dcaf97_0': '10.11',
+    'javafx-sdk-11.0.4-h6dcaf97_0': '10.11',
+    'qt-5.12.1-h1b46049_0': '10.12',
+    'qt-5.9.7-h8cf7e54_3': '10.12',
+    'qt-5.9.7-h93ee506_0': '10.12',
+    'qt-5.9.7-h93ee506_1': '10.12',
+    'qt-5.12.5-h1b46049_0': '10.12',
+    'qt-5.9.7-h93ee506_2': '10.12',
+    'openmpi-mpicxx-4.0.1-h6052eea_2': '10.12',
+    'openmpi-mpicxx-4.0.1-h6052eea_1': '10.12',
+    'openmpi-mpicxx-4.0.1-h6052eea_0': '10.12',
+    'openmpi-mpicxx-4.0.1-hc9558a2_2': '10.12',
+    'openmpi-mpicxx-4.0.1-hc9558a2_0': '10.12',
+    'openmpi-mpicxx-4.0.1-hc9558a2_1': '10.12',
+    'freecad-0.18.3-py37h4764a83_2': '10.12',
+    'freecad-0.18.3-py37hc453731_1': '10.12',
+    'freecad-0.18.4-py37hab2b3aa_1': '10.12',
+    'freecad-0.18.4-py37hab2b3aa_0': '10.12',
+    'openmpi-mpicc-4.0.1-h24e1f75_1': '10.12',
+    'openmpi-mpicc-4.0.1-h24e1f75_2': '10.12',
+    'openmpi-mpicc-4.0.1-h24e1f75_0': '10.12',
+    'openmpi-mpicc-4.0.1-h516909a_0': '10.12',
+    'openmpi-mpicc-4.0.1-h516909a_1': '10.12',
+    'openmpi-mpicc-4.0.1-h516909a_2': '10.12',
+    'openmpi-mpifort-4.0.1-h939af09_0': '10.12',
+    'openmpi-mpifort-4.0.1-h6ad152f_2': '10.12',
+    'openmpi-mpifort-4.0.1-h939af09_2': '10.12',
+    'openmpi-mpifort-4.0.1-h939af09_1': '10.12',
+    'openmpi-mpifort-4.0.1-he991be0_0': '10.12',
+    'openmpi-mpifort-4.0.1-he991be0_1': '10.12',
+    'openmpi-mpifort-4.0.1-he991be0_2': '10.12',
+    'reaktoro-1.0.7-py37h99eb986_0': '10.12',
+    'reaktoro-1.0.7-py37h99eb986_1': '10.12',
+    'reaktoro-1.0.7-py36h99eb986_0': '10.12',
+    'reaktoro-1.0.7-py36h99eb986_1': '10.12',
+    'pyqt-5.12.3-py38he22c54c_1': '10.12',
+    'pyqt-5.9.2-py37h2a560b1_0': '10.12',
+    'pyqt-5.12.3-py36he22c54c_1': '10.12',
+    'pyqt-5.9.2-py27h2a560b1_4': '10.12',
+    'pyqt-5.9.2-py27h2a560b1_1': '10.12',
+    'pyqt-5.9.2-py37h2a560b1_4': '10.12',
+    'pyqt-5.9.2-py36h2a560b1_3': '10.12',
+    'pyqt-5.9.2-py27h2a560b1_2': '10.12',
+    'pyqt-5.9.2-py36h2a560b1_1': '10.12',
+    'pyqt-5.12.3-py27h2a560b1_0': '10.12',
+    'pyqt-5.12.3-py37h2a560b1_0': '10.12',
+    'pyqt-5.12.3-py27he22c54c_0': '10.12',
+    'pyqt-5.12.3-py27he22c54c_1': '10.12',
+    'pyqt-5.9.2-py37h2a560b1_2': '10.12',
+    'pyqt-5.9.2-py37h2a560b1_1': '10.12',
+    'pyqt-5.9.2-py36h2a560b1_0': '10.12',
+    'pyqt-5.9.2-py36h2a560b1_4': '10.12',
+    'pyqt-5.9.2-py27h2a560b1_0': '10.12',
+    'pyqt-5.9.2-py37h2a560b1_3': '10.12',
+    'pyqt-5.12.3-py38he22c54c_0': '10.12',
+    'pyqt-5.9.2-py27h2a560b1_3': '10.12',
+    'pyqt-5.9.2-py36h2a560b1_2': '10.12',
+    'pyqt-5.12.3-py37he22c54c_0': '10.12',
+    'pyqt-5.12.3-py36he22c54c_0': '10.12',
+    'pyqt-5.12.3-py37he22c54c_1': '10.12',
+    'pyqt-5.12.3-py36h2a560b1_0': '10.12',
+    'ldas-tools-al-2.6.3-hf543496_0': '10.12',
+    'ldas-tools-al-2.6.3-hf543496_1': '10.12',
+    'ldas-tools-al-2.6.4-h4f290e7_1': '10.12',
+    'ldas-tools-al-2.6.4-h4f290e7_0': '10.12',
+    'openmpi-4.0.1-ha90c164_2': '10.12',
+    'openmpi-4.0.1-ha90c164_0': '10.12',
+    'openmpi-4.0.1-hfcebdee_2': '10.12',
+    'openmpi-4.0.1-ha90c164_1': '10.12',
+    'openmpi-4.0.1-hc99cbb1_1': '10.12',
+    'openmpi-4.0.1-hc99cbb1_0': '10.12',
+    'openmpi-4.0.1-hc99cbb1_2': '10.12',
+}
 
 def _gen_patch_instructions(index, new_index, subdir):
     instructions = {
@@ -201,9 +291,16 @@ def _gen_patch_instructions(index, new_index, subdir):
     # diff all items in the index and put any differences in the instructions
     for fn in index:
         assert fn in new_index
+
+        # replace any old keys
         for key in index[fn]:
             assert key in new_index[fn], (key, index[fn], new_index[fn])
             if index[fn][key] != new_index[fn][key]:
+                instructions['packages'][fn][key] = new_index[fn][key]
+
+        # add any new keys
+        for key in new_index[fn]:
+            if key not in index[fn]:
                 instructions['packages'][fn][key] = new_index[fn][key]
 
     return instructions
@@ -321,6 +418,10 @@ def _gen_new_index(repodata, subdir):
             _fix_libgfortran(fn, record)
             _fix_libcxx(fn, record)
 
+            full_pkg_name = fn.replace('.tar.bz2', '')
+            if full_pkg_name in OSX_SDK_FIXES:
+                _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
+
     return index
 
 
@@ -366,6 +467,20 @@ def _fix_libgfortran(fn, record):
             # catches all of 4.*
             depends[dep_idx] = "libgfortran >=4.0.0,<5.0.0.a0"
             record['depends'] = depends
+
+
+def _set_osx_virt_min(fn, record, min_vers):
+    rconst = record.get("constrains", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(rconst)
+         if dep.split(' ')[0] == "__osx"),
+        None
+    )
+    run_constrained = list(rconst)
+    if dep_idx is None:
+        run_constrained.append("__osx >=%s" % min_vers)
+    if run_constrained:
+        record['constrains'] = run_constrained
 
 
 def _fix_libcxx(fn, record):
