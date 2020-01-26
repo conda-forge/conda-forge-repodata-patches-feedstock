@@ -8,7 +8,7 @@ import os
 from os.path import join, isdir
 import sys
 import tqdm
-
+import re
 import requests
 
 CHANNEL_NAME = "conda-forge"
@@ -382,6 +382,9 @@ def _gen_new_index(repodata, subdir):
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
+        if any(dep.startswith("gf2x") for dep in deps):
+            _pin_stricter(fn, record, "gf2x", "x.x")
+
         # FIXME: disable patching-out blas_openblas feature
         # because hotfixes are not applied to gcc7 label
         # causing inconsistent behavior
@@ -501,6 +504,20 @@ def _fix_libcxx(fn, record):
             record['depends'] = depends
 
 
+def pad_list(l, num):
+    if len(l) >= num:
+        return l
+    return l + [0]*(num - len(l))
+
+
+def get_upper_bound(version, max_pin):
+    num_x = max_pin.count("x")
+    ver = pad_list(version.split("."), num_x)
+    ver[num_x:] = ["0"]*(len(ver)-num_x)
+    ver[num_x-1] = str(int(ver[num_x-1])+1)
+    return ".".join(ver)
+
+
 def _relax_exact(fn, record, fix_dep, max_pin=None):
     depends = record.get("depends", ())
     dep_idx = next(
@@ -513,15 +530,34 @@ def _relax_exact(fn, record, fix_dep, max_pin=None):
         if (len(dep_parts) == 3 and \
                 not any(dep_parts[1].startswith(op) for op in OPERATORS)):
             if max_pin is not None:
-                ver = dep_parts[1].split(".")
-                num_x = max_pin.count("x")
-                ver[num_x:] = ["0"]*(len(ver)-num_x)
-                ver[num_x-1] = str(int(ver[num_x-1])+1)
-                upper_bound="{}a0".format(".".join(ver))
+                upper_bound = get_upper_bound(dep_parts[1], max_pin) + "a0"
                 depends[dep_idx] = "{} >={},<{}".format(*dep_parts[:2], upper_bound)
             else:
                 depends[dep_idx] = "{} >={}".format(*dep_parts[:2])
             record['depends'] = depends
+
+
+cb_pin_regex = re.compile(r"^>=(?P<lower>\d(\.\d+)*),<(?P<upper>\d(\.\d+)*)a0$")
+
+def _pin_stricter(fn, record, fix_dep, max_pin):
+    depends = record.get("depends", ())
+    dep_indices = [q for q, dep in enumerate(depends) if dep.split(' ')[0] == fix_dep]
+    for dep_idx in dep_indices:
+        dep_parts = depends[dep_idx].split(" ")
+        if len(dep_parts) != 2:
+            continue
+        m = cb_pin_regex.match(dep_parts[1])
+        if m is None:
+            continue
+        lower = m.group("lower")
+        upper = m.group("upper").split(".")
+        new_upper = get_upper_bound(lower, max_pin).split(".")
+        upper = pad_list(upper, len(new_upper))
+        new_upper = pad_list(new_upper, len(upper))
+        if tuple(upper) > tuple(new_upper):
+            depends[dep_idx] = "{} >={},<{}a0".format(dep_parts[0], lower, ".".join(new_upper))
+            record['depends'] = depends
+
 
 
 def _extract_and_remove_vc_feature(record):
