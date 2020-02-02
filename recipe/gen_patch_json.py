@@ -306,6 +306,10 @@ def _gen_patch_instructions(index, new_index, subdir):
     return instructions
 
 
+def has_dep(record, name):
+    return any(dep.split(' ')[0] == name for dep in record.get('depends', ()))
+
+
 def _gen_new_index(repodata, subdir):
     """Make any changes to the index by adjusting the values directly.
 
@@ -350,6 +354,11 @@ def _gen_new_index(repodata, subdir):
     proj4_fixes = {"cartopy", "cdo", "gdal", "libspatialite", "pynio", "qgis"}
     for fn, record in index.items():
         record_name = record["name"]
+
+        # Make existing python and python-dependent packages conflict with pypy
+        if record_name == "python" or (has_dep(record, 'python') and not has_dep(record, 'pypy')):
+            new_constrains = record.get('constrains', [])
+            new_constrains.append('pypy <0a0')
 
         # remove dependency from constrains for twisted
         if record_name == "twisted":
