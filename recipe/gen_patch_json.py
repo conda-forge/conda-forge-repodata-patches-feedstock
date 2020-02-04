@@ -401,7 +401,7 @@ def _gen_new_index(repodata, subdir):
             #         depends.append("blas 1.* openblas")
             #         instructions["packages"][fn]["depends"] = depends
 
-        if any(dep.startswith("snappy >=1.1.7") for dep in deps):
+        if 'snappy >=1.1.7,<1.1.8.0a0' in deps:
             i = record['depends'].index('snappy >=1.1.7,<1.1.8.0a0')
             record['depends'][i] = 'snappy >=1.1.7,<2.0.0.0a0'
 
