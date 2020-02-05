@@ -473,6 +473,10 @@ def _gen_new_index(repodata, subdir):
             #         depends.append("blas 1.* openblas")
             #         instructions["packages"][fn]["depends"] = depends
 
+        if 'snappy >=1.1.7,<1.1.8.0a0' in deps:
+            i = record['depends'].index('snappy >=1.1.7,<1.1.8.0a0')
+            record['depends'][i] = 'snappy >=1.1.7,<2.0.0.0a0'
+
         # remove features for openjdk and rb2
         if ("track_features" in record and
                 record['track_features'] is not None):
