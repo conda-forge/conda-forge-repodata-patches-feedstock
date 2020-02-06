@@ -14,14 +14,14 @@ import requests
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda-web.anaconda.org"
 SUBDIRS = (
-    "noarch",
+    #"noarch",
     "linux-64",
-    "linux-armv7l",
-    "linux-aarch64",
-    "linux-ppc64le",
-    "osx-64",
-    "win-32",
-    "win-64",
+    #"linux-armv7l",
+    #"linux-aarch64",
+    #"linux-ppc64le",
+    #"osx-64",
+    #"win-32",
+    #"win-64",
 )
 
 REMOVALS = {
@@ -334,6 +334,8 @@ def get_python_abi(version, subdir):
 
 # Workaround for https://github.com/conda/conda-build/pull/3868
 def remove_python_abi(record):
+    if record['name'] in ['python', 'python_abi', 'pypy']:
+        return
     if not has_dep(record, 'python_abi'):
         return
     depends = record.get('depends', [])
