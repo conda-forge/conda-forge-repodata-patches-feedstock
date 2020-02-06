@@ -332,6 +332,14 @@ def get_python_abi(version, subdir):
     return "cp*"
 
 
+# Workaround for https://github.com/conda/conda-build/pull/3868
+def remove_python_abi(record):
+    if not has_dep(record, 'python_abi'):
+        return
+    depends = record.get('depends', [])
+    record['depends'] = [dep for dep in depends if dep.split(" ")[0] != "python_abi"]
+
+
 changes = set([])
 
 def add_python_abi(record, subdir):
@@ -420,7 +428,9 @@ def _gen_new_index(repodata, subdir):
     for fn, record in index.items():
         record_name = record["name"]
 
-        if subdir != 'noarch':
+        if subdir == 'noarch':
+            remove_python_abi(record)
+        else:
             add_python_abi(record, subdir)
 
         # remove dependency from constrains for twisted
