@@ -14,14 +14,14 @@ import requests
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda-web.anaconda.org"
 SUBDIRS = (
-    "noarch",
+    #"noarch",
     "linux-64",
-    "linux-armv7l",
-    "linux-aarch64",
-    "linux-ppc64le",
-    "osx-64",
-    "win-32",
-    "win-64",
+    #"linux-armv7l",
+    #"linux-aarch64",
+    #"linux-ppc64le",
+    #"osx-64",
+    #"win-32",
+    #"win-64",
 )
 
 REMOVALS = {
@@ -306,6 +306,85 @@ def _gen_patch_instructions(index, new_index, subdir):
     return instructions
 
 
+def has_dep(record, name):
+    return any(dep.split(' ')[0] == name for dep in record.get('depends', ()))
+
+
+def get_python_abi(version, subdir):
+    if version.startswith("2.7"):
+        if subdir.startswith("linux"):
+            return "cp27mu"
+        return "cp27m"
+    elif version.startswith("2.6"):
+        if subdir.startswith("linux"):
+            return "cp26mu"
+        return "cp26m"
+    elif version.startswith("3.4"):
+        return "cp34m"
+    elif version.startswith("3.5"):
+        return "cp35m"
+    elif version.startswith("3.6"):
+        return "cp36m"
+    elif version.startswith("3.7"):
+        return "cp37m"
+    elif version.startswith("3.8"):
+        return "cp38"
+    return "cp*"
+
+
+# Workaround for https://github.com/conda/conda-build/pull/3868
+def remove_python_abi(record):
+    if record['name'] in ['python', 'python_abi', 'pypy']:
+        return
+    if not has_dep(record, 'python_abi'):
+        return
+    depends = record.get('depends', [])
+    record['depends'] = [dep for dep in depends if dep.split(" ")[0] != "python_abi"]
+
+
+changes = set([])
+
+def add_python_abi(record, subdir):
+    record_name = record['name']
+    # Make existing python and python-dependent packages conflict with pypy
+    if record_name == "python":
+        version = record['version']
+        new_constrains = record.get('constrains', [])
+        python_abi = get_python_abi(version, subdir)
+        new_constrains.append(f"python_abi * {python_abi}")
+        record['constrains'] = new_constrains
+        return
+
+    if has_dep(record, 'python') and not has_dep(record, 'pypy') and not has_dep(record, 'python_abi'):
+        python_abi = None
+        new_constrains = record.get('constrains', [])
+        for dep in record.get('depends', []):
+            dep_split = dep.split(' ')
+            if dep_split[0] == 'python':
+                if len(dep_split) == 3:
+                    continue
+                if len(dep_split) == 1:
+                    python_abi = "cp*"
+                elif dep_split[1] == "<3":
+                    python_abi = get_python_abi("2.7", subdir)
+                elif dep_split[1].startswith(">="):
+                    m = cb_pin_regex.match(dep_split[1])
+                    if m == None:
+                        python_abi = "cp*"
+                    else:
+                        lower = pad_list(m.group("lower").split("."), 2)[:2]
+                        upper = pad_list(m.group("upper").split("."), 2)[:2]
+                        if lower[0] == upper[0] and int(lower[1]) + 1 == int(upper[1]):
+                            python_abi = get_python_abi(m.group("lower"), subdir)
+                        else:
+                            python_abi = "cp*"
+                else:
+                    python_abi = get_python_abi(dep_split[1], subdir)
+                new_constrains.append(f"python_abi * {python_abi}")
+                changes.add((dep, f"python_abi * {python_abi}"))
+        record['constrains'] = new_constrains
+
+
 def _gen_new_index(repodata, subdir):
     """Make any changes to the index by adjusting the values directly.
 
@@ -350,6 +429,11 @@ def _gen_new_index(repodata, subdir):
     proj4_fixes = {"cartopy", "cdo", "gdal", "libspatialite", "pynio", "qgis"}
     for fn, record in index.items():
         record_name = record["name"]
+
+        if subdir == 'noarch':
+            remove_python_abi(record)
+        else:
+            add_python_abi(record, subdir)
 
         # remove dependency from constrains for twisted
         if record_name == "twisted":
@@ -428,7 +512,9 @@ def _gen_new_index(repodata, subdir):
             full_pkg_name = fn.replace('.tar.bz2', '')
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
-
+    print("python ABI changes")
+    for change in changes:
+        print(change)
     return index
 
 
@@ -541,7 +627,7 @@ def _relax_exact(fn, record, fix_dep, max_pin=None):
             record['depends'] = depends
 
 
-cb_pin_regex = re.compile(r"^>=(?P<lower>\d(\.\d+)*),<(?P<upper>\d(\.\d+)*)a0$")
+cb_pin_regex = re.compile(r"^>=(?P<lower>\d(\.\d+)*a?),<(?P<upper>\d(\.\d+)*)a0$")
 
 def _pin_stricter(fn, record, fix_dep, max_pin):
     depends = record.get("depends", ())
