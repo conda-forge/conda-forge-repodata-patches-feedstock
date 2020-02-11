@@ -66,21 +66,21 @@ def test_add_python_abi():
         record = copy.deepcopy(record_orig)
         add_python_abi(record, "linux-64")
         print(record, condition, tag)
-        assert record["constrains"] == [f"python_abi * {tag}"]
+        assert record["constrains"] == [f"python_abi * *_{tag}"]
 
         record = copy.deepcopy(record_orig)
         add_python_abi(record, "osx-64")
         if tag == "cp27mu" or tag == "cp26mu":
-            assert record["constrains"] == [f"python_abi * {tag[:-1]}"]
+            assert record["constrains"] == [f"python_abi * *_{tag[:-1]}"]
         else:
-            assert record["constrains"] == [f"python_abi * {tag}"]
+            assert record["constrains"] == [f"python_abi * *_{tag}"]
 
     python_record = {
         "name": "python",
         "version": "3.6.8",
     }
     add_python_abi(python_record, "osx-64")
-    assert python_record["constrains"] == [f"python_abi * cp36m"]
+    assert python_record["constrains"] == [f"python_abi * *_cp36m"]
 
     exact_record = {
         "name": "foo",
