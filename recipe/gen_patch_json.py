@@ -310,7 +310,10 @@ def has_dep(record, name):
     return any(dep.split(' ')[0] == name for dep in record.get('depends', ()))
 
 
-def get_python_abi(version, subdir):
+def get_python_abi(version, subdir, build=None):
+    if build is not None:
+        if re.match("py\d\d", build):
+            version = f"{build[2]}.{build[3]}"
     if version.startswith("2.7"):
         if subdir.startswith("linux"):
             return "cp27mu"
@@ -329,7 +332,7 @@ def get_python_abi(version, subdir):
         return "cp37m"
     elif version.startswith("3.8"):
         return "cp38"
-    return "cp*"
+    return None
 
 
 # Workaround for https://github.com/conda/conda-build/pull/3868
@@ -358,30 +361,40 @@ def add_python_abi(record, subdir):
     if has_dep(record, 'python') and not has_dep(record, 'pypy') and not has_dep(record, 'python_abi'):
         python_abi = None
         new_constrains = record.get('constrains', [])
+        build = record["build"]
+        ver_strict_found = False
+        ver_relax_found = False
+
         for dep in record.get('depends', []):
             dep_split = dep.split(' ')
             if dep_split[0] == 'python':
                 if len(dep_split) == 3:
                     continue
                 if len(dep_split) == 1:
-                    python_abi = "cp*"
+                    continue
                 elif dep_split[1] == "<3":
-                    python_abi = get_python_abi("2.7", subdir)
+                    python_abi = get_python_abi("2.7", subdir, build)
                 elif dep_split[1].startswith(">="):
                     m = cb_pin_regex.match(dep_split[1])
                     if m == None:
-                        python_abi = "cp*"
+                        python_abi = get_python_abi("", subdir, build)
                     else:
                         lower = pad_list(m.group("lower").split("."), 2)[:2]
                         upper = pad_list(m.group("upper").split("."), 2)[:2]
                         if lower[0] == upper[0] and int(lower[1]) + 1 == int(upper[1]):
-                            python_abi = get_python_abi(m.group("lower"), subdir)
+                            python_abi = get_python_abi(m.group("lower"), subdir, build)
                         else:
-                            python_abi = "cp*"
+                            python_abi = get_python_abi("", subdir, build)
                 else:
-                    python_abi = get_python_abi(dep_split[1], subdir)
-                new_constrains.append(f"python_abi * *_{python_abi}")
-                changes.add((dep, f"python_abi * *_{python_abi}"))
+                    python_abi = get_python_abi(dep_split[1], subdir, build)
+                if python_abi:
+                    new_constrains.append(f"python_abi * *_{python_abi}")
+                    changes.add((dep, f"python_abi * *_{python_abi}"))
+                    ver_strict_found = True
+                else:
+                    ver_relax_found = True
+        if not ver_strict_found and ver_relax_found:
+            new_constrains.append("pypy <0a0")
         record['constrains'] = new_constrains
 
 
