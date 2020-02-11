@@ -14,14 +14,14 @@ import requests
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda-web.anaconda.org"
 SUBDIRS = (
-    #"noarch",
+    "noarch",
     "linux-64",
-    #"linux-armv7l",
-    #"linux-aarch64",
-    #"linux-ppc64le",
-    #"osx-64",
-    #"win-32",
-    #"win-64",
+    "linux-armv7l",
+    "linux-aarch64",
+    "linux-ppc64le",
+    "osx-64",
+    "win-32",
+    "win-64",
 )
 
 REMOVALS = {
