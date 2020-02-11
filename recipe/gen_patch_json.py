@@ -351,7 +351,7 @@ def add_python_abi(record, subdir):
         version = record['version']
         new_constrains = record.get('constrains', [])
         python_abi = get_python_abi(version, subdir)
-        new_constrains.append(f"python_abi * {python_abi}")
+        new_constrains.append(f"python_abi * *_{python_abi}")
         record['constrains'] = new_constrains
         return
 
