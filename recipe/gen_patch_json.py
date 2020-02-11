@@ -14,14 +14,14 @@ import requests
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda-web.anaconda.org"
 SUBDIRS = (
-    #"noarch",
+    "noarch",
     "linux-64",
-    #"linux-armv7l",
-    #"linux-aarch64",
-    #"linux-ppc64le",
-    #"osx-64",
-    #"win-32",
-    #"win-64",
+    "linux-armv7l",
+    "linux-aarch64",
+    "linux-ppc64le",
+    "osx-64",
+    "win-32",
+    "win-64",
 )
 
 REMOVALS = {
@@ -351,7 +351,7 @@ def add_python_abi(record, subdir):
         version = record['version']
         new_constrains = record.get('constrains', [])
         python_abi = get_python_abi(version, subdir)
-        new_constrains.append(f"python_abi * {python_abi}")
+        new_constrains.append(f"python_abi * *_{python_abi}")
         record['constrains'] = new_constrains
         return
 
@@ -380,8 +380,8 @@ def add_python_abi(record, subdir):
                             python_abi = "cp*"
                 else:
                     python_abi = get_python_abi(dep_split[1], subdir)
-                new_constrains.append(f"python_abi * {python_abi}")
-                changes.add((dep, f"python_abi * {python_abi}"))
+                new_constrains.append(f"python_abi * *_{python_abi}")
+                changes.add((dep, f"python_abi * *_{python_abi}"))
         record['constrains'] = new_constrains
 
 
