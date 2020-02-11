@@ -430,10 +430,10 @@ def _gen_new_index(repodata, subdir):
     for fn, record in index.items():
         record_name = record["name"]
 
-        if subdir == 'noarch':
-            remove_python_abi(record)
-        else:
-            add_python_abi(record, subdir)
+        #if subdir == 'noarch':
+        #    remove_python_abi(record)
+        #else:
+        #    add_python_abi(record, subdir)
 
         # remove dependency from constrains for twisted
         if record_name == "twisted":
