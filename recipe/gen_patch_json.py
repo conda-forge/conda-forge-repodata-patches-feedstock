@@ -380,8 +380,8 @@ def add_python_abi(record, subdir):
                             python_abi = "cp*"
                 else:
                     python_abi = get_python_abi(dep_split[1], subdir)
-                new_constrains.append(f"python_abi * {python_abi}")
-                changes.add((dep, f"python_abi * {python_abi}"))
+                new_constrains.append(f"python_abi * *_{python_abi}")
+                changes.add((dep, f"python_abi * *_{python_abi}"))
         record['constrains'] = new_constrains
 
 
