@@ -29,7 +29,7 @@ def test_gen_patch_instructions():
     assert inst['remove'] == list(REMOVALS['osx-64'])
 
 
-def _test_add_python_abi():
+def test_add_python_abi():
     conditions = {
         'python >=2.7,<2.8.0a0': 'cp27mu',
         'python 3.5.*': 'cp35m',
