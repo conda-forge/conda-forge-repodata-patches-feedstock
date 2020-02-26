@@ -459,7 +459,7 @@ def _gen_new_index(repodata, subdir):
         # newer versions of distributed require at least msgpack-python >=0.6.0
         # so we can fix cases where msgpack-python is unbounded
         # https://github.com/conda-forge/distributed-feedstock/pull/114
-        if record_name == 'distributed'
+        if record_name == 'distributed':
             if 'msgpack-python' in record['depends']:
                 i = record['depends'].index('msgpack-python')
                 record['depends'][i] = 'msgpack-python <1.0.0'
