@@ -455,6 +455,15 @@ def _gen_new_index(repodata, subdir):
             if new_constrains != record.get('constrains', ()):
                 record['constrains'] = new_constrains
 
+        # distributed <2.11.0 does not work with msgpack-python >=1.0
+        # newer versions of distributed require at least msgpack-python >=0.6.0
+        # so we can fix cases where msgpack-python is unbounded
+        # https://github.com/conda-forge/distributed-feedstock/pull/114
+        if record_name == 'distributed'
+            if 'msgpack-python' in record['depends']:
+                i = record['depends'].index('msgpack-python')
+                record['depends'][i] = 'msgpack-python <1.0.0'
+
         # fix deps with wrong names
         if record_name in proj4_fixes:
             _rename_dependency(fn, record, "proj.4", "proj4")
