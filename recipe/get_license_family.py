@@ -1,9 +1,28 @@
 import license_expression
 
 mapping = {
+    "AGPL-3.0-or-later": "AGPL",
+    "AGPL-3.0-only": "AGPL",
+    "AGPL-2.0-or-later": "AGPL",
+    "AGPL-2.0-only": "AGPL",
+    "GPL-3.0-or-later": "GPL",
+    "GPL-3.0-only": "GPL",
     "GPL-2.0-or-later": "GPL",
+    "GPL-2.0-only": "GPL",
+    "LGPL-3.0-or-later": "LGPL",
+    "LGPL-3.0-only": "LGPL",
+    "LGPL-2.0-or-later": "LGPL",
+    "LGPL-2.0-only": "LGPL",
     "BSD-3-Clause": "BSD",
+    "BSD-2-Clause": "BSD",
     "MIT": "MIT",
+    "Apache-2.0": "APACHE",
+    "PSF-2.0": "PSF",
+    "MPL-1.0": "MOZILLA",
+    "MPL-1.1": "MOZILLA",
+    "MPL-2.0": "MOZILLA",
+    "MPL-2.0-no-copyleft-exception": "MOZILLA",
+    "LicenseRef-Proprietary": "PROPRIETARY",
 }
 
 precedence = {
