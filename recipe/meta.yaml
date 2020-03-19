@@ -22,6 +22,7 @@ test:
   files:
     - test_gen_patch_json.py
     - gen_patch_json.py
+    - get_license_family.py
   requires:
     - python 3.*
     - requests
