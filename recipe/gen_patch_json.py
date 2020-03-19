@@ -11,6 +11,8 @@ import tqdm
 import re
 import requests
 
+from get_license_family import get_license_family
+
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda-web.anaconda.org"
 SUBDIRS = (
@@ -447,6 +449,11 @@ def _gen_new_index(repodata, subdir):
             remove_python_abi(record)
         else:
             add_python_abi(record, subdir)
+
+        if "license" in record and "license_family" not in record and record["license"]:
+            family = get_license_family(record["license"])
+            if family:
+                record['license_family'] = family
 
         # remove dependency from constrains for twisted
         if record_name == "twisted":
