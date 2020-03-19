@@ -49,7 +49,7 @@ def get_license_family(license):
                 family = family_new
                 continue
             pair = tuple(sorted([family_new, family]))
-            family = precendence.get(pair, None)
+            family = precedence.get(pair, None)
             if not family:
                 return None
     except license_expression.ExpressionError:
