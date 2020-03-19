@@ -35,7 +35,7 @@ test:
 about:
   summary: generate tweaks to index metadata, hosted separately from anaconda.org index
   home: https://github.com/conda-forge/conda-forge-repodata-patches-feedstock
-  license: Public Domain
+  license: CC-PDDC
 
 extra:
   recipe-maintainers:
