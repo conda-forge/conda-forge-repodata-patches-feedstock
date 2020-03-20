@@ -352,7 +352,7 @@ changes = set([])
 def add_python_abi(record, subdir):
     record_name = record['name']
     # Make existing python and python-dependent packages conflict with pypy
-    if record_name == "python":
+    if record_name == "python" and not record['build'].endswith("pypy"):
         version = record['version']
         new_constrains = record.get('constrains', [])
         python_abi = get_python_abi(version, subdir)
