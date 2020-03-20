@@ -522,6 +522,11 @@ def _gen_new_index(repodata, subdir):
             i = record['depends'].index('abseil-cpp')
             record['depends'][i] = 'abseil-cpp =20190808'
 
+        # Filter by timestamp as pythia8 also contains python bindings that shouldn't be pinned
+        if 'pythia8' in deps and record.get('timestamp', 0) < 1584264455759:
+            i = record['depends'].index('pythia8')
+            record['depends'][i] = 'pythia8 >=8.240,<8.300.0a0'
+
         # remove features for openjdk and rb2
         if ("track_features" in record and
                 record['track_features'] is not None):
