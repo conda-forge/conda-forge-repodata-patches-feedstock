@@ -471,6 +471,20 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('msgpack-python')
                 record['depends'][i] = 'msgpack-python <1.0.0'
 
+        # HoloViews <1.13.0 does not work with bokeh >= 2.0
+        # Newer versions do allow it but have the same pin as older
+        # versions, therefore we use the fact that 1.13.0 is the first
+        # version to require pandas to detect >1.13.0
+        if record_name == 'holoviews':
+            if 'bokeh' in record['depends']:
+                i = record['depends'].index('bokeh')
+                record['depends'][i] = 'bokeh <2.0.0'
+            elif ('bokeh >=1.1.0' in record['depends'] and
+                  not any('pandas' in d for d in record['depends'])):
+                i = record['depends'].index('bokeh >=1.1.0')
+                current = record['depends'][i]
+                record['depends'][i] = current+',<2.0.0'
+
         # fix deps with wrong names
         if record_name in proj4_fixes:
             _rename_dependency(fn, record, "proj.4", "proj4")
