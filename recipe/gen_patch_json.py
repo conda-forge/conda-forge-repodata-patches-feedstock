@@ -498,7 +498,7 @@ def _gen_new_index(repodata, subdir):
         if any(dep.startswith("gf2x") for dep in deps):
             _pin_stricter(fn, record, "gf2x", "x.x")
 
-        if any(dep.startswith("libnetcdf") for dep in deps):
+        if any(dep.startswith("libnetcdf >=4.7.3") for dep in deps):
             _pin_stricter(fn, record, "libnetcdf", "x.x.x.x")
 
         # FIXME: disable patching-out blas_openblas feature
