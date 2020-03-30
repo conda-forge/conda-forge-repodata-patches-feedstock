@@ -498,6 +498,9 @@ def _gen_new_index(repodata, subdir):
         if any(dep.startswith("gf2x") for dep in deps):
             _pin_stricter(fn, record, "gf2x", "x.x")
 
+        if any(dep.startswith("libnetcdf >=4.7.3") for dep in deps):
+            _pin_stricter(fn, record, "libnetcdf", "x.x.x.x")
+
         # FIXME: disable patching-out blas_openblas feature
         # because hotfixes are not applied to gcc7 label
         # causing inconsistent behavior
@@ -672,7 +675,7 @@ def _pin_stricter(fn, record, fix_dep, max_pin):
     dep_indices = [q for q, dep in enumerate(depends) if dep.split(' ')[0] == fix_dep]
     for dep_idx in dep_indices:
         dep_parts = depends[dep_idx].split(" ")
-        if len(dep_parts) != 2:
+        if len(dep_parts) not in [2, 3]:
             continue
         m = cb_pin_regex.match(dep_parts[1])
         if m is None:
@@ -686,6 +689,8 @@ def _pin_stricter(fn, record, fix_dep, max_pin):
             if str(new_upper[-1]) != "0":
                 new_upper += ["0"]
             depends[dep_idx] = "{} >={},<{}a0".format(dep_parts[0], lower, ".".join(new_upper))
+            if len(dep_parts) == 3:
+                depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
             record['depends'] = depends
 
 
