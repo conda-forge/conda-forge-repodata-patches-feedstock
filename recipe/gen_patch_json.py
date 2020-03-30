@@ -674,9 +674,9 @@ def _pin_stricter(fn, record, fix_dep, max_pin):
     depends = record.get("depends", ())
     dep_indices = [q for q, dep in enumerate(depends) if dep.split(' ')[0] == fix_dep]
     for dep_idx in dep_indices:
+        dep_parts = depends[dep_idx].split(" ")
         if len(dep_parts) not in [2, 3]:
             continue
-        dep_parts = depends[dep_idx].split(" ")
         m = cb_pin_regex.match(dep_parts[1])
         if m is None:
             continue
