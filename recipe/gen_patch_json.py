@@ -734,7 +734,8 @@ def main():
     # Step 1. Collect initial repodata for all subdirs.
     repodatas = {}
     if "CF_SUBDIR" in os.environ:
-        subdirs = [os.environ["CF_SUBDIR"]]
+        # For local debugging
+        subdirs = os.environ["CF_SUBDIR"].split(";")
     else:
         subdirs = SUBDIRS
     for subdir in tqdm.tqdm(subdirs, desc="Downloading repodata"):
