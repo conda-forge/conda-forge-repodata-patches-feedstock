@@ -545,6 +545,15 @@ def _gen_new_index(repodata, subdir):
                     _relax_exact(fn, record, llvm, max_pin="x.x")
                 else:
                     _relax_exact(fn, record, llvm, max_pin="x.x.x")
+
+        if record_name in llvm_pkgs:
+            new_constrains = record.get('constrains', [])
+            version = record["version"]
+            for pkg in llvm_pkgs:
+                if record_name == pkg:
+                    continue
+                new_constrains.append(f'{pkg} {version}.*')
+            record['constrains'] = new_constrains
         # make sure the libgfortran version is bound from 3 to 4 for osx
         if subdir == "osx-64":
             _fix_libgfortran(fn, record)
@@ -724,7 +733,12 @@ def _extract_track_feature(record, feature_name):
 def main():
     # Step 1. Collect initial repodata for all subdirs.
     repodatas = {}
-    for subdir in tqdm.tqdm(SUBDIRS, desc="Downloading repodata"):
+    if "CF_SUBDIR" in os.environ:
+        # For local debugging
+        subdirs = os.environ["CF_SUBDIR"].split(";")
+    else:
+        subdirs = SUBDIRS
+    for subdir in tqdm.tqdm(subdirs, desc="Downloading repodata"):
         repodata_url = "/".join(
             (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata.json"))
         response = requests.get(repodata_url)
@@ -732,8 +746,8 @@ def main():
         repodatas[subdir] = response.json()
 
     # Step 2. Create all patch instructions.
-    prefix_dir = os.getenv("PREFIX")
-    for subdir in SUBDIRS:
+    prefix_dir = os.getenv("PREFIX", "tmp")
+    for subdir in subdirs:
         prefix_subdir = join(prefix_dir, subdir)
         if not isdir(prefix_subdir):
             os.makedirs(prefix_subdir)
