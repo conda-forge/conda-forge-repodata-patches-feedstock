@@ -550,6 +550,8 @@ def _gen_new_index(repodata, subdir):
             new_constrains = record.get('constrains', [])
             version = record["version"]
             for pkg in llvm_pkgs:
+                if record_name == pkg:
+                    continue
                 new_constrains.append(f'{pkg} {version}.*')
             record['constrains'] = new_constrains
         # make sure the libgfortran version is bound from 3 to 4 for osx
