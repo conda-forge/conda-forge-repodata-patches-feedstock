@@ -3,7 +3,7 @@ About conda-forge-repodata-patches
 
 Home: https://github.com/conda-forge/conda-forge-repodata-patches-feedstock
 
-Package license: Public Domain
+Package license: CC-PDDC
 
 Feedstock license: BSD 3-Clause
 
