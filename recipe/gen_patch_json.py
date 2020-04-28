@@ -462,6 +462,13 @@ def _gen_new_index(repodata, subdir):
             if new_constrains != record.get('constrains', ()):
                 record['constrains'] = new_constrains
 
+        if record_name == "arrow-cpp":
+            if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
+                if 'constrains' in record:
+                    record['constrains'].append("arrow-cpp-proc * cpu")
+                else:
+                    record['constrains'] = ["arrow-cpp-proc * cpu"]
+
         # distributed <2.11.0 does not work with msgpack-python >=1.0
         # newer versions of distributed require at least msgpack-python >=0.6.0
         # so we can fix cases where msgpack-python is unbounded
