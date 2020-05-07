@@ -569,9 +569,6 @@ def _gen_new_index(repodata, subdir):
             full_pkg_name = fn.replace('.tar.bz2', '')
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
-    print("python ABI changes")
-    for change in changes:
-        print(change)
     return index
 
 
