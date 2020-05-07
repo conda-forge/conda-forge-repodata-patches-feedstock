@@ -14,7 +14,7 @@ import requests
 from get_license_family import get_license_family
 
 CHANNEL_NAME = "conda-forge"
-CHANNEL_ALIAS = "https://conda-web.anaconda.org"
+CHANNEL_ALIAS = "https://conda.anaconda.org"
 SUBDIRS = (
     "noarch",
     "linux-64",
@@ -747,7 +747,7 @@ def main():
         subdirs = SUBDIRS
     for subdir in tqdm.tqdm(subdirs, desc="Downloading repodata"):
         repodata_url = "/".join(
-            (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata.json"))
+            (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata_from_packages.json"))
         response = requests.get(repodata_url)
         response.raise_for_status()
         repodatas[subdir] = response.json()
