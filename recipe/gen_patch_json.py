@@ -483,10 +483,10 @@ def _gen_new_index(repodata, subdir):
         # included explicitly in 0.31.10+
         # https://github.com/conda-forge/python-language-server-feedstock/pull/50
         version = record['version']
-        pversion = pkg_resources.parse_version(version)
-        v0_31_9 = pkg_resources.parse_version('0.31.9')
-        if record_name == 'python-language-server' and pversion <= v0_31_9:
-            if 'pyflakes >=1.6.0' in record['depends']:
+        if record_name == 'python-language-server':
+            pversion = pkg_resources.parse_version(version)
+            v0_31_9 = pkg_resources.parse_version('0.31.9')
+            if pversion <= v0_31_9 and 'pyflakes >=1.6.0' in record['depends']:
                 i = record['depends'].index('pyflakes >=1.6.0')
                 record['depends'][i] = 'pyflakes >=1.6.0,<2.2.0'
 
