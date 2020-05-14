@@ -10,6 +10,7 @@ import sys
 import tqdm
 import re
 import requests
+import pkg_resources
 
 from get_license_family import get_license_family
 
@@ -477,6 +478,17 @@ def _gen_new_index(repodata, subdir):
             if 'msgpack-python' in record['depends']:
                 i = record['depends'].index('msgpack-python')
                 record['depends'][i] = 'msgpack-python <1.0.0'
+
+        # python-language-server <=0.31.9 requires pyflakes <2.2.2
+        # included explicitly in 0.31.10+
+        # https://github.com/conda-forge/python-language-server-feedstock/pull/50
+        version = record['version']
+        if record_name == 'python-language-server':
+            pversion = pkg_resources.parse_version(version)
+            v0_31_9 = pkg_resources.parse_version('0.31.9')
+            if pversion <= v0_31_9 and 'pyflakes >=1.6.0' in record['depends']:
+                i = record['depends'].index('pyflakes >=1.6.0')
+                record['depends'][i] = 'pyflakes >=1.6.0,<2.2.0'
 
         # fix deps with wrong names
         if record_name in proj4_fixes:
