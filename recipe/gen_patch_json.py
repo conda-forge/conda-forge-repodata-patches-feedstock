@@ -15,7 +15,7 @@ import pkg_resources
 from get_license_family import get_license_family
 
 CHANNEL_NAME = "conda-forge"
-CHANNEL_ALIAS = "https://conda-web.anaconda.org"
+CHANNEL_ALIAS = "https://conda.anaconda.org"
 SUBDIRS = (
     "noarch",
     "linux-64",
@@ -581,9 +581,6 @@ def _gen_new_index(repodata, subdir):
             full_pkg_name = fn.replace('.tar.bz2', '')
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
-    print("python ABI changes")
-    for change in changes:
-        print(change)
     return index
 
 
@@ -759,7 +756,7 @@ def main():
         subdirs = SUBDIRS
     for subdir in tqdm.tqdm(subdirs, desc="Downloading repodata"):
         repodata_url = "/".join(
-            (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata.json"))
+            (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata_from_packages.json"))
         response = requests.get(repodata_url)
         response.raise_for_status()
         repodatas[subdir] = response.json()
