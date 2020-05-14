@@ -514,6 +514,8 @@ def _gen_new_index(repodata, subdir):
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
+        _relax_libssh2_1_x_pinning(fn, record)
+
         if any(dep.startswith("gf2x") for dep in deps):
             _pin_stricter(fn, record, "gf2x", "x.x")
 
@@ -691,6 +693,31 @@ def _relax_exact(fn, record, fix_dep, max_pin=None):
             else:
                 depends[dep_idx] = "{} >={}".format(*dep_parts[:2])
             record['depends'] = depends
+
+
+def _match_strict_libssh2_1_x_pin(dep):
+    if dep.startswith("libssh2 >=1.8.0,<1.9.0a0"):
+        return True
+    if dep.startswith("libssh2 >=1.8.1,<1.9.0a0"):
+        return True
+    if dep.startswith("libssh2 >=1.8.2,<1.9.0a0"):
+        return True
+    if dep.startswith("libssh2 1.8.*"):
+        return True
+
+    return False
+
+
+def _relax_libssh2_1_x_pinning(fn, record):
+    depends = record.get("depends", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(depends)
+         if _match_strict_libssh2_1_x_pin(dep)),
+        None
+    )
+
+    if dep_idx is not None:
+        depends[dep_idx] = "libssh2 >=1.8.0,<2.0.0a0"
 
 
 cb_pin_regex = re.compile(r"^>=(?P<lower>\d(\.\d+)*a?),<(?P<upper>\d(\.\d+)*)a0$")
