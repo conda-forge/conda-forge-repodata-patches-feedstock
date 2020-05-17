@@ -514,6 +514,9 @@ def _gen_new_index(repodata, subdir):
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
+        if 're2' in deps and record.get('timestamp', 0) < 1588349339243:
+            _rename_dependency(fn, record, "re2", "re2 <2020.05.01")
+
         _relax_libssh2_1_x_pinning(fn, record)
 
         if any(dep.startswith("gf2x") for dep in deps):
