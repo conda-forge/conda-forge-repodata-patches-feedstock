@@ -26,7 +26,7 @@ def test_gen_patch_instructions():
         'a': {'depends': ['c', 'd', 'e'], 'features': None},
         'c': {'addthis': 'yes'}}
 
-    assert set(REMOVALS['osx-64']) in set(inst['remove'])
+    assert set(REMOVALS['osx-64']) <= set(inst['remove'])
 
 
 def test_add_python_abi():
@@ -96,4 +96,3 @@ def test_add_python_abi():
     }
     add_python_abi(exact_record, "osx-64")
     assert exact_record["constrains"] == []
-
