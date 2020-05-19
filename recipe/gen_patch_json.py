@@ -284,7 +284,7 @@ OSX_SDK_FIXES = {
 }
 
 
-def _add_broken_to_removals(subdir):
+def _add_removals(instructions, subdir):
     global REMOVALS
     r = requests.get(
         "https://conda-static.anaconda.org/conda-forge/"
@@ -299,7 +299,7 @@ def _add_broken_to_removals(subdir):
     for pkg_name in data["packages"]:
         currvals.append(pkg_name)
 
-    REMOVALS[subdir] = tuple(set(currvals))
+    instructions["remove"].extend(tuple(set(currvals)))
 
 
 def _gen_patch_instructions(index, new_index, subdir):
@@ -310,8 +310,7 @@ def _gen_patch_instructions(index, new_index, subdir):
         "remove": [],
     }
 
-    _add_broken_to_removals(subdir)
-    instructions["remove"].extend(REMOVALS.get(subdir, ()))
+    _add_removals(instructions, subdir)
 
     # diff all items in the index and put any differences in the instructions
     for fn in index:
