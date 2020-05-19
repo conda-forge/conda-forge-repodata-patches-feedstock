@@ -284,23 +284,22 @@ OSX_SDK_FIXES = {
 }
 
 
-def _add_broken_to_removals():
+def _add_broken_to_removals(subdir):
     global REMOVALS
-    for subdir in SUBDIRS:
-        r = requests.get(
-            "https://conda-static.anaconda.org/conda-forge/"
-            "label/broken/%s/repodata.json" % subdir
-        )
+    r = requests.get(
+        "https://conda-static.anaconda.org/conda-forge/"
+        "label/broken/%s/repodata.json" % subdir
+    )
 
-        if r.status_code != 200:
-            r.raise_for_status()
+    if r.status_code != 200:
+        r.raise_for_status()
 
-        data = r.json()
-        currvals = list(REMOVALS.get(subdir, []))
-        for pkg_name in data["packages"]:
-            currvals.append(pkg_name)
+    data = r.json()
+    currvals = list(REMOVALS.get(subdir, []))
+    for pkg_name in data["packages"]:
+        currvals.append(pkg_name)
 
-        REMOVALS[subdir] = tuple(set(currvals))
+    REMOVALS[subdir] = tuple(set(currvals))
 
 
 def _gen_patch_instructions(index, new_index, subdir):
@@ -311,7 +310,7 @@ def _gen_patch_instructions(index, new_index, subdir):
         "remove": [],
     }
 
-    _add_broken_to_removals()
+    _add_broken_to_removals(subdir)
     instructions["remove"].extend(REMOVALS.get(subdir, ()))
 
     # diff all items in the index and put any differences in the instructions
