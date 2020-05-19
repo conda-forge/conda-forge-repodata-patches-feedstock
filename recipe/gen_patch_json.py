@@ -12,6 +12,8 @@ import re
 import requests
 import pkg_resources
 
+import requests
+
 from get_license_family import get_license_family
 
 CHANNEL_NAME = "conda-forge"
@@ -281,6 +283,26 @@ OSX_SDK_FIXES = {
     'openmpi-4.0.1-hc99cbb1_2': '10.12',
 }
 
+
+def _add_broken_to_removals():
+    global REMOVALS
+    for subdir in SUBDIRS:
+        r = requests.get(
+            "https://conda-static.anaconda.org/conda-forge/"
+            "label/broken/%s/repodata.json" % subdir
+        )
+
+        if r.status_code != 200:
+            r.raise_for_status()
+
+        data = r.json()
+        currvals = list(REMOVALS.get(subdir, []))
+        for pkg_name in data["packages"]:
+            currvals.append(pkg_name)
+
+        REMOVALS[subdir] = tuple(set(currvals))
+
+
 def _gen_patch_instructions(index, new_index, subdir):
     instructions = {
         "patch_instructions_version": 1,
@@ -289,6 +311,7 @@ def _gen_patch_instructions(index, new_index, subdir):
         "remove": [],
     }
 
+    _add_broken_to_removals()
     instructions["remove"].extend(REMOVALS.get(subdir, ()))
 
     # diff all items in the index and put any differences in the instructions
