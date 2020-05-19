@@ -285,7 +285,6 @@ OSX_SDK_FIXES = {
 
 
 def _add_removals(instructions, subdir):
-    global REMOVALS
     r = requests.get(
         "https://conda-static.anaconda.org/conda-forge/"
         "label/broken/%s/repodata.json" % subdir
