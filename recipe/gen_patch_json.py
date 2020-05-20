@@ -578,6 +578,7 @@ def _gen_new_index(repodata, subdir):
                     continue
                 new_constrains.append(f'{pkg} {version}.*')
             record['constrains'] = new_constrains
+
         # make sure the libgfortran version is bound from 3 to 4 for osx
         if subdir == "osx-64":
             _fix_libgfortran(fn, record)
@@ -586,6 +587,20 @@ def _gen_new_index(repodata, subdir):
             full_pkg_name = fn.replace('.tar.bz2', '')
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
+
+        # make old binutils packages conflict with the new sysroot packages
+        # that have renamed the sysroot from conda_cos6 or conda_cos7 to just
+        # conda
+        if (
+            subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
+            and record_name in [
+                "binutils", "binutils_impl_" + subdir, "ld_impl_" + subdir]
+            and record.get('timestamp', 0) < 1589953178153  # 2020-05-20
+        ):
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("sysroot_" + subdir + " ==99999999999")
+            record["constrains"] = new_constrains
+
     return index
 
 
