@@ -506,6 +506,18 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('msgpack-python')
                 record['depends'][i] = 'msgpack-python <1.0.0'
 
+        # numba does not work with numpy >=1.18
+        version = record['version']
+        if record_name == 'numba':
+            pversion = pkg_resources.parse_version(version)
+            v0_49_0 = pkg_resources.parse_version('0.49.0')
+            if pversion < v0_49_0:
+                for i in range(len(record['depends'])):
+                    if record['depends'][i] == "numpy":
+                        record['depends'][i] += ' <1.18.0'
+                    elif record['depends'][i].startswith('numpy'):
+                        record['depends'][i] += ',<1.18.0'
+
         # python-language-server <=0.31.9 requires pyflakes <2.2.2
         # included explicitly in 0.31.10+
         # https://github.com/conda-forge/python-language-server-feedstock/pull/50
