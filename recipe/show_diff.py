@@ -16,19 +16,20 @@ BASE_URL = "https://conda.anaconda.org/conda-forge"
 
 def show_record_diffs(subdir, ref_repodata, new_repodata):
     for name, ref_pkg in ref_repodata["packages"].items():
-        new_pkg = new_repodata["packages"][name]
-        # license_family gets added for new packages, ignore it in the diff
-        ref_pkg.pop("license_family", None)
-        new_pkg.pop("license_family", None)
-        if ref_pkg == new_pkg:
-            continue
-        print(f"{subdir}::{name}")
-        ref_lines = json.dumps(ref_pkg, indent=2).splitlines()
-        new_lines = json.dumps(new_pkg, indent=2).splitlines()
-        for l in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=''):
-            if l.startswith('+++') or l.startswith('---') or l.startswith('@@'):
+        if name in new_repodata["packages"]:
+            new_pkg = new_repodata["packages"][name]
+            # license_family gets added for new packages, ignore it in the diff
+            ref_pkg.pop("license_family", None)
+            new_pkg.pop("license_family", None)
+            if ref_pkg == new_pkg:
                 continue
-            print(l)
+            print(f"{subdir}::{name}")
+            ref_lines = json.dumps(ref_pkg, indent=2).splitlines()
+            new_lines = json.dumps(new_pkg, indent=2).splitlines()
+            for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=''):
+                if ln.startswith('+++') or ln.startswith('---') or ln.startswith('@@'):
+                    continue
+                print(ln)
 
 
 def do_subdir(subdir, raw_repodata_path, ref_repodata_path):
