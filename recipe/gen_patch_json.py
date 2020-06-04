@@ -621,10 +621,7 @@ def _gen_new_index(repodata, subdir):
         if (
             subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
             and record_name in [
-                "binutils", "binutils_impl_" + subdir, "ld_impl_" + subdir,
-                "gcc_impl_" + subdir, "gxx_impl_" + subdir, "gfortran_impl_" + subdir,
-                "libstdcxx-ng", "libgcc-ng", "libgomp", "libgfortran-ng",
-            ]
+                "binutils", "binutils_impl_" + subdir, "ld_impl_" + subdir]
             and record.get('timestamp', 0) < 1589953178153  # 2020-05-20
         ):
             new_constrains = record.get('constrains', [])
