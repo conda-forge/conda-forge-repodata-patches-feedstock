@@ -2,6 +2,7 @@
 from __future__ import absolute_import, division, print_function
 
 from collections import defaultdict
+from contextlib import suppress
 import copy
 import json
 import os
@@ -526,6 +527,17 @@ def _gen_new_index(repodata, subdir):
 
         if record_name == "iris":
             _rename_dependency(fn, record, "nc_time_axis", "nc-time-axis")
+
+        # google-api-core-grpc==1.20.0 omitted an update to grpcio>=1.29.0
+        # https://github.com/conda-forge/google-api-core-feedstock/pull/43
+        if record_name == 'google-api-core-grpc':
+            pversion = pkg_resources.parse_version(record['version'])
+            v1_18_0 = pkg_resources.parse_version('1.18.0')
+            v1_20_0 = pkg_resources.parse_version('1.20.0')
+            if v1_18_0 <= pversion <= v1_20_0:
+                with suppress(ValueError):
+                    i = record['depends'].index('grpcio >=1.8.2')
+                    record['depends'][i] = 'grpcio >=1.29.0'
 
         if (record_name == "r-base" and
                 not any(dep.startswith("_r-mutex ")
