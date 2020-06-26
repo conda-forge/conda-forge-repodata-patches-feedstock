@@ -639,6 +639,33 @@ def _gen_new_index(repodata, subdir):
                 new_constrains.append("{} 5.4.*|7.2.*|7.3.*|8.2.*|9.1.*|9.2.*".format(pkg))
             record["constrains"] = new_constrains
 
+        # old CDTs with the conda_cos6 or conda_cos7 name in the sysroot need to
+        # conflict with the new CDT and compiler packages
+        # all of the new CDTs and compilers depend on the sysroot_{subdir} packages
+        # so we use a constraint on those
+        if (
+            subdir == "noarch"
+            and (
+                record_name.endswith("-cos6-x86_64") or
+                record_name.endswith("-cos7-x86_64") or
+                record_name.endswith("-cos7-aarch64") or
+                record_name.endswith("-cos7-ppc64le")
+            )
+            and not record_name.startswith("sysroot-")
+            and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
+        ):
+            if record_name.endswith("x86_64"):
+                sys_subdir = "linux-64"
+            elif record_name.endswith("aarch64"):
+                sys_subdir = "linux-aarch64"
+            elif record_name.endswith("ppc64le"):
+                sys_subdir = "linux-ppc64le"
+
+            new_constrains = record.get('constrains', [])
+            if not any(__r.startswith("sysroot_") for __r in new_constrains):
+                new_constrains.append("sysroot_" + sys_subdir + " ==99999999999")
+                record["constrains"] = new_constrains
+
     return index
 
 
