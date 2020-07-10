@@ -5,7 +5,7 @@ Home: https://github.com/conda-forge/conda-forge-repodata-patches-feedstock
 
 Package license: CC-PDDC
 
-Feedstock license: BSD 3-Clause
+Feedstock license: BSD-3-Clause
 
 Summary: generate tweaks to index metadata, hosted separately from anaconda.org index
 
@@ -117,7 +117,4 @@ Feedstock Maintainers
 =====================
 
 * [@conda-forge/core](https://github.com/conda-forge/core/)
-
-
-<!-- dummy commit to enable rerendering -->
 
