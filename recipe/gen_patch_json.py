@@ -572,6 +572,10 @@ def _gen_new_index(repodata, subdir):
             i = record['depends'].index('snappy >=1.1.7,<1.1.8.0a0')
             record['depends'][i] = 'snappy >=1.1.7,<2.0.0.0a0'
 
+        if 'ncurses >=6.1,<6.2.0a0' in deps:
+            i = record['depends'].index('ncurses >=6.1,<6.2.0a0')
+            record['depends'][i] = 'ncurses >=6.1,<6.3.0a0'
+
         if 'abseil-cpp' in deps:
             i = record['depends'].index('abseil-cpp')
             record['depends'][i] = 'abseil-cpp =20190808'
