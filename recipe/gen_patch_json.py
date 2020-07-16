@@ -641,6 +641,7 @@ def _gen_new_index(repodata, subdir):
             new_constrains = record.get('constrains', [])
             for pkg in ["libgcc-ng", "libstdcxx-ng", "libgfortran", "libgomp"]:
                 new_constrains.append("{} 5.4.*|7.2.*|7.3.*|8.2.*|9.1.*|9.2.*".format(pkg))
+            new_constrains.append("sysroot_" + subdir + " ==99999999999")
             record["constrains"] = new_constrains
 
         # old CDTs with the conda_cos6 or conda_cos7 name in the sysroot need to
