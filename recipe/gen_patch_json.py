@@ -12,8 +12,6 @@ import re
 import requests
 import pkg_resources
 
-import requests
-
 from get_license_family import get_license_family
 
 CHANNEL_NAME = "conda-forge"
@@ -632,6 +630,8 @@ def _gen_new_index(repodata, subdir):
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
             record["constrains"] = new_constrains
 
+        # make sure the old compilers conflict with the new sysroot packages
+        # and they only use libraries from the old compilers
         if (
             subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
             and record_name in [
@@ -641,6 +641,21 @@ def _gen_new_index(repodata, subdir):
             new_constrains = record.get('constrains', [])
             for pkg in ["libgcc-ng", "libstdcxx-ng", "libgfortran", "libgomp"]:
                 new_constrains.append("{} 5.4.*|7.2.*|7.3.*|8.2.*|9.1.*|9.2.*".format(pkg))
+            new_constrains.append("sysroot_" + subdir + " ==99999999999")
+            record["constrains"] = new_constrains
+
+        # we pushed a few builds of the compilers past the list of versions
+        # above which do not use the sysroot packages - this block catches those
+        # it will also break some test builds of the new compilers but we should
+        # not be using those anyways and they are marked as broken.
+        if (
+            subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
+            and record_name in [
+                "gcc_impl_" + subdir, "gxx_impl_" + subdir, "gfortran_impl_" + subdir]
+            and record['version'] not in ['5.4.0', '7.2.0', '7.3.0', '8.2.0']
+            and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
+        ):
+            new_constrains = record.get('constrains', [])
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
             record["constrains"] = new_constrains
 

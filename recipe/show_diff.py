@@ -10,7 +10,10 @@ from gen_patch_json import _gen_new_index, _gen_patch_instructions, SUBDIRS
 
 from conda_build.index import _apply_instructions
 
-CACHE_DIR = os.environ.get("CACHE_DIR", "cache")
+CACHE_DIR = os.environ.get(
+    "CACHE_DIR",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
+)
 BASE_URL = "https://conda.anaconda.org/conda-forge"
 
 
@@ -25,10 +28,10 @@ def show_record_diffs(subdir, ref_repodata, new_repodata):
         print(f"{subdir}::{name}")
         ref_lines = json.dumps(ref_pkg, indent=2).splitlines()
         new_lines = json.dumps(new_pkg, indent=2).splitlines()
-        for l in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=''):
-            if l.startswith('+++') or l.startswith('---') or l.startswith('@@'):
+        for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=''):
+            if ln.startswith('+++') or ln.startswith('---') or ln.startswith('@@'):
                 continue
-            print(l)
+            print(ln)
 
 
 def do_subdir(subdir, raw_repodata_path, ref_repodata_path):
