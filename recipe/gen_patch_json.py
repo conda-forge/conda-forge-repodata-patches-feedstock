@@ -568,17 +568,16 @@ def _gen_new_index(repodata, subdir):
             #         depends.append("blas 1.* openblas")
             #         instructions["packages"][fn]["depends"] = depends
 
-        if 'snappy >=1.1.7,<1.1.8.0a0' in deps:
-            i = record['depends'].index('snappy >=1.1.7,<1.1.8.0a0')
-            record['depends'][i] = 'snappy >=1.1.7,<2.0.0.0a0'
+        _replace_pin('zstd >=1.4.0,<1.4.1.0a0', 'zstd >=1.4.0,<1.5.0.0a0', deps, record)
+        _replace_pin('zstd >=1.4.1,<1.4.2.0a0', 'zstd >=1.4.1,<1.5.0.0a0', deps, record)
+        _replace_pin('zstd >=1.4.2,<1.4.3.0a0', 'zstd >=1.4.2,<1.5.0.0a0', deps, record)
+        _replace_pin('zstd >=1.4.3,<1.4.4.0a0', 'zstd >=1.4.3,<1.5.0.0a0', deps, record)
+        _replace_pin('zstd >=1.4.4,<1.4.5.0a0', 'zstd >=1.4.4,<1.5.0.0a0', deps, record)
+        _replace_pin('zstd >=1.4.5,<1.4.6.0a0', 'zstd >=1.4.5,<1.5.0.0a0', deps, record)
 
-        if 'ncurses >=6.1,<6.2.0a0' in deps:
-            i = record['depends'].index('ncurses >=6.1,<6.2.0a0')
-            record['depends'][i] = 'ncurses >=6.1,<6.3.0a0'
-
-        if 'abseil-cpp' in deps:
-            i = record['depends'].index('abseil-cpp')
-            record['depends'][i] = 'abseil-cpp =20190808'
+        _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
+        _replace_pin('ncurses >=6.1,<6.2.0a0', 'ncurses >=6.1,<6.3.0a0', deps, record)
+        _replace_pin('abseil-cpp', 'abseil-cpp =20190808', deps, record)
 
         # Filter by timestamp as pythia8 also contains python bindings that shouldn't be pinned
         if 'pythia8' in deps and record.get('timestamp', 0) < 1584264455759:
@@ -673,6 +672,12 @@ def _gen_new_index(repodata, subdir):
 
     return index
 
+
+def _replace_pin(old_pin, new_pin, deps, record):
+    """Replace an exact pin with a new one."""
+    if old_pin in deps:
+        i = record['depends'].index(old_pin)
+        record['depends'][i] = new_pin
 
 def _rename_dependency(fn, record, old_name, new_name):
     depends = record["depends"]
