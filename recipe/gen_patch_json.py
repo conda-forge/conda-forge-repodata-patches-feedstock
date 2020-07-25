@@ -658,6 +658,19 @@ def _gen_new_index(repodata, subdir):
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
             record["constrains"] = new_constrains
 
+        # all ctng activation packages that don't depend on the sysroot_*
+        # packages are not compatible with the new sysroot_*-based compilers
+        if (
+            subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
+            and record_name in [
+                "gcc_" + subdir, "gxx_" + subdir, "gfortran_" + subdir,
+                "binutils_" + subdir, "gcc_bootstrap_" + subdir]
+            and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
+        ):
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("sysroot_" + subdir + " ==99999999999")
+            record["constrains"] = new_constrains
+
         # old CDTs with the conda_cos6 or conda_cos7 name in the sysroot need to
         # conflict with the new CDT and compiler packages
         # all of the new CDTs and compilers depend on the sysroot_{subdir} packages
