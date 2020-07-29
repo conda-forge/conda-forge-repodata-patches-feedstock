@@ -666,7 +666,7 @@ def _gen_new_index(repodata, subdir):
             subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
             and record_name in [
                 "gcc_" + subdir, "gxx_" + subdir, "gfortran_" + subdir,
-                "binutils_" + subdir, "gcc_bootstrap_" + subdir]
+                "binutils_" + subdir, "gcc_bootstrap_" + subdir, "root_base", "cling"]
             and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
         ):
             new_constrains = record.get('constrains', [])
