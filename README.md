@@ -118,7 +118,3 @@ Feedstock Maintainers
 
 * [@conda-forge/core](https://github.com/conda-forge/core/)
 
-
-
-<!-- dummy commit to enable rerendering -->
-
