@@ -662,6 +662,7 @@ def _gen_new_index(repodata, subdir):
 
         # all ctng activation packages that don't depend on the sysroot_*
         # packages are not compatible with the new sysroot_*-based compilers
+        # root and cling must also be included as they have a builtin C++ interpreter
         if (
             subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
             and record_name in [
