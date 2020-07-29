@@ -604,6 +604,10 @@ def _gen_new_index(repodata, subdir):
             for pkg in llvm_pkgs:
                 if record_name == pkg:
                     continue
+                if pkg in new_constrains:
+                    del new_constrains[pkg]
+                if any(constraint.startswith(f"{pkg} ") for constraint in new_constrains):
+                    continue
                 new_constrains.append(f'{pkg} {version}.*')
             record['constrains'] = new_constrains
 
