@@ -535,7 +535,7 @@ def _gen_new_index(repodata, subdir):
         if record_name == "gcc_impl_{}".format(subdir):
             _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
 
-        deps = record.get("depends", ())
+        deps = record.get("depends", [])
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
@@ -552,6 +552,15 @@ def _gen_new_index(repodata, subdir):
 
         if any(dep.startswith("libnetcdf >=4.7.3") for dep in deps):
             _pin_stricter(fn, record, "libnetcdf", "x.x.x.x")
+
+        # this doesn't seem to match the _pin_looser or _pin_stricter patterns
+        # nor _replace_pin
+        if record_name == "jedi" and record.get("timestamp", 0) < 1592619891258:
+            for i, dep in enumerate(record["depends"]):
+                if dep.startswith("parso") and "<" not in dep:
+                    _dep_parts = dep.split(" ")
+                    _dep_parts[1] = _dep_parts[1] + ",<0.8.0"
+                    record["depends"][i] = " ".join(_dep_parts)
 
         # FIXME: disable patching-out blas_openblas feature
         # because hotfixes are not applied to gcc7 label
