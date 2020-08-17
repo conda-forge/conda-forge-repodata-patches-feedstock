@@ -539,6 +539,9 @@ def _gen_new_index(repodata, subdir):
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
+        if "libiconv >=1.15,<1.16.0a0" in deps:
+            _pin_looser(fn, record, "libiconv", upper_bound="1.17.0")
+
         if 're2' in deps and record.get('timestamp', 0) < 1588349339243:
             _rename_dependency(fn, record, "re2", "re2 <2020.05.01")
 
@@ -566,12 +569,8 @@ def _gen_new_index(repodata, subdir):
             #         depends.append("blas 1.* openblas")
             #         instructions["packages"][fn]["depends"] = depends
 
-        _replace_pin('zstd >=1.4.0,<1.4.1.0a0', 'zstd >=1.4.0,<1.5.0.0a0', deps, record)
-        _replace_pin('zstd >=1.4.1,<1.4.2.0a0', 'zstd >=1.4.1,<1.5.0.0a0', deps, record)
-        _replace_pin('zstd >=1.4.2,<1.4.3.0a0', 'zstd >=1.4.2,<1.5.0.0a0', deps, record)
-        _replace_pin('zstd >=1.4.3,<1.4.4.0a0', 'zstd >=1.4.3,<1.5.0.0a0', deps, record)
-        _replace_pin('zstd >=1.4.4,<1.4.5.0a0', 'zstd >=1.4.4,<1.5.0.0a0', deps, record)
-        _replace_pin('zstd >=1.4.5,<1.4.6.0a0', 'zstd >=1.4.5,<1.5.0.0a0', deps, record)
+        if any(dep.startswith("zstd >=1.4") for dep in deps):
+            _pin_looser(fn, record, "zstd", max_pin="x.x")
 
         _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
         _replace_pin('ncurses >=6.1,<6.2.0a0', 'ncurses >=6.1,<6.3.0a0', deps, record)
@@ -793,7 +792,7 @@ def _fix_libcxx(fn, record):
 def pad_list(l, num):
     if len(l) >= num:
         return l
-    return l + [0]*(num - len(l))
+    return l + ["0"]*(num - len(l))
 
 
 def get_upper_bound(version, max_pin):
@@ -866,6 +865,36 @@ def _pin_stricter(fn, record, fix_dep, max_pin):
         upper = pad_list(upper, len(new_upper))
         new_upper = pad_list(new_upper, len(upper))
         if tuple(upper) > tuple(new_upper):
+            if str(new_upper[-1]) != "0":
+                new_upper += ["0"]
+            depends[dep_idx] = "{} >={},<{}a0".format(dep_parts[0], lower, ".".join(new_upper))
+            if len(dep_parts) == 3:
+                depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
+            record['depends'] = depends
+
+
+def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
+    depends = record.get("depends", ())
+    dep_indices = [q for q, dep in enumerate(depends) if dep.split(' ')[0] == fix_dep]
+    for dep_idx in dep_indices:
+        dep_parts = depends[dep_idx].split(" ")
+        if len(dep_parts) not in [2, 3]:
+            continue
+        m = cb_pin_regex.match(dep_parts[1])
+        if m is None:
+            continue
+        lower = m.group("lower")
+        upper = m.group("upper").split(".")
+
+        if upper_bound is None:
+            new_upper = get_upper_bound(lower, max_pin).split(".")
+        else:
+            new_upper = upper_bound.split(".")
+
+        upper = pad_list(upper, len(new_upper))
+        new_upper = pad_list(new_upper, len(upper))
+
+        if tuple(upper) < tuple(new_upper):
             if str(new_upper[-1]) != "0":
                 new_upper += ["0"]
             depends[dep_idx] = "{} >={},<{}a0".format(dep_parts[0], lower, ".".join(new_upper))
