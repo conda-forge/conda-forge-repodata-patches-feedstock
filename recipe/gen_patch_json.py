@@ -535,7 +535,7 @@ def _gen_new_index(repodata, subdir):
         if record_name == "gcc_impl_{}".format(subdir):
             _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
 
-        deps = record.get("depends", [])
+        deps = record.get("depends", ())
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
