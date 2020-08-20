@@ -494,6 +494,13 @@ def _gen_new_index(repodata, subdir):
                     record['constrains'].append("arrow-cpp-proc * cpu")
                 else:
                     record['constrains'] = ["arrow-cpp-proc * cpu"]
+        
+        # jupyerlab-nvdashboard-0.1.11 (all builds)
+        # depends on "bokeh" should be "bokeh <2"
+        if record_name == 'jupyterlab-nvdashboard':
+            if 'bokeh' in record['depends']:
+                i = record['depends'].index('bokeh')
+                record['depends'][i] = 'bokeh <2'
 
         # distributed <2.11.0 does not work with msgpack-python >=1.0
         # newer versions of distributed require at least msgpack-python >=0.6.0
