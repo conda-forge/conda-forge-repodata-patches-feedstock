@@ -23,6 +23,7 @@ SUBDIRS = (
     "linux-aarch64",
     "linux-ppc64le",
     "osx-64",
+    "osx-arm64",
     "win-32",
     "win-64",
 )
@@ -124,6 +125,8 @@ REMOVALS = {
         "sundials-3.1.0-blas_openblash0edd121_202.tar.bz2",
         "vlfeat-0.9.20-h470a237_2.tar.bz2",
         "xtensor-python-0.19.1-h3e44d54_0.tar.bz2",
+    ),
+    "osx-arm64": (
     ),
     "win-32": (
         "compliance-checker-2.2.0-0.tar.bz2",
