@@ -491,6 +491,10 @@ def _gen_new_index(repodata, subdir):
                 else:
                     record['constrains'] = ["arrow-cpp-proc * cpu"]
 
+            if "aws-sdk-cpp" in record['depends']:
+                i = record['depends'].index('aws-sdk-cpp')
+                record['depends'][i] = 'aws-sdk-cpp 1.7.164'
+
         if record_name == "pyarrow":
             if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
                 if 'constrains' in record:
