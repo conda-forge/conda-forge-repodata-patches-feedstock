@@ -518,6 +518,16 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('pyflakes >=1.6.0')
                 record['depends'][i] = 'pyflakes >=1.6.0,<2.2.0'
 
+        # numpydoc >=1.0.0 requires python >=3.5
+        # https://github.com/conda-forge/numpydoc-feedstock/pull/14
+        version = record['version']
+        if record_name == 'numpydoc':
+            pversion = pkg_resources.parse_version(version)
+            v1_0_0 = pkg_resources.parse_version('1.0.0')
+            if pversion >= v1_0_0 and 'python' in record['depends']:
+                i = record['depends'].index('python')
+                record['depends'][i] = 'python >=3.5'
+
         # fix deps with wrong names
         if record_name in proj4_fixes:
             _rename_dependency(fn, record, "proj.4", "proj4")
