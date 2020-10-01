@@ -529,7 +529,7 @@ def _gen_new_index(repodata, subdir):
             pversion = pkg_resources.parse_version(version)
             v1_0_0 = pkg_resources.parse_version('1.0.0')
             v1_1_0 = pkg_resources.parse_version('1.1.0')
-            if v1_0_0 >= pversion >= v1_1_0 and 'python' in record['depends']:
+            if v1_0_0 >= pversion <= v1_1_0 and 'python' in record['depends']:
                 i = record['depends'].index('python')
                 record['depends'][i] = 'python >=3.5'
 
