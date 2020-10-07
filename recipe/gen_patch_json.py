@@ -356,6 +356,8 @@ def get_python_abi(version, subdir, build=None):
         return "cp37m"
     elif version.startswith("3.8"):
         return "cp38"
+    elif version.startswith("3.9"):
+        return "cp39"        
     return None
 
 
