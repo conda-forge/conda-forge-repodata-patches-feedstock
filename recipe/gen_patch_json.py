@@ -357,7 +357,7 @@ def get_python_abi(version, subdir, build=None):
     elif version.startswith("3.8"):
         return "cp38"
     elif version.startswith("3.9"):
-        return "cp39"        
+        return "cp39"
     return None
 
 
@@ -606,6 +606,10 @@ def _gen_new_index(repodata, subdir):
         _replace_pin('ncurses >=6.1,<6.2.0a0', 'ncurses >=6.1,<6.3.0a0', deps, record)
         _replace_pin('abseil-cpp', 'abseil-cpp =20190808', deps, record)
 
+        if record_name not in ["blas", "libblas", "libcblas", "liblapack",
+                               "liblapacke", "lapack", "blas-devel"]:
+            _replace_pin('liblapack >=3.8.0,<3.9.0a0', 'liblapack >=3.8.0,<4.0.0a0', deps, record)
+            _replace_pin('liblapacke >=3.8.0,<3.9.0a0', 'liblapacke >=3.8.0,<4.0.0a0', deps, record)
         # Filter by timestamp as pythia8 also contains python bindings that shouldn't be pinned
         if 'pythia8' in deps and record.get('timestamp', 0) < 1584264455759:
             i = record['depends'].index('pythia8')
