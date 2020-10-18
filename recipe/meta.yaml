@@ -40,7 +40,7 @@ test:
     - test -e $PREFIX/{{ subdir }}/patch_instructions.json
     {% endfor %}
     - pytest -vv test_gen_patch_json.py
-    - python show_diff.py
+    - python show_diff.py --subdir linux-64 --subdir noarch --subdir linux-ppc64le --subdir linux-aarch64 --subdir osx-64 --subdir win-64
 
 about:
   summary: generate tweaks to index metadata, hosted separately from anaconda.org index
