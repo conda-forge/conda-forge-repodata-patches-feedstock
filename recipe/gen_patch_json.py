@@ -504,6 +504,12 @@ def _gen_new_index(repodata, subdir):
                 else:
                     record['constrains'] = ["arrow-cpp-proc * cpu"]
 
+        if record_name == "kartothek":
+            if record["version"] in ["3.15.0", "3.15.1", "3.16.0"] \
+                    and "pyarrow >=0.13.0,!=0.14.0,<2" in record["depends"]:
+                i = record["depends"].index("pyarrow >=0.13.0,!=0.14.0,<2")
+                record["depends"][i] = "pyarrow >=0.17.1,<2"
+
         # distributed <2.11.0 does not work with msgpack-python >=1.0
         # newer versions of distributed require at least msgpack-python >=0.6.0
         # so we can fix cases where msgpack-python is unbounded
