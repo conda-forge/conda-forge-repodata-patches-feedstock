@@ -582,7 +582,14 @@ def _gen_new_index(repodata, subdir):
         if any(dep.startswith("libignition-") for dep in deps):
             for dep_idx, _ in enumerate(deps):
                 if record['depends'][dep_idx].startswith('libignition-'):
-                    record['depends'][dep_idx] = record['depends'][dep_idx].split()[0]
+                    try:
+                        parts = record['depends'][dep_idx].split()
+                        name, constraint = parts
+                        lower, upper = constraint.split(',')
+                        record['depends'][dep_idx] = f'{name} {lower.strip()}'
+                    except:
+                        pass
+                        # print(f"Cannot handle {record['depends'][dep_idx]}")
 
         # this doesn't seem to match the _pin_looser or _pin_stricter patterns
         # nor _replace_pin
