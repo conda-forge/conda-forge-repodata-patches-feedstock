@@ -579,17 +579,13 @@ def _gen_new_index(repodata, subdir):
         if any(dep.startswith("libnetcdf >=4.7.3") for dep in deps):
             _pin_stricter(fn, record, "libnetcdf", "x.x.x.x")
 
-        if any(dep.startswith("libignition-") for dep in deps):
+        if any(dep.startswith("libignition-") or dep == 'libsdformat' for dep in deps):
             for dep_idx, _ in enumerate(deps):
-                if record['depends'][dep_idx].startswith('libignition-'):
-                    try:
-                        parts = record['depends'][dep_idx].split()
-                        name, constraint = parts
-                        lower, upper = constraint.split(',')
-                        record['depends'][dep_idx] = f'{name} {lower.strip()}'
-                    except:
-                        pass
-                        # print(f"Cannot handle {record['depends'][dep_idx]}")
+                dep = record['depends'][dep_idx]
+                if dep.startswith('libignition-'):
+                    _change_upper_bound(record, dep_idx, True)
+                if dep.startswith('libsdformat '):
+                    _change_upper_bound(record, dep_idx, True)
 
         # this doesn't seem to match the _pin_looser or _pin_stricter patterns
         # nor _replace_pin
@@ -981,6 +977,24 @@ def _extract_track_feature(record, feature_name):
     features.remove(feature_name)
     return " ".join(features) or None
 
+
+def _change_upper_bound(record, dep_idx, new_upper=True):
+    try:
+        parts = record['depends'][dep_idx].split()
+        name, constraint = parts
+        lower, upper = constraint.split(',')
+        if new_upper:
+            for idx, c in enumerate(upper):
+                if c not in '><=':
+                    break
+                v = [x for x in upper[idx+1:].split('.')]
+
+                upper = upper[:idx+1] + str(int(v[0]) + 1)
+                record['depends'][dep_idx] = f'{name} {lower},{upper}'
+        else:
+            record['depends'][dep_idx] = f'{name} {lower.strip()}'
+    except:
+        pass
 
 def main():
     # Step 1. Collect initial repodata for all subdirs.
