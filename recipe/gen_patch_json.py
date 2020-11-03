@@ -469,10 +469,11 @@ def _gen_new_index(repodata, subdir):
     for fn, record in index.items():
         record_name = record["name"]
 
-        if subdir == 'noarch':
-            remove_python_abi(record)
-        else:
-            add_python_abi(record, subdir)
+        if record.get('timestamp', 0) < 1604417730:
+            if subdir == 'noarch':
+                remove_python_abi(record)
+            else:
+                add_python_abi(record, subdir)
 
         if "license" in record and "license_family" not in record and record["license"]:
             family = get_license_family(record["license"])
