@@ -580,6 +580,14 @@ def _gen_new_index(repodata, subdir):
         if any(dep.startswith("libnetcdf >=4.7.3") for dep in deps):
             _pin_stricter(fn, record, "libnetcdf", "x.x.x.x")
 
+        if any(dep.startswith("libignition-") or dep == 'libsdformat' for dep in deps):
+            for dep_idx, _ in enumerate(deps):
+                dep = record['depends'][dep_idx]
+                if dep.startswith('libignition-'):
+                    _pin_looser(fn, record, dep.split(" ")[0], max_pin="x")
+                if dep.startswith('libsdformat '):
+                    _pin_looser(fn, record, dep.split(" ")[0], max_pin="x")
+
         # this doesn't seem to match the _pin_looser or _pin_stricter patterns
         # nor _replace_pin
         if record_name == "jedi" and record.get("timestamp", 0) < 1592619891258:
