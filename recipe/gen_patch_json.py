@@ -531,6 +531,18 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('pyflakes >=1.6.0')
                 record['depends'][i] = 'pyflakes >=1.6.0,<2.2.0'
 
+        # aioftp >=0.17.0 requires python >=3.7
+        # aioftp 0.17.x was incorrectly built with 3.6 support
+        # https://github.com/conda-forge/aioftp-feedstock/pull/12
+        version = record['version']
+        if record_name == 'aioftp':
+            pversion = pkg_resources.parse_version(version)
+            base_version = pkg_resources.parse_version('0.17.0')
+            max_version = pkg_resources.parse_version('0.17.2')
+            if base_version <= pversion <= max_version and 'python >=3.6' in record['depends']:
+                i = record['depends'].index('python >=3.6')
+                record['depends'][i] = 'python >=3.7'
+
         # numpydoc >=1.0.0 requires python >=3.5
         # https://github.com/conda-forge/numpydoc-feedstock/pull/14
         version = record['version']
