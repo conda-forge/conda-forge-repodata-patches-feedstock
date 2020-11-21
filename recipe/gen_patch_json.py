@@ -584,6 +584,12 @@ def _gen_new_index(repodata, subdir):
         if 're2' in deps and record.get('timestamp', 0) < 1588349339243:
             _rename_dependency(fn, record, "re2", "re2 <2020.05.01")
 
+        if 'libffi' in deps and record.get('timestamp', 0) < 1605980936031:
+            _rename_dependency(fn, record, "libffi", "libffi <3.3.0.a0")
+
+        if 'libffi >=3.2.1,<4.0a0' in deps and record.get('timestamp', 0) < 1605980936031:
+            _pin_stricter(fn, record, "libffi", "x.x")
+
         _relax_libssh2_1_x_pinning(fn, record)
 
         if any(dep.startswith("gf2x") for dep in deps):
