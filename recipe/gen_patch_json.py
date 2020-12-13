@@ -771,7 +771,81 @@ def _gen_new_index(repodata, subdir):
                 new_constrains.append("sysroot_" + sys_subdir + " ==99999999999")
                 record["constrains"] = new_constrains
 
+        # make sure pybind11 and pybind11-global have run constraints on
+        # the abi metapackage
+        # see https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/104  # noqa
+        if (
+            record_name in ["pybind11", "pybind11-global"]
+            # this version has a constraint sometimes
+            and (
+                pkg_resources.parse_version(record["version"])
+                <= pkg_resources.parse_version("2.6.1")
+            )
+            and not any(
+                c.startswith("pybind11-abi ")
+                for c in record.get("constrains", [])
+            )
+        ):
+            _add_pybind11_abi_constraint(fn, record)
+
     return index
+
+
+def _add_pybind11_abi_constraint(fn, record):
+    """the pybind11-abi package uses the internals version
+
+    here are the ranges
+
+    v2.2.0 1
+    v2.2.1 1
+    v2.2.2 1
+    v2.2.3 1
+    v2.2.4 2
+    v2.3.0 3
+    v2.4.0 3
+    v2.4.1 3
+    v2.4.2 3
+    v2.4.3 3
+    v2.5.0 4
+    v2.6.0 4
+    v2.6.0b1 4
+    v2.6.0rc1 4
+    v2.6.0rc2 4
+    v2.6.0rc3 4
+    v2.6.1 4
+
+    prior to 2.2.0 we set it to 0
+    """
+    ver = pkg_resources.parse_version(record["version"])
+
+    if ver < pkg_resources.parse_version("2.2.0"):
+        abi_ver = "0"
+    elif ver < pkg_resources.parse_version("2.2.4"):
+        abi_ver = "1"
+    elif ver < pkg_resources.parse_version("2.3.0"):
+        abi_ver = "2"
+    elif ver < pkg_resources.parse_version("2.5.0"):
+        abi_ver = "3"
+    elif ver <= pkg_resources.parse_version("2.6.1"):
+        abi_ver = "4"
+    else:
+        # past this we should have a constrains there already
+        raise RuntimeError(
+            "pybind11 version %s out of range for abi" % record["version"]
+        )
+
+    constrains = record.get("constrains", [])
+    found_idx = None
+    for idx in range(len(constrains)):
+        if constrains[idx].startswith("pybind11-abi "):
+            found_idx = idx
+
+    if found_idx is None:
+        constrains.append("pybind11-abi ==" + abi_ver)
+    else:
+        constrains[found_idx] = "pybind11-abi ==" + abi_ver
+
+    record["constrains"] = constrains
 
 
 def _replace_pin(old_pin, new_pin, deps, record):
