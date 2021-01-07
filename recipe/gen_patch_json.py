@@ -605,6 +605,9 @@ def _gen_new_index(repodata, subdir):
         if any(dep.startswith("libnetcdf >=4.7.3") for dep in deps):
             _pin_stricter(fn, record, "libnetcdf", "x.x.x.x")
 
+        if any(dep.startswith("libarchive >=3.3") for dep in deps):
+            _pin_looser(fn, record, "libarchive", upper_bound="3.6.0")
+
         if any(dep.startswith("libignition-") or dep == 'libsdformat' for dep in deps):
             for dep_idx, _ in enumerate(deps):
                 dep = record['depends'][dep_idx]
