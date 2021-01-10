@@ -494,7 +494,7 @@ def _gen_new_index(repodata, subdir):
                 else:
                     record['constrains'] = [f"starlette {record['version']}"]
 
-        if record_name == "pytorch":
+        if record_name == "pytorch" and record.get('timestamp', 0) < 1610297816658:
             # https://github.com/conda-forge/pytorch-cpu-feedstock/issues/29
             if not any(dep.split(' ')[0] == 'typing_extensions' 
                        for dep in record.get('constrains', ())):
