@@ -89,6 +89,15 @@ def test_add_python_abi():
     add_python_abi(python_record, "osx-64")
     assert python_record["constrains"] == ["python_abi * *_cp36m"]
 
+    build_string_record = {
+        "name": "h5py",
+        "version": "1.20.0",
+        "build": "nompi_py36h513d04c_100",
+        "depends": ["python >=3.6,<3.7.0a0"],
+    }
+    add_python_abi(build_string_record, "osx-64")
+    assert build_string_record["constrains"] == ["python_abi * *_cp36m"]
+
     exact_record = {
         "name": "foo",
         "depends": ["python 3.6.7 h12312"],
