@@ -336,8 +336,9 @@ def has_dep(record, name):
 
 def get_python_abi(version, subdir, build=None):
     if build is not None:
-        if re.match(".*py\d\d", build):
-            version = f"{build[2]}.{build[3]}"
+        m = re.match(".*py\d\d", build)
+        if m:
+            version = f"{m.group()[-2]}.{m.group()[-1]}"
     if version.startswith("2.7"):
         if subdir.startswith("linux"):
             return "cp27mu"
