@@ -654,7 +654,7 @@ def _gen_new_index(repodata, subdir):
         if any(dep.startswith("zstd >=1.4") for dep in deps):
             _pin_looser(fn, record, "zstd", max_pin="x.x")
 
-        if any(dep.startswith("openmpi >=4.1") for dep in deps):
+        if any(dep.startswith("openmpi >=4.0") for dep in deps):
             _pin_looser(fn, record, "openmpi", upper_bound="5.0")
 
         if any(dep.startswith("mpich >=3.3") for dep in deps):
