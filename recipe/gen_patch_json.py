@@ -504,6 +504,12 @@ def _gen_new_index(repodata, subdir):
                 else:
                     record['constrains'] = ["typing_extensions"]
 
+        if record_name == "kartothek" and record.get('timestamp', 0) < 1611565264:
+            # https://github.com/conda-forge/kartothek-feedstock/issues/36
+            if "zstandard" in record['depends']:
+                i = record['depends'].index('zstandard')
+                record['depends'][i] = 'zstandard <0.15'
+
         if record_name == "arrow-cpp":
             if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
                 if 'constrains' in record:
