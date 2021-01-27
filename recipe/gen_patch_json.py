@@ -506,7 +506,7 @@ def _gen_new_index(repodata, subdir):
 
         if record_name == "ipython" and record.get('timestamp', 0) < 1609621539000:
             # https://github.com/conda-forge/ipython-feedstock/issues/127
-            if any(dep.split(' ')[0] == "jedi" for dep in record.get('constrains', ())):
+            if any(dep.split(' ')[0] == "jedi" for dep in record.get('depends', ())):
                 record['depends'].append('jedi <0.18')
 
         if record_name == "kartothek" and record.get('timestamp', 0) < 1611565264000:
