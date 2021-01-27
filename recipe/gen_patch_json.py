@@ -506,15 +506,8 @@ def _gen_new_index(repodata, subdir):
 
         if record_name == "ipython" and record.get('timestamp', 0) < 1609621539000:
             # https://github.com/conda-forge/ipython-feedstock/issues/127
-            if record["version"] in ["7.18.0"]:
-                i = record['depends'].index('jedi >=0.16')
-                record['depends'][i] = 'jedi >=0.10,<0.18'
-            else:
-                # before conda-forge/ipython-feedstock#110 (7.18.0), this has been 0.10 for years, see
-                # https://github.com/conda-forge/ipython-feedstock/blame/a487716d78710c4f8998654c63000cb5c3402910/recipe/meta.yaml#L30
-                # and returned to that with conda-forge/ipython-feedstock#111 (7.18.1)
-                i = record['depends'].index('jedi >=0.10')
-                record['depends'][i] = 'jedi >=0.10,<0.18'
+            if any(dep.split(' ')[0] == "jedi" for dep in record.get('constrains', ())):
+                record['depends'].append('jedi <0.18')
 
         if record_name == "kartothek" and record.get('timestamp', 0) < 1611565264000:
             # https://github.com/conda-forge/kartothek-feedstock/issues/36
