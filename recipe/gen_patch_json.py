@@ -515,6 +515,10 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('zstandard')
                 record['depends'][i] = 'zstandard <0.15'
 
+        if record_name == "gitdb" and record['version'] == '4.0.1' and 'smmap >=3.0.1' in record['depends']:
+            i = record['depends'].index('smmap >=3.0.1')
+            record['depends'][i] = 'smmap >=3.0.1,<4'
+
         if record_name == "arrow-cpp":
             if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
                 if 'constrains' in record:
