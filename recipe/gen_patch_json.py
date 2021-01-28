@@ -586,6 +586,13 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('python')
                 record['depends'][i] = 'python >=3.5'
 
+        # pip >=21 requires python >=3.6 but the first build has >=3
+        # https://github.com/conda-forge/pip-feedstock/pull/68
+        if record_name == 'pip':
+            if record['version'] == "21.0" and record['build'] == "pyhd8ed1ab_0":
+                i = record['depends'].index('python >=3')
+                record['depends'][i] = 'python >=3.6'
+
         # fix deps with wrong names
         if record_name in proj4_fixes:
             _rename_dependency(fn, record, "proj.4", "proj4")
