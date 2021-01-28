@@ -515,7 +515,7 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('zstandard')
                 record['depends'][i] = 'zstandard <0.15'
 
-        if record_name == "gitdb" and record['version'] == '4.0.1' and 'smmap >=3.0.1' in record['depends']:
+        if record_name == "gitdb" and record['version'].startswith('4.0.') and 'smmap >=3.0.1' in record['depends']:
             i = record['depends'].index('smmap >=3.0.1')
             record['depends'][i] = 'smmap >=3.0.1,<4'
 
