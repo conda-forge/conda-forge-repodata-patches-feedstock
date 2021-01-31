@@ -497,12 +497,12 @@ def _gen_new_index(repodata, subdir):
 
         if record_name == "pytorch" and record.get('timestamp', 0) < 1610297816658:
             # https://github.com/conda-forge/pytorch-cpu-feedstock/issues/29
-            if not any(dep.split(' ')[0] == 'typing_extensions' 
-                       for dep in record.get('constrains', ())):
-                if 'constrains' in record:
-                    record['constrains'].append("typing_extensions")
+            if not any(dep.split(' ')[0] == 'typing_extensions'
+                       for dep in record.get('depends', ())):
+                if 'depends' in record:
+                    record['depends'].append("typing_extensions")
                 else:
-                    record['constrains'] = ["typing_extensions"]
+                    record['depends'] = ["typing_extensions"]
 
         if record_name == "ipython" and record.get('timestamp', 0) < 1609621539000:
             # https://github.com/conda-forge/ipython-feedstock/issues/127
