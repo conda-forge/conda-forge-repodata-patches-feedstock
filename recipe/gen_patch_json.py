@@ -530,10 +530,10 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('aws-sdk-cpp')
                 record['depends'][i] = 'aws-sdk-cpp 1.7.164'
 
-            # arrow 1.0.1 cuda builds < 18 are incompatible with numpy 1.20
+            # arrow 1.0.1 builds < 17 are incompatible with numpy 1.20
             if record.get("version") == "1.0.1":
-                cuda_build = re.match(".+_([\d]{1,3})_cuda$", record.get("build", ""))
-                if cuda_build and int(cuda_build.groups()[0]) < 18:
+                build_number_capture = re.match(".+_([\d]{1,3})_[a-z]{1,4}$", record.get("build", ""))
+                if build_number_capture and int(build_number_capture.groups()[0]) < 17:
                     if 'constrains' in record:
                         record['constrains'].append("numpy <1.20")
                     else:
@@ -546,10 +546,10 @@ def _gen_new_index(repodata, subdir):
                 else:
                     record['constrains'] = ["arrow-cpp-proc * cpu"]
 
-            # arrow 1.0.1 cuda builds < 18 are incompatible with numpy 1.20
+            # arrow 1.0.1 builds < 17 are incompatible with numpy 1.20
             if record.get("version") == "1.0.1":
-                cuda_build = re.match(".+_([\d]{1,3})_cuda$", record.get("build", ""))
-                if cuda_build and int(cuda_build.groups()[0]) < 18:
+                build_number_capture = re.match(".+_([\d]{1,3})_[a-z]{1,4}$", record.get("build", ""))
+                if build_number_capture and int(build_number_capture.groups()[0]) < 17:
                     if 'constrains' in record:
                         record['constrains'].append("numpy <1.20")
                     else:
