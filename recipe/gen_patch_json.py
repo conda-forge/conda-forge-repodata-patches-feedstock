@@ -529,6 +529,11 @@ def _gen_new_index(repodata, subdir):
             if "aws-sdk-cpp" in record['depends']:
                 i = record['depends'].index('aws-sdk-cpp')
                 record['depends'][i] = 'aws-sdk-cpp 1.7.164'
+            if record.get("build") and record.get("build").endswith("14_cuda"):
+                if 'constrains' in record:
+                    record['constrains'].append("numpy <1.20")
+                else:
+                    record['constrains'] = ["numpy <1.20"]
 
         if record_name == "pyarrow":
             if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
@@ -536,6 +541,11 @@ def _gen_new_index(repodata, subdir):
                     record['constrains'].append("arrow-cpp-proc * cpu")
                 else:
                     record['constrains'] = ["arrow-cpp-proc * cpu"]
+            if record.get("build") and record.get("build").endswith("14_cuda"):
+                if 'constrains' in record:
+                    record['constrains'].append("numpy <1.20")
+                else:
+                    record['constrains'] = ["numpy <1.20"]
 
         if record_name == "kartothek":
             if record["version"] in ["3.15.0", "3.15.1", "3.16.0"] \
