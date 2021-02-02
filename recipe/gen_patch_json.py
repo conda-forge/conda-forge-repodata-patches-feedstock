@@ -840,6 +840,17 @@ def _gen_new_index(repodata, subdir):
         ):
             _add_pybind11_abi_constraint(fn, record)
 
+        # add *lal>=7.1.1 as run_constrained for liblal-7.1.1
+        if (
+            record_name == "liblal"
+            and record['version'] == "7.1.1"
+            and record['build_number'] in (0, 1, 2, 100, 101, 102)
+        ):
+            record.setdefault('constrains', []).extend((
+                "lal >=7.1.1",
+                "python-lal >=7.1.1",
+            ))
+
     return index
 
 
