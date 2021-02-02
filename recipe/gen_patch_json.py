@@ -531,13 +531,11 @@ def _gen_new_index(repodata, subdir):
                 record['depends'][i] = 'aws-sdk-cpp 1.7.164'
 
             # arrow 1.0.1 builds < 17 are incompatible with numpy 1.20
-            if record.get("version") == "1.0.1":
-                build_number_capture = re.match(".+_([\d]{1,3})_[a-z]{1,4}$", record.get("build", ""))
-                if build_number_capture and int(build_number_capture.groups()[0]) < 17:
-                    if 'constrains' in record:
-                        record['constrains'].append("numpy <1.20")
-                    else:
-                        record['constrains'] = ["numpy <1.20"]
+            if record.get("version") == "1.0.1" and record.get("build_number") < 17:
+                if 'constrains' in record:
+                    record['constrains'].append("numpy <1.20")
+                else:
+                    record['constrains'] = ["numpy <1.20"]
 
         if record_name == "pyarrow":
             if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
@@ -547,13 +545,11 @@ def _gen_new_index(repodata, subdir):
                     record['constrains'] = ["arrow-cpp-proc * cpu"]
 
             # arrow 1.0.1 builds < 17 are incompatible with numpy 1.20
-            if record.get("version") == "1.0.1":
-                build_number_capture = re.match(".+_([\d]{1,3})_[a-z]{1,4}$", record.get("build", ""))
-                if build_number_capture and int(build_number_capture.groups()[0]) < 17:
-                    if 'constrains' in record:
-                        record['constrains'].append("numpy <1.20")
-                    else:
-                        record['constrains'] = ["numpy <1.20"]
+            if record.get("version") == "1.0.1" and record.get("build_number") < 17:
+                if 'constrains' in record:
+                    record['constrains'].append("numpy <1.20")
+                else:
+                    record['constrains'] = ["numpy <1.20"]
 
         if record_name == "kartothek":
             if record["version"] in ["3.15.0", "3.15.1", "3.16.0"] \
