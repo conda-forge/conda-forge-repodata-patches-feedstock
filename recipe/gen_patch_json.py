@@ -530,12 +530,11 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('aws-sdk-cpp')
                 record['depends'][i] = 'aws-sdk-cpp 1.7.164'
 
-            # arrow 1.0.1 builds < 17 are incompatible with numpy 1.20
-            if record.get("version") == "1.0.1" and record.get("build_number") < 17:
-                if 'constrains' in record:
-                    record['constrains'].append("numpy <1.20")
-                else:
-                    record['constrains'] = ["numpy <1.20"]
+            # arrow-cpp builds done with numpy<1.16.6 are incompatible with numpy 1.20
+            # We have been building with numpy 1.16.6 since 1612266172867
+            # The underlying issue is https://github.com/numpy/numpy/issues/17913
+            if record.get('timestamp', 0) < 1607959235411 and any(dep.split(' ')[0] == 'numpy' for dep in record.get('depends', ())):
+                _pin_stricter(fn, record, "numpy", "x", "1.20")
 
         if record_name == "pyarrow":
             if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
@@ -544,12 +543,11 @@ def _gen_new_index(repodata, subdir):
                 else:
                     record['constrains'] = ["arrow-cpp-proc * cpu"]
 
-            # arrow 1.0.1 builds < 17 are incompatible with numpy 1.20
-            if record.get("version") == "1.0.1" and record.get("build_number") < 17:
-                if 'constrains' in record:
-                    record['constrains'].append("numpy <1.20")
-                else:
-                    record['constrains'] = ["numpy <1.20"]
+            # pyarrow builds done with numpy<1.16.6 are incompatible with numpy 1.20
+            # We have been building with numpy 1.16.6 since 1612266172867
+            # The underlying issue is https://github.com/numpy/numpy/issues/17913
+            if record.get('timestamp', 0) < 1607959235411 and any(dep.split(' ')[0] == 'numpy' for dep in record.get('depends', ())):
+                _pin_stricter(fn, record, "numpy", "x", "1.20")
 
         if record_name == "kartothek":
             if record["version"] in ["3.15.0", "3.15.1", "3.16.0"] \
@@ -1067,7 +1065,7 @@ def _relax_libssh2_1_x_pinning(fn, record):
 
 cb_pin_regex = re.compile(r"^>=(?P<lower>\d(\.\d+)*a?),<(?P<upper>\d(\.\d+)*)a0$")
 
-def _pin_stricter(fn, record, fix_dep, max_pin):
+def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
     depends = record.get("depends", ())
     dep_indices = [q for q, dep in enumerate(depends) if dep.split(' ')[0] == fix_dep]
     for dep_idx in dep_indices:
@@ -1079,7 +1077,10 @@ def _pin_stricter(fn, record, fix_dep, max_pin):
             continue
         lower = m.group("lower")
         upper = m.group("upper").split(".")
-        new_upper = get_upper_bound(lower, max_pin).split(".")
+        if upper_bound is None:
+            new_upper = get_upper_bound(lower, max_pin).split(".")
+        else:
+            new_upper = upper_bound.split(".")
         upper = pad_list(upper, len(new_upper))
         new_upper = pad_list(new_upper, len(upper))
         if tuple(upper) > tuple(new_upper):
