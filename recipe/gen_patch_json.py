@@ -673,6 +673,17 @@ def _gen_new_index(repodata, subdir):
                     _dep_parts[1] = _dep_parts[1] + ",<0.8.0"
                     record["depends"][i] = " ".join(_dep_parts)
 
+        # Integration between mdtraj and astunparse 1.6.3 on python 3.8 is
+        # broken, which was pinned for new builds in
+        # https://github.com/conda-forge/mdtraj-feedstock/pull/30 but should
+        # also be corrected on older builds
+        if (record_name == "mdtraj" and
+            "py38" in record['build'] and
+            "astunparse" in record['depends'] and
+            "astunparse <=1.6.2" not in record['depends']):
+            i = record['depends'].index('astunparse')
+            record['depends'][i] = 'astunparse <=1.6.2'
+
         # FIXME: disable patching-out blas_openblas feature
         # because hotfixes are not applied to gcc7 label
         # causing inconsistent behavior
@@ -692,7 +703,7 @@ def _gen_new_index(repodata, subdir):
         if any(dep.startswith("zstd >=1.4") for dep in deps):
             _pin_looser(fn, record, "zstd", max_pin="x.x")
 
-        # We pin MPI packages loosely so as to rely on their ABI compatibility                                    
+        # We pin MPI packages loosely so as to rely on their ABI compatibility
         if any(dep.startswith("openmpi >=4.0") for dep in deps):
             _pin_looser(fn, record, "openmpi", upper_bound="5.0")
         if any(dep.startswith("mpich >=3.3") for dep in deps):
