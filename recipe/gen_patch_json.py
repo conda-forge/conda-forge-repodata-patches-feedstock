@@ -697,7 +697,9 @@ def _gen_new_index(repodata, subdir):
             _pin_looser(fn, record, "openmpi", upper_bound="5.0")
         if any(dep.startswith("mpich >=3.3") for dep in deps):
             _pin_looser(fn, record, "mpich", upper_bound="4.0")
-        if any(dep.startswith("mpich >=3.4") for dep in deps):
+        if any(dep.startswith("mpich >=3.4,") for dep in deps):
+            _pin_looser(fn, record, "mpich", upper_bound="4.0")
+        if any(dep.startswith("mpich >=3.4.1,") for dep in deps):
             _pin_looser(fn, record, "mpich", upper_bound="4.0")
 
         _replace_pin('libunwind >=1.2.1,<1.3.0a0', 'libunwind >=1.2.1,<2.0.0a0', deps, record)
