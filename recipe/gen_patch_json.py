@@ -678,6 +678,7 @@ def _gen_new_index(repodata, subdir):
         # https://github.com/conda-forge/mdtraj-feedstock/pull/30 but should
         # also be corrected on older builds
         if (record_name == "mdtraj" and
+            record["version"] == "1.9.5" and
             "py38" in record['build'] and
             "astunparse" in record['depends'] and
             "astunparse <=1.6.2" not in record['depends']):
