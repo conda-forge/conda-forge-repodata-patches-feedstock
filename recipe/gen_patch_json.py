@@ -714,6 +714,19 @@ def _gen_new_index(repodata, subdir):
         if any(dep.startswith("mpich >=3.4.1,") for dep in deps):
             _pin_looser(fn, record, "mpich", upper_bound="4.0")
 
+        # TBB 2021 (oneTBB 2021) is incompatible with previous releases.
+        if has_dep(record, "tbb") and record.get('timestamp', 0) < 1614285451000:
+            for i, dep in enumerate(deps):
+                if dep.split(" ")[0] != "tbb":
+                    continue
+                if "<" in dep:
+                    break
+
+                if " " in record['depends'][i]:
+                    record['depends'][i] = record['depends'][i] + ',<2021a0'
+                else:
+                    _rename_dependency(fn, record, "tbb", "tbb <2021a0")
+
         _replace_pin('libunwind >=1.2.1,<1.3.0a0', 'libunwind >=1.2.1,<2.0.0a0', deps, record)
         _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
         _replace_pin('ncurses >=6.1,<6.2.0a0', 'ncurses >=6.1,<6.3.0a0', deps, record)
