@@ -719,13 +719,9 @@ def _gen_new_index(repodata, subdir):
             for i, dep in enumerate(deps):
                 if dep.split(" ")[0] != "tbb":
                     continue
-                if "<" in dep:
+                if dep == "tbb" or any(dep.startswith(f"tbb >={i}") for i in range(2016, 2021)):
+                    deps.append("tbb <2021.a0")
                     break
-
-                if " " in record['depends'][i]:
-                    record['depends'][i] = record['depends'][i] + ',<2021a0'
-                else:
-                    _rename_dependency(fn, record, "tbb", "tbb <2021a0")
 
         _replace_pin('libunwind >=1.2.1,<1.3.0a0', 'libunwind >=1.2.1,<2.0.0a0', deps, record)
         _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
