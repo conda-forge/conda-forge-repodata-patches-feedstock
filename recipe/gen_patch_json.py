@@ -879,6 +879,15 @@ def _gen_new_index(repodata, subdir):
                 "python-lal >=7.1.1",
             ))
 
+        # Version constraints for azure-storage-common in azure-storage-file
+        # 2.1.0 build 0 were incorrect.  These have been corrected in
+        # https://github.com/conda-forge/azure-storage-file-feedstock/pull/8
+        if (record_name == "azure-storage-file" and
+                record["version"] == "2.1.0" and
+                "azure-storage-common >=1.3.0,<1.4.0" in record['depends']):
+            i = record['depends'].index('azure-storage-common >=1.3.0,<1.4.0')
+            record['depends'][i] = 'azure-storage-common >=2.1,<3.0'
+
     return index
 
 
