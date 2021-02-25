@@ -717,7 +717,7 @@ def _gen_new_index(repodata, subdir):
         # TBB 2021 (oneTBB 2021) is incompatible with previous releases.
         if has_dep(record, "tbb") and record.get('timestamp', 0) < 1614261110000:
             for i, dep in enumerate(deps):
-                if dep == "tbb" or any(dep.startswith(f"tbb >={i}") for i in range(2017, 2020)) or dep.startswith("tbb >=4.4"):
+                if dep == "tbb" or any(dep.startswith(f"tbb >={i}") for i in range(2017, 2021)) or dep.startswith("tbb >=4.4"):
                     deps.append("tbb <2021.0.0a0")
                     break
 
