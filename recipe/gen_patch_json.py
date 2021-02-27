@@ -900,7 +900,7 @@ def _gen_new_index(repodata, subdir):
         # https://github.com/conda-forge/gazebo-feedstock/issues/52
         if (record_name == "gazebo" and 
                 record.get('timestamp', 0) < 1583200976700):
-            _pin_stricter(fn, record, "boost-cpp", "x.x")
+            _replace_pin('boost-cpp >=1.71', 'boost-cpp >=1.71.0,<1.71.1.0a0', deps, record)
 
     return index
 
