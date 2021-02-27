@@ -895,6 +895,13 @@ def _gen_new_index(repodata, subdir):
             i = record['depends'].index('azure-storage-common >=1.3.0,<1.4.0')
             record['depends'][i] = 'azure-storage-common >=2.1,<3.0'
 
+        # Old versions of Gazebo depend on boost-cpp >= 1.71,
+        # but they are actually incompatible with any boost-cpp >= 1.72
+        # https://github.com/conda-forge/gazebo-feedstock/issues/52
+        if (record_name == "gazebo" and 
+                record.get('timestamp', 0) < 1583200976700):
+            _replace_pin('boost-cpp >=1.71', 'boost-cpp >=1.71.0,<1.71.1.0a0', deps, record)
+
     return index
 
 
