@@ -638,6 +638,9 @@ def _gen_new_index(repodata, subdir):
         if 'libffi' in deps and record.get('timestamp', 0) < 1605980936031:
             _rename_dependency(fn, record, "libffi", "libffi <3.3.0.a0")
 
+        if ('libthrift >=0.14.0,<0.15.0a0' in deps or 'libthrift >=0.14.1,<0.15.0a0' in deps) and record.get('timestamp', 0) < 1615295782045:
+            _pin_stricter(fn, record, "libthrift", "x.x.x")
+
         if 'libffi >=3.2.1,<4.0a0' in deps and record.get('timestamp', 0) < 1605980936031:
             _pin_stricter(fn, record, "libffi", "x.x")
 
