@@ -727,8 +727,12 @@ def _gen_new_index(repodata, subdir):
         # ROOT 6.22.6 contained an ABI break, we'll always pin on patch releases from now on
         if has_dep(record, "root_base"):
             for i, dep in enumerate(deps):
-                if "root_base" in dep and ">=6.22." in dep and "<6.23.0a0" in dep:
+                if not ("root_base" in dep and "<6.23.0a0" in dep):
+                    continue
+                if ">=6.22.0," in dep or ">=6.22.2," in dep or ">=6.22.4," in dep:
                     deps.append("root_base <6.22.5a0")
+                elif ">=6.22.6," in dep:
+                    deps.append("root_base <6.22.7a0")
 
         _replace_pin('libunwind >=1.2.1,<1.3.0a0', 'libunwind >=1.2.1,<2.0.0a0', deps, record)
         _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
