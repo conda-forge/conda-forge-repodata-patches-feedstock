@@ -471,7 +471,10 @@ def _gen_new_index(repodata, subdir):
         record_name = record["name"]
 
         if record_name == "great-expectations" and record.get("timestamp", 0) < 1616454000000:
-            record["constrains"] = record.get("constrains", []) + ["sqlalchemy <1.4"]
+            old_constrains = record.get("constrains", [])
+            new_constrains = [f"{constraint},<1.4" if constraint == "sqlalchemy >=1.2" else constraint for constraint in old_constrains]
+            new_constrains = new_constrains if new_constrains != old_constrains else new_constrains + ["sqlalchemy <1.4"]
+            record["constrains"] = new_constrains
 
         if record.get('timestamp', 0) < 1604417730000:
             if subdir == 'noarch':
