@@ -470,6 +470,9 @@ def _gen_new_index(repodata, subdir):
     for fn, record in index.items():
         record_name = record["name"]
 
+        if record_name == "great-expectations":
+            record["constrains"] = record.get("constrains", []) + ["sqlalchemy <1.4"]
+
         if record.get('timestamp', 0) < 1604417730000:
             if subdir == 'noarch':
                 remove_python_abi(record)
