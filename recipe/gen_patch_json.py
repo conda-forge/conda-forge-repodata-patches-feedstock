@@ -638,6 +638,10 @@ def _gen_new_index(repodata, subdir):
         if "libiconv >=1.15,<1.16.0a0" in deps:
             _pin_looser(fn, record, "libiconv", upper_bound="1.17.0")
 
+        if any(dep.startswith("expat >=2.2.") for dep in deps) or \
+                any(dep.startswith("expat >=2.3.") for dep in deps):
+            _pin_looser(fn, record, "expat", max_pin="x")
+
         if 're2' in deps and record.get('timestamp', 0) < 1588349339243:
             _rename_dependency(fn, record, "re2", "re2 <2020.05.01")
 
