@@ -918,6 +918,15 @@ def _gen_new_index(repodata, subdir):
             i = record['depends'].index('azure-storage-common >=1.3.0,<1.4.0')
             record['depends'][i] = 'azure-storage-common >=2.1,<3.0'
 
+        # Version constraints for fsspec in gcsfs 0.8.0 build 0 were incorrect.
+        # These have been corrected in PR
+        # https://github.com/conda-forge/gcsfs-feedstock/pull/32
+        if (record_name == "gcsfs" and
+                record["version"] == "0.8.0" and
+                "fsspec >=0.8.0" in record["depends"]):
+            i = record["depends"].index("fsspec >=0.8.0")
+            record["depends"][i] = "fsspec >=0.9.0,<0.10.0"
+
         # Old versions of Gazebo depend on boost-cpp >= 1.71,
         # but they are actually incompatible with any boost-cpp >= 1.72
         # https://github.com/conda-forge/gazebo-feedstock/issues/52
