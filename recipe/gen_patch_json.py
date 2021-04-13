@@ -951,6 +951,18 @@ def _gen_new_index(repodata, subdir):
                 i = record["depends"].index("jupyterlab")
                 record["depends"][i] = "jupyterlab <1.0.0"
 
+        # Old versions of arosics do not work with py-tools-ds>=0.16.0 due to the an import of the
+        # py-tools-ds.similarity module which was removed in py-tools-ds 0.16.0. In arosics>=1.2.0, this import does
+        # not exist anymore, i.e., newer versions of arosics work together with all py-tools-ds>0.14.28 versions.
+        # No additional PR in the arosics feedstock should be needed.
+        if (record_name == "arosics" and
+                record["version"] in ["0.9.22", "0.9.23", "0.9.24", "0.9.25", "0.9.26",
+                                      "1.0.0", "1.0.1", "1.0.2", "1.0.3", "1.0.4", "1.0.5", "1.0.6",
+                                      "1.1.0", "1.1.1"] and
+                "py-tools-ds >=0.14.28" in record["depends"]):
+            i = record["depends"].index("py-tools-ds >=0.14.28")
+            record["depends"][i] = "py-tools-ds >=0.14.28,<=0.15.11"
+
     return index
 
 
