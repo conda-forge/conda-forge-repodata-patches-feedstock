@@ -934,12 +934,22 @@ def _gen_new_index(repodata, subdir):
                 record.get('timestamp', 0) < 1583200976700):
             _replace_pin('boost-cpp >=1.71', 'boost-cpp >=1.71.0,<1.71.1.0a0', deps, record)
 
-        # Version constraints for jupyterlab in jupyterlab-git<=0.23.0 were incorrect.
+        # Version constraints for jupyterlab in jupyterlab-git<=0.22.0 were incorrect.
         # These have been corrected in PR
         # https://github.com/conda-forge/jupyterlab-git-feedstock/pull/27
-        if record_name == "jupyterlab-git" and "jupyterlab >=2.0.0" in record["depends"]:
-            i = record["depends"].index("jupyterlab >=2.0.0")
-            record["depends"][i] = "jupyterlab >=2.0.0,<3.0.0"
+        if record_name == "jupyterlab-git":
+            if "jupyterlab >=2.0.0" in record["depends"]:
+                i = record["depends"].index("jupyterlab >=2.0.0")
+                record["depends"][i] = "jupyterlab >=2.0.0,<3.0.0"
+            if "jupyterlab >=1.1.0" in record["depends"]:
+                i = record["depends"].index("jupyterlab >=1.1.0")
+                record["depends"][i] = "jupyterlab >=1.1.0,<2.0.0"
+            if "jupyterlab >=1.0.0" in record["depends"]:
+                i = record["depends"].index("jupyterlab >=1.0.0")
+                record["depends"][i] = "jupyterlab >=1.0.0,<2.0.0"
+            if "jupyterlab" in record["depends"]:
+                i = record["depends"].index("jupyterlab")
+                record["depends"][i] = "jupyterlab <1.0.0"
 
     return index
 
