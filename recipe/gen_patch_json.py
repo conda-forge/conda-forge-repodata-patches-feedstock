@@ -611,6 +611,12 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('python >=3')
                 record['depends'][i] = 'python >=3.6'
 
+        # some versions mpi4py-fft are not compatible with MKL
+        # https://github.com/conda-forge/mpi4py-fft-feedstock/issues/20
+        if record_name == "mpi4py-fft" and record.get('timestamp', 0) < 1619448232206:
+            if "nomkl" not in record["depends"]:
+                record["depends"].append("nomkl")
+
         # fix deps with wrong names
         if record_name in proj4_fixes:
             _rename_dependency(fn, record, "proj.4", "proj4")
