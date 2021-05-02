@@ -734,6 +734,11 @@ def _gen_new_index(repodata, subdir):
                     deps.append("tbb <2021.0.0a0")
                     break
 
+        # cuTENSOR 1.3.x is binary incompatible with 1.2.x. Let's just pin exactly since
+        # it appears semantic versioning is not guaranteed.
+        if any(dep.startswith("cutensor >=1.2.2.5,<2.0a0") for dep in deps):
+            _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor =1.2.2.5", deps, record)
+
         # ROOT 6.22.6 contained an ABI break, we'll always pin on patch releases from now on
         if has_dep(record, "root_base"):
             for i, dep in enumerate(deps):
