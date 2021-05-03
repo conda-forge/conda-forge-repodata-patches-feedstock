@@ -734,6 +734,11 @@ def _gen_new_index(repodata, subdir):
                     deps.append("tbb <2021.0.0a0")
                     break
 
+        # cuTENSOR 1.3.x is binary incompatible with 1.2.x. Let's just pin exactly since
+        # it appears semantic versioning is not guaranteed.
+        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor =1.2.2.5", deps, record)
+        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor =1.2.2.5", record.get("constrains", []), record, target='constrains')
+
         # ROOT 6.22.6 contained an ABI break, we'll always pin on patch releases from now on
         if has_dep(record, "root_base"):
             for i, dep in enumerate(deps):
@@ -1033,11 +1038,13 @@ def _add_pybind11_abi_constraint(fn, record):
     record["constrains"] = constrains
 
 
-def _replace_pin(old_pin, new_pin, deps, record):
-    """Replace an exact pin with a new one."""
+def _replace_pin(old_pin, new_pin, deps, record, target='depends'):
+    """Replace an exact pin with a new one. deps and target must match."""
+    if target not in ('depends', 'constrains'):
+        raise ValueError
     if old_pin in deps:
-        i = record['depends'].index(old_pin)
-        record['depends'][i] = new_pin
+        i = record[target].index(old_pin)
+        record[target][i] = new_pin
 
 def _rename_dependency(fn, record, old_name, new_name):
     depends = record["depends"]
