@@ -561,14 +561,23 @@ def _gen_new_index(repodata, subdir):
                 i = record["depends"].index("pyarrow >=0.13.0,!=0.14.0,<2")
                 record["depends"][i] = "pyarrow >=0.17.1,<2"
 
-        # distributed <2.11.0 does not work with msgpack-python >=1.0
-        # newer versions of distributed require at least msgpack-python >=0.6.0
-        # so we can fix cases where msgpack-python is unbounded
-        # https://github.com/conda-forge/distributed-feedstock/pull/114
         if record_name == 'distributed':
+            # distributed <2.11.0 does not work with msgpack-python >=1.0
+            # newer versions of distributed require at least msgpack-python >=0.6.0
+            # so we can fix cases where msgpack-python is unbounded
+            # https://github.com/conda-forge/distributed-feedstock/pull/114
             if 'msgpack-python' in record['depends']:
                 i = record['depends'].index('msgpack-python')
                 record['depends'][i] = 'msgpack-python <1.0.0'
+
+            # click 8 broke distributed prior to 2021.5.0.
+            # This has been corrected in PR:
+            # https://github.com/conda-forge/distributed-feedstock/pull/165
+            pversion = pkg_resources.parse_version(record['version'])
+            v2021_5_0 = pkg_resources.parse_version('2021.5.0')
+            if pversion < v2021_5_0 and 'click >=6.6' in record['depends']:
+                i = record['depends'].index('click >=6.6')
+                record['depends'][i] = 'click >=6.6,<8.0.0'
 
         # python-language-server <=0.31.9 requires pyflakes <2.2.2
         # included explicitly in 0.31.10+
