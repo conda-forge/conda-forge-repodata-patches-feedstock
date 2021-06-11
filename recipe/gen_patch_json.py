@@ -651,6 +651,9 @@ def _gen_new_index(repodata, subdir):
                 any(dep.startswith("expat >=2.3.") for dep in deps):
             _pin_looser(fn, record, "expat", max_pin="x")
 
+        if any(dep.startswith("mysql-libs >=8.0.") for dep in deps):
+            _pin_looser(fn, record, "mysql-libs", max_pin="x.x")
+            
         if 're2' in deps and record.get('timestamp', 0) < 1588349339243:
             _rename_dependency(fn, record, "re2", "re2 <2020.05.01")
 
