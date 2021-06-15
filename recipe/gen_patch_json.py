@@ -626,6 +626,17 @@ def _gen_new_index(repodata, subdir):
             if "nomkl" not in record["depends"]:
                 record["depends"].append("nomkl")
 
+        # nc-time-axis 1.3.0 and 1.3.1 require a minimum pin of cftime >=1.5
+        version = record["version"]
+        if record_name == "nc-time-axis":
+            pversion = pkg_resources.parse_version(version)
+            v1_3_0 = pkg_resources.parse_version("1.3.0")
+            v1_3_1 = pkg_resources.parse_version("1.3.1")
+            pdependency = "cftime"
+            if pversion in [v1_3_0, v1_3_1] and pdependency in record["depends"]:
+                i = record["depends"].index(pdependency)
+                record["depends"][i] = "cftime >=1.5"
+
         # fix deps with wrong names
         if record_name in proj4_fixes:
             _rename_dependency(fn, record, "proj.4", "proj4")
