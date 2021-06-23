@@ -670,7 +670,7 @@ def _gen_new_index(repodata, subdir):
 
         if any(dep.startswith("mysql-libs >=8.0.") for dep in deps):
             _pin_looser(fn, record, "mysql-libs", max_pin="x.x")
-            
+
         if 're2' in deps and record.get('timestamp', 0) < 1588349339243:
             _rename_dependency(fn, record, "re2", "re2 <2020.05.01")
 
@@ -799,6 +799,11 @@ def _gen_new_index(repodata, subdir):
                 if feat.startswith(("rb2", "openjdk")):
                     record["track_features"] = _extract_track_feature(
                         record, feat)
+
+        # add track_features to old python_abi pypy packages
+        if (record_name == 'python_abi' and 'pypy' in record['build'] and
+                "track_features" not in record):
+            record["track_features"] = "pypy"
 
         llvm_pkgs = ["libclang", "clang", "clang-tools", "llvm", "llvm-tools", "llvmdev"]
         for llvm in ["libllvm8", "libllvm9"]:
