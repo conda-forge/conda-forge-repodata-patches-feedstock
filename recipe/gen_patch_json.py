@@ -778,6 +778,10 @@ def _gen_new_index(repodata, subdir):
                 elif ">=6.22.6," in dep:
                     deps.append("root_base <6.22.7a0")
 
+        if record_name == "root_base":
+            # ROOT requires vector-classes to be the exact same version as the one used for the build
+            _replace_pin('vector-classes >=1.4.1,<1.5.0a0', 'vector-classes >=1.4.1,<1.4.2a0', deps, record)
+
         _replace_pin('libunwind >=1.2.1,<1.3.0a0', 'libunwind >=1.2.1,<2.0.0a0', deps, record)
         _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
         _replace_pin('ncurses >=6.1,<6.2.0a0', 'ncurses >=6.1,<6.3.0a0', deps, record)
