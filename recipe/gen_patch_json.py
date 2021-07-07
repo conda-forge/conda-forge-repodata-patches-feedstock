@@ -817,6 +817,9 @@ def _gen_new_index(repodata, subdir):
                 else:
                     _relax_exact(fn, record, llvm, max_pin="x.x.x")
 
+        if any(dep.startswith("pari >=2.13.2") for dep in deps) and record.get('timestamp', 0) < 1625642169000:
+            record["depends"].append("pari * *_single")
+
         if record_name in llvm_pkgs:
             new_constrains = record.get('constrains', [])
             version = record["version"]
