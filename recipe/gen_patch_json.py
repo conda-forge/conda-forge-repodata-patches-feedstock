@@ -30,6 +30,7 @@ SUBDIRS = (
 
 REMOVALS = {
     "noarch": (
+        "botocore-1.21.0-pyhd8ed1ab_0.tar.bz2",
         "sendgrid-5.3.0-py_0.tar.bz2",
     ),
     "linux-64": (
