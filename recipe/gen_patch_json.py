@@ -680,6 +680,9 @@ def _gen_new_index(repodata, subdir):
         if ('libthrift >=0.14.0,<0.15.0a0' in deps or 'libthrift >=0.14.1,<0.15.0a0' in deps) and record.get('timestamp', 0) < 1624268394471:
             _pin_stricter(fn, record, "libthrift", "x.x.x")
 
+        if any(dep.startswith('spdlog >=1.8') for dep in deps) and record.get('timestamp', 0) < 1626942511225:
+            _pin_stricter(fn, record, "spdlog", "x.x")
+
         if 'libffi >=3.2.1,<4.0a0' in deps and record.get('timestamp', 0) < 1605980936031:
             _pin_stricter(fn, record, "libffi", "x.x")
 
