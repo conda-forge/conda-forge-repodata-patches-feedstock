@@ -881,6 +881,7 @@ def _gen_new_index(repodata, subdir):
                 "gcc_impl_" + subdir, "gxx_impl_" + subdir, "gfortran_impl_" + subdir]
             and record['version'] not in ['5.4.0', '7.2.0', '7.3.0', '8.2.0']
             and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
+            and record.get('timestamp', 0) < 1626220800000  # 2020-07-14
         ):
             new_constrains = record.get('constrains', [])
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
@@ -895,6 +896,7 @@ def _gen_new_index(repodata, subdir):
                 "gcc_" + subdir, "gxx_" + subdir, "gfortran_" + subdir,
                 "binutils_" + subdir, "gcc_bootstrap_" + subdir, "root_base", "cling"]
             and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
+            and record.get('timestamp', 0) < 1626220800000  # 2020-07-14
         ):
             new_constrains = record.get('constrains', [])
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
