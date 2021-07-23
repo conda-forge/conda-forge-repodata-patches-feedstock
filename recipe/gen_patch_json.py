@@ -579,6 +579,18 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('click >=6.6')
                 record['depends'][i] = 'click >=6.6,<8.0.0'
 
+        if record_name == 'fastparquet':
+            # fastparquet >= 0.7.0 requires pandas >= 1.0.0
+            # This was taken care of by rebuilding the fastparquet=0.7.0 release
+            # https://github.com/conda-forge/fastparquet-feedstock/pull/47
+            # We patch the pandas requirement here to prevent the original
+            # fastparquet build from being installed
+            pversion = pkg_resources.parse_version(record['version'])
+            v0_7_0 = pkg_resources.parse_version('0.7.0')
+            if pversion == v0_7_0 and 'pandas >=0.19' in record['depends']:
+                i = record['depends'].index('pandas >=0.19')
+                record['depends'][i] = 'pandas >=1.0.0'
+
         # python-language-server <=0.31.9 requires pyflakes <2.2.2
         # included explicitly in 0.31.10+
         # https://github.com/conda-forge/python-language-server-feedstock/pull/50
