@@ -649,6 +649,14 @@ def _gen_new_index(repodata, subdir):
                 i = record["depends"].index(pdependency)
                 record["depends"][i] = "cftime >=1.5"
 
+        # chemfiles-python 0.10.1 require chemfiles-lib 0.10.1 but build 0
+        # asks for 0.10.*
+        # https://github.com/conda-forge/chemfiles-python-feedstock/pull/18
+        if record_name == "chemfiles-python":
+            if record["version"] == "0.10.1" and record["build"].endswith("_0"):
+                i = record['depends'].index('chemfiles-lib 0.10.*')
+                record['depends'][i] = 'chemfiles-lib >=0.10.1,<0.11'
+
         # fix deps with wrong names
         if record_name in proj4_fixes:
             _rename_dependency(fn, record, "proj.4", "proj4")
