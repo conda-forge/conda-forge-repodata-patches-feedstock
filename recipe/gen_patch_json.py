@@ -925,6 +925,14 @@ def _gen_new_index(repodata, subdir):
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
             record["constrains"] = new_constrains
 
+        if (record_name == "gcc_impl_{}".format(subdir)
+            and record['version'] in ['5.4.0', '7.2.0', '7.3.0', '8.2.0', '8.4.0', '9.3.0']
+            and record.get('timestamp', 0) < 1627530043000  # 2021-07-29
+        ):
+            new_depends = record.get("depends", [])
+            new_depends.append("libgcc-ng <=9.3.0")
+            record["depends"] = new_depends
+
         # old CDTs with the conda_cos6 or conda_cos7 name in the sysroot need to
         # conflict with the new CDT and compiler packages
         # all of the new CDTs and compilers depend on the sysroot_{subdir} packages
