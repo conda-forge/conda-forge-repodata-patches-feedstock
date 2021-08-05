@@ -1063,10 +1063,9 @@ def _gen_new_index(repodata, subdir):
 
         # https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/159
         if record_name == "snowflake-sqlalchemy" and record["version"] == "1.3.1" and record["build_number"] == 0:
-            depends = list(record["depends"])
-            depends = [depend for depend in depends if not depend.startswith(("sqlalchemy ", "snowflake-connector-python "))]
-            depends.extend(["sqlalchemy >=1.4.0,<2.0.0", "snowflake-connector-python <3.0.0"])
-            record["depends"] = depends
+            depends = record["depends"]
+            depends[depends.index("snowflake-connector-python <3")] = "snowflake-connector-python <3.0.0"
+            depends[depends.index("sqlalchemy <2")] = "sqlalchemy >=1.4.0,<2.0.0"
 
     return index
 
