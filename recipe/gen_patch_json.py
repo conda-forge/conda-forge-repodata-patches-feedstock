@@ -1061,6 +1061,11 @@ def _gen_new_index(repodata, subdir):
                 i = record["depends"].index("py-tools-ds >=0.15.10")
                 record["depends"][i] = "py-tools-ds >=0.15.10,<=0.15.11"
 
+        # Xarray 0.19.0 dropped Python 3.6--but first build accidentally included 3.6 support
+        # https://github.com/conda-forge/xarray-feedstock/pull/66
+        if record_name == "xarray" and record["version"] == "0.19.0":
+            _replace_pin("python >=3.6", "python >=3.7", deps, record)
+
         # https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/159
         if record_name == "snowflake-sqlalchemy" and record["version"] in ("1.3.1", "1.2.5") and record["build_number"] == 0:
             depends = record["depends"]
