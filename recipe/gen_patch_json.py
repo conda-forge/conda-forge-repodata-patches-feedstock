@@ -1066,6 +1066,12 @@ def _gen_new_index(repodata, subdir):
         if record_name == "xarray" and record["version"] == "0.19.0":
             _replace_pin("python >=3.6", "python >=3.7", deps, record)
 
+        # https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/159
+        if record_name == "snowflake-sqlalchemy" and record["version"] in ("1.3.1", "1.2.5") and record["build_number"] == 0:
+            depends = record["depends"]
+            depends[depends.index("snowflake-connector-python <3")] = "snowflake-connector-python <3.0.0"
+            depends[depends.index("sqlalchemy <2")] = "sqlalchemy >=1.4.0,<2.0.0"
+
     return index
 
 
