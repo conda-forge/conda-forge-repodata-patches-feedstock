@@ -793,8 +793,8 @@ def _gen_new_index(repodata, subdir):
 
         # cuTENSOR 1.3.x is binary incompatible with 1.2.x. Let's just pin exactly since
         # it appears semantic versioning is not guaranteed.
-        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor =1.2.2.5", deps, record)
-        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor =1.2.2.5", record.get("constrains", []), record, target='constrains')
+        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", deps, record)
+        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", record.get("constrains", []), record, target='constrains')
 
         # ROOT 6.22.6 contained an ABI break, we'll always pin on patch releases from now on
         if has_dep(record, "root_base"):
@@ -813,7 +813,7 @@ def _gen_new_index(repodata, subdir):
         _replace_pin('libunwind >=1.2.1,<1.3.0a0', 'libunwind >=1.2.1,<2.0.0a0', deps, record)
         _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
         _replace_pin('ncurses >=6.1,<6.2.0a0', 'ncurses >=6.1,<6.3.0a0', deps, record)
-        _replace_pin('abseil-cpp', 'abseil-cpp =20190808', deps, record)
+        _replace_pin('abseil-cpp', 'abseil-cpp ==20190808.*', deps, record)
 
         if record_name not in ["blas", "libblas", "libcblas", "liblapack",
                                "liblapacke", "lapack", "blas-devel"]:
@@ -1042,7 +1042,7 @@ def _gen_new_index(repodata, subdir):
         if (record_name == "librmm" and
                 record["version"] == "0.19.0" and
                 "spdlog =1.7.0" not in record["depends"]):
-            record["depends"].append("spdlog =1.7.0")
+            record["depends"].append("spdlog ==1.7.0")
 
         # Old versions of arosics do not work with py-tools-ds>=0.16.0 due to the an import of the
         # py-tools-ds.similarity module which was removed in py-tools-ds 0.16.0. In arosics>=1.2.0,
@@ -1076,6 +1076,24 @@ def _gen_new_index(repodata, subdir):
             depends = record["depends"]
             depends[depends.index("snowflake-connector-python <3")] = "snowflake-connector-python <3.0.0"
             depends[depends.index("sqlalchemy <2")] = "sqlalchemy >=1.4.0,<2.0.0"
+
+        # replace =2.7 with ==2.7.* for compatibility with older conda
+        new_deps = []
+        changed = False
+        for dep in record.get("depends", []):
+            dep_split = dep.split(" ")
+            if len(dep_split) == 2 and dep_split[1].startswith("=") and not dep_split[1].startswith("=="):
+                split_or = dep_split[1].split("|")
+                split_or[0] = "=" + split_or[0] + ".*"
+                new_dep = dep_split[0] + " " + "|".join(split_or)
+                changed = True
+            else:
+                new_dep = dep
+            new_deps.append(new_dep)
+        if changed:
+            record["depends"] = new_deps
+        del new_deps
+        del changed
 
     return index
 
