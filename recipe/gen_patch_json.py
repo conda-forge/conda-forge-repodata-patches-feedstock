@@ -1077,6 +1077,11 @@ def _gen_new_index(repodata, subdir):
             depends[depends.index("snowflake-connector-python <3")] = "snowflake-connector-python <3.0.0"
             depends[depends.index("sqlalchemy <2")] = "sqlalchemy >=1.4.0,<2.0.0"
 
+        # tzlocal 3.0 needs Python 3.9 (or backports.zoneinfo)
+        # fixed in https://github.com/conda-forge/tzlocal-feedstock/pull/10
+        if record_name == "tzlocal" and record["version"] == "3.0" and "python >=3.6" in record["depends"]:
+            _replace_pin("python >=3.6", "python >=3.9", deps, record)
+
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False
