@@ -1071,6 +1071,16 @@ def _gen_new_index(repodata, subdir):
         if record_name == "xarray" and record["version"] == "0.19.0":
             _replace_pin("python >=3.6", "python >=3.7", deps, record)
 
+        # tensorboard had incorrect dependencies between 2.4.0 and 2.6.0
+        if record_name == "tensorboard" and record["version"] in ("2.4.0", "2.4.1", "2.5.0", "2.6.0"):
+            _replace_pin("google-auth-oauthlib 0.4.1", "google-auth-oauthlib >=0.4.1,<0.5", deps, record)
+            if "google-auth >=1.6.3,<2" not in deps:
+                deps.append("google-auth >=1.6.3,<2")
+            if "requests >=2.21.0,<3" not in deps:
+                deps.append("requests >=2.21.0,<3")
+            if "setuptools >=41.0.0" not in deps:
+                deps.append("setuptools >=41.0.0")
+
         # https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/159
         if record_name == "snowflake-sqlalchemy" and record["version"] in ("1.3.1", "1.2.5") and record["build_number"] == 0:
             depends = record["depends"]
