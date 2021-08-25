@@ -470,6 +470,10 @@ def _gen_new_index(repodata, subdir):
     for fn, record in index.items():
         record_name = record["name"]
 
+        # was a pre-release, not the actual 3.0.0 release
+        if record_name == "damask" and record.get("timestamp", 0) < 1629922824:
+            record["version"] = "3.0.0a"
+
         if record_name == "great-expectations" and record.get("timestamp", 0) < 1616454000000:
             old_constrains = record.get("constrains", [])
             new_constrains = [f"{constraint},<1.4" if constraint == "sqlalchemy >=1.2" else constraint for constraint in old_constrains]
