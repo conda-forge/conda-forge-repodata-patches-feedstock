@@ -755,6 +755,15 @@ def _gen_new_index(repodata, subdir):
             i = record['depends'].index('astunparse')
             record['depends'][i] = 'astunparse <=1.6.2'
 
+        # With release of openmm 7.6 it changed package structure, breaking
+        # parmed. This is fixed for 3.4.3, but older builds should get
+        # a pin to prevent breaks for now.
+        if (record_name == "parmed" and
+            (pkg_resources.parse_version(record["version"]) <
+             pkg_resources.parse_version("3.4.3"))):
+            record['depends'].append("openmm <7.6")
+
+
         # FIXME: disable patching-out blas_openblas feature
         # because hotfixes are not applied to gcc7 label
         # causing inconsistent behavior
