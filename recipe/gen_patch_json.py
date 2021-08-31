@@ -761,7 +761,9 @@ def _gen_new_index(repodata, subdir):
         if (record_name == "parmed" and
             (pkg_resources.parse_version(record["version"]) <
              pkg_resources.parse_version("3.4.3"))):
-            record['depends'].append("openmm <7.6")
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("openmm <7.6")
+            record['constrains'] = new_constrains
 
 
         # FIXME: disable patching-out blas_openblas feature
