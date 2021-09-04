@@ -1103,6 +1103,12 @@ def _gen_new_index(repodata, subdir):
         if record_name == "tzlocal" and record["version"] == "3.0" and "python >=3.6" in record["depends"]:
             _replace_pin("python >=3.6", "python >=3.9", deps, record)
 
+        if record_name == "uproot" and record["version"].startswith("4.0."):
+            _replace_pin('uproot-base', f"uproot-base {record['version']}", deps, record)
+
+        if record_name == "uproot" and record["version"] == "4.1.0" and record["build_number"] == 0:
+            _replace_pin('uproot-base', f"uproot-base {record['version']}", deps, record)
+
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False
