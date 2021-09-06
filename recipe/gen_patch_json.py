@@ -993,6 +993,17 @@ def _gen_new_index(repodata, subdir):
         ):
             _add_pybind11_abi_constraint(fn, record)
 
+        if (
+            record_name == "pytorch-cpu"
+            # this version has a constraint sometimes
+            and (
+                pkg_resources.parse_version(record["version"])
+                <= pkg_resources.parse_version("1.6")
+            )):
+            record.setdefault('constrains', []).extend([
+                "pytorch-gpu 9999999999"
+            ])
+
         # add *lal>=7.1.1 as run_constrained for liblal-7.1.1
         if (
             record_name == "liblal"
