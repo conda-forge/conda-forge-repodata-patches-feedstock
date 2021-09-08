@@ -1109,6 +1109,12 @@ def _gen_new_index(repodata, subdir):
         if record_name == "uproot" and record["version"] == "4.1.0" and record["build_number"] == 0:
             _replace_pin('uproot-base', f"uproot-base {record['version']}", deps, record)
 
+        # jupyter_kernel_test does not work with latest jupyter_client
+        # fixed in https://github.com/conda-forge/jupyter_kernel_test-feedstock/pull/3
+        if record_name == "jupyter_kernel_test" and record["version"] == "0.3" and record["build_number"] < 3:
+            depends = record["depends"]
+            depends[depends.index("jupyter_client")] = "jupyter_client <7.0"
+
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False
