@@ -1115,6 +1115,14 @@ def _gen_new_index(repodata, subdir):
             depends = record["depends"]
             depends[depends.index("jupyter_client")] = "jupyter_client <7.0"
 
+        # Fix missing dependency for xeus-python and xeus-python-static
+        # Fixed upstream in https://github.com/conda-forge/xeus-python-feedstock/pull/123
+        # and https://github.com/conda-forge/xeus-python-static-feedstock/pull/15
+        if record_name == "xeus-python" and record["version"] == "0.13.0" and record["build_number"] == 0:
+            record["depends"].append("xeus-python-shell >=0.1.5,<0.2")
+        if record_name == "xeus-python-static" and record["version"] == "0.13.0" and record["build_number"] == 0:
+            record["depends"].append("xeus-python-shell >=0.1.5,<0.2")
+
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False
