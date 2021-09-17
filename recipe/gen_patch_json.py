@@ -859,6 +859,18 @@ def _gen_new_index(repodata, subdir):
         if any(dep.startswith("pari >=2.13.2") for dep in deps) and record.get('timestamp', 0) < 1625642169000:
             record["depends"].append("pari * *_single")
 
+        # patch out bad numba for ngmix
+        if (
+            record_name == "ngmix"
+            and not any(
+                ("!=0.54.0" in dp and "numba" in dp)
+                for dp in record.get("depends", [])
+            )
+        ):
+            deps = record.get("depends", [])
+            deps.append("numba !=0.54.0")
+            record["depends"] = deps
+
         if record_name in llvm_pkgs:
             new_constrains = record.get('constrains', [])
             version = record["version"]
