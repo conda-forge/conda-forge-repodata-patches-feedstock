@@ -691,7 +691,7 @@ def _gen_new_index(repodata, subdir):
         with suppress(ValueError):
             i = deps.index("cudatoolkit 11.2|11.2.*")
         if i >= 0:
-            deps[i] = "cudatoolkit >=11.2,<12"
+            deps[i] = "cudatoolkit >=11.2,<12.0a0"
 
         if "libiconv >=1.15,<1.16.0a0" in deps:
             _pin_looser(fn, record, "libiconv", upper_bound="1.17.0")
