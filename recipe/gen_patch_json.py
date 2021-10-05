@@ -2,6 +2,7 @@
 from __future__ import absolute_import, division, print_function
 
 from collections import defaultdict
+from contextlib import suppress
 import copy
 import json
 import os
@@ -685,6 +686,12 @@ def _gen_new_index(repodata, subdir):
         deps = record.get("depends", ())
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
+
+        i = -1
+        with suppress(ValueError):
+            i = deps.index("cudatoolkit 11.2|11.2.*")
+        if i >= 0:
+            deps[i] = "cudatoolkit >=11.2,<12"
 
         if "libiconv >=1.15,<1.16.0a0" in deps:
             _pin_looser(fn, record, "libiconv", upper_bound="1.17.0")
