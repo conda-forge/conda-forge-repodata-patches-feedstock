@@ -527,6 +527,15 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('zstandard')
                 record['depends'][i] = 'zstandard <0.15'
 
+        if record_name == "vs2015_runtime" and record.get('timestamp', 0) < 1633470721000:
+            pversion = pkg_resources.parse_version(record['version'])
+            vs2019_version = pkg_resources.parse_version('14.29.30037')
+            if pversion < vs2019_version:
+                # make these conflict with ucrt
+                new_constrains = record.get("constrains", [])
+                new_constrains.append("ucrt <0a0")
+                record['constrains'] = new_constrains
+
         if record_name == "gitdb" and record['version'].startswith('4.0.') and 'smmap >=3.0.1' in record['depends']:
             i = record['depends'].index('smmap >=3.0.1')
             record['depends'][i] = 'smmap >=3.0.1,<4'
