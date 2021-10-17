@@ -527,6 +527,17 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('zstandard')
                 record['depends'][i] = 'zstandard <0.15'
 
+        if record_name == "pythran"  and record.get('timestamp', 0) < 1634547109490:
+            # xsimd 8.0 broke pythran; upstream pythran bundles xsimd, recipe should follow
+            # (see https://github.com/conda-forge/pythran-feedstock/pull/60,
+            # https://gitter.im/QuantStack/Lobby?at=616c8e1298c13e7550de7659)
+            if record["version"] == "0.10.0":
+                record['depends'].append('xsimd 7.6.*')
+            else:
+                # cannot follow upstream bundling history one-to-one
+                # because xsimd aarch/ppc-builds only exist from 7.5.0
+                record['depends'].append('xsimd 7.5.*')
+
         if record_name == "vs2015_runtime" and record.get('timestamp', 0) < 1633470721000:
             pversion = pkg_resources.parse_version(record['version'])
             vs2019_version = pkg_resources.parse_version('14.29.30037')
