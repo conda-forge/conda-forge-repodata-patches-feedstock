@@ -1173,6 +1173,12 @@ def _gen_new_index(repodata, subdir):
         if record_name == "xeus-python-static" and record["version"] == "0.13.0" and record["build_number"] == 0:
             record["depends"].append("xeus-python-shell >=0.1.5,<0.2")
 
+        # google-api-core 1.31.2 has an incorrect version range allowed for google-auth
+        # https://github.com/conda-forge/google-api-core-feedstock/pull/74#discussion_r736929096
+        if record_name == "google-api-core" and record["version"] == "1.31.2":
+            deps = record["depends"]
+            _replace_pin("google-auth >=1.25.1,<3.0dev", "google-auth >=1.25.1,<2.0dev", deps, record)
+
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False
