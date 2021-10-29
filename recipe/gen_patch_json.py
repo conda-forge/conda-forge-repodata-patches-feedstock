@@ -527,6 +527,15 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('zstandard')
                 record['depends'][i] = 'zstandard <0.15'
 
+        if record_name == "packaging" and record["version"] in ["21.1", "21.2"]:
+            # https://github.com/conda-forge/packaging-feedstock/pull/21
+            deps = record["depends"]
+            i = -1
+            with suppress(ValueError):
+                i = deps.index("pyparsing >=2.0.2")
+            if i >= 0:
+                deps[i] = "pyparsing >=2.0.2,<3"
+
         if record_name == "vs2015_runtime" and record.get('timestamp', 0) < 1633470721000:
             pversion = pkg_resources.parse_version(record['version'])
             vs2019_version = pkg_resources.parse_version('14.29.30037')
