@@ -1187,6 +1187,11 @@ def _gen_new_index(repodata, subdir):
         if record_name == "google-api-core" and record["version"] == "1.31.2":
             deps = record["depends"]
             _replace_pin("google-auth >=1.25.1,<3.0dev", "google-auth >=1.25.1,<2.0dev", deps, record)
+        
+        # auto-sklear needs to depend on the full dask.
+        # https://github.com/automl/auto-sklearn/issues/1256
+        if record_name == "auto-sklearn":
+            _rename_dependency(fn, record, "dask-core", "dask")
 
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
