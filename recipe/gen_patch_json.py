@@ -1193,7 +1193,7 @@ def _gen_new_index(repodata, subdir):
         if record_name == "auto-sklearn":
             _rename_dependency(fn, record, "dask-core", "dask")
 
-        # remove libcugraph constrain to prevent cyclical dependency issues with RAPIDS
+        # libcugraph 0.19.0 is compatible with the new calver based version 21.x
         if record_name == "cupy":
             _replace_pin("libcugraph >=0.19.0,<1.0a0", "libcugraph >=0.19.0", record.get("constrains", []), record, target='constrains')
 
