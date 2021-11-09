@@ -1195,7 +1195,7 @@ def _gen_new_index(repodata, subdir):
 
         # remove libcugraph constrain to prevent cyclical dependency issues with RAPIDS
         if record_name == "cupy":
-            _replace_pin("libcugraph >=0.19.0,<1.0a0", "libcugraph", record.get("constrains", []), record, target='constrains')
+            _replace_pin("libcugraph >=0.19.0,<1.0a0", "libcugraph >=0.19.0", record.get("constrains", []), record, target='constrains')
 
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
