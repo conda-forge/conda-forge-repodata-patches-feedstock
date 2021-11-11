@@ -1193,6 +1193,13 @@ def _gen_new_index(repodata, subdir):
         if record_name == "auto-sklearn":
             _rename_dependency(fn, record, "dask-core", "dask")
 
+        # Only some build of clad work with cling, if there isn't a constraint mark it as conflicting
+        if record_name == "clad":
+            new_constrains = record.get('constrains', [])
+            if all("cling " not in x for x in new_constrains):
+                new_constrains.append("cling ==99999999999")
+            record["constrains"] = new_constrains
+
         # libcugraph 0.19.0 is compatible with the new calver based version 21.x
         if record_name == "cupy":
             _replace_pin("libcugraph >=0.19.0,<1.0a0", "libcugraph >=0.19.0", record.get("constrains", []), record, target='constrains')
