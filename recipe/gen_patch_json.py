@@ -1217,6 +1217,12 @@ def _gen_new_index(repodata, subdir):
             if record["version"] in ["0.3.4", "0.3.6", "0.3.9", "0.4.0"]:
                 _replace_pin("dask >=2.19.0,!=2021.3.0", f"dask =={dask_sql_map[record['version']]}", deps, record)
 
+        # Retroactively pin a max version of docutils for sphinx 3.x and 2.x since 0.17 broke things as noted upstream:
+        # https://github.com/sphinx-doc/sphinx/commit/025f26cd5dba57dfb6a8a036708da120001c6768
+        if record_name == "sphinx" and (record["version"].startswith("3.") or record["version"].startswith("2.")):
+            deps = record["depends"]
+            _replace_pin("docutils >=0.12", "docutils >=0.12,<0.17", deps, record)
+
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False
