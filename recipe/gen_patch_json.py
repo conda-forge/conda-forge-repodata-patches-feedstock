@@ -1223,6 +1223,15 @@ def _gen_new_index(repodata, subdir):
             deps = record["depends"]
             _replace_pin("docutils >=0.12", "docutils >=0.12,<0.17", deps, record)
 
+        # Retroactively pin Python < 3.10 for some older noarch Pony packages, since Pony depends on the parser
+        # module removed in 3.10: https://github.com/conda-forge/pony-feedstock/pull/20
+        if record_name == "pony":
+            deps = record["depends"]
+            if  record['version'] == "0.7.13":
+                _replace_pin("python", "python >=2.7,<3.10", deps, record)
+            elif record["version"] == "0.7.14":
+                _replace_pin("python >=2.7", "python >=2.7,<3.10", deps, record)
+
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False
