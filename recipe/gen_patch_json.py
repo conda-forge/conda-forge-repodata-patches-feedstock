@@ -1232,6 +1232,25 @@ def _gen_new_index(repodata, subdir):
             elif record["version"] == "0.7.14":
                 _replace_pin("python >=2.7", "python >=2.7,<3.10", deps, record)
 
+        if record_name == "conda-build":
+            # Work around vendored auxlib import error; see:
+            #   https://github.com/conda/conda-build/issues/4333
+            #   https://github.com/conda/conda-build/pull/4335
+            #   https://github.com/conda-forge/conda-build-feedstock/pull/169
+            #
+            # Conda 4.11.1 should fix this upstream, so all we really need to
+            # do is avoid 4.11.0 specifically.
+            major, minor, patch = (int(v) for v in record["version"].split("."))
+            build_num = record['build_number']
+            if (major < 3 or (major == 3 and minor < 21) or
+                (major == 3 and minor == 21 and patch < 6) or
+                (major == 3 and minor == 21 and patch == 6 and build_num < 2)
+                ):
+                if "constrains" in record:
+                    record["constrains"].append("conda !=4.11.0")
+                else:
+                    record["constrains"] = ["conda !=4.11.0"]
+
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False
