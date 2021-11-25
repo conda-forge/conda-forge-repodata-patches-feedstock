@@ -566,6 +566,10 @@ def _gen_new_index(repodata, subdir):
             if record.get('timestamp', 0) < 1607959235411 and any(dep.split(' ')[0] == 'numpy' for dep in record.get('depends', ())):
                 _pin_stricter(fn, record, "numpy", "x", "1.20")
 
+        if record_name == "tensorflow-base" and record["version"] == "2.6.0":
+            i = record['depends'].index('keras >=2.6,<3')
+            record['depends'][i] = 'keras >=2.6,<2.7'
+
         if record_name == "pyarrow":
             if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
                 if 'constrains' in record:
