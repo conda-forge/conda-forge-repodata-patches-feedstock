@@ -865,8 +865,11 @@ def _gen_new_index(repodata, subdir):
             record['depends'][i] = 'pythia8 >=8.240,<8.300.0a0'
 
         # remove features for openjdk and rb2
-        if ("track_features" in record and
-                record['track_features'] is not None):
+        if (
+            "track_features" in record
+            and record['track_features'] is not None
+            and record_name != "ruby"
+        ):
             for feat in record["track_features"].split():
                 if feat.startswith(("rb2", "openjdk")):
                     record["track_features"] = _extract_track_feature(
@@ -1211,7 +1214,7 @@ def _gen_new_index(repodata, subdir):
         # retroactively pin dask dependency for older version of dask-sql as it is now being pinned
         # https://github.com/dask-contrib/dask-sql/issues/302
         if record_name == "dask-sql":
-            dask_sql_map = {"0.1.0rc2": "2.26.0", "0.1.2": "2.30.0", "0.2.0": "2.30.0", "0.2.2": "2.30.0", 
+            dask_sql_map = {"0.1.0rc2": "2.26.0", "0.1.2": "2.30.0", "0.2.0": "2.30.0", "0.2.2": "2.30.0",
                             "0.3.0": "2021.1.0", "0.3.1": "2021.2.0", "0.3.2": "2021.4.0", "0.3.3": "2021.4.1",
                             "0.3.4": "2021.4.1", "0.3.6": "2021.5.0", "0.3.9": "2021.8.0", "0.4.0": "2021.10.0"}
             if record["version"] in ["0.1.0rc2", "0.1.2", "0.2.0", "0.2.2", "0.3.0", "0.3.1"]:
