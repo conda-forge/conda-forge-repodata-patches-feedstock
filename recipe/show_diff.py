@@ -19,7 +19,11 @@ BASE_URL = "https://conda.anaconda.org/conda-forge"
 
 def show_record_diffs(subdir, ref_repodata, new_repodata):
     for name, ref_pkg in ref_repodata["packages"].items():
-        new_pkg = new_repodata["packages"][name]
+        if name in new_repodata["packages"]:
+            new_pkg = new_repodata["packages"][name]
+        else:
+            new_pkg = {}
+
         # license_family gets added for new packages, ignore it in the diff
         ref_pkg.pop("license_family", None)
         new_pkg.pop("license_family", None)
