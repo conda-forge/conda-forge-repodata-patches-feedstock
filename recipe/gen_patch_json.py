@@ -868,7 +868,7 @@ def _gen_new_index(repodata, subdir):
         if ("track_features" in record and
                 record['track_features'] is not None):
             for feat in record["track_features"].split():
-                if feat.startswith(("rb2", "openjdk")):
+                if feat.startswith("openjdk"):
                     record["track_features"] = _extract_track_feature(
                         record, feat)
 
