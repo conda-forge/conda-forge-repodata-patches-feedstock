@@ -1236,6 +1236,19 @@ def _gen_new_index(repodata, subdir):
             elif record["version"] == "0.7.14":
                 _replace_pin("python >=2.7", "python >=2.7,<3.10", deps, record)
 
+        if record_name == "tsnecuda":
+            # These have dependencies like
+            # - libfaiss * *_cuda
+            # - libfaiss * *cuda
+            # which conda doesn't like
+            deps = record.get("depends", [])
+            for i in range(len(deps)):
+                dep = deps[i]
+                if dep.startswith("libfaiss") and dep.endswith("*cuda"):
+                    dep = dep.replace("*cuda", "*_cuda")
+                deps[i] = dep
+            record["depends"] = deps
+
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False
