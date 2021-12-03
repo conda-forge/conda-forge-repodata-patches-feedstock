@@ -900,6 +900,7 @@ def _gen_new_index(repodata, subdir):
             deps.append("numba !=0.54.0")
             record["depends"] = deps
 
+        llvm_pkgs = ["clang", "clang-tools", "llvm", "llvm-tools", "llvmdev"]
         if record_name in llvm_pkgs:
             new_constrains = record.get('constrains', [])
             version = record["version"]
