@@ -1212,7 +1212,7 @@ def _gen_new_index(repodata, subdir):
         # retroactively pin dask dependency for older version of dask-sql as it is now being pinned
         # https://github.com/dask-contrib/dask-sql/issues/302
         if record_name == "dask-sql":
-            dask_sql_map = {"0.1.0rc2": "2.26.0", "0.1.2": "2.30.0", "0.2.0": "2.30.0", "0.2.2": "2.30.0", 
+            dask_sql_map = {"0.1.0rc2": "2.26.0", "0.1.2": "2.30.0", "0.2.0": "2.30.0", "0.2.2": "2.30.0",
                             "0.3.0": "2021.1.0", "0.3.1": "2021.2.0", "0.3.2": "2021.4.0", "0.3.3": "2021.4.1",
                             "0.3.4": "2021.4.1", "0.3.6": "2021.5.0", "0.3.9": "2021.8.0", "0.4.0": "2021.10.0"}
             if record["version"] in ["0.1.0rc2", "0.1.2", "0.2.0", "0.2.2", "0.3.0", "0.3.1"]:
@@ -1267,6 +1267,17 @@ def _gen_new_index(repodata, subdir):
             record["depends"] = new_deps
         del new_deps
         del changed
+
+        if record_name == "conda-forge-ci-setup-feedstock":
+            constrains = record.get("constrains", [])
+            ind = None
+            for _ind in range(len(constrains)):
+                if constrains[_ind].startswith("boa "):
+                    ind = _ind
+                    constrains[_ind] = "boa >=0.8,<0.9"
+            if ind is None:
+                constrains.append("boa >=0.8,<0.9")
+            record["constrains"] = constrains
 
     return index
 
