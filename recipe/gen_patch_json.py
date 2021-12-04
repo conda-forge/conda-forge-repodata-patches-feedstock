@@ -1268,7 +1268,7 @@ def _gen_new_index(repodata, subdir):
         del new_deps
         del changed
 
-        if record_name == "conda-forge-ci-setup-feedstock":
+        if record_name == "conda-forge-ci-setup":
             constrains = record.get("constrains", [])
             ind = None
             for _ind in range(len(constrains)):
