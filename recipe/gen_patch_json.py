@@ -1268,14 +1268,10 @@ def _gen_new_index(repodata, subdir):
         del new_deps
         del changed
 
-        if record_name == "conda-forge-ci-setup":
+        if record_name == "conda-forge-ci-setup" and record.get('timestamp', 0) < 1638899810000:
             constrains = record.get("constrains", [])
-            ind = None
-            for _ind in range(len(constrains)):
-                if constrains[_ind].startswith("boa "):
-                    ind = _ind
-                    constrains[_ind] = "boa >=0.8,<0.9"
-            if ind is None:
+            found = any(c.startswith("boa") for c in constrains)
+            if not found:
                 constrains.append("boa >=0.8,<0.9")
             record["constrains"] = constrains
 
