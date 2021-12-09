@@ -1278,7 +1278,7 @@ def _gen_new_index(repodata, subdir):
         if record_name == "boa" and record.get("timestamp", 0) <= 1619005998286:
             depends = record.get("depends", [])
             for i, dep in enumerate(depends):
-                if dep.startswith("mamba") and "<=" not in dep:
+                if dep.startswith("mamba") and "<=" not in dep and ".*" not in dep:
                     _dep_parts = dep.split(" ")
                     _dep_parts[1] = _dep_parts[1] + ",<=0.14"
                     depends[i] = " ".join(_dep_parts)
