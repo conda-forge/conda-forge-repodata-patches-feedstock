@@ -1280,7 +1280,7 @@ def _gen_new_index(repodata, subdir):
             for i, dep in enumerate(depends):
                 if dep.startswith("mamba") and "<=" not in dep and ".*" not in dep:
                     _dep_parts = dep.split(" ")
-                    _dep_parts[1] = _dep_parts[1] + ",<=0.14"
+                    _dep_parts[1] = _dep_parts[1] + ",<0.15a0"
                     depends[i] = " ".join(_dep_parts)
             record["depends"] = depends
 
