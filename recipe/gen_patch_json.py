@@ -851,7 +851,6 @@ def _gen_new_index(repodata, subdir):
             _replace_pin('vector-classes >=1.4.1,<1.5.0a0', 'vector-classes >=1.4.1,<1.4.2a0', deps, record)
 
         _pin_stricter(fn, record, 'libunwind', 'x.x')
-        _replace_pin('libunwind >=1.2.1,<1.3.0a0', 'libunwind >=1.2.1,<2.0.0a0', deps, record)
         _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
         _replace_pin('ncurses >=6.1,<6.2.0a0', 'ncurses >=6.1,<6.3.0a0', deps, record)
         _replace_pin('abseil-cpp', 'abseil-cpp ==20190808.*', deps, record)
