@@ -1284,6 +1284,18 @@ def _gen_new_index(repodata, subdir):
                     depends[i] = " ".join(_dep_parts)
             record["depends"] = depends
 
+        if record_name == "proplot" and record.get("timestamp", 0) < 1634670686970:
+            depends = record.get("depends", [])
+            for i, dep in enumerate(depends):
+                if dep.startswith("matplotlib"):
+                    _dep_parts = dep.split(" ")
+                    if len(_dep_parts) > 1:
+                        _dep_parts[1] = _dep_parts[1] + ",<3.5.0a0"
+                    else:
+                        _dep_parts = list(_dep_parts) + ["<3.5.0a0"]
+                    depends[i] = " ".join(_dep_parts)
+                record["depends"] = depends
+
     return index
 
 
