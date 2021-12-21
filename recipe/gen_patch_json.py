@@ -995,7 +995,13 @@ def _gen_new_index(repodata, subdir):
             new_depends.append("libgcc-ng <=9.3.0")
             record["depends"] = new_depends
         
-        if record.get("timestamp", 0) < 1640101398654:  # 2021-12-21
+        # setutools started raising a warning when using `LooseVersion` from distutils
+        # since packages don't tend to pin setuptools, this raises warnings in old versions
+        # https://github.com/conda-forge/conda-forge.github.io/issues/1575
+        if (
+            record_name in ["pandas", "distributed", "dask"]
+            and record.get("timestamp", 0) < 1640101398654  # 2021-12-21
+        ):
             new_depends = record.get("depends", [])
             new_depends.append("setuptools <60.0.0")
             record["depends"] = new_depends
