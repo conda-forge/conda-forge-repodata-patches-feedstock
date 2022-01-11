@@ -995,7 +995,7 @@ def _gen_new_index(repodata, subdir):
             new_depends.append("libgcc-ng <=9.3.0")
             record["depends"] = new_depends
         
-        # setutools started raising a warning when using `LooseVersion` from distutils
+        # setuptools started raising a warning when using `LooseVersion` from distutils
         # since packages don't tend to pin setuptools, this raises warnings in old versions
         # https://github.com/conda-forge/conda-forge.github.io/issues/1575
         if (
