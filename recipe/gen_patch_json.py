@@ -685,6 +685,13 @@ def _gen_new_index(repodata, subdir):
                 i = record['depends'].index('chemfiles-lib 0.10.*')
                 record['depends'][i] = 'chemfiles-lib >=0.10.1,<0.11'
 
+        # sardana <3.2 (meaning 3.0 and 3.1) should depend on taurus <5
+        # https://github.com/conda-forge/sardana-feedstock/pull/8
+        if record_name == "sardana" and record['version'].startswith(('3.0.', '3.1.')):
+            if 'taurus >=4.7.0' in record['depends']:
+                i = record['depends'].index('taurus >=4.7.0')
+                record['depends'][i] = 'taurus >=4.7.0,<5'
+
         # fix deps with wrong names
         if record_name in proj4_fixes:
             _rename_dependency(fn, record, "proj.4", "proj4")
