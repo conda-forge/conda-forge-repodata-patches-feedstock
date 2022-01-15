@@ -1001,7 +1001,6 @@ def _gen_new_index(repodata, subdir):
         if (
             record_name in ["pandas", "distributed", "dask-core"]
             and record.get("timestamp", 0) < 1640101398654  # 2021-12-21
-            or record_name in ["numpy", "scipy"]
         ):
             new_depends = record.get("depends", [])
             if "setuptools" in new_depends:
