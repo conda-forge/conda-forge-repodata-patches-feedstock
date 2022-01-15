@@ -998,7 +998,6 @@ def _gen_new_index(repodata, subdir):
         # setuptools started raising a warning when using `LooseVersion` from distutils
         # since packages don't tend to pin setuptools, this raises warnings in old versions
         # https://github.com/conda-forge/conda-forge.github.io/issues/1575
-        # This is what the time-based pin is for.
         if (
             record_name in ["pandas", "distributed", "dask-core"]
             and record.get("timestamp", 0) < 1640101398654  # 2021-12-21
@@ -1013,7 +1012,8 @@ def _gen_new_index(repodata, subdir):
             record["depends"] = new_depends
  
         # NumPy and SciPy do not support setuptools >= 60.0 and setuptools is
-        # an optional requirement.
+        # an optional requirement. We only patch already released packages.
+        # That is what the time based pin is for.
         if (
             record_name in ["numpy", "scipy"]
             and record.get("timestamp", 0) < 1640101398654  # 2021-12-21
