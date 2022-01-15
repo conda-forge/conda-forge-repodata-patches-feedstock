@@ -999,9 +999,6 @@ def _gen_new_index(repodata, subdir):
         # since packages don't tend to pin setuptools, this raises warnings in old versions
         # https://github.com/conda-forge/conda-forge.github.io/issues/1575
         # This is what the time-based pin is for.
-        # NumPy and SciPy do not support setuptools >= 60.0, and perhaps never
-        # will, so they get a permanent pin. Other packages using
-        # `numpy.distutils` may need one too if they run into issues.
         if (
             record_name in ["pandas", "distributed", "dask-core"]
             and record.get("timestamp", 0) < 1640101398654  # 2021-12-21
@@ -1014,6 +1011,20 @@ def _gen_new_index(repodata, subdir):
             else:
                 new_depends.append("setuptools <60.0.0")
             record["depends"] = new_depends
+ 
+        # NumPy and SciPy do not support setuptools >= 60.0 and setuptools is
+        # an optional requirement.
+        if (
+            record_name in ["numpy", "scipy"]
+            and record.get("timestamp", 0) < 1640101398654  # 2021-12-21
+        ):
+            new_constrains = record.get("constrains", [])
+            if "setuptools" in new_constrains:
+                i = new_depends.index("setuptools")
+                new_constrains[i] = "setuptools <60.0.0"
+            else:
+                new_constrains.append("setuptools <60.0.0")
+            record["depends"] = new_constrains
 
         # old CDTs with the conda_cos6 or conda_cos7 name in the sysroot need to
         # conflict with the new CDT and compiler packages
