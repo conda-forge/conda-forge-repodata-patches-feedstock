@@ -994,7 +994,7 @@ def _gen_new_index(repodata, subdir):
             new_depends = record.get("depends", [])
             new_depends.append("libgcc-ng <=9.3.0")
             record["depends"] = new_depends
-        
+
         # setuptools started raising a warning when using `LooseVersion` from distutils
         # since packages don't tend to pin setuptools, this raises warnings in old versions
         # https://github.com/conda-forge/conda-forge.github.io/issues/1575
@@ -1268,6 +1268,10 @@ def _gen_new_index(repodata, subdir):
                     dep = dep.replace("*cuda", "*_cuda")
                 deps[i] = dep
             record["depends"] = deps
+
+        # pillow 7.1.0 and 7.1.1 break napari viewer but this wasn't dealt with til latest release
+        if record_name == "napari" and record.get("timestamp", 0) < 1642529454000:  # 2022-01-18
+            _replace_pin("pillow", "pillow !=7.1.0,!=7.1.1", record.get("depends", []), record)
 
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
