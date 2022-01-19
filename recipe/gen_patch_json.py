@@ -856,7 +856,8 @@ def _gen_new_index(repodata, subdir):
             if dep.startswith(libunwind_str) and dep[len(libunwind_str):len(libunwind_str) + 2] in ["2.", "3.", "4.", "5."]:
                 _pin_stricter(fn, record, 'libunwind', 'x', '1.6.0')
         _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
-        _replace_pin('ncurses >=6.1,<6.2.0a0', 'ncurses >=6.1,<6.3.0a0', deps, record)
+        if record.get('timestamp', 0) < 1641975772000:
+            _pin_looser(fn, record, "ncurses", max_pin="x")
         _replace_pin('abseil-cpp', 'abseil-cpp ==20190808.*', deps, record)
 
         if record_name not in ["blas", "libblas", "libcblas", "liblapack",
