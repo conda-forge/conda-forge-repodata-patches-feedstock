@@ -869,6 +869,9 @@ def _gen_new_index(repodata, subdir):
             i = record['depends'].index('pythia8')
             record['depends'][i] = 'pythia8 >=8.240,<8.300.0a0'
 
+        # gct should have been pinned at x.x.x rather than x.x
+        _replace_pin('gct >=6.2.1550507116,<6.3.0a0', "gct >=6.2.1550507116,<6.2.1550507117", deps, record)
+
         # remove features for openjdk and rb2
         if ("track_features" in record and
                 record['track_features'] is not None):
