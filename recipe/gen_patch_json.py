@@ -661,7 +661,7 @@ def _gen_new_index(repodata, subdir):
                 record['depends'][i] = 'python >=3.6'
             # Same issue with pip 22 moving to Python 3.7+
             # https://github.com/conda-forge/pip-feedstock/pull/88
-            if record['version'] in {"22.0", "22.0.1", "22.0.2"} and record['build'] == "pyhd8ed1ab_0"}:
+            if record['version'] in {"22.0", "22.0.1", "22.0.2"} and record['build'] == "pyhd8ed1ab_0":
                 i = record['depends'].index('python >=3.6')
                 record['depends'][i] = 'python >=3.7'
 
