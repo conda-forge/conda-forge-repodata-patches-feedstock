@@ -1257,6 +1257,13 @@ def _gen_new_index(repodata, subdir):
         if record_name == "sphinx" and (record["version"].startswith("3.") or record["version"].startswith("2.")):
             deps = record["depends"]
             _replace_pin("docutils >=0.12", "docutils >=0.12,<0.17", deps, record)
+            
+        # Retroactively pin a max version of openlibm for julia 1.6.* and 1.7.*:
+        # https://github.com/conda-forge/julia-feedstock/issues/169
+        # timestamp: 29 December 2021 (osx-64/julia-1.7.1-h132cb31_1.tar.bz2) (+ 1)
+        if record_name == "julia" and record["version"].startswith(("1.6", "1.7")) and record.get("timestamp", 0) < 1640819858392:
+            deps = record["depends"]
+            _replace_pin("openlibm", "openlibm <0.8.0", deps, record)
 
         # Retroactively pin Python < 3.10 for some older noarch Pony packages, since Pony depends on the parser
         # module removed in 3.10: https://github.com/conda-forge/pony-feedstock/pull/20
