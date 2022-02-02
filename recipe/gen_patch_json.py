@@ -297,8 +297,9 @@ def _add_removals(instructions, subdir):
 
     data = r.json()
     currvals = list(REMOVALS.get(subdir, []))
-    for pkg_name in data["packages"]:
-        currvals.append(pkg_name)
+    for pkgs_section_key in ["packages", "packages.conda"]:
+        for pkg_name in data.get(pkgs_section_key, []):
+            currvals.append(pkg_name)
 
     instructions["remove"].extend(tuple(set(currvals)))
 
@@ -307,6 +308,7 @@ def _gen_patch_instructions(index, new_index, subdir):
     instructions = {
         "patch_instructions_version": 1,
         "packages": defaultdict(dict),
+        "packages.conda": defaultdict(dict),
         "revoke": [],
         "remove": [],
     }
@@ -314,19 +316,20 @@ def _gen_patch_instructions(index, new_index, subdir):
     _add_removals(instructions, subdir)
 
     # diff all items in the index and put any differences in the instructions
-    for fn in index:
-        assert fn in new_index
+    for pkgs_section_key in ["packages", "packages.conda"]:
+        for fn in index.get(pkgs_section_key, {}):
+            assert fn in new_index[pkgs_section_key]
 
-        # replace any old keys
-        for key in index[fn]:
-            assert key in new_index[fn], (key, index[fn], new_index[fn])
-            if index[fn][key] != new_index[fn][key]:
-                instructions['packages'][fn][key] = new_index[fn][key]
+            # replace any old keys
+            for key in index[pkgs_section_key][fn]:
+                assert key in new_index[pkgs_section_key][fn], (key, index[pkgs_section_key][fn], new_index[pkgs_section_key][fn])
+                if index[pkgs_section_key][fn][key] != new_index[pkgs_section_key][fn][key]:
+                    instructions[pkgs_section_key][fn][key] = new_index[pkgs_section_key][fn][key]
 
-        # add any new keys
-        for key in new_index[fn]:
-            if key not in index[fn]:
-                instructions['packages'][fn][key] = new_index[fn][key]
+            # add any new keys
+            for key in new_index[pkgs_section_key][fn]:
+                if key not in index[pkgs_section_key][fn]:
+                    instructions[pkgs_section_key][fn][key] = new_index[pkgs_section_key][fn][key]
 
     return instructions
 
@@ -337,7 +340,7 @@ def has_dep(record, name):
 
 def get_python_abi(version, subdir, build=None):
     if build is not None:
-        m = re.match(".*py\d\d", build)
+        m = re.match(r".*py\d\d", build)
         if m:
             version = f"{m.group()[-2]}.{m.group()[-1]}"
     if version.startswith("2.7"):
@@ -427,13 +430,21 @@ def add_python_abi(record, subdir):
 
 
 def _gen_new_index(repodata, subdir):
+    indexes = {}
+    for index_key in ['packages', 'packages.conda']:
+        indexes[index_key] = _gen_new_index_per_key(repodata, subdir, index_key)
+
+    return indexes
+
+
+def _gen_new_index_per_key(repodata, subdir, index_key):
     """Make any changes to the index by adjusting the values directly.
 
     This function returns the new index with the adjustments.
     Finally, the new and old indices are then diff'ed to produce the repo
     data patches.
     """
-    index = copy.deepcopy(repodata["packages"])
+    index = copy.deepcopy(repodata[index_key])
 
     # deal with windows vc features
     if subdir.startswith("win-"):
@@ -1336,7 +1347,6 @@ def _gen_new_index(repodata, subdir):
                         _dep_parts = list(_dep_parts) + ["<3.5.0a0"]
                     depends[i] = " ".join(_dep_parts)
                 record["depends"] = depends
-
     return index
 
 
@@ -1651,8 +1661,7 @@ def main():
         new_index = _gen_new_index(repodatas[subdir], subdir)
 
         # Step 2b. Generate the instructions by diff'ing the indices.
-        instructions = _gen_patch_instructions(
-            repodatas[subdir]['packages'], new_index, subdir)
+        instructions = _gen_patch_instructions(repodatas[subdir], new_index, subdir)
 
         # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
         patch_instructions_path = join(

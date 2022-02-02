@@ -3,17 +3,33 @@ import copy
 
 def test_gen_patch_instructions():
     index = {
-        'a': {'depends': ['c', 'd'],
-              'features': 'd'},
-        'b': {'nane': 'blah'},
-        'c': {}
+        'packages': {
+            'a': {'depends': ['c', 'd'],
+                  'features': 'd'},
+            'b': {'nane': 'blah'},
+            'c': {}
+        },
+        'packages.conda': {
+            'a': {'depends': ['c', 'd'],
+                  'features': 'd'},
+            'b': {'nane': 'blah'},
+            'c': {}
+        }
     }
 
     new_index = {
-        'a': {'depends': ['c', 'd', 'e'],
+        'packages': {
+            'a': {'depends': ['c', 'd', 'e'],
               'features': None},
-        'b': {'nane': 'blah'},
-        'c': {'addthis': 'yes'}
+            'b': {'nane': 'blah'},
+            'c': {'addthis': 'yes'}
+        },
+        'packages.conda': {
+            'a': {'depends': ['c', 'd', 'e'],
+                  'features': None},
+            'b': {'nane': 'blah'},
+            'c': {'addthis': 'yes'}
+        }
     }
 
     inst = _gen_patch_instructions(index, new_index, 'osx-64')
@@ -21,8 +37,13 @@ def test_gen_patch_instructions():
     assert 'revoke' in inst
     assert 'remove' in inst
     assert 'packages' in inst
+    assert 'packages.conda' in inst
 
     assert inst['packages'] == {
+        'a': {'depends': ['c', 'd', 'e'], 'features': None},
+        'c': {'addthis': 'yes'}}
+
+    assert inst['packages.conda'] == {
         'a': {'depends': ['c', 'd', 'e'], 'features': None},
         'c': {'addthis': 'yes'}}
 
