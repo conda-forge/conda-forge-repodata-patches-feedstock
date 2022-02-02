@@ -707,6 +707,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if 'taurus >=4.7.0' in record['depends']:
                 i = record['depends'].index('taurus >=4.7.0')
                 record['depends'][i] = 'taurus >=4.7.0,<5'
+                
+        if record_name == 'zipp':
+            # zipp >=3.7 requires python >=3.7 but it was missed
+            # https://github.com/conda-forge/zipp-feedstock/pull/29
+            if record['version'] == "3.7.0" and record['build'] == "pyhd8ed1ab_0":
+                i = record['depends'].index('python >=3.6')
+                record['depends'][i] = 'python >=3.7'
 
         # fix deps with wrong names
         if record_name in proj4_fixes:
