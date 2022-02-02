@@ -664,12 +664,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record['depends'].index('python')
                 record['depends'][i] = 'python >=3.5'
 
-        # pip >=21 requires python >=3.6 but the first build has >=3
-        # https://github.com/conda-forge/pip-feedstock/pull/68
         if record_name == 'pip':
+            # pip >=21 requires python >=3.6 but the first build has >=3
+            # https://github.com/conda-forge/pip-feedstock/pull/68
             if record['version'] == "21.0" and record['build'] == "pyhd8ed1ab_0":
                 i = record['depends'].index('python >=3')
                 record['depends'][i] = 'python >=3.6'
+            # Same issue with pip 22 moving to Python 3.7+
+            # https://github.com/conda-forge/pip-feedstock/pull/88
+            if record['version'] in {"22.0", "22.0.1", "22.0.2"} and record['build'] == "pyhd8ed1ab_0":
+                i = record['depends'].index('python >=3.6')
+                record['depends'][i] = 'python >=3.7'
 
         # some versions mpi4py-fft are not compatible with MKL
         # https://github.com/conda-forge/mpi4py-fft-feedstock/issues/20
