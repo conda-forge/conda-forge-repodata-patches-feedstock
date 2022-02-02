@@ -1290,6 +1290,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             elif record["version"] == "0.7.14":
                 _replace_pin("python >=2.7", "python >=2.7,<3.10", deps, record)
 
+        # Retroactively pin hloviews to Python < 3.10 b/c they import Callable directly and that was removed in py310.
+        # This is already fixed in next verision of holoviews >1.14.7 (unrelease).
+        if record_name == "holoviews":
+            deps = record["depends"]
+            if  record['version'] <= "1.14.7":
+                _replace_pin("python", "python >=2.7,<3.10", deps, record)
+
         if record_name == "tsnecuda":
             # These have dependencies like
             # - libfaiss * *_cuda
