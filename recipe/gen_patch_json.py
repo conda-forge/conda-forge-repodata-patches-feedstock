@@ -762,6 +762,10 @@ def _gen_new_index(repodata, subdir):
         if any(dep == "libflang" or dep.startswith("libflang >=5.0.0") for dep in deps) and record.get('timestamp', 0) < 1611789153000:
             record["depends"].append("libflang <6.0.0.a0")
 
+        for torch in ["pytorch", "pytorch-cpu", "pytorch-gpu"]:
+            if any(dep.startswith(torch) for dep in deps):
+                _pin_looser(fn, record, torch, max_pin="x.x")
+
         if any(dep.startswith("libignition-") or dep == 'libsdformat' for dep in deps):
             for dep_idx, _ in enumerate(deps):
                 dep = record['depends'][dep_idx]
