@@ -283,6 +283,8 @@ OSX_SDK_FIXES = {
     'openmpi-4.0.1-hc99cbb1_1': '10.12',
     'openmpi-4.0.1-hc99cbb1_0': '10.12',
     'openmpi-4.0.1-hc99cbb1_2': '10.12',
+    'qt-main-5.15.2-hfc65906_0': '11.0'
+    'qt-main-5.15.2-h76a31b5_1': '11.0',
 }
 
 
@@ -707,7 +709,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if 'taurus >=4.7.0' in record['depends']:
                 i = record['depends'].index('taurus >=4.7.0')
                 record['depends'][i] = 'taurus >=4.7.0,<5'
-                
+
         if record_name == 'zipp':
             # zipp >=3.7 requires python >=3.7 but it was missed
             # https://github.com/conda-forge/zipp-feedstock/pull/29
@@ -957,6 +959,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _fix_libgfortran(fn, record)
             _fix_libcxx(fn, record)
 
+        if subdir in ['osx-64', 'osx-arm64']:
             full_pkg_name = fn.replace('.tar.bz2', '')
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
@@ -1280,7 +1283,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "sphinx" and (record["version"].startswith("3.") or record["version"].startswith("2.")):
             deps = record["depends"]
             _replace_pin("docutils >=0.12", "docutils >=0.12,<0.17", deps, record)
-            
+
         # Retroactively pin a max version of openlibm for julia 1.6.* and 1.7.*:
         # https://github.com/conda-forge/julia-feedstock/issues/169
         # timestamp: 29 December 2021 (osx-64/julia-1.7.1-h132cb31_1.tar.bz2) (+ 1)
