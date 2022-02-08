@@ -953,6 +953,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record['constrains'] = new_constrains
 
         # make sure the libgfortran version is bound from 3 to 4 for osx
+        full_pkg_name = fn.replace('.tar.bz2', '')
         if subdir == "osx-64":
             _fix_libgfortran(fn, record)
             _fix_libcxx(fn, record)
