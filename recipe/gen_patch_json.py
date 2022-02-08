@@ -283,8 +283,6 @@ OSX_SDK_FIXES = {
     'openmpi-4.0.1-hc99cbb1_1': '10.12',
     'openmpi-4.0.1-hc99cbb1_0': '10.12',
     'openmpi-4.0.1-hc99cbb1_2': '10.12',
-    'qt-main-5.15.2-hfc65906_0': '11.0',
-    'qt-main-5.15.2-h76a31b5_1': '11.0',
 }
 
 
@@ -959,10 +957,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _fix_libgfortran(fn, record)
             _fix_libcxx(fn, record)
 
-        if subdir in ['osx-64', 'osx-arm64']:
-            full_pkg_name = fn.replace('.tar.bz2', '')
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
+
+        if subdir in ['osx-arm64']:
+            qt_main_pkgs = ['qt-main-5.15.2-hfc65906_0', 'qt-main-5.15.2-h76a31b5_1']
+            if full_pkg_name in qt_main_pkgs:
+                _fix_qt_main(fn, record)
 
         # make old binutils packages conflict with the new sysroot packages
         # that have renamed the sysroot from conda_cos6 or conda_cos7 to just
@@ -1484,6 +1485,20 @@ def _set_osx_virt_min(fn, record, min_vers):
     run_constrained = list(rconst)
     if dep_idx is None:
         run_constrained.append("__osx >=%s" % min_vers)
+    if run_constrained:
+        record['constrains'] = run_constrained
+
+
+def _fix_qt_main(fn, record):
+    rconst = record.get("constrains", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(rconst)
+         if dep.split(' ')[0] == "__osx"),
+        None
+    )
+    run_constrained = list(rconst)
+    if dep_idx is not None:
+        run_constrained.pop(dep_idx)
     if run_constrained:
         record['constrains'] = run_constrained
 
