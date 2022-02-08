@@ -283,7 +283,7 @@ OSX_SDK_FIXES = {
     'openmpi-4.0.1-hc99cbb1_1': '10.12',
     'openmpi-4.0.1-hc99cbb1_0': '10.12',
     'openmpi-4.0.1-hc99cbb1_2': '10.12',
-    'qt-main-5.15.2-hfc65906_0': '11.0'
+    'qt-main-5.15.2-hfc65906_0': '11.0',
     'qt-main-5.15.2-h76a31b5_1': '11.0',
 }
 
