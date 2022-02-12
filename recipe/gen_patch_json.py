@@ -1297,6 +1297,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             elif record["version"] == "0.7.14":
                 _replace_pin("python >=2.7", "python >=2.7,<3.10", deps, record)
 
+        # Properly depend on clangdev 5.0.0 flang* for flang 5.0
+        if record_name == "flang":
+            deps = record["depends"]
+            if  record['version'] == "5.0.0":
+                deps += ["clangdev * flang*"]
+
+
         if record_name == "tsnecuda":
             # These have dependencies like
             # - libfaiss * *_cuda
