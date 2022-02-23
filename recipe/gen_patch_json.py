@@ -785,6 +785,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if any(dep == "libflang" or dep.startswith("libflang >=5.0.0") for dep in deps) and record.get('timestamp', 0) < 1611789153000:
             record["depends"].append("libflang <6.0.0.a0")
 
+        if any(dep == "ffmpeg" for dep in deps) and record.get('timestamp', 0) < 1645603462892:
+            # https://github.com/conda-forge/ffmpeg-feedstock/pull/115#issuecomment-1020619231
+            record["depends"].append("ffmpeg <4.4")
+
         if any(dep.startswith("libignition-") or dep == 'libsdformat' for dep in deps):
             for dep_idx, _ in enumerate(deps):
                 dep = record['depends'][dep_idx]
