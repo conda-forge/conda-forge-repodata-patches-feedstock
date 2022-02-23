@@ -785,6 +785,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if any(dep == "libflang" or dep.startswith("libflang >=5.0.0") for dep in deps) and record.get('timestamp', 0) < 1611789153000:
             record["depends"].append("libflang <6.0.0.a0")
 
+        # fix run_export from packages built against 4.3; it's corrected now, but the solver
+        # may potentially still pick up an old ffmpeg-build as build dep for something else
+        if any(dep == f"ffmpeg >=4.3.{p},<5.0a0" for dep in deps for p in [0, 1, 2]) and record.get('timestamp', 0) < 1645651093167:
+            # https://github.com/conda-forge/ffmpeg-feedstock/pull/115#issuecomment-1020619231
+            _pin_stricter(fn, record, "ffmpeg", "x.x")
+
         if any(dep.startswith("libignition-") or dep == 'libsdformat' for dep in deps):
             for dep_idx, _ in enumerate(deps):
                 dep = record['depends'][dep_idx]
