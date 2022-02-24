@@ -1320,6 +1320,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "napari" and record.get("timestamp", 0) < 1642529454000:  # 2022-01-18
             _replace_pin("pillow", "pillow !=7.1.0,!=7.1.1", record.get("depends", []), record)
 
+        # oiffile depends on python >=3.8 not python >=3.7
+        if record_name == "oiffile":
+            if record["version"] in ["2021.6.6", "2022.2.2"] and record["build"].endswith("_0"):
+                i = record['depends'].index('python >=3.7')
+                record['depends'][i] = 'python >=3.8'
+
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False
