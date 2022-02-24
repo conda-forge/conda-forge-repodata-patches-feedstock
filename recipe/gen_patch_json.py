@@ -1365,6 +1365,21 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         _dep_parts = list(_dep_parts) + ["<3.5.0a0"]
                     depends[i] = " ".join(_dep_parts)
                 record["depends"] = depends
+
+        # Fix depends for python-benedict 0.25.0, see https://github.com/conda-forge/python-benedict-feedstock/pull/11
+        if record_name == "python-benedict" and record["version"] == "0.25.0" and record["build_number"] == 0:
+            _replace_pin("ftfy", "ftfy >=6.0.0,<7.0.0", record["depends"], record)
+            _replace_pin("mailchecker", "mailchecker >=4.1.0,<5.0.0", record["depends"], record)
+            _replace_pin("phonenumbers", "phonenumbers >=8.12.0,<9.0.0", record["depends"], record)
+            _replace_pin("python >=3.4", "python >=3.6", record["depends"], record)
+            _replace_pin("python-dateutil", "python-dateutil >=2.8.0,<3.0.0", record["depends"], record)
+            _replace_pin("python-fsutil", "python-fsutil >=0.6.0,<1.0.0", record["depends"], record)
+            _replace_pin("python-slugify", "python-slugify >=6.0.1,<7.0.0", record["depends"], record)
+            _replace_pin("pyyaml", "pyyaml >=6.0,<7.0", record["depends"], record)
+            _replace_pin("requests", "requests >=2.26.0,<3.0.0", record["depends"], record)
+            record["depends"].remove("six")
+            _replace_pin("toml", "toml >=0.10.2,<1.0.0", record["depends"], record)
+            _replace_pin("xmltodict", "xmltodict >=0.12.0,<1.0.0", record["depends"], record)
     return index
 
 
