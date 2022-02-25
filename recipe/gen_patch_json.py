@@ -1380,6 +1380,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record["depends"].remove("six")
             _replace_pin("toml", "toml >=0.10.2,<1.0.0", record["depends"], record)
             _replace_pin("xmltodict", "xmltodict >=0.12.0,<1.0.0", record["depends"], record)
+
+        if (record_name == "libgdal"
+            and subdir == "linux-64"
+            and record["version"] == "3.4.1"
+            and record["build_number"] == 3):
+            record["depends"].insert(0, "__glibc >=2.17,<3.0.a0")
     return index
 
 
