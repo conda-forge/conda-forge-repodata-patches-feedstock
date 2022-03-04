@@ -854,11 +854,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if any(dep.startswith("openmpi >=4.0") for dep in deps):
             _pin_looser(fn, record, "openmpi", upper_bound="5.0")
         if any(dep.startswith("mpich >=3.3") for dep in deps):
-            _pin_looser(fn, record, "mpich", upper_bound="4.0")
-        if any(dep.startswith("mpich >=3.4,") for dep in deps):
-            _pin_looser(fn, record, "mpich", upper_bound="4.0")
-        if any(dep.startswith("mpich >=3.4.1,") for dep in deps):
-            _pin_looser(fn, record, "mpich", upper_bound="4.0")
+            _pin_looser(fn, record, "mpich", upper_bound="5.0")
+        if any(dep.startswith("mpich >=3.4") for dep in deps):
+            _pin_looser(fn, record, "mpich", upper_bound="5.0")
 
         # TBB 2021 (oneTBB 2021) is incompatible with previous releases.
         if has_dep(record, "tbb") and record.get('timestamp', 0) < 1614809400000:
