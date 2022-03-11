@@ -5,7 +5,7 @@ Home: https://github.com/conda-forge/conda-forge-repodata-patches-feedstock
 
 Package license: CC-PDDC
 
-Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/blob/master/LICENSE.txt)
+Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/blob/main/LICENSE.txt)
 
 Summary: generate tweaks to index metadata, hosted separately from anaconda.org index
 
@@ -15,8 +15,8 @@ Current build status
 
 <table><tr><td>All platforms:</td>
     <td>
-      <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=5520&branchName=master">
-        <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/conda-forge-repodata-patches-feedstock?branchName=master">
+      <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=5520&branchName=main">
+        <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/conda-forge-repodata-patches-feedstock?branchName=main">
       </a>
     </td>
   </tr>
