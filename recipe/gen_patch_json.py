@@ -707,7 +707,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if 'taurus >=4.7.0' in record['depends']:
                 i = record['depends'].index('taurus >=4.7.0')
                 record['depends'][i] = 'taurus >=4.7.0,<5'
-                
+
         if record_name == 'zipp':
             # zipp >=3.7 requires python >=3.7 but it was missed
             # https://github.com/conda-forge/zipp-feedstock/pull/29
@@ -1150,6 +1150,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 record.get('timestamp', 0) < 1583200976700):
             _replace_pin('boost-cpp >=1.71', 'boost-cpp >=1.71.0,<1.71.1.0a0', deps, record)
 
+        # jinja2 >=2.9,<3 (meaning 2.9.x, 2.10.x and 2.11.x) have known
+        # incompatibilities with markupsafe >=2.1 and we are constraining
+        # markupsafe <2 to be on the safe side
+        # https://github.com/pallets/jinja/issues/1585
+        if record_name == "jinja2" and record['version'].startswith(
+                ('2.9.', '2.10.', '2.11.')):
+            markupsafe = 'markupsafe >=0.23'
+            if markupsafe in record['depends']:
+                i = record['depends'].index(markupsafe)
+                record['depends'][i] = 'markupsafe >=0.23,<2'
+
         # Version constraints for jupyterlab in jupyterlab-git<=0.22.0 were incorrect.
         # These have been corrected in PR
         # https://github.com/conda-forge/jupyterlab-git-feedstock/pull/27
@@ -1284,7 +1295,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "sphinx" and (record["version"].startswith("3.") or record["version"].startswith("2.")):
             deps = record["depends"]
             _replace_pin("docutils >=0.12", "docutils >=0.12,<0.17", deps, record)
-            
+
         # Retroactively pin a max version of openlibm for julia 1.6.* and 1.7.*:
         # https://github.com/conda-forge/julia-feedstock/issues/169
         # timestamp: 29 December 2021 (osx-64/julia-1.7.1-h132cb31_1.tar.bz2) (+ 1)
