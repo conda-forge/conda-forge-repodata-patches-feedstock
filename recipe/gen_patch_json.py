@@ -1391,6 +1391,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and record["version"] == "3.4.1"
             and record["build_number"] == 3):
             record["depends"].insert(0, "__glibc >=2.17,<3.0.a0")
+
+        # Fix depends for pytest-flake8-1.1.1 https://github.com/conda-forge/pytest-flake8-feedstock/pull/21
+        if record_name == "pytest-flake8" and record["version"] == "1.1.1" and record["build_number"] == 0:
+            _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
+            _replace_pin("flake8 >=3.5", "flake8 >=4.0", record["depends"], record)
+            _replace_pin("pytest >=3.5", "pytest >=7.0", record["depends"], record)
+
     return index
 
 
