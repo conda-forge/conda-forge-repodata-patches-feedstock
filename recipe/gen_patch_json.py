@@ -456,7 +456,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             '3.5': 'vc 14.*',
             '3.6': 'vc 14.*',
             '3.7': 'vc 14.*',
-            '3.8': 'vc 14.*',
+            '3.8': 'vc 14.1.*',
+            '3.9': 'vc 14.1.*',
+            '3.10': 'vc 14.1.*',
         }
         for fn, record in index.items():
             record_name = record['name']
