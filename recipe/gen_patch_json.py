@@ -1391,6 +1391,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and record["version"] == "3.4.1"
             and record["build_number"] == 3):
             record["depends"].insert(0, "__glibc >=2.17,<3.0.a0")
+            
+        # Fix depends for openff-bespokefit-0.1.0 https://github.com/conda-forge/openff-bespokefit-feedstock/issues/3
+        if record_name == "openff-bespokefit" and record["version"] in ["0.1.0", "0.1.1"] and record["build_number"] == 0:
+            _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
+
     return index
 
 
