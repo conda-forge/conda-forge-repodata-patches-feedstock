@@ -459,7 +459,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         }
         for fn, record in index.items():
             record_name = record['name']
-            if record_name == 'python':
+            if record_name == 'python' and 'pypy' not in record['build']:
                 # remove the track_features key
                 if 'track_features' in record:
                     record['track_features'] = None
@@ -707,7 +707,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if 'taurus >=4.7.0' in record['depends']:
                 i = record['depends'].index('taurus >=4.7.0')
                 record['depends'][i] = 'taurus >=4.7.0,<5'
-                
+
         if record_name == 'zipp':
             # zipp >=3.7 requires python >=3.7 but it was missed
             # https://github.com/conda-forge/zipp-feedstock/pull/29
@@ -1284,7 +1284,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "sphinx" and (record["version"].startswith("3.") or record["version"].startswith("2.")):
             deps = record["depends"]
             _replace_pin("docutils >=0.12", "docutils >=0.12,<0.17", deps, record)
-            
+
         # Retroactively pin a max version of openlibm for julia 1.6.* and 1.7.*:
         # https://github.com/conda-forge/julia-feedstock/issues/169
         # timestamp: 29 December 2021 (osx-64/julia-1.7.1-h132cb31_1.tar.bz2) (+ 1)
