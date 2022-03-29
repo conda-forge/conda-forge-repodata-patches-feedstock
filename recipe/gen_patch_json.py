@@ -1048,6 +1048,21 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_depends.append("setuptools <60.0.0")
             record["depends"] = new_depends
 
+        # setuptools started raising a warning when using `LooseVersion` from distutils
+        # since packages don't tend to pin setuptools, this raises warnings in old versions
+        # https://github.com/conda-forge/conda-forge.github.io/issues/1575
+        if (
+            record_name == "panel"
+            and record.get("timestamp", 0) < 1648623600000  # 2022-03-30
+        ):
+            new_depends = record.get("depends", [])
+            if "setuptools" in new_depends:
+                i = new_depends.index("setuptools")
+                new_depends[i] = "setuptools >=42,<61"
+            else:
+                new_depends.append("setuptools >=42,<61")
+            record["depends"] = new_depends
+
         # old CDTs with the conda_cos6 or conda_cos7 name in the sysroot need to
         # conflict with the new CDT and compiler packages
         # all of the new CDTs and compilers depend on the sysroot_{subdir} packages
