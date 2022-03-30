@@ -1402,7 +1402,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # issues in click 8.1.0 cause failures for older versions of dask-cuda
         if record_name == "dask-cuda" and record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
             new_depends = record.get("depends", [])
-            new_depends += ["click <8.1", "__unix"]
+            new_depends += ["click ==8.0.4", "__unix"]
             record["depends"] = new_depends
 
     return index
