@@ -739,7 +739,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
-        if subdir in ["osx-64", "osx-arm64"] and record.get('timestamp', 0) < 1644377400000 and \
+        if subdir in ["osx-64", "osx-arm64"] and record.get('timestamp', 0) < 1646796600000 and \
                 any(dep.startswith("fontconfig") for dep in deps):
             for dep in deps:
                 if not dep.startswith("fontconfig >=2.13"):
