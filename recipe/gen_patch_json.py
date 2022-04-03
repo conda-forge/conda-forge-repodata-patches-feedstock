@@ -739,6 +739,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
+        if record.get('timestamp', 0) < 1646796600000 and \
+                any(dep.startswith("fontconfig") for dep in deps):
+            for dep in deps:
+                if not dep.startswith("fontconfig >=2.13"):
+                    continue
+                if not dep.startswith("fontconfig >=2.13.96"):
+                    _pin_stricter(fn, record, "fontconfig", "x", upper_bound="2.13.96")
+                    break
+                else:
+                    #FIXME: not sure how to fix these packages
+
         i = -1
         with suppress(ValueError):
             i = deps.index("cudatoolkit 11.2|11.2.*")
