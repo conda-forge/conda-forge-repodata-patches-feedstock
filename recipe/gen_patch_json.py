@@ -749,6 +749,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     break
                 else:
                     #FIXME: not sure how to fix these packages
+                    pass
 
         i = -1
         with suppress(ValueError):
