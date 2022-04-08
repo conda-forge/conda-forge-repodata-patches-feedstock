@@ -1410,6 +1410,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _replace_pin("flake8 >=3.5", "flake8 >=4.0", record["depends"], record)
             _replace_pin("pytest >=3.5", "pytest >=7.0", record["depends"], record)
 
+        # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
+        # issues in click 8.1.0 cause failures for older versions of dask-cuda
+        if record_name == "dask-cuda" and record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
+            new_depends = record.get("depends", [])
+            new_depends += ["click ==8.0.4", "__linux"]
+            record["depends"] = new_depends
+
     return index
 
 
