@@ -1417,6 +1417,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_depends += ["click ==8.0.4", "__linux"]
             record["depends"] = new_depends
 
+        # Fix pins for psiresp to avoid pulling in very old QCFractal versions
+        # This is fixed from 0.4.2 onwards but should be fixed for older versions too
+        # https://github.com/lilyminium/psiresp/issues/93
+        if record_name == "psiresp" and record["version"] in ["0.3.1", "0.4.0", "0.4.1"]:
+                _replace_pin("qcfractal", "qcfractal >=0.15", record["depends"], record)
+        elif record_name == "psiresp-base":
+            if record["version"] in ["0.3.1", "0.4.0", "0.4.1"]:
+                if record["version"] == "0.3.1" and record["build_number"] == 0:
+                    record["depends"].append("pydantic >=1.9")
+                else:
+                    _replace_pin("pydantic", "pydantic >=1.9", record["depends"], record)
+                    _replace_pin("pydantic >=1.0", "pydantic >=1.9", record["depends"], record)
+
     return index
 
 
