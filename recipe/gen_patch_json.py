@@ -71,6 +71,7 @@ REMOVALS = {
         "pygpu-0.6.5-0.tar.bz2",
         "pytest-regressions-1.0.1-0.tar.bz2",
         "rapidpy-2.5.2-py36_0.tar.bz2",
+        "scikit-learn-0.24.2-py310hffb9edd_2.tar.bz2",
         "smesh-8.3.0b0-1.tar.bz2",
         "statuspage-0.3.3-0.tar.bz2",
         "statuspage-0.4.0-0.tar.bz2",
@@ -79,6 +80,12 @@ REMOVALS = {
         "statuspage-0.5.1-0.tar.bz2",
         "tokenize-rt-2.0.1-py27_0.tar.bz2",
         "vaex-core-0.4.0-py27_0.tar.bz2",
+    ),
+    "linux-aarch64": (
+        "scikit-learn-0.24.2-py310h960e1e0_2.tar.bz2",
+    ),
+    "linux-ppc64le": (
+        "scikit-learn-0.24.2-py310h1063a06_2.tar.bz2",
     ),
     "osx-64": (
         "adios-1.13.1-py36hbecc8f4_0.tar.bz2",
@@ -118,6 +125,7 @@ REMOVALS = {
         "pytest-regressions-1.0.1-0.tar.bz2",
         "reentry-1.1.0-py27_0.tar.bz2",
         "resampy-0.2.0-py27_0.tar.bz2",
+        "scikit-learn-0.24.2-py310hddb2b46_2.tar.bz2",
         "statuspage-0.3.3-0.tar.bz2",
         "statuspage-0.4.0-0.tar.bz2",
         "statuspage-0.4.1-0.tar.bz2",
@@ -128,6 +136,7 @@ REMOVALS = {
         "xtensor-python-0.19.1-h3e44d54_0.tar.bz2",
     ),
     "osx-arm64": (
+        "scikit-learn-0.24.2-py310hdf675a2_2.tar.bz2",
     ),
     "win-32": (
         "compliance-checker-2.2.0-0.tar.bz2",
@@ -189,6 +198,7 @@ REMOVALS = {
         "nlopt-2.4.2-0.tar.bz2",
         "pygpu-0.6.5-0.tar.bz2",
         "pytest-regressions-1.0.1-0.tar.bz2",
+        "scikit-learn-0.24.2-py310h4dafddf_2.tar.bz2",
     ),
 }
 
