@@ -1417,6 +1417,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_depends += ["click ==8.0.4", "__linux"]
             record["depends"] = new_depends
 
+        # libmamba 0.22 introduces API breaking changes
+        # conda-libmamba-solver 22.3.1 and prior are not compatible
+        if record_name == "conda-libmamba-solver" and record.get("timestamp", 0) <= 1650455037727:
+            _replace_pin("libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record)
     return index
 
 
