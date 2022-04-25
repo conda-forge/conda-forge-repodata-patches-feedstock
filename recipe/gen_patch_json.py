@@ -1424,10 +1424,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # typing-extensions 4.2.0 requires python >=3.7. Build 0 incorrectly specified >=3.6. Fixed in
         # https://github.com/conda-forge/typing_extensions-feedstock/pull/30
-        if record_name in ["typing-extensions", "typing_extensions"]:
+        if record_name == "typing_extensions":
             if record["version"] == "4.2.0" and record["build"].endswith("_0"):
-                i = record['depends'].index('python >=3.6')
-                record['depends'][i] = 'python >=3.7'
+                _replace_pin("python >=3.6", "python >=3.7", deps, record)
 
     return index
 
