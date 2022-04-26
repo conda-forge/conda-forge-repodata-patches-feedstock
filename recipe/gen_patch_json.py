@@ -1422,6 +1422,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "conda-libmamba-solver" and record.get("timestamp", 0) <= 1650455037727:
             _replace_pin("libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record)
 
+        if record_name == "qt-webengine" and record["version"] == "5.15.4" and record["build_number"] == 1:
+            # Allow users to depend on qt 5.15.2 or 5.15.3 metapackage
+            record["constrains"] = [c for c in record["constrains"]
+                                    if not c.startswith("qt ")]
+            record["constrains"].append("qt 5.15.2|5.15.3|5.15.4")
+
         # typing-extensions 4.2.0 requires python >=3.7. Build 0 incorrectly specified >=3.6. Fixed in
         # https://github.com/conda-forge/typing_extensions-feedstock/pull/30
         if record_name == "typing_extensions":
