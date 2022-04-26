@@ -1274,6 +1274,21 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_constrains.append("cling ==99999999999")
             record["constrains"] = new_constrains
 
+        # altgraph 0.11.0 and newer make use of `pkg_resources`, but
+        # some of the packages previously did not include `setuptools` as
+        # a requirement. This has since been fixed for new `altgraph` packages.
+        # Though older packages need this added as well via a hot-fix.
+        # So handle this here.
+        if (record_name == "altgraph"
+                and record.get("timestamp", 0) <= 1650870000000
+                and (
+                    pkg_resources.parse_version(record["version"]) >=
+                    pkg_resources.parse_version("0.11.0")
+                )):
+            new_depends = record.get("depends", [])
+            new_depends.append("setuptools")
+            record["depends"] = new_depends
+
         # libcugraph 0.19.0 is compatible with the new calver based version 21.x
         if record_name == "cupy":
             _replace_pin("libcugraph >=0.19.0,<1.0a0", "libcugraph >=0.19.0", record.get("constrains", []), record, target='constrains')
