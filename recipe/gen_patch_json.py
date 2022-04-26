@@ -1162,6 +1162,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 record.get('timestamp', 0) < 1583200976700):
             _replace_pin('boost-cpp >=1.71', 'boost-cpp >=1.71.0,<1.71.1.0a0', deps, record)
 
+        # jinja2 >=2.9,<3 (meaning 2.9.x, 2.10.x and 2.11.x) have known
+        # incompatibilities with markupsafe >=2.1 and we are constraining
+        # markupsafe <2 to be on the safe side
+        # https://github.com/pallets/jinja/issues/1585
+        if record_name == "jinja2" and record['version'].startswith(
+                ('2.9.', '2.10.', '2.11.')):
+            markupsafe = 'markupsafe >=0.23'
+            if markupsafe in record['depends']:
+                i = record['depends'].index(markupsafe)
+                record['depends'][i] = 'markupsafe >=0.23,<2'
+
         # Version constraints for jupyterlab in jupyterlab-git<=0.22.0 were incorrect.
         # These have been corrected in PR
         # https://github.com/conda-forge/jupyterlab-git-feedstock/pull/27
