@@ -1454,6 +1454,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                                     if not c.startswith("qt ")]
             record["constrains"].append("qt 5.15.2|5.15.3|5.15.4")
 
+        # tifffile 2022.2.2 and more recent versions requires python >=3.8.
+        # See https://github.com/conda-forge/tifffile-feedstock/issues/93
+        # Fixed in https://github.com/conda-forge/tifffile-feedstock/pull/94
+        if record_name == "tifffile":
+            if record["version"] >= "2022.2.2" and record["version"] < "2022.4.26":
+                _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
+
         # typing-extensions 4.2.0 requires python >=3.7. Build 0 incorrectly specified >=3.6. Fixed in
         # https://github.com/conda-forge/typing_extensions-feedstock/pull/30
         if record_name == "typing_extensions":
