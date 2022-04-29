@@ -1467,6 +1467,24 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if record["version"] == "4.2.0" and record["build"].endswith("_0"):
                 _replace_pin("python >=3.6", "python >=3.7", deps, record)
 
+        if (
+            record_name == "des-pizza-cutter-metadetect"
+            # and record.get("timestamp", 0) <= 1642249342181
+        ):
+            if any(d == "metadetect" for d in record["depends"]):
+                i = record["depends"].index("metadetect")
+                record["depends"][i] = "metadetect <0.7.0.a0"
+            else:
+                for i in range(len(record["depends"])):
+                    d = record["depends"][i]
+                    if not d.startswith("metadetect "):
+                        continue
+                    d = d.split(" ")
+                    if "<" in d[1]:
+                        _pin_stricter(fn, record, "metadetect", "x.x", "0.7.0")
+                    else:
+                        record["depends"][i] = record["depends"][i] + ",<0.7.0.a0"
+
     return index
 
 
