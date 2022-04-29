@@ -1469,7 +1469,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         if (
             record_name == "des-pizza-cutter-metadetect"
-            and record.get("timestamp", 0) <= 1642249342181
+            and record.get("timestamp", 0) <= 1651245289563  # 2022/04/29
         ):
             if any(d == "metadetect" for d in record["depends"]):
                 i = record["depends"].index("metadetect")
