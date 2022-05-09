@@ -1159,7 +1159,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # Has been corrected on the feedstock in https://github.com/conda-forge/xgcm-feedstock/pull/13/files
         if (record_name == "xgcm" and record["version"] == "0.7.0" and record["build_number"] == 0):
             for wrong_version, right_version in [("python >=3.7", "python >=3.9"), ("xarray >=0.17.0", "xarray >=0.20.0")]:
-                if wrong_version in record["depends"]):
+                if wrong_version in record["depends"]:
                     i = record["depends"].index(wrong_version)
                     record["depends"][i] = right_version
 
