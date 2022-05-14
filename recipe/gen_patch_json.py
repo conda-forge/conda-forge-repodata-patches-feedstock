@@ -1495,7 +1495,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # add missing pins for singularity-hpc
         if record_name == "singularity-hpc" and record.get("timestamp", 0) < 1652410323526:
-            record["depends"].append("jinja2, jsonschema, requests, ruamel.yaml, spython >=0.2.0")
+            record["depends"].append("jinja2", "jsonschema", "requests", "ruamel.yaml", "spython >=0.2.0")
 
     return index
 
