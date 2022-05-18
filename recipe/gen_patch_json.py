@@ -1154,7 +1154,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 "fsspec >=0.8.0" in record["depends"]):
             i = record["depends"].index("fsspec >=0.8.0")
             record["depends"][i] = "fsspec >=0.9.0,<0.10.0"
-            
+
         # Version constraints for python and xarray in xgcm 0.7.0 build 0 were incorrect
         # Has been corrected on the feedstock in https://github.com/conda-forge/xgcm-feedstock/pull/13/files
         if (record_name == "xgcm" and record["version"] == "0.7.0" and record["build_number"] == 0):
@@ -1492,6 +1492,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         _pin_stricter(fn, record, "metadetect", "x.x", "0.7.0")
                     else:
                         record["depends"][i] = record["depends"][i] + ",<0.7.0.a0"
+
+        if any(dep.startswith("svt-av1") for dep in deps):
+            # hmaarrfk -- 2022/05/18
+            # These packages were built with svt-av1 0.8.7 or 0.9
+            # These two versions of svt seem to be compatible with each
+            # other, but they are not compatible with the recently
+            # released 1.1.0
+            _replace_pin("svt-av1", "svt-av1 <1.0.0a0", record["depends"], record)
 
     return index
 
