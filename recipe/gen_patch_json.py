@@ -1493,6 +1493,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     else:
                         record["depends"][i] = record["depends"][i] + ",<0.7.0.a0"
 
+        # add missing pins for singularity-hpc
+        if record_name == "singularity-hpc" and record.get("timestamp", 0) < 1652410323526:
+            record["depends"].append("jinja2")
+            record["depends"].append("jsonschema")
+            record["depends"].append("requests")
+            record["depends"].append("ruamel.yaml")
+            record["depends"].append("spython >=0.2.0")
         if any(dep.startswith("svt-av1") for dep in deps):
             # hmaarrfk -- 2022/05/18
             # These packages were built with svt-av1 0.8.7 or 0.9
