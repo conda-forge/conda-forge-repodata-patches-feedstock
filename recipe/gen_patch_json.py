@@ -1460,6 +1460,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record_name in {"libmamba", "libmambapy"} \
             and record.get("version", 0) == "0.23.3":
             _replace_pin("libstdcxx-ng >=10.3.0", "libstdcxx-ng >=12.1.0", record["depends"], record)
+            _replace_pin("libgcc-ng >=10.3.0", "libgcc-ng >=12.1.0", record["depends"], record)
 
         if record_name == "qt-webengine" and record["version"] == "5.15.4" and record["build_number"] == 1:
             # Allow users to depend on qt 5.15.2 or 5.15.3 metapackage
