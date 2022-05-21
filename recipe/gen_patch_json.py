@@ -1456,6 +1456,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "conda-libmamba-solver" and record.get("timestamp", 0) <= 1650455037727:
             _replace_pin("libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record)
 
+        if subdir == "linux-64" and \
+            record_name in {"libmamba", "libmambapy"} \
+            and record.get("version", 0) == "0.23.3":
+            _replace_pin("libstdcxx-ng >=10.3.0", "libstdcxx-ng >=12.1.0", record["depends"], record)
+            _replace_pin("libgcc-ng >=10.3.0", "libgcc-ng >=12.1.0", record["depends"], record)
+
         if record_name == "qt-webengine" and record["version"] == "5.15.4" and record["build_number"] == 1:
             # Allow users to depend on qt 5.15.2 or 5.15.3 metapackage
             record["constrains"] = [c for c in record["constrains"]
