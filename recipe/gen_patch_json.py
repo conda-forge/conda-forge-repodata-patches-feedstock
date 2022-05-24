@@ -1468,6 +1468,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                                     if not c.startswith("qt ")]
             record["constrains"].append("qt 5.15.2|5.15.3|5.15.4")
 
+        if record_name == "pytorch" and \
+                record["version"] == "1.11.0" and \
+                record["build_number"] <= 1:
+            if record['build'].startswith('cpu'):
+                record["track_features"] = "pytorch-cpu"
+            if record['build'].startswith('cuda'):
+                if '__cuda' not in record['depends']:
+                    record['depends'].append('__cuda')
+
         # tifffile 2022.2.2 and more recent versions requires python >=3.8.
         # See https://github.com/conda-forge/tifffile-feedstock/issues/93
         # Fixed in https://github.com/conda-forge/tifffile-feedstock/pull/94
