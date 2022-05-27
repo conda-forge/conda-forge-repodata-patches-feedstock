@@ -1514,6 +1514,22 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # released 1.1.0
             _replace_pin("svt-av1", "svt-av1 <1.0.0a0", record["depends"], record)
 
+        # Code removed in conda 4.13.0 broke older conda-build releases;
+        # x-ref issue: conda/conda-build#4481
+        if record_name == "conda-build" and (
+                pkg_resources.parse_version(record["version"]) <=
+                pkg_resources.parse_version("3.21.7") or
+                # backported fix in 3.21.8, build 1
+                # (PR: conda-forge/conda-build-feedstock#176)
+                record["version"] == "3.21.8" and record["build_number"] == 0
+                ):
+            for i, dep in enumerate(record["depends"]):
+                dep_name, *dep_other = dep.split()
+                if dep_name == "conda" and ",<" not in dep:
+                    record["depends"][i] = "{} {}<4.13.0".format(
+                        dep_name, dep_other[0] + "," if dep_other else ""
+                        )
+
     return index
 
 
