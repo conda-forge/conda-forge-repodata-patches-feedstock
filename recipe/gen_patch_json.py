@@ -1105,6 +1105,21 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _add_pybind11_abi_constraint(fn, record)
 
         # do some fixes for pytorch, pytorch-cpu & gpu
+        if record_name == "pytorch" and record.get("timestamp", 0) < 1653777188:
+            pversion = pkg_resources.parse_version(record['version'])
+            limit_version = pkg_resources.parse_version("1.10.0")
+            if record["build"].startswith("cpu_") and pversion < limit_version:
+                if "constrains" not in record:
+                    record["constrains"] = [
+                        "pytorch-gpu = 99999999",
+                        f"pytorch-cpu = {record['version']}=*_{record['build_number']}"
+                    ]
+            if record["build"].startswith("cuda") and pversion < limit_version:
+                if "constrains" not in record:
+                    record["constrains"] = [
+                        "pytorch-cpu = 99999999",
+                        f"pytorch-gpu = {record['version']}=*_{record['build_number']}"
+                    ]
         if (
             record_name == "pytorch-cpu"
             and (
