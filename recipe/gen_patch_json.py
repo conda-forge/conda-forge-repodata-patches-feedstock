@@ -1499,6 +1499,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     else:
                         record["depends"][i] = record["depends"][i] + ",<0.7.0.a0"
 
+        if record_name == "pillow":
+            if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("9.1.1"):
+                _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
+            if pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("9.1.1"):
+                if record["build_number"] < 1:
+                    _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
+
         # add missing pins for singularity-hpc
         if record_name == "singularity-hpc" and record.get("timestamp", 0) < 1652410323526:
             record["depends"].append("jinja2")
