@@ -1535,6 +1535,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if record["build_number"] < 1:
                     _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
 
+        if record_name == "freeimage":
+            version = pkg_resources.parse_version(record["version"])
+            if version < pkg_resources.parse_version("3.18.0"):
+                _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
+            if version == pkg_resources.parse_version("3.18.0") and  record["build_number"] < 9:
+                _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
+
         # add missing pins for singularity-hpc
         if record_name == "singularity-hpc" and record.get("timestamp", 0) < 1652410323526:
             record["depends"].append("jinja2")
@@ -1568,7 +1575,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "mamba" and (
             pkg_resources.parse_version(record["version"]) <=
             pkg_resources.parse_version("0.24")):
-            
+
             for i, dep in enumerate(record["depends"]):
                 dep_name, *dep_other = dep.split()
                 if dep_name == "conda" and ",<" not in dep:
