@@ -1203,8 +1203,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # incompatibilities with markupsafe >=2.1 and we are constraining
         # markupsafe <2 to be on the safe side
         # https://github.com/pallets/jinja/issues/1585
-        if record_name == "jinja2" and record['version'].startswith(
-                ('2.9.', '2.10.', '2.11.')):
+        # The constrain was added in 2.11.3 build 1 so we don't want builds
+        # after that.
+        version = record["version"]
+        build = record["build_number"]
+        if record_name == "jinja2" and \
+                (version.startswith(('2.9.', '2.10.')) or 
+                 version in ('2.10', '2.11.0', '2.11.1', '2.11.2') or
+                 (version == '2.11.3' and build == 0)):
             markupsafe = 'markupsafe >=0.23'
             if markupsafe in record['depends']:
                 i = record['depends'].index(markupsafe)
