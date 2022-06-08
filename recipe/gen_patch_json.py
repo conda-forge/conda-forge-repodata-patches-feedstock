@@ -1208,7 +1208,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         version = record["version"]
         build = record["build_number"]
         if record_name == "jinja2" and \
-                (version.startswith(('2.9.', '2.10.')) or 
+                (version.startswith(('2.9.', '2.10.')) or
                  version in ('2.10', '2.11.0', '2.11.1', '2.11.2') or
                  (version == '2.11.3' and build == 0)):
             markupsafe = 'markupsafe >=0.23'
@@ -1585,8 +1585,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         dep_name, dep_other[0] + "," if dep_other else ""
                         )
         if record_name == "mamba" and (
-            pkg_resources.parse_version(record["version"]) <=
-            pkg_resources.parse_version("0.24")):
+            pkg_resources.parse_version(record["version"]) <
+            pkg_resources.parse_version("0.24.0")):
 
             for i, dep in enumerate(record["depends"]):
                 dep_name, *dep_other = dep.split()
@@ -1597,7 +1597,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         if record_name == "aesara" and (
             pkg_resources.parse_version(record["version"]) >
-            pkg_resources.parse_version("2.4.0") and 
+            pkg_resources.parse_version("2.4.0") and
             pkg_resources.parse_version(record["version"]) <=
             pkg_resources.parse_version("2.7.1")):
             if record.get("timestamp", 0) <= 1654360235233:
