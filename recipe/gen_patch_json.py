@@ -1600,7 +1600,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             pkg_resources.parse_version("2.4.0") and 
             pkg_resources.parse_version(record["version"]) <=
             pkg_resources.parse_version("2.7.1")):
-
+            if record.get("timestamp", 0) <= 1654360235233:
                 _replace_pin("scipy >=0.14,<1.8.0", "scipy >=0.14", record["depends"], record)
 
 
