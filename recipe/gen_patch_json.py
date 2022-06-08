@@ -1586,14 +1586,26 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         )
         if record_name == "mamba" and (
             pkg_resources.parse_version(record["version"]) <
-            pkg_resources.parse_version("0.24.0")):
-
+            pkg_resources.parse_version("0.24.0") or (
+                (pkg_resources.parse_version(record["version"]) <
+                 pkg_resources.parse_version("0.24.0")) and (
+                     record["build_number"] == 0)
+                 )):
             for i, dep in enumerate(record["depends"]):
                 dep_name, *dep_other = dep.split()
                 if dep_name == "conda" and ",<" not in dep:
                     record["depends"][i] = "{} {}<4.13.0".format(
                         dep_name, dep_other[0] + "," if dep_other else ""
                         )
+        if record_name == "mamba" and (
+            pkg_resources.parse_version(record["version"]) ==
+            pkg_resources.parse_version("0.24.0")) and (
+                record["build_number"] == 1):
+
+            for i, dep in enumerate(record["depends"]):
+                dep_name, *dep_other = dep.split()
+                if dep_name == "conda":
+                    record["depends"][i] = "conda >=4.8"
 
         if record_name == "aesara" and (
             pkg_resources.parse_version(record["version"]) >
