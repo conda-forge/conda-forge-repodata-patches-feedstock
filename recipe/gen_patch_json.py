@@ -1487,7 +1487,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # pyzmq 23.0.0 broke zerorpc-python
         # https://github.com/0rpc/zerorpc-python/issues/251
-        if record_name == "zerorpc-python" and record["version"] == "0.6.3":
+        if record_name == "zerorpc-python" and record["version"] == "0.6.3" and record["build_number"] == 0:
             _replace_pin("pyzmq >=13.1.0", "pyzmq >=13.1.0,<23.0.0", record["depends"], record)
 
         # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
