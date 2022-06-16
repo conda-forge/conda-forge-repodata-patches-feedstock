@@ -882,6 +882,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", deps, record)
         _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", record.get("constrains", []), record, target='constrains')
 
+        # cuDNN v8.3.2 works with all CUDA 11.x, but we mistakenly made conflicting pins
+        if record_name == "cudnn" and record["version"].startswith("8.3.2") and record["build"].endswith("_0"):
+            record["depends"].remove('cudatoolkit >=11.2,<12')
+
         # ROOT 6.22.6 contained an ABI break, we'll always pin on patch releases from now on
         if has_dep(record, "root_base"):
             for i, dep in enumerate(deps):
