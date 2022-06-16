@@ -1216,6 +1216,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record['depends'].index(markupsafe)
                 record['depends'][i] = 'markupsafe >=0.23,<2'
 
+        # To complement the above, markupsafe introduced a run constraint to
+        # only accept jinja2>=3 with markupsafe >=2.1. However, this constraint
+        # is missing from the build 0 of markupsafe 2.1.0 so one could still
+        # install markupsafe 2.1.0 from conda-forge and jinja2 from defaults.
+        # We add that run constraint to the build that was missing it.
+        if record_name == "markupsafe" and \
+            pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("2.1.0") and \
+            not any("jinja2" in constraint for constraint in record.get("constrains", [])):
+            record["constrains"] = record.get("constrains", []) + ["jinja2 >=3"]
+
         # Version constraints for jupyterlab in jupyterlab-git<=0.22.0 were incorrect.
         # These have been corrected in PR
         # https://github.com/conda-forge/jupyterlab-git-feedstock/pull/27
@@ -1619,7 +1629,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             pkg_resources.parse_version("2.7.1")):
             if record.get("timestamp", 0) <= 1654360235233:
                 _replace_pin("scipy >=0.14,<1.8.0", "scipy >=0.14", record["depends"], record)
-
 
     return index
 
