@@ -1639,6 +1639,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 "chardet >=3.0.2,<5",
             ))
  
+        if record_name == "requests" and (
+            pkg_resources.parse_version(record["version"]) ==
+            pkg_resources.parse_version("2.28.0") and 
+            record["build_number"] == 0):
+            record.setdefault('constrains', []).extend((
+                "chardet >=3.0.2,<5",
+            ))
         # Different patch versions of ipopt can be ABI incompatible
         # See https://github.com/conda-forge/ipopt-feedstock/issues/85
         if has_dep(record, "ipopt") and record.get('timestamp', 0) < 1656352053694:
