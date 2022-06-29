@@ -1641,7 +1641,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
  
         if record_name == "requests" and (
             pkg_resources.parse_version(record["version"]) ==
-            pkg_resources.parse_version("2.28.0") and 
+            pkg_resources.parse_version("2.28.0")) and (
             record["build_number"] == 0):
             record.setdefault('constrains', []).extend((
                 "chardet >=3.0.2,<5",
