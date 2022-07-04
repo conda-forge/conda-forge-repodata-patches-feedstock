@@ -1630,6 +1630,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if record.get("timestamp", 0) <= 1654360235233:
                 _replace_pin("scipy >=0.14,<1.8.0", "scipy >=0.14", record["depends"], record)
 
+        if record_name == "aesara-base":
+            if (
+                pkg_resources.parse_version(record["version"]) ==
+                pkg_resources.parse_version("2.7.4")
+            ) and (
+                record["build_number"] == 1 and subdir.startswith("win-")
+            ):
+                record["depends"].append("libpython >=2.0")
+
         if record_name == "requests" and (
             pkg_resources.parse_version(record["version"]) >=
             pkg_resources.parse_version("2.26.0") and
