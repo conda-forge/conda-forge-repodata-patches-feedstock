@@ -1637,7 +1637,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             ) and (
                 record["build_number"] == 1 and subdir.startswith("win-")
             ):
-                record["depends"].append("libpython >=2.0")
+                record["depends"].append("libpython >=2.2")
 
         if record_name == "requests" and (
             pkg_resources.parse_version(record["version"]) >=
