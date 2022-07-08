@@ -1660,6 +1660,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if has_dep(record, "ipopt") and record.get('timestamp', 0) < 1656352053694:
             _pin_stricter(fn, record, "ipopt", "x.x.x")
 
+        if record_name == "pdf2image":
+            dependencies = record["depends"]
+            if not any(dep.split(' ')[0] == "poppler" for dep in dependencies):
+                # Some versions of pdf2image are missing the runtime dependency on poppler, see https://github.com/conda-forge/pdf2image-feedstock/pull/17
+                dependencies.append("poppler")
+
     return index
 
 
