@@ -127,6 +127,8 @@ REMOVALS = {
         "vlfeat-0.9.20-h470a237_2.tar.bz2",
         "xtensor-python-0.19.1-h3e44d54_0.tar.bz2",
     ),
+    "osx-arm64": (
+    ),
     "win-32": (
         "compliance-checker-2.2.0-0.tar.bz2",
         "compliance-checker-3.0.3-py27_0.tar.bz2",
