@@ -1662,9 +1662,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         if record_name == "pandas" and (
             pkg_resources.parse_version(record["version"]) >=
-            pkg_resources.parse_version("0.14.0") and
+            pkg_resources.parse_version("1.14.0") and
             pkg_resources.parse_version(record["version"]) <=
-            pkg_resources.parse_version("0.14.2")):
+            pkg_resources.parse_version("1.14.2")):
             _replace_pin("python-dateutil >=2.7.3", "python-dateutil >=2.8.1", record["depends"], record)
             _replace_pin("pytz >=2017.2", "pytz >=2020.1", record["depends"], record)
 
