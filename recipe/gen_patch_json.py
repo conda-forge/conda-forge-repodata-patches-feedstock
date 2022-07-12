@@ -1647,10 +1647,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record.setdefault('constrains', []).extend((
                 "chardet >=3.0.2,<5",
             ))
- 
+
         if record_name == "requests" and (
             pkg_resources.parse_version(record["version"]) ==
-            pkg_resources.parse_version("2.28.0") and 
+            pkg_resources.parse_version("2.28.0") and
             record["build_number"] == 0):
             record.setdefault('constrains', []).extend((
                 "chardet >=3.0.2,<5",
@@ -1667,6 +1667,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             pkg_resources.parse_version("1.14.2")):
             _replace_pin("python-dateutil >=2.7.3", "python-dateutil >=2.8.1", record["depends"], record)
             _replace_pin("pytz >=2017.2", "pytz >=2020.1", record["depends"], record)
+
+        if (record_name == "keyring" and
+                record["version"] == "23.6.0" and
+                record["build_number"] == 0):
+            for i, dep in enumerate(record["depends"]):
+                dep_name = dep.split()[0]
+                if dep_name == "importlib_metadata" and ">=" not in dep:
+                    record["depends"][i] = "importlib_metadata >=3.6"
 
     return index
 
