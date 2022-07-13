@@ -739,6 +739,27 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if "ntl" in deps and record_name != "sage":
             _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
 
+        if (
+            record_name in {"slepc", "petsc4py", "slepc4py"}
+            and record.get("timestamp", 0) < 1657407373000
+            and record.get("version").startswith("3.17.")
+        ):
+            # rename scalar pins to workaround conda bug #11612
+            for dep in list(deps):
+                dep_name, *version_build = dep.split()
+                if dep_name not in {"petsc", "slepc", "petsc4py"}:
+                    continue
+                if len(version_build) < 2:
+                    # version only, no build pin
+                    continue
+                version_pin, build_pin = version_build[:2]
+                for scalar in ("real", "complex"):
+                    old_build = f"*{scalar}*"
+                    if build_pin == f"*{scalar}*":
+                        new_build = f"{scalar}_*"
+                        new_dep = f"{dep_name} {version_pin} {new_build}"
+                        _replace_pin(dep, new_dep, deps, record)
+
         if subdir in ["osx-64", "osx-arm64"] and record.get('timestamp', 0) < 1646796600000 and \
                 any(dep.startswith("fontconfig") for dep in deps):
             for dep in deps:
