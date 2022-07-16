@@ -1548,9 +1548,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # tifffile 2022.2.2 and more recent versions requires python >=3.8.
         # See https://github.com/conda-forge/tifffile-feedstock/issues/93
         # Fixed in https://github.com/conda-forge/tifffile-feedstock/pull/94
-        if record_name == "tifffile":
-            if record["version"] >= "2022.2.2" and record["version"] < "2022.4.26":
-                _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
+        if (
+            record_name == "tifffile"
+            and pkg_resources.parse_version(record["version"]) >= pkg_resources.parse_version("2022.2.2")
+            and pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("2022.4.26")
+        ):
+            _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
 
         # typing-extensions 4.2.0 requires python >=3.7. Build 0 incorrectly specified >=3.6. Fixed in
         # https://github.com/conda-forge/typing_extensions-feedstock/pull/30
