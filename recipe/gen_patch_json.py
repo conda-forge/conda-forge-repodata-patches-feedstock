@@ -1578,6 +1578,23 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         _pin_stricter(fn, record, "metadetect", "x.x", "0.7.0")
                     else:
                         record["depends"][i] = record["depends"][i] + ",<0.7.0.a0"
+        if (
+            record_name == "metadetect"
+            and record.get("timestamp", 0) <= 1651593228024  # 2022/05
+        ):
+            if any(d == "ngmix" for d in record["depends"]):
+                i = record["depends"].index("ngmix")
+                record["depends"][i] = "ngmix <2.1.0a0"
+            else:
+                for i in range(len(record["depends"])):
+                    d = record["depends"][i]
+                    if not d.startswith("ngmix "):
+                        continue
+                    d = d.split(" ")
+                    if "<" in d[1]:
+                        _pin_stricter(fn, record, "ngmix", "x.x.x", "2.1.0")
+                    else:
+                        record["depends"][i] = record["depends"][i] + ",<2.1.0a0"
 
         if record_name == "pillow":
             if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("9.1.1"):
