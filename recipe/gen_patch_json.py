@@ -621,9 +621,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # Older versions of distributed break with tornado 6.2.
             # See https://github.com/dask/distributed/pull/6668 for more details.
             v2022_6_1 = pkg_resources.parse_version('2022.6.1')
-            if pversion < v2022_6_1 and 'tornado >=6.0.3' in record['depends']:
-                i = record['depends'].index('tornado >=6.0.3')
-                record['depends'][i] = 'tornado >=6.0.3,<6.2'
+            if pversion < v2022_6_1:
+                record['depends'].append('tornado <6.2')
 
         if record_name == 'fastparquet':
             # fastparquet >= 0.7.0 requires pandas >= 1.0.0
