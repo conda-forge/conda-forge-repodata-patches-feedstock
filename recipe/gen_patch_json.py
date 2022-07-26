@@ -618,6 +618,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record['depends'].index('click >=6.6')
                 record['depends'][i] = 'click >=6.6,<8.0.0'
 
+            # Older versions of distributed break with tornado 6.2.
+            # See https://github.com/dask/distributed/pull/6668 for more details.
+            v2022_6_1 = pkg_resources.parse_version('2022.6.1')
+            if pversion < v2022_6_1:
+                record['depends'].append('tornado <6.2')
+
         if record_name == 'fastparquet':
             # fastparquet >= 0.7.0 requires pandas >= 1.0.0
             # This was taken care of by rebuilding the fastparquet=0.7.0 release
