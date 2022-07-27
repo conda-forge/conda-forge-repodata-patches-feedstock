@@ -1723,6 +1723,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "importlib_metadata" and ">=" not in dep:
                     record["depends"][i] = "importlib_metadata >=3.6"
 
+        # Pin NSIS on constructor
+        # https://github.com/conda/constructor/issues/526
+        if record_name == "constructor" and record.get("timestamp", 0) <= 1658913358571:
+            _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
+
     return index
 
 
