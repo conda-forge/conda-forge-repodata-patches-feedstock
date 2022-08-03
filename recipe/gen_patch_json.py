@@ -618,6 +618,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record['depends'].index('click >=6.6')
                 record['depends'][i] = 'click >=6.6,<8.0.0'
 
+            # click 8.1.0. broke distributed prior to 2022.4.0.
+            v2022_4_0 = pkg_resources.parse_version('2022.4.0')
+            if pversion < v2022_4_0 and 'click >=6.6' in record['depends']:
+                i = record['depends'].index('click >=6.6')
+                record['depends'][i] = 'click >=6.6,<8.1.0'
+                
             # Older versions of distributed break with tornado 6.2.
             # See https://github.com/dask/distributed/pull/6668 for more details.
             v2022_6_1 = pkg_resources.parse_version('2022.6.1')
