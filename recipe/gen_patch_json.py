@@ -738,6 +738,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             depends.append("_r-mutex 1.* anacondar_1")
             record["depends"] = depends
 
+        if (record_name == "scipy" and subdir == "osx-arm64"
+                and record.get('timestamp', 0) < 1659636598216):
+            # openblas 0.3.20 is broken with osx-arm, see
+            # https://github.com/scipy/scipy/issues/16767
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("openblas <0.3.20")
+            record['constrains'] = new_constrains
+
         if record_name == "gcc_impl_{}".format(subdir):
             _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
 
