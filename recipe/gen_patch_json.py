@@ -1723,6 +1723,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "importlib_metadata" and ">=" not in dep:
                     record["depends"][i] = "importlib_metadata >=3.6"
 
+        # The run_exports of antic on macOS were too loose. We add a stricter
+        # pin on all packages built against antic before this was fixed.
+        if record_name in ["libeantic", "e-antic"] and subdir.startswith("osx") and record.get("timestamp", 0) <= 1653062891029:
+            _pin_stricter(fn, record, "antic", "x.x.x")
+
     return index
 
 
