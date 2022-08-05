@@ -1723,6 +1723,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "importlib_metadata" and ">=" not in dep:
                     record["depends"][i] = "importlib_metadata >=3.6"
 
+        if (record_name == "grpcio-status" and
+                record["version"] == "1.48.0" and
+                record["build_number"] == 0):
+            for i, dep in enumerate(record["depends"]):
+                if dep == 'grpcio >=1.46.3':
+                    record["depends"][i] = "grpcio >=1.48.0"
+
     return index
 
 
