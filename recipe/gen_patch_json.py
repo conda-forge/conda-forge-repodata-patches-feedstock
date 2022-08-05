@@ -1730,6 +1730,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep == 'grpcio >=1.46.3':
                     record["depends"][i] = "grpcio >=1.48.0"
 
+        if (record_name == "duet-python" and record["version"] in ["0.2.4", "0.2.5", "0.2.6", "0.2.7"]):
+          _replace_pin("typing-extensions", "typing-extensions ==3.10.0", record["depends"], record)
+
     return index
 
 
