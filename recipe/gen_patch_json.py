@@ -618,6 +618,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record['depends'].index('click >=6.6')
                 record['depends'][i] = 'click >=6.6,<8.0.0'
 
+            # click 8.1.0. broke distributed prior to 2022.4.0.
+            v2022_4_0 = pkg_resources.parse_version('2022.4.0')
+            if pversion < v2022_4_0 and 'click >=6.6' in record['depends']:
+                i = record['depends'].index('click >=6.6')
+                record['depends'][i] = 'click >=6.6,<8.1.0'
+                
             # Older versions of distributed break with tornado 6.2.
             # See https://github.com/dask/distributed/pull/6668 for more details.
             v2022_6_1 = pkg_resources.parse_version('2022.6.1')
@@ -1727,6 +1733,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # https://github.com/conda/constructor/issues/526
         if record_name == "constructor" and record.get("timestamp", 0) <= 1658913358571:
             _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
+
+        if (record_name == "grpcio-status" and
+                record["version"] == "1.48.0" and
+                record["build_number"] == 0):
+            for i, dep in enumerate(record["depends"]):
+                if dep == 'grpcio >=1.46.3':
+                    record["depends"][i] = "grpcio >=1.48.0"
 
     return index
 
