@@ -1712,7 +1712,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # jaxlib was built with grpc-cpp 1.46.4 that 
         # was only available at abseil-cpp 20220623.0
         # and thus it needs to be explicitily constrained
-        # no grpc-cpp fix can fix this retro 
+        # no grpc-cpp fix can fix this retro
+        # fixed in https://github.com/conda-forge/jaxlib-feedstock/pull/133
         if record_name == "jaxlib" and (
             pkg_resources.parse_version(record["version"]) ==
             pkg_resources.parse_version("0.3.15") and
