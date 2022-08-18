@@ -1708,6 +1708,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record.setdefault('constrains', []).extend((
                 "chardet >=3.0.2,<5",
             ))
+        
+        # jaxlib was built with grpc-cpp 1.46.4 that 
+        # was only available at abseil-cpp 20220623.0
+        # and thus it needs to be explicitily constrained
+        # no grpc-cpp fix can fix this retro
+        # fixed in https://github.com/conda-forge/jaxlib-feedstock/pull/133
+        if record_name == "jaxlib" and (
+            pkg_resources.parse_version(record["version"]) ==
+            pkg_resources.parse_version("0.3.15") and
+            record["build_number"] == 0
+        ):
+            record["depends"].append("abseil-cpp ==20220623.0")
+            
         # Different patch versions of ipopt can be ABI incompatible
         # See https://github.com/conda-forge/ipopt-feedstock/issues/85
         if has_dep(record, "ipopt") and record.get('timestamp', 0) < 1656352053694:
