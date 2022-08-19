@@ -1688,7 +1688,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 pkg_resources.parse_version(record["version"]) <=
                 pkg_resources.parse_version("2.7.3")
             ):
-                record["depends"].append("setuptools !=65")
+                _replace_pin('setuptools', 'setuptools !=65.*', deps, record)
 
         if record_name == "aesara-base":
             if (
@@ -1699,14 +1699,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             ):
                 record["depends"].append("libpython >=2.2")
             if record["version"] in ["2.7.8", "2.7.9"]:
-                _replace_pin('setuptools >=45.0.0', 'setuptools >=48.0.0,!=65', deps, record)
+                _replace_pin('setuptools >=45.0.0', 'setuptools >=48.0.0,!=65.*', deps, record)
             if (
                 pkg_resources.parse_version(record["version"]) >=
                 pkg_resources.parse_version("2.7.4") and
                 pkg_resources.parse_version(record["version"]) <=
                 pkg_resources.parse_version("2.7.7")
             ):
-                record["depends"].append("setuptools !=65")
+                record["depends"].append("setuptools !=65.*")
 
         if record_name == "requests" and (
             pkg_resources.parse_version(record["version"]) >=
