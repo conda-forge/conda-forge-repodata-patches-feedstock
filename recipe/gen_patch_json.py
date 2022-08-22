@@ -618,6 +618,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record['depends'].index('click >=6.6')
                 record['depends'][i] = 'click >=6.6,<8.0.0'
 
+            # click 8.1.0. broke distributed prior to 2022.4.0.
+            v2022_4_0 = pkg_resources.parse_version('2022.4.0')
+            if pversion < v2022_4_0 and 'click >=6.6' in record['depends']:
+                i = record['depends'].index('click >=6.6')
+                record['depends'][i] = 'click >=6.6,<8.1.0'
+                
             # Older versions of distributed break with tornado 6.2.
             # See https://github.com/dask/distributed/pull/6668 for more details.
             v2022_6_1 = pkg_resources.parse_version('2022.6.1')
@@ -1702,6 +1708,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record.setdefault('constrains', []).extend((
                 "chardet >=3.0.2,<5",
             ))
+        
+        # jaxlib was built with grpc-cpp 1.46.4 that 
+        # was only available at abseil-cpp 20220623.0
+        # and thus it needs to be explicitily constrained
+        # no grpc-cpp fix can fix this retro
+        # fixed in https://github.com/conda-forge/jaxlib-feedstock/pull/133
+        if record_name == "jaxlib" and (
+            pkg_resources.parse_version(record["version"]) ==
+            pkg_resources.parse_version("0.3.15") and
+            record["build_number"] == 0
+        ):
+            record["depends"].append("abseil-cpp ==20220623.0")
+            
         # Different patch versions of ipopt can be ABI incompatible
         # See https://github.com/conda-forge/ipopt-feedstock/issues/85
         if has_dep(record, "ipopt") and record.get('timestamp', 0) < 1656352053694:
@@ -1723,6 +1742,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "importlib_metadata" and ">=" not in dep:
                     record["depends"][i] = "importlib_metadata >=3.6"
 
+        # Pin NSIS on constructor
+        # https://github.com/conda/constructor/issues/526
+        if record_name == "constructor" and record.get("timestamp", 0) <= 1658913358571:
+            _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
+
+        if (record_name == "grpcio-status" and
+                record["version"] == "1.48.0" and
+                record["build_number"] == 0):
+            for i, dep in enumerate(record["depends"]):
+                if dep == 'grpcio >=1.46.3':
+                    record["depends"][i] = "grpcio >=1.48.0"
+                    
         # The run_exports of antic on macOS were too loose. We add a stricter
         # pin on all packages built against antic before this was fixed.
         if record_name in ["libeantic", "e-antic"] and subdir.startswith("osx") and record.get("timestamp", 0) <= 1653062891029:
