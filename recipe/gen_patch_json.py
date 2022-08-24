@@ -630,6 +630,24 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if pversion < v2022_6_1:
                 record['depends'].append('tornado <6.2')
 
+        if record_name in {"distributed", "dask"}:
+            version = pkg_resources.parse_version(record["version"])
+            if (
+                version >= pkg_resources.parse_version("2021.12.0") and
+                version < pkg_resources.parse_version("2022.8.0") or
+                version == pkg_resources.parse_version("2022.8.0") and
+                record["build_number"] < 2
+            ):
+                for dep in record["depends"]:
+                    if dep.startswith("dask-core") or dep.startswith("distributed"):
+                        pkg = dep.split()[0]
+                        major_minor_patch = record["version"].split(".")
+                        major_minor_patch[2] = str(int(major_minor_patch[2]) + 1)
+                        next_patch_version = ".".join(major_minor_patch)
+                        _replace_pin(
+                            dep, f"{pkg} >={version},<{next_patch_version}.0a0", record["depends"], record
+                        )
+
         if record_name == 'fastparquet':
             # fastparquet >= 0.7.0 requires pandas >= 1.0.0
             # This was taken care of by rebuilding the fastparquet=0.7.0 release
