@@ -1772,6 +1772,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep == 'grpcio >=1.46.3':
                     record["depends"][i] = "grpcio >=1.48.0"
 
+        if record_name == "cylc-rose" and (
+            pkg_resources.parse_version(record["version"]) <
+            pkg_resources.parse_version("0.3")
+        ):
+            for i, dep in enumerate(record["depends"]):
+                dep_name = dep.split(" ", 1)[0]
+                if dep_name in {"cylc-flow", "metomi-rose"}:
+                    record["depends"][i] = dep.replace(">", "=", 1)
+
         if (record_name == "virtualenv" and
                 record["version"] == "20.16.3" and
                 record["build_number"] == 0):
