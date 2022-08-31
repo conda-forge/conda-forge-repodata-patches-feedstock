@@ -1727,6 +1727,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 "chardet >=3.0.2,<5",
             ))
 
+        # the first libabseil[-static] builds did not correctly ensure
+        # that they cannot be co-installed (two conditions)
+        if record_name == "libabseil" and record.get("timestamp", 0) <= 1661962873884:
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("libabseil-static ==99999999999")
+            record["constrains"] = new_constrains
+        if record_name == "libabseil-static" and record.get("timestamp", 0) <= 1661962873884:
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("libabseil ==99999999999")
+            record["constrains"] = new_constrains
+
         # jaxlib was built with grpc-cpp 1.46.4 that
         # was only available at abseil-cpp 20220623.0
         # and thus it needs to be explicitily constrained
