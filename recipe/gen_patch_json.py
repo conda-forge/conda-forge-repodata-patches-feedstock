@@ -623,12 +623,30 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if pversion < v2022_4_0 and 'click >=6.6' in record['depends']:
                 i = record['depends'].index('click >=6.6')
                 record['depends'][i] = 'click >=6.6,<8.1.0'
-                
+
             # Older versions of distributed break with tornado 6.2.
             # See https://github.com/dask/distributed/pull/6668 for more details.
             v2022_6_1 = pkg_resources.parse_version('2022.6.1')
             if pversion < v2022_6_1:
                 record['depends'].append('tornado <6.2')
+
+        if record_name in {"distributed", "dask"}:
+            version = pkg_resources.parse_version(record["version"])
+            if (
+                version >= pkg_resources.parse_version("2021.12.0") and
+                version < pkg_resources.parse_version("2022.8.0") or
+                version == pkg_resources.parse_version("2022.8.0") and
+                record["build_number"] < 2
+            ):
+                for dep in record["depends"]:
+                    if dep.startswith("dask-core") or dep.startswith("distributed"):
+                        pkg = dep.split()[0]
+                        major_minor_patch = record["version"].split(".")
+                        major_minor_patch[2] = str(int(major_minor_patch[2]) + 1)
+                        next_patch_version = ".".join(major_minor_patch)
+                        _replace_pin(
+                            dep, f"{pkg} >={version},<{next_patch_version}.0a0", record["depends"], record
+                        )
 
         if record_name == 'fastparquet':
             # fastparquet >= 0.7.0 requires pandas >= 1.0.0
@@ -1708,8 +1726,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record.setdefault('constrains', []).extend((
                 "chardet >=3.0.2,<5",
             ))
-        
-        # jaxlib was built with grpc-cpp 1.46.4 that 
+
+        # the first libabseil[-static] builds did not correctly ensure
+        # that they cannot be co-installed (two conditions)
+        if record_name == "libabseil" and record.get("timestamp", 0) <= 1661962873884:
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("libabseil-static ==99999999999")
+            record["constrains"] = new_constrains
+        if record_name == "libabseil-static" and record.get("timestamp", 0) <= 1661962873884:
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("libabseil ==99999999999")
+            record["constrains"] = new_constrains
+
+        # jaxlib was built with grpc-cpp 1.46.4 that
         # was only available at abseil-cpp 20220623.0
         # and thus it needs to be explicitily constrained
         # no grpc-cpp fix can fix this retro
@@ -1720,7 +1749,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record["build_number"] == 0
         ):
             record["depends"].append("abseil-cpp ==20220623.0")
-            
+
         # Different patch versions of ipopt can be ABI incompatible
         # See https://github.com/conda-forge/ipopt-feedstock/issues/85
         if has_dep(record, "ipopt") and record.get('timestamp', 0) < 1656352053694:
@@ -1743,7 +1772,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     record["depends"][i] = "importlib_metadata >=3.6"
 
         # Pin NSIS on constructor
-        # https://github.com/conda/constructor/issues/526
+        # https://github.com/conda/constructor/issues/526
         if record_name == "constructor" and record.get("timestamp", 0) <= 1658913358571:
             _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
 
@@ -1753,11 +1782,36 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             for i, dep in enumerate(record["depends"]):
                 if dep == 'grpcio >=1.46.3':
                     record["depends"][i] = "grpcio >=1.48.0"
-                    
+
         # Different patch versions of foonathan-memory have different library names
         # See https://github.com/conda-forge/foonathan-memory-feedstock/pull/7
         if has_dep(record, "foonathan-memory") and record.get('timestamp', 0) < 1661242172938:
             _pin_stricter(fn, record, "foonathan-memory", "x.x.x")
+
+        # The run_exports of antic on macOS were too loose. We add a stricter
+        # pin on all packages built against antic before this was fixed.
+        if record_name in ["libeantic", "e-antic"] and subdir.startswith("osx") and record.get("timestamp", 0) <= 1653062891029:
+            _pin_stricter(fn, record, "antic", "x.x.x")
+
+        if (record_name == "virtualenv" and
+                record["version"] == "20.16.3" and
+                record["build_number"] == 0):
+            new_deps = []
+            for dep in record["depends"]:
+                if dep == "distlib >=0.3.1,<1":
+                    dep = "distlib >=0.3.5,<1"
+                elif dep == "filelock >=3.2,<4":
+                    dep = "filelock >=3.4.1,<4"
+                elif dep == "platformdirs >=2,<3":
+                    dep = "platformdirs >=2.4,<3"
+                elif dep == "six >=1.9.0,<2":
+                    dep = None
+                elif dep == "importlib-metadata >=0.12":
+                    dep = "importlib-metadata >=4.8.3"
+
+                if dep is not None:
+                    new_deps.append(dep)
+            record["depends"] = new_deps
 
     return index
 
