@@ -1782,7 +1782,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             for i, dep in enumerate(record["depends"]):
                 if dep == 'grpcio >=1.46.3':
                     record["depends"][i] = "grpcio >=1.48.0"
-                    
+
+        # Different patch versions of foonathan-memory have different library names
+        # See https://github.com/conda-forge/foonathan-memory-feedstock/pull/7
+        if has_dep(record, "foonathan-memory") and record.get('timestamp', 0) < 1661242172938:
+            _pin_stricter(fn, record, "foonathan-memory", "x.x.x")
+
         # The run_exports of antic on macOS were too loose. We add a stricter
         # pin on all packages built against antic before this was fixed.
         if record_name in ["libeantic", "e-antic"] and subdir.startswith("osx") and record.get("timestamp", 0) <= 1653062891029:
