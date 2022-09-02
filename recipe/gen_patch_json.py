@@ -1782,6 +1782,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             for i, dep in enumerate(record["depends"]):
                 if dep == 'grpcio >=1.46.3':
                     record["depends"][i] = "grpcio >=1.48.0"
+                    
+        # The run_exports of antic on macOS were too loose. We add a stricter
+        # pin on all packages built against antic before this was fixed.
+        if record_name in ["libeantic", "e-antic"] and subdir.startswith("osx") and record.get("timestamp", 0) <= 1653062891029:
+            _pin_stricter(fn, record, "antic", "x.x.x")
 
         if (record_name == "virtualenv" and
                 record["version"] == "20.16.3" and
