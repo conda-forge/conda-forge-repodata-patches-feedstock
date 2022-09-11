@@ -825,6 +825,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _pin_looser(fn, record, "pango", max_pin="x")
             if any(dep.startswith("pango >=5.2") for dep in deps):
                 _pin_looser(fn, record, "xz", max_pin="x")
+            if any(dep.startswith("libxml2 >=2.9") for dep in deps):
+                _pin_looser(fn, record, "libxml2", max_pin="x")
 
         if any(dep.startswith("expat >=2.2.") for dep in deps) or \
                 any(dep.startswith("expat >=2.3.") for dep in deps):
