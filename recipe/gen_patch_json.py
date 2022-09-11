@@ -808,8 +808,23 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if i >= 0:
             deps[i] = "cudatoolkit >=11.2,<12.0a0"
 
-        if any(dep.startswith("libiconv >=1") for dep in deps):
-            _pin_looser(fn, record, "libiconv", max_pin="x")
+        if record.get('timestamp', 0) < 1662860143000:
+            if any(dep.startswith("arpack >=3.7") for dep in deps):
+                _pin_looser(fn, record, "arpack", max_pin="x.x")
+            if any(dep.startswith("libiconv >=1") for dep in deps):
+                _pin_looser(fn, record, "libiconv", max_pin="x")
+            if any(dep.startswith("cairo >=1") for dep in deps):
+                _pin_looser(fn, record, "cairo", max_pin="x")
+            if any(dep.startswith("glpk >=5") for dep in deps):
+                _pin_looser(fn, record, "glpk", max_pin="x")
+            if any(dep.startswith("nlopt >=2.7") for dep in deps):
+                _pin_looser(fn, record, "nlopt", max_pin="x.x")
+            if any(dep.startswith("openjpeg >=2.4") for dep in deps):
+                _pin_looser(fn, record, "openjpeg", max_pin="x")
+            if any(dep.startswith("pango >=1.48") for dep in deps):
+                _pin_looser(fn, record, "pango", max_pin="x")
+            if any(dep.startswith("pango >=5.2") for dep in deps):
+                _pin_looser(fn, record, "xz", max_pin="x")
 
         if any(dep.startswith("expat >=2.2.") for dep in deps) or \
                 any(dep.startswith("expat >=2.3.") for dep in deps):
