@@ -808,8 +808,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if i >= 0:
             deps[i] = "cudatoolkit >=11.2,<12.0a0"
 
-        if "libiconv >=1.15,<1.16.0a0" in deps:
-            _pin_looser(fn, record, "libiconv", upper_bound="1.17.0")
+        if any(dep.startswith("libiconv >=1") for dep in deps):
+            _pin_looser(fn, record, "libiconv", max_pin="x")
 
         if any(dep.startswith("expat >=2.2.") for dep in deps) or \
                 any(dep.startswith("expat >=2.3.") for dep in deps):
