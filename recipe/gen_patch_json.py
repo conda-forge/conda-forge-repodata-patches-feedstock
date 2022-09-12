@@ -1727,6 +1727,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 "chardet >=3.0.2,<5",
             ))
 
+        # the first libabseil[-static] builds did not correctly ensure
+        # that they cannot be co-installed (two conditions)
+        if record_name == "libabseil" and record.get("timestamp", 0) <= 1661962873884:
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("libabseil-static ==99999999999")
+            record["constrains"] = new_constrains
+        if record_name == "libabseil-static" and record.get("timestamp", 0) <= 1661962873884:
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("libabseil ==99999999999")
+            record["constrains"] = new_constrains
+
         # jaxlib was built with grpc-cpp 1.46.4 that
         # was only available at abseil-cpp 20220623.0
         # and thus it needs to be explicitily constrained
@@ -1780,6 +1791,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 dep_name = dep.split(" ", 1)[0]
                 if dep_name in {"cylc-flow", "metomi-rose"}:
                     record["depends"][i] = dep.replace(">", "=", 1)
+
+        # Different patch versions of foonathan-memory have different library names
+        # See https://github.com/conda-forge/foonathan-memory-feedstock/pull/7
+        if has_dep(record, "foonathan-memory") and record.get('timestamp', 0) < 1661242172938:
+            _pin_stricter(fn, record, "foonathan-memory", "x.x.x")
+
+        # The run_exports of antic on macOS were too loose. We add a stricter
+        # pin on all packages built against antic before this was fixed.
+        if record_name in ["libeantic", "e-antic"] and subdir.startswith("osx") and record.get("timestamp", 0) <= 1653062891029:
+            _pin_stricter(fn, record, "antic", "x.x.x")
 
         if (record_name == "virtualenv" and
                 record["version"] == "20.16.3" and
