@@ -1470,6 +1470,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             deps = record["depends"]
             _replace_pin("openlibm", "openlibm <0.8.0", deps, record)
 
+        # Retroactively pin a max version of matplotlib for mapgenerator 1.0.5
+        if record_name == "mapgenerator" and record["version"] == "1.0.5":
+            _replace_pin("matplotlib-base", "matplotlib-base <3.6", record["depends"], record)
+
         # Retroactively pin Python < 3.10 for some older noarch Pony packages, since Pony depends on the parser
         # module removed in 3.10: https://github.com/conda-forge/pony-feedstock/pull/20
         if record_name == "pony":
