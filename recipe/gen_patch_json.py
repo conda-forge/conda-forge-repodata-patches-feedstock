@@ -1830,8 +1830,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     new_deps.append(dep)
             record["depends"] = new_deps
 
-        if any(depend.startswith("openh264 >=2.3.0,<2.4")
-               for depend in record['depends']):
+        if (any(depend.startswith("openh264 >=2.3.0,<2.4")
+                for depend in record['depends']) or
+            any(depend.startswith("openh264 >=2.3.1,<2.4")
+                for depend in record['depends'])):
             _pin_stricter(fn, record, "openh264", "x.x.x")
 
         if (record_name == "thrift_sasl" and
