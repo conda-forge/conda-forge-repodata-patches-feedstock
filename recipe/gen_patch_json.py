@@ -1813,6 +1813,32 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     new_deps.append(dep)
             record["depends"] = new_deps
 
+        if (record_name == "thrift_sasl" and
+                record["version"] == "0.4.3" and
+                record["build_number"] == 0):
+            new_deps = []
+            six_found = False
+            for dep in record["depends"]:
+                if dep in ["pure-sasl", "sasl"]:
+                    dep = "pure-sasl >=0.6.2"
+                if 'six' in dep:
+                    six_found = True
+                new_deps.append(dep)
+            if not six_found:
+                new_deps.append("six >=1.13.0")
+            record["depends"] = new_deps
+
+        if (record_name == "thrift_sasl" and
+                record["version"] == "0.4.3" and
+                record["build_number"] == 1):
+            new_deps = []
+            six_found = False
+            for dep in record["depends"]:
+                if dep == "thrift >=0.13":
+                    dep = "thrift >=0.10.0"
+                new_deps.append(dep)
+            record["depends"] = new_deps
+
     return index
 
 
