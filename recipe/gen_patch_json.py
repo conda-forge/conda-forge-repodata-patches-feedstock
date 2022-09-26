@@ -808,8 +808,25 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if i >= 0:
             deps[i] = "cudatoolkit >=11.2,<12.0a0"
 
-        if "libiconv >=1.15,<1.16.0a0" in deps:
-            _pin_looser(fn, record, "libiconv", upper_bound="1.17.0")
+        if record.get('timestamp', 0) < 1663795137000:
+            if any(dep.startswith("arpack >=3.7") for dep in deps):
+                _pin_looser(fn, record, "arpack", max_pin="x.x")
+            if any(dep.startswith("libiconv >=1") for dep in deps):
+                _pin_looser(fn, record, "libiconv", max_pin="x")
+            if any(dep.startswith("cairo >=1") for dep in deps):
+                _pin_looser(fn, record, "cairo", max_pin="x")
+            if any(dep.startswith("glpk >=5") for dep in deps):
+                _pin_looser(fn, record, "glpk", max_pin="x")
+            if any(dep.startswith("nlopt >=2.7") for dep in deps):
+                _pin_looser(fn, record, "nlopt", max_pin="x.x")
+            if any(dep.startswith("openjpeg >=2.4") for dep in deps):
+                _pin_looser(fn, record, "openjpeg", max_pin="x")
+            if any(dep.startswith("pango >=1.48") for dep in deps):
+                _pin_looser(fn, record, "pango", max_pin="x")
+            if any(dep.startswith("pango >=5.2") for dep in deps):
+                _pin_looser(fn, record, "xz", max_pin="x")
+            if any(dep.startswith("libxml2 >=2.9") for dep in deps):
+                _pin_looser(fn, record, "libxml2", upper_bound="2.11.0")
 
         if any(dep.startswith("expat >=2.2.") for dep in deps) or \
                 any(dep.startswith("expat >=2.3.") for dep in deps):
@@ -1828,6 +1845,38 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 # Any version of ipython_genutils will do. The package is not
                 # developed anymore since it has been dropped by all its consumers.
                 record["depends"].append("ipython_genutils >=0.2.0")
+
+        if (any(depend.startswith("openh264 >=2.3.0,<2.4")
+                for depend in record['depends']) or
+            any(depend.startswith("openh264 >=2.3.1,<2.4")
+                for depend in record['depends'])):
+            _pin_stricter(fn, record, "openh264", "x.x.x")
+
+        if (record_name == "thrift_sasl" and
+                record["version"] == "0.4.3" and
+                record["build_number"] == 0):
+            new_deps = []
+            six_found = False
+            for dep in record["depends"]:
+                if dep in ["pure-sasl", "sasl"]:
+                    dep = "pure-sasl >=0.6.2"
+                if 'six' in dep:
+                    six_found = True
+                new_deps.append(dep)
+            if not six_found:
+                new_deps.append("six >=1.13.0")
+            record["depends"] = new_deps
+
+        if (record_name == "thrift_sasl" and
+                record["version"] == "0.4.3" and
+                record["build_number"] == 1):
+            new_deps = []
+            six_found = False
+            for dep in record["depends"]:
+                if dep == "thrift >=0.13":
+                    dep = "thrift >=0.10.0"
+                new_deps.append(dep)
+            record["depends"] = new_deps
 
     return index
 
