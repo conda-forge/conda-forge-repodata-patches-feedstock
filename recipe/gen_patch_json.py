@@ -1835,8 +1835,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # was originally satisfied indirectly. Newer versions of ipython and
         # traitlets don't pull in ipython_genutils anymore so we need to make
         # that dependency explicit.
-        if (record_name == "ipykernel" and
-                pkg_resources.parse_version(record["version"]) >= pkg_resources.parse_version("4.0.1") and
+        if (record_name == "ipykernel" and record.get("timestamp", 0) <= 1664184744000 and
+                pkg_resources.parse_version("4.0.1") <= 
                 pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("6.5.0")):
             for dep in record["depends"]:
                 if dep.startswith("ipython_genutils"):
