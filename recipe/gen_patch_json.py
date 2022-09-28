@@ -1710,6 +1710,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "conda":
                     record["depends"][i] = "conda >=4.8"
 
+        if record_name == "mamba" and (
+            pkg_resources.parse_version(record["version"]) ==
+            pkg_resources.parse_version("0.25.0")):
+
+            for i, dep in enumerate(record["depends"]):
+                dep_name, *dep_other = dep.split()
+                if dep_name == "conda":
+                    record["depends"][i] = "conda >=4.8,<5"
+
         if record_name == "aesara" and (
             pkg_resources.parse_version(record["version"]) >
             pkg_resources.parse_version("2.4.0") and
