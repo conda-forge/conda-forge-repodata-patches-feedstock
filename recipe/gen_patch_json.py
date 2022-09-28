@@ -1883,13 +1883,31 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 parts = record["depends"][i].split(" ")
                 if parts[0] == "jinja2":
                     if len(parts) == 1:
-                        parts.append("<3")
+                        parts.append("<3a0")
                     elif len(parts) == 2 and "<" not in parts[1]:
                         parts[1] = parts[1] + ",<3a0"
                     record["depends"][i] = " ".join(parts)
                 elif parts[0] == "mistune":
                     if len(parts) == 2 and "<" not in parts[1]:
                         parts[1] = parts[1] + ",<2a0"
+                    record["depends"][i] = " ".join(parts)
+
+        # conda moved to calvar from semver and this broke old versions of
+        # conda smithy that do on-the-fly version checks
+        if (
+            record_name == "conda-smithy"
+            and (
+                pkg_resources.parse_version(record["version"]) <=
+                pkg_resources.parse_version("3.21.1")
+            )
+        ):
+            for i in range(len(record["depends"])):
+                parts = record["depends"][i].split(" ")
+                if parts[0] == "conda":
+                    if len(parts) == 1:
+                        parts.append("<5a0")
+                    elif len(parts) == 2 and "<" not in parts[1]:
+                        parts[1] = parts[1] + ",<5a0"
                     record["depends"][i] = " ".join(parts)
 
     return index
