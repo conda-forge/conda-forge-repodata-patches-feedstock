@@ -1862,6 +1862,27 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_deps.append(dep)
             record["depends"] = new_deps
 
+        # jinja2 3 breaks nbconvert 5
+        # see https://github.com/conda-forge/nbconvert-feedstock/issues/81
+        # the issue there says to pin mistune <1. However some current mistune
+        # pins for v5 are <2, so going with that.
+        if (
+            record_name == "nbconvert"
+            and pkg_resources.parse_version(record["version"]).major == 5
+        ):
+            for i in range(len(record["depends"])):
+                parts = record["depends"][i].split(" ")
+                if parts[0] == "jinja2":
+                    if len(parts) == 1:
+                        parts.append("<3")
+                    elif len(parts) == 2 and "<" not in parts[1]:
+                        parts[1] = parts[1] + ",<3a0"
+                    record["depends"][i] = " ".join(parts)
+                elif parts[0] == "mistune":
+                    if len(parts) == 2 and "<" not in parts[1]:
+                        parts[1] = parts[1] + ",<2a0"
+                    record["depends"][i] = " ".join(parts)
+
     return index
 
 
