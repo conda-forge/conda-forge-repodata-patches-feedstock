@@ -1128,6 +1128,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_depends.append("setuptools <60.0.0")
             record["depends"] = new_depends
 
+        # Fix numcodecs min pin to 0.10.0 for zarr 2.13.2
+        if (
+            record_name in "zarr"
+            and (
+                pkg_resources.parse_version(record["version"])
+                == pkg_resources.parse_version("2.13.2")
+            )
+        ):
+            record["depends"] = [
+                "numcodecs >=0.10.0" if dep == "numcodecs >=0.6.4" else dep
+                for dep in record.get("depends", [])
+            ]
+
         # old CDTs with the conda_cos6 or conda_cos7 name in the sysroot need to
         # conflict with the new CDT and compiler packages
         # all of the new CDTs and compilers depend on the sysroot_{subdir} packages
