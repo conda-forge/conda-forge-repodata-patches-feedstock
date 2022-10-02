@@ -808,6 +808,22 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if i >= 0:
             deps[i] = "cudatoolkit >=11.2,<12.0a0"
 
+        # cuda-python 11.7.1 is ABI-breaking, currently it impacts rmm & numba
+        if record_name == "rmm":
+            if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("22.08"):
+                # these were built with cuda-python <= 11.7.0
+                _pin_stricter(fn, record, "cuda-python", max_pin="x", upper_bound="11.7.1")
+            if (pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("22.08")
+                and record['build_number'] == 0):
+                # this is built with cuda-python 11.7.1
+                _replace_pin("cuda-python >=11.7,<12.0a0", "cuda-python >=11.7.1,<12.0a0", deps, record)
+        if (record_name == "numba"
+            and pkg_resources.parse_version(record["version"]) <= pkg_resources.parse_version("0.56.2")):
+            for i, dep in enumerate(record.get("constrains", [])):
+                if dep.startswith("cuda-python"):
+                    record["constrains"][i] = "cuda-python >=11.6,<11.7.1"
+                    break
+
         if record.get('timestamp', 0) < 1663795137000:
             if any(dep.startswith("arpack >=3.7") for dep in deps):
                 _pin_looser(fn, record, "arpack", max_pin="x.x")
@@ -2112,7 +2128,7 @@ def _relax_libssh2_1_x_pinning(fn, record):
         depends[dep_idx] = "libssh2 >=1.8.0,<2.0.0a0"
 
 
-cb_pin_regex = re.compile(r"^>=(?P<lower>\d(\.\d+)*a?),<(?P<upper>\d(\.\d+)*)a0$")
+cb_pin_regex = re.compile(r"^>=(?P<lower>\d{1,2}(\.\d+)*a?),<(?P<upper>\d{1,2}(\.\d+)*)a0$")
 
 def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
     depends = record.get("depends", ())
