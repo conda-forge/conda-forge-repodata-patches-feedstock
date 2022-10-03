@@ -2719,6 +2719,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _replace_pin("jax >=0.3.2", "jax >=0.3.2,<0.4.14", record["depends"], record)
             _replace_pin("jax >=0.2.6", "jax >=0.2.6,<0.4.14", record["depends"], record)
 
+        # orix 0.10.0 dropped Python 3.6 support but first build accidentally included 3.6 support
+        # (https://github.com/conda-forge/orix-feedstock/pull/23)
+        if (
+            record_name == "orix"
+            and record["version"] == "0.10.0"
+            and record["build_number"] == 0
+        ):
+            _replace_pin("python >=3", "python >=3.7", record["depends"], record)
+
     return index
 
 
