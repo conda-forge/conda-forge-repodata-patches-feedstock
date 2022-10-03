@@ -823,11 +823,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep.startswith("cuda-python"):
                     record["constrains"][i] = "cuda-python >=11.6,<11.7.1"
                     break
-        if (record_name == "cuda-python"
-            and pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("11.7.1")
-            and record['build_number'] == 0):
-            # add run_exports
-            deps.append("cuda-python >=11.7.1,<12.0a0")
 
         if record.get('timestamp', 0) < 1663795137000:
             if any(dep.startswith("arpack >=3.7") for dep in deps):
