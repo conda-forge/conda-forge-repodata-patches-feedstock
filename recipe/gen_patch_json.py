@@ -31,6 +31,7 @@ SUBDIRS = (
 
 REMOVALS = {
     "noarch": (
+        "moviepy-1.0.3-pyhd8ed1ab_0.tar.bz2",
         "sendgrid-5.3.0-py_0.tar.bz2",
     ),
     "linux-64": (
