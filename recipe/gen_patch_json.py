@@ -1010,6 +1010,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if any(dep.startswith("pari >=2.13.2") for dep in deps) and record.get('timestamp', 0) < 1625642169000:
             record["depends"].append("pari * *_single")
 
+        if record_name == "minimalkv" and record['version'] == '1.4.0' and record['build_number'] == 0:
+            record["depends"].append("gcsfs")
+
         # patch out bad numba for ngmix
         if (
             record_name == "ngmix"
