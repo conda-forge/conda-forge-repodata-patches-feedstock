@@ -1581,6 +1581,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "zerorpc-python" and record["version"] == "0.6.3" and record["build_number"] == 0:
             _replace_pin("pyzmq >=13.1.0", "pyzmq >=13.1.0,!=23.0.0", record["depends"], record)
 
+        # Fix pyqtgraph 0.13.x requirements
+        # https://github.com/conda-forge/pyqtgraph-feedstock/issues/24
+        # https://github.com/conda-forge/pyqtgraph-feedstock/pull/25
+        if record_name == "pyqtgraph" and record["version"] in ("0.13.0", "0.13.1") and record["build_number"] == 0:
+            _replace_pin("pyside2 >=5.12", "pyside2 >=5.15", record["constrains"], record, target="constrains")
+            _replace_pin("pyqt >=5.12", "pyqt >=5.15", record["constrains"], record, target="constrains")
+            _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
+
         # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
         # issues in click 8.1.0 cause failures for older versions of dask-cuda
         if record_name == "dask-cuda" and record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
