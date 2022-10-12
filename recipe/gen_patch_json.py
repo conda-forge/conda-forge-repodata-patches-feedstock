@@ -1505,8 +1505,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if timestamp < 1642529454000:  # 2022-01-18
                 _replace_pin("pillow", "pillow !=7.1.0,!=7.1.1", record.get("depends", []), record)
             if timestamp < 1661793597230:  # 2022-08-29
-                _replace_pin("vispy >=0.9.4", "vispy >=0.9.4<0.10", record.get("depends", []), record)
-                _replace_pin("vispy >=0.6.4", "vispy >=0.6.4<0.10", record.get("depends", []), record)
+                _replace_pin("vispy >=0.9.4", "vispy >=0.9.4,<0.10", record.get("depends", []), record)
+                _replace_pin("vispy >=0.6.4", "vispy >=0.6.4,<0.10", record.get("depends", []), record)
 
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
