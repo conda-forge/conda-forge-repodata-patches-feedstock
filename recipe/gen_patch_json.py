@@ -285,6 +285,11 @@ OSX_SDK_FIXES = {
     'openmpi-4.0.1-hc99cbb1_2': '10.12',
 }
 
+OSX_SDK_REMOVALS = {
+    'qt-main-5.15.2-hfc65906_0',
+    'qt-main-5.15.2-h76a31b5_1'
+}
+
 
 def _add_removals(instructions, subdir):
     r = requests.get(
@@ -1037,13 +1042,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record['constrains'] = new_constrains
 
         # make sure the libgfortran version is bound from 3 to 4 for osx
+        full_pkg_name = fn.replace('.tar.bz2', '')
         if subdir == "osx-64":
             _fix_libgfortran(fn, record)
             _fix_libcxx(fn, record)
 
-            full_pkg_name = fn.replace('.tar.bz2', '')
+        if subdir in ['osx-64', 'osx-arm64']:
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
+
+            if full_pkg_name in OSX_SDK_REMOVALS:
+                _remove_osx_virtual_dep(fn, record)
 
         # make old binutils packages conflict with the new sysroot packages
         # that have renamed the sysroot from conda_cos6 or conda_cos7 to just
@@ -2070,6 +2079,20 @@ def _set_osx_virt_min(fn, record, min_vers):
     run_constrained = list(rconst)
     if dep_idx is None:
         run_constrained.append("__osx >=%s" % min_vers)
+    if run_constrained:
+        record['constrains'] = run_constrained
+
+
+def _remove_osx_virtual_dep(fn, record):
+    rconst = record.get("constrains", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(rconst)
+         if dep.split(' ')[0] == "__osx"),
+        None
+    )
+    run_constrained = list(rconst)
+    if dep_idx is not None:
+        run_constrained.pop(dep_idx)
     if run_constrained:
         record['constrains'] = run_constrained
 
