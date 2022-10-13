@@ -1948,6 +1948,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         parts[1] = parts[1] + ",<5a0"
                     record["depends"][i] = " ".join(parts)
 
+        if (
+                record_name == "satpy"
+                and record.get("timestamp", 0) <= 1665672000000
+                and record["build_number"] == 0
+                and (pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("0.37.0")
+                or pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("0.37.1"))
+                ):
+            _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
+
     return index
 
 
