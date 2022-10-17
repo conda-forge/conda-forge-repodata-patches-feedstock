@@ -1376,6 +1376,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             depends[depends.index("snowflake-connector-python <3")] = "snowflake-connector-python <3.0.0"
             depends[depends.index("sqlalchemy <2")] = "sqlalchemy >=1.4.0,<2.0.0"
 
+        # https://github.com/conda-forge/snowflake-sqlalchemy-feedstock/pull/15
+        if record_name == "snowflake-sqlalchemy" and "sqlalchemy >=1.4.0,<2.0.0" in record["depends"] and record.get("timestamp", 0) <= 1666005807652:
+            depends = record["depends"]
+            depends[depends.index("sqlalchemy >=1.4.0,<2.0.0")] = "sqlalchemy >=1.4.0,<1.4.42"
+
+        if record_name == "snowflake-sqlalchemy" and "sqlalchemy <2" in record["depends"] and record.get("timestamp", 0) <= 1666005807652:
+            depends = record["depends"]
+            depends[depends.index("sqlalchemy <2")] = "sqlalchemy <1.4.42"
+
         # tzlocal 3.0 needs Python 3.9 (or backports.zoneinfo)
         # fixed in https://github.com/conda-forge/tzlocal-feedstock/pull/10
         if record_name == "tzlocal" and record["version"] == "3.0" and "python >=3.6" in record["depends"]:
