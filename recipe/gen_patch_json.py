@@ -1976,7 +1976,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and record['version'] >= "0.8"
         ):
             record.setdefault('constrains', []).extend((
-                "gxx_linux-64 !=9.5.0  # [clangdev == \"5.*\"] - sysroot_linux-64  # [linux]",
+                "gxx_linux-64 !=9.5.0",
             ))
     return index
 
