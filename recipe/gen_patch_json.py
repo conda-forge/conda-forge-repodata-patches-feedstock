@@ -660,6 +660,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record['depends'].index('pandas >=0.19')
                 record['depends'][i] = 'pandas >=1.0.0'
 
+        # versioneer >=0.23 does not work with python 3.6
+        # versioneer >=0.23,<0.27 allowed python 3.6 to be installed
+        # this fixes those versions to require python >=3.7
+        #
+        # https://github.com/conda-forge/versioneer-feedstock/pull/24#discussion_r1000000027
+        if record_name == 'versioneer':
+            pversion = pkg_resources.parse_version(record['version'])
+            v0_23 = pkg_resources.parse_version('0.23')
+            v0_27 = pkg_resources.parse_version('0.27')
+            if v0_23 <= pversion < v0_27 and 'python >=3.6' in record['depends']:
+                i = record['depends'].index('python >=3.6')
+                record['depends'][i] = 'python >=3.7'
+
         # python-language-server <=0.31.9 requires pyflakes <2.2.2
         # included explicitly in 0.31.10+
         # https://github.com/conda-forge/python-language-server-feedstock/pull/50
