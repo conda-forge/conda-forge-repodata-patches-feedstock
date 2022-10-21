@@ -838,6 +838,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _pin_looser(fn, record, "pango", max_pin="x")
             if any(dep.startswith("pango >=5.2") for dep in deps):
                 _pin_looser(fn, record, "xz", max_pin="x")
+
+        if record.get('timestamp', 0) < 1666320182000:
             if any(dep.startswith("libxml2 >=2.9") for dep in deps):
                 _pin_looser(fn, record, "libxml2", upper_bound="2.11.0")
 
@@ -1527,7 +1529,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # pillow 7.1.0 and 7.1.1 break napari viewer but this wasn't dealt with til latest release
         if record_name == "napari":
-            timestamp = record.get("timestamp", 0) 
+            timestamp = record.get("timestamp", 0)
             if timestamp < 1642529454000:  # 2022-01-18
                 _replace_pin("pillow", "pillow !=7.1.0,!=7.1.1", record.get("depends", []), record)
             if timestamp < 1661793597230:  # 2022-08-29
