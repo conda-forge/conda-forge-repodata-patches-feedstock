@@ -13,7 +13,7 @@ import re
 import requests
 import pkg_resources
 
-from get_license_family import get_license_family
+# from get_license_family import get_license_family
 
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda.anaconda.org"
@@ -494,10 +494,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             else:
                 add_python_abi(record, subdir)
 
-        if "license" in record and "license_family" not in record and record["license"]:
-            family = get_license_family(record["license"])
-            if family:
-                record['license_family'] = family
+        # if "license" in record and "license_family" not in record and record["license"]:
+        #     family = get_license_family(record["license"])
+        #     if family:
+        #         record['license_family'] = family
 
         # remove dependency from constrains for twisted
         if record_name == "twisted":
@@ -1527,7 +1527,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # pillow 7.1.0 and 7.1.1 break napari viewer but this wasn't dealt with til latest release
         if record_name == "napari":
-            timestamp = record.get("timestamp", 0) 
+            timestamp = record.get("timestamp", 0)
             if timestamp < 1642529454000:  # 2022-01-18
                 _replace_pin("pillow", "pillow !=7.1.0,!=7.1.1", record.get("depends", []), record)
             if timestamp < 1661793597230:  # 2022-08-29
@@ -1955,6 +1955,22 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     if len(parts) == 2 and "<" not in parts[1]:
                         parts[1] = parts[1] + ",<2a0"
                     record["depends"][i] = " ".join(parts)
+
+        # Earlier versions of switch_model are marked as compatible with all
+        # versions of pyomo and pyutilib, but are actually incompatible with
+        # some later versions.
+        switch_model_updates = {
+            "2.0.4": [
+                "glpk", "pandas", "pint", "pyomo <=5.6.5", "pyutilib <=5.7.0",
+                "python", "testfixtures"
+            ],
+            "2.0.5": [
+                "glpk", "pandas", "pint", "pyomo <=5.6.8", "pyutilib <=5.7.3",
+                "python", "testfixtures"
+            ]
+        }
+        if record_name == "switch_model" and record["version"] in switch_model_updates:
+            record["depends"] = switch_model_updates[record["version"]]
 
         # conda moved to calvar from semver and this broke old versions of
         # conda smithy that do on-the-fly version checks
