@@ -1527,7 +1527,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # pillow 7.1.0 and 7.1.1 break napari viewer but this wasn't dealt with til latest release
         if record_name == "napari":
-            timestamp = record.get("timestamp", 0) 
+            timestamp = record.get("timestamp", 0)
             if timestamp < 1642529454000:  # 2022-01-18
                 _replace_pin("pillow", "pillow !=7.1.0,!=7.1.1", record.get("depends", []), record)
             if timestamp < 1661793597230:  # 2022-08-29
@@ -1600,6 +1600,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and record["version"] == "3.4.1"
             and record["build_number"] == 3):
             record["depends"].insert(0, "__glibc >=2.17,<3.0.a0")
+
+        if (record_name == "libgdal" and record["version"] == "3.5.2"
+                and record["build_number"] == 4):
+            new_deps = []
+            for dep in record["depends"]:
+                if dep == "tiledb >=2.11,<3.0a0":
+                    dep = "tiledb >=2.11.3,<2.12.0a0"
+                new_deps.append(dep)
+            record["depends"] = new_deps
 
         # Fix depends for pytest-flake8-1.1.1 https://github.com/conda-forge/pytest-flake8-feedstock/pull/21
         if record_name == "pytest-flake8" and record["version"] == "1.1.1" and record["build_number"] == 0:
@@ -1928,7 +1937,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 record["version"] == "0.4.3" and
                 record["build_number"] == 1):
             new_deps = []
-            six_found = False
             for dep in record["depends"]:
                 if dep == "thrift >=0.13":
                     dep = "thrift >=0.10.0"
