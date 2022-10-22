@@ -1631,6 +1631,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _replace_pin("pyqt >=5.12", "pyqt >=5.15", record["constrains"], record, target="constrains")
             _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
 
+        # guidata 1.7.9 not compatible with qtpy >=2.0.0
+        # (previous versions didn't depend on it)
+        # https://github.com/PierreRaybaut/guidata/issues/52
+        # https://github.com/PierreRaybaut/guidata/issues/54
+        if record_name == "guidata" and record["version"] == "1.7.9" and record["build_number"] == 0:
+            _replace_pin("qtpy >=1.3", "qtpy >=1.3,<2.0", record["depends"], record)
+
         # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
         # issues in click 8.1.0 cause failures for older versions of dask-cuda
         if record_name == "dask-cuda" and record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
