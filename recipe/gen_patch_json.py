@@ -1914,6 +1914,22 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     new_deps.append(dep)
             record["depends"] = new_deps
 
+        # ipykernel >=4.0.1,<6.5.0 needs ipython_genutils. Old versions of
+        # ipython and traitlets depend on ipython_genutils so the dependency
+        # was originally satisfied indirectly. Newer versions of ipython and
+        # traitlets don't pull in ipython_genutils anymore so we need to make
+        # that dependency explicit.
+        if (record_name == "ipykernel" and record.get("timestamp", 0) <= 1664184744000 and
+                pkg_resources.parse_version("4.0.1") <= 
+                pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("6.5.0")):
+            for dep in record["depends"]:
+                if dep.startswith("ipython_genutils"):
+                    break
+            else:
+                # Any version of ipython_genutils will do. The package is not
+                # developed anymore since it has been dropped by all its consumers.
+                record["depends"].append("ipython_genutils >=0.2.0")
+
         if (any(depend.startswith("openh264 >=2.3.0,<2.4")
                 for depend in record['depends']) or
             any(depend.startswith("openh264 >=2.3.1,<2.4")
