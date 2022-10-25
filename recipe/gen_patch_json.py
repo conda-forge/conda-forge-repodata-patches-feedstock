@@ -1709,6 +1709,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     else:
                         record["depends"][i] = record["depends"][i] + ",<2.1.0a0"
 
+        # datamol <=0.7.18 not compatible with rdkit >=2022.09
+        # datamol 0.8 will be compatible with rdkit>=2022.09 but current packages
+        # should still work and ask for a lower rdkit version.
+        if (
+            record_name == "datamol"
+             and pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("0.7.18")
+        ):
+            _replace_pin("rdkit >=2021.09", "rdkit >=2021.09,<2022.09", record["depends"], record)
+
         if record_name == "pillow":
             if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("9.1.1"):
                 _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
@@ -1923,7 +1932,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # traitlets don't pull in ipython_genutils anymore so we need to make
         # that dependency explicit.
         if (record_name == "ipykernel" and record.get("timestamp", 0) <= 1664184744000 and
-                pkg_resources.parse_version("4.0.1") <= 
+                pkg_resources.parse_version("4.0.1") <=
                 pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("6.5.0")):
             for dep in record["depends"]:
                 if dep.startswith("ipython_genutils"):
