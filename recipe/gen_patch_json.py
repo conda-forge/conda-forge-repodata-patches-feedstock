@@ -1714,9 +1714,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # should still work and ask for a lower rdkit version.
         if (
             record_name == "datamol"
-             and pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("0.7.18")
+             and pkg_resources.parse_version(record["version"]) <= pkg_resources.parse_version("0.7.18")
         ):
-            _replace_pin("rdkit >=2021.09", "rdkit >=2021.09,<2022.09", record["depends"], record)
+            _pin_stricter(fn, record, "rdkit", "x", upper_bound="2022.09")
 
         if record_name == "pillow":
             if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("9.1.1"):
