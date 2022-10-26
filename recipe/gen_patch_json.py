@@ -1475,9 +1475,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "cupy":
             _replace_pin("libcugraph >=0.19.0,<1.0a0", "libcugraph >=0.19.0", record.get("constrains", []), record, target='constrains')
 
-        # retroactively pin dask dependency for older version of dask-sql as it is now being pinned
-        # https://github.com/dask-contrib/dask-sql/issues/302
         if record_name == "dask-sql":
+            # retroactively pin dask dependency for older version of dask-sql as it is now being pinned
+            # https://github.com/dask-contrib/dask-sql/issues/302
             dask_sql_map = {"0.1.0rc2": "2.26.0", "0.1.2": "2.30.0", "0.2.0": "2.30.0", "0.2.2": "2.30.0",
                             "0.3.0": "2021.1.0", "0.3.1": "2021.2.0", "0.3.2": "2021.4.0", "0.3.3": "2021.4.1",
                             "0.3.4": "2021.4.1", "0.3.6": "2021.5.0", "0.3.9": "2021.8.0", "0.4.0": "2021.10.0"}
@@ -1487,6 +1487,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _replace_pin("dask >=2.19.0,<=2021.2.0", f"dask =={dask_sql_map[record['version']]}", deps, record)
             if record["version"] in ["0.3.4", "0.3.6", "0.3.9", "0.4.0"]:
                 _replace_pin("dask >=2.19.0,!=2021.3.0", f"dask =={dask_sql_map[record['version']]}", deps, record)
+
+            # make dask/uvicorn pinnings consistent for older builds of 2022.10.1
+            if record["version"] == "2022.10.1" and record["build_number"] == 0:
+                _replace_pin("dask >=2022.3.0,<=2022.9.2", "dask >=2022.3.0,<=2022.10.0")
+                _replace_pin("uvicorn >=0.11.3", "uvicorn >=0.13.4")
 
         # Retroactively pin a max version of docutils for sphinx 3.x and 2.x since 0.17 broke things as noted upstream:
         # https://github.com/sphinx-doc/sphinx/commit/025f26cd5dba57dfb6a8a036708da120001c6768
