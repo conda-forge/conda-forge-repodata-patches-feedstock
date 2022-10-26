@@ -1490,8 +1490,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
             # make dask/uvicorn pinnings consistent for older builds of 2022.10.1
             if record["version"] == "2022.10.1" and record["build_number"] == 0:
-                _replace_pin("dask >=2022.3.0,<=2022.9.2", "dask >=2022.3.0,<=2022.10.0")
-                _replace_pin("uvicorn >=0.11.3", "uvicorn >=0.13.4")
+                _replace_pin("dask >=2022.3.0,<=2022.9.2", "dask >=2022.3.0,<=2022.10.0", deps, record)
+                _replace_pin("uvicorn >=0.11.3", "uvicorn >=0.13.4", deps, record)
 
         # Retroactively pin a max version of docutils for sphinx 3.x and 2.x since 0.17 broke things as noted upstream:
         # https://github.com/sphinx-doc/sphinx/commit/025f26cd5dba57dfb6a8a036708da120001c6768
