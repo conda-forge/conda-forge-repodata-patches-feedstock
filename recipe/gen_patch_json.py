@@ -1489,6 +1489,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _replace_pin("dask >=2.19.0,!=2021.3.0", f"dask =={dask_sql_map[record['version']]}", deps, record)
 
             # make dask/uvicorn pinnings consistent for older builds of 2022.10.1
+            # https://github.com/conda-forge/dask-sql-feedstock/pull/46#issuecomment-1291416642
             if record["version"] == "2022.10.1" and record["build_number"] == 0:
                 _replace_pin("dask >=2022.3.0,<=2022.9.2", "dask >=2022.3.0,<=2022.10.0", deps, record)
                 _replace_pin("uvicorn >=0.11.3", "uvicorn >=0.13.4", deps, record)
