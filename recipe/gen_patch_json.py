@@ -1704,6 +1704,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         _pin_stricter(fn, record, "metadetect", "x.x", "0.7.0")
                     else:
                         record["depends"][i] = record["depends"][i] + ",<0.7.0.a0"
+        if record_name == "pexpect" and pkg_resources.parse_version(
+            "4.0"
+        ) <= pkg_resources.parse_version(
+            record["version"]
+        ) <= pkg_resources.parse_version(
+            "4.8.0"
+        ) and not any(pyXY in record["build"] for pyXY in ["py27", "py34", "py35", "py36"]):
+            if "ptyprocess >=0.5" not in record["depends"]:
+                if "ptyprocess" in record["depends"]:
+                    _replace_pin("ptyprocess", "ptyprocess >=0.5", record["depends"], record)
+                else:
+                    record["depends"].append("ptyprocess >=0.5")
         if (
             record_name == "metadetect"
             and record.get("timestamp", 0) <= 1651593228024  # 2022/05
