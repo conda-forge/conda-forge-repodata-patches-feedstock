@@ -600,6 +600,20 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record["depends"].index("pyarrow >=0.13.0,!=0.14.0,<2")
                 record["depends"][i] = "pyarrow >=0.17.1,<2"
 
+        if record_name == 'dask':
+            # older versions of dask are incompatible with bokeh=3
+            # https://github.com/dask/community/issues/283#issuecomment-1295095683
+            if record.get('timestamp', 0) < 1667000131632:  # releases prior to 2022.10.1
+                bokeh_pinning = [x for x in record['depends'] if x.startswith('bokeh')]
+                if bokeh_pinning:
+                    bokeh_pinning = bokeh_pinning[0]
+                    _replace_pin(
+                        bokeh_pinning,
+                        bokeh_pinning + (",<3" if bokeh_pinning[-1].isdigit() else " <3"),
+                        deps,
+                        record
+                    )
+                    
         if record_name == 'distributed':
             # distributed <2.11.0 does not work with msgpack-python >=1.0
             # newer versions of distributed require at least msgpack-python >=0.6.0
