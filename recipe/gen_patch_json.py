@@ -1660,6 +1660,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # https://github.com/PierreRaybaut/guidata/issues/54
         if record_name == "guidata" and record["version"] == "1.7.9" and record["build_number"] == 0:
             _replace_pin("qtpy >=1.3", "qtpy >=1.3,<2.0", record["depends"], record)
+        # guiqwt 3.0.5 and 3.0.7 not compatible with qtpy >=2.0.0
+        # (previous versions didn't depend on it)
+        # https://github.com/conda-forge/guiqwt-feedstock/issues/21
+        if record_name == "guiqwt" and record["version"] in ("3.0.5", "3.0.7") and record["build_number"] in (0, 1):
+            _replace_pin("qtpy >=1.3", "qtpy >=1.3,<2.0", record["depends"], record)
 
         # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
         # issues in click 8.1.0 cause failures for older versions of dask-cuda
