@@ -613,7 +613,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         deps,
                         record
                     )
-                    
+        
+        if record_name == 'ratelimiter':
+            if record.get('timestamp', 0) < 1667804400000 and subdir == "noarch":  # noarch builds prior to 2022/11/7
+                _replace_pin('python', "python >=3,<3.11", record['depends'], record)
+        
         if record_name == 'distributed':
             # distributed <2.11.0 does not work with msgpack-python >=1.0
             # newer versions of distributed require at least msgpack-python >=0.6.0
