@@ -20,6 +20,8 @@ requirements:
     - requests
     - tqdm
     - license-expression
+  host:
+  run:
 
 test:
   files:
