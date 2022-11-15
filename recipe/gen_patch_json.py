@@ -499,6 +499,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if family:
                 record['license_family'] = family
 
+        # test dot-conda patches
+        if (
+            record_name == "cf-autotick-bot-test-package"
+            and record["version"] == "0.14"
+            and fn.rsplit(".", 1)[0].endswith("_2")
+        ):
+            record["depends"].append("tqdm")
+
         # remove dependency from constrains for twisted
         if record_name == "twisted":
             new_constrains = [dep for dep in record.get('constrains', ())
@@ -613,7 +621,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         deps,
                         record
                     )
-        
+
         if record_name == 'ratelimiter':
             if record.get('timestamp', 0) < 1667804400000 and subdir == "noarch":  # noarch builds prior to 2022/11/7
                 python_pinning = [
@@ -621,7 +629,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 ]
                 for pinning in python_pinning:
                     _replace_pin(pinning, 'python >=3,<3.11', record['depends'], record)
-        
+
         if record_name == 'distributed':
             # distributed <2.11.0 does not work with msgpack-python >=1.0
             # newer versions of distributed require at least msgpack-python >=0.6.0
@@ -2005,7 +2013,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # traitlets don't pull in ipython_genutils anymore so we need to make
         # that dependency explicit.
         if (record_name == "ipykernel" and record.get("timestamp", 0) <= 1664184744000 and
-                pkg_resources.parse_version("4.0.1") <= 
+                pkg_resources.parse_version("4.0.1") <=
                 pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("6.5.0")):
             for dep in record["depends"]:
                 if dep.startswith("ipython_genutils"):
