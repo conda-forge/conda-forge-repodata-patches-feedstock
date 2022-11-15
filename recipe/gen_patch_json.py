@@ -1837,6 +1837,20 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "conda":
                     record["depends"][i] = "conda >=4.8,<5"
 
+        # Bump minimum `requests` requirement of `anaconda-client` 1.11.0
+        #
+        # https://github.com/conda-forge/anaconda-client-feedstock/pull/35
+        if record_name == "anaconda-client" and (
+            pkg_resources.parse_version(record["version"]) ==
+            pkg_resources.parse_version("1.11.0")):
+
+            i = -1
+            deps = record["depends"]
+            with suppress(ValueError):
+                i = deps.index("requests >=2.9.1")
+            if i >= 0:
+                deps[i] = "requests >=2.20.0"
+
         if record_name == "aesara" and (
             pkg_resources.parse_version(record["version"]) >
             pkg_resources.parse_version("2.4.0") and
