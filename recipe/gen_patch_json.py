@@ -1070,6 +1070,35 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             deps.append("numba !=0.54.0")
             record["depends"] = deps
 
+        # Patch bokeh version restrictions on older panels.
+        if record_name == "panel":
+            deps = record.get("depends", [])
+            bokeh_dep = None
+            if record["version"] in ["0.1.2", "0.1.3"]:
+                bokeh_dep = "bokeh ==0.12.15"
+            elif record["version"] in ["0.3.1", "0.4.0"]:
+                bokeh_dep = "bokeh >=1.0.0,<1.1.0"
+            elif record["version"] in ["0.5.1", "0.6.0"]:
+                bokeh_dep = "bokeh >=1.1.0,<1.2.0"
+            elif record["version"] in ["0.6.2", "0.6.3", "0.6.4"]:
+                bokeh_dep = "bokeh >=1.3.0,<1.4.0"
+            elif record["version"] in ["0.7.0"]:
+                bokeh_dep = "bokeh >=1.4.0,<1.5.0"
+            elif record["version"] in ["0.9.1", "0.9.2", "0.9.3", "0.9.4", "0.9.5"]:
+                bokeh_dep = "bokeh >=2.0,<2.1"
+            elif record["version"] in ["0.9.6", "0.9.7"]:
+                bokeh_dep = "bokeh >=2.1,<2.2"
+            elif record["version"] in ["0.10.0", "0.10.1", "0.10.2", "0.10.3"]:
+                bokeh_dep = "bokeh >=2.2,<2.3"
+            if bokeh_dep:
+                deps = record.get("depends", [])
+                ind = [deps.index(dep) for dep in deps if dep.startswith("bokeh")]
+                if len(ind) == 1:
+                    deps[ind[0]] = bokeh_dep
+                else:
+                    deps.append(bokeh_dep)
+                record["depends"] = deps
+
         llvm_pkgs = ["clang", "clang-tools", "llvm", "llvm-tools", "llvmdev"]
         if record_name in llvm_pkgs:
             new_constrains = record.get('constrains', [])
