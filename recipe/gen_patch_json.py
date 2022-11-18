@@ -795,8 +795,27 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "airflow-with-async":
             _rename_dependency(fn, record, "evenlet", "eventlet")
 
+        # Current implementation in iris allows for frequent SegFaults
+        # when netCDF4>1.6.0; iris devs are working on a solution and
+        # discussing it in https://github.com/SciTools/iris/issues/5016
+        # but a wide repodata patch is needed before a permanent solution
+        iris_deps = [
+            "netcdf4 <1.6.1",
+        ]
+        iris_updates = {
+            "3.1.0": iris_deps,
+            "3.2.0": iris_deps,
+            "3.2.0.post0": iris_deps,
+            "3.2.1": iris_deps,
+            "3.2.1.post0": iris_deps,
+            "3.3.0": iris_deps,
+            "3.3.1": iris_deps,
+            "3.4.0": iris_deps,
+        }
         if record_name == "iris":
             _rename_dependency(fn, record, "nc_time_axis", "nc-time-axis")
+            if record["version"] in iris_updates:
+                record["depends"].extend(iris_updates[record["version"]])
 
         if record_name == "nordugrid-arc" and record.get("timestamp", 0) < 1666690884000:
             record["depends"].append("glibmm-2.4 >=2.58.1")
