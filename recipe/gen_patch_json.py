@@ -1981,6 +1981,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep == 'grpcio >=1.46.3':
                     record["depends"][i] = "grpcio >=1.48.0"
 
+        if record_name == "cylc-rose" and (
+            pkg_resources.parse_version(record["version"]) <
+            pkg_resources.parse_version("0.3")
+        ):
+            for i, dep in enumerate(record["depends"]):
+                dep_name = dep.split(" ", 1)[0]
+                if dep_name in {"cylc-flow", "metomi-rose"}:
+                    record["depends"][i] = dep.replace(">", "=", 1)
+
         # Different patch versions of foonathan-memory have different library names
         # See https://github.com/conda-forge/foonathan-memory-feedstock/pull/7
         if has_dep(record, "foonathan-memory") and record.get('timestamp', 0) < 1661242172938:
