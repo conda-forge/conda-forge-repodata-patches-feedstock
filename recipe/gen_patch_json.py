@@ -807,6 +807,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             "3.2.0": iris_deps,
             "3.2.0.post0": iris_deps,
             "3.2.1": iris_deps,
+            "3.2.1.post0": iris_deps,
             "3.3.0": iris_deps,
             "3.3.1": iris_deps,
             "3.4.0": iris_deps,
