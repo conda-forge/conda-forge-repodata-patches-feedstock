@@ -815,7 +815,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "iris":
             _rename_dependency(fn, record, "nc_time_axis", "nc-time-axis")
             if record["version"] in iris_updates:
-                record["depends"] = iris_updates[record["version"]]
+                record["depends"].extend(iris_updates[record["version"]])
 
         if record_name == "nordugrid-arc" and record.get("timestamp", 0) < 1666690884000:
             record["depends"].append("glibmm-2.4 >=2.58.1")
