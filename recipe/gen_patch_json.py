@@ -1720,7 +1720,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _replace_pin("libmambapy >=0.23", "libmambapy >=0.23,<1.0.0a", record["depends"], record)
             # conda 22.11 introduces the plugin system, which needs a new release
             _replace_pin("conda >=4.12", "conda >=4.12,<22.11.0a", record["depends"], record)
-            _replace_pin("conda >=4.13", "conda >=4.12,<22.11.0a", record["depends"], record)
+            _replace_pin("conda >=4.13", "conda >=4.13,<22.11.0a", record["depends"], record)
 
         if subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"] and \
             record_name in {"libmamba", "libmambapy"} \
