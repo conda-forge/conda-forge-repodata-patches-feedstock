@@ -1716,8 +1716,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "conda-libmamba-solver" and record.get("timestamp", 0) <= 1669391735453:  # 2022-11-25
             # libmamba 0.23 introduces API breaking changes, pin to v0.22
             _replace_pin("libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record)
-            # small issues with libmamba 1.0 (exceptions are different)
-            _replace_pin("libmambapy >=0.23", "libmambapy >=0.23,<1.0.0a", record["depends"], record)
             # conda 22.11 introduces the plugin system, which needs a new release
             _replace_pin("conda >=4.12", "conda >=4.12,<22.11.0a", record["depends"], record)
             _replace_pin("conda >=4.13", "conda >=4.13,<22.11.0a", record["depends"], record)
