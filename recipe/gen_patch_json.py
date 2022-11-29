@@ -2142,6 +2142,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record.setdefault('constrains', []).extend((
                 "gxx_linux-64 !=9.5.0",
             ))
+
+        # Flake8 6 removed some deprecated option parsing APIs and broke these plugins
+        if ((record_name == 'flake8-copyright'
+             and pkg_resources.parse_version(record['version']) <= pkg_resources.parse_version('0.2.3'))
+            or (record_name == 'flake8-quotes'
+             and pkg_resources.parse_version(record['version']) <= pkg_resources.parse_version('3.3.1'))):
+            _replace_pin("flake8", "flake8 <6", record["depends"], record)
+
     return index
 
 
