@@ -1712,10 +1712,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_depends += ["click ==8.0.4", "__linux"]
             record["depends"] = new_depends
 
-        # libmamba 0.22 introduces API breaking changes
-        # conda-libmamba-solver 22.3.1 and prior are not compatible
-        if record_name == "conda-libmamba-solver" and record.get("timestamp", 0) <= 1650455037727:
+        # conda-libmamba-solver uses calver YY.MM.micro
+        if record_name == "conda-libmamba-solver" and record.get("timestamp", 0) <= 1669391735453:  # 2022-11-25
+            # libmamba 0.23 introduces API breaking changes, pin to v0.22
             _replace_pin("libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record)
+            # conda 22.11 introduces the plugin system, which needs a new release
+            _replace_pin("conda >=4.12", "conda >=4.12,<22.11.0a", record["depends"], record)
+            _replace_pin("conda >=4.13", "conda >=4.13,<22.11.0a", record["depends"], record)
 
         if subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"] and \
             record_name in {"libmamba", "libmambapy"} \
