@@ -1705,6 +1705,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "guiqwt" and record["version"] in ("3.0.5", "3.0.7") and record["build_number"] in (0, 1):
             _replace_pin("qtpy >=1.3", "qtpy >=1.3,<2.0", record["depends"], record)
 
+        # exclude libxml2 2.9.11 and 2.9.12 due to https://bugs.launchpad.net/lxml/+bug/1928795
+        # https://github.com/conda-forge/lxml-feedstock/issues/75
+        if record_name == "lxml" and record.get("timestamp", 0) <= 1649691000000: # 4.8.0 build 2 and prior
+            for i, dep in enumerate(record["depends"]):
+                if dep.startswith("libxml2 >=2.9."):
+                    record["depends"][i] = f"{dep},!=2.9.11,!=2.9.12"
+
         # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
         # issues in click 8.1.0 cause failures for older versions of dask-cuda
         if record_name == "dask-cuda" and record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
