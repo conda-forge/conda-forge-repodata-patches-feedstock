@@ -1314,6 +1314,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 "python-lal >=7.1.1",
             ))
 
+        if (
+            record_name == "plotly"
+            and ((pkg_resources.parse_version(record["version"])
+                < pkg_resources.parse_version("5.11.0")
+                ) or (record["version"] == "5.11.0" and record["build_number"] <= 0))
+        ):
+            # The new ipywidgets 8 breaks Plotly, so add a run_constrained requirement.
+            # <https://github.com/conda-forge/plotly-feedstock/issues/115>
+            record.setdefault('constrains', []).extend((
+                "ipywidgets <8.0.0",
+            ))
+
         # Version constraints for azure-storage-common in azure-storage-file
         # 2.1.0 build 0 were incorrect.  These have been corrected in
         # https://github.com/conda-forge/azure-storage-file-feedstock/pull/8
