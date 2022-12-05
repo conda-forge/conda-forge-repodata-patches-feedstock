@@ -1674,6 +1674,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_deps.append(dep)
             record["depends"] = new_deps
 
+        # Fix gmt 6.4.0 builds 3, 4, 5 which didn't properly set GDAL 3.6 pin
+        # See issue at https://github.com/GenericMappingTools/pygmt/issues/2215
+        if (
+            record_name == "gmt"
+            and record["version"] == "6.4.0"
+            and record["build_number"] in [3, 4, 5]
+        ):
+            _replace_pin("gdal", "gdal >=3.6.0,<3.7.0a0", record["depends"], record)
+
         # Fix depends for pytest-flake8-1.1.1 https://github.com/conda-forge/pytest-flake8-feedstock/pull/21
         if record_name == "pytest-flake8" and record["version"] == "1.1.1" and record["build_number"] == 0:
             _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
