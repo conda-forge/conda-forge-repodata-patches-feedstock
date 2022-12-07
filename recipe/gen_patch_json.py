@@ -1892,6 +1892,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "conda":
                     record["depends"][i] = "conda >=4.8,<5"
 
+        # `conda` version `22.11.1` number `0` had an incorrect
+        # `conda-libmamba-solver` constraint. This was fixed in number `1`.
+        # Here we patch the repodata to apply the same fix to number `0`.
+        #
+        # xref: https://github.com/conda-forge/conda-feedstock/pull/196
+        if (record_name == "conda" and
+            record["version"] == "22.11.1" and
+            record["build_number"] == 0):
+            i = record["constrains"].index("conda-libmamba-solver >=22.11.0")
+            record["constrains"][i] = "conda-libmamba-solver >=22.12.0"
+
         # Bump minimum `requests` requirement of `anaconda-client` 1.11.0
         #
         # https://github.com/conda-forge/anaconda-client-feedstock/pull/35
