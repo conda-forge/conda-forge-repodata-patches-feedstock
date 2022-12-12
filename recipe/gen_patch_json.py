@@ -1768,6 +1768,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep.startswith("libxml2 >=2.9."):
                     record["depends"][i] = f"{dep},!=2.9.11,!=2.9.12"
 
+        if record_name == "qt" and (pkg_resources.parse_version(record["version"])
+                <= pkg_resources.parse_version("5.12.9")) and subdir == "linux-64":
+            _replace_pin("openssl", "openssl <3", record["depends"], record)
+
         # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
         # issues in click 8.1.0 cause failures for older versions of dask-cuda
         if record_name == "dask-cuda" and record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
