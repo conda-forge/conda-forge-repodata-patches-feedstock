@@ -2220,6 +2220,26 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
              and pkg_resources.parse_version(record['version']) <= pkg_resources.parse_version('3.3.1'))):
             _replace_pin("flake8", "flake8 <6", record["depends"], record)
 
+        # NetworkX 2.7.1 build 0 had wrong dependency information
+        # This was fixed in https://github.com/conda-forge/networkx-feedstock/pull/32
+        # This patches build 0 with the right information too.
+        if (
+            record_name == "networkx"
+            and record["version"] == "2.7.1"
+            and record["build_number"] == 0
+        ):
+            _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+            _replace_pin(
+                "scipy >=1.5,!=1.6.1", "scipy >=1.8", record["depends"], record
+            )
+            _replace_pin(
+                "matplotlib-base >=3.3",
+                "matplotlib-base >=3.4",
+                record["depends"],
+                record,
+            )
+            _replace_pin("pandas >=1.1", "pandas >=1.3", record["depends"], record)
+
     return index
 
 
