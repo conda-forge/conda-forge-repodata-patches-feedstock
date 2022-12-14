@@ -601,6 +601,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     record['constrains'].append("arrow-cpp-proc * cpu")
                 else:
                     record['constrains'] = ["arrow-cpp-proc * cpu"]
+        
+        # jupyerlab-nvdashboard-0.1.11 (all builds)
+        # depends on "bokeh" should be "bokeh <2"
+        if record_name == 'jupyterlab-nvdashboard':
+            if 'bokeh' in record['depends']:
+                i = record['depends'].index('bokeh')
+                record['depends'][i] = 'bokeh <2'
 
             # pyarrow builds done with numpy<1.16.6 are incompatible with numpy 1.20
             # We have been building with numpy 1.16.6 since 1612266172867
