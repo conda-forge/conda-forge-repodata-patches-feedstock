@@ -530,6 +530,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 else:
                     record['depends'] = ["typing_extensions"]
 
+        if record_name == "torchvision" and record["version"] == "0.11.2":
+            if 'pytorch * cpu*' in record['depends']:
+                i = record['depends'].index('pytorch * cpu*')
+                record['depends'][i] = 'pytorch 1.10.* cpu*'
+            elif 'pytorch * cuda*' in record['depends']:
+                i = record['depends'].index('pytorch * cuda*')
+                record['depends'][i] = 'pytorch 1.10.* cuda*'
+
         if record_name == "typer" and record.get('timestamp', 0) < 1609873200000:
             # https://github.com/conda-forge/typer-feedstock/issues/5
             if any(dep.split(' ')[0] == "click" for dep in record.get('depends', ())):
