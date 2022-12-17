@@ -1863,6 +1863,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     else:
                         record["depends"][i] = record["depends"][i] + ",<2.1.0a0"
 
+        if record.get("timestamp", 0) < 1671301008000:
+            # libtiff broke abit from 4.4 and 4.5
+            # https://github.com/conda-forge/libtiff-feedstock/pull/85
+            if any(re.match(r"libtiff >=4\.[01234].*<5.0", dep)
+                   for dep in deps):
+                _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.5.0")
+
         if record_name == "pillow":
             if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("9.1.1"):
                 _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
