@@ -2255,6 +2255,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             )
             _replace_pin("pandas >=1.1", "pandas >=1.3", record["depends"], record)
 
+        # numba<=0.53.1 needs numpy<1.24
+        if (
+            record_name == "numba"
+            and (
+                pkg_resources.parse_version(record["version"]) <=
+                pkg_resources.parse_version("0.53.1")
+            )
+        ):
+          _replace_pin("numpy >=1.19.5,<2.0a0", "numpy >=1.19.5,<1.24", record["depends"], record)  
+
     return index
 
 
