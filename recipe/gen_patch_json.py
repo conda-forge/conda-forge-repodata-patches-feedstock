@@ -2262,6 +2262,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 pkg_resources.parse_version(record["version"]) <=
                 pkg_resources.parse_version("0.53.1")
             )
+            and record.get("timestamp", 0) <= 1671537177000
         ):
             deps = record["depends"]
             for i, dep in enumerate(deps):
