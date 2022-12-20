@@ -2279,13 +2279,28 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             "0.47": ("1.15", "1.18"),
         }
 
+        def _approx_compare_versions(v1, v2):
+            """Compare two versions so that 0.52 is the same as 0.52.1."""
+            for x, y in zip(
+                pkg_resources.parse_version(v1).release,
+                pkg_resources.parse_version(v2).release,
+            ):
+                if x != y:
+                    return False
+            return True
+
+
         if record_name == "numba" and record.get("timestamp", 0) <= 1671537177000:
-            for numba_version, (_, numpy_ub) in numba_numpy_depends.items():
-                if pkg_resources.parse_version(numba_version) == pkg_resources.parse_version(
-                    record["version"]
-                ):
-                    _pin_stricter(fn, record, "numpy", "x.x", numpy_ub)
-                    break
+            # pin packages that are not listed in the table at <1.18
+            if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version(
+                "0.47"
+            ):
+                _pin_stricter(fn, record, "numpy", "x.x", "1.18")
+            else:
+                for numba_version, (_, numpy_ub) in numba_numpy_depends.items():
+                    if _approx_compare_versions(numba_version, record["version"]):
+                        _pin_stricter(fn, record, "numpy", "x.x", numpy_ub)
+                        break
 
     return index
 
