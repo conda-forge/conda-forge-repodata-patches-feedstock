@@ -2263,8 +2263,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 pkg_resources.parse_version("0.53.1")
             )
         ):
-          _replace_pin("numpy >=1.19.5,<2.0a0", "numpy >=1.19.5,<1.24", record["depends"], record)  
-
+            deps = record["depends"]
+            for i, dep in enumerate(deps):
+                if dep.startswith("numpy ") and "<2.0a0" in dep:
+                    deps[i] = dep.replace("<2.0a0", "<1.24")
+                
     return index
 
 
