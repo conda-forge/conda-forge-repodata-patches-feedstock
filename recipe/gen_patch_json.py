@@ -2265,6 +2265,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 record,
             )
             _replace_pin("pandas >=1.1", "pandas >=1.3", record["depends"], record)
+        
+        # napari-svg 0.1.6 build 0 had napari added as dependency, when it's not
+        # PR to fix: https://github.com/conda-forge/napari-svg-feedstock/pull/7
+        if (
+            record_name == "napari-svg"
+            and record["version"] == "0.1.6"
+            and record["build_number"] == 0
+        ):
+            record["depends"].remove("napari")
 
     return index
 
