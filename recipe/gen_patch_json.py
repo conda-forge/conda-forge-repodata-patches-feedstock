@@ -1773,6 +1773,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 <= pkg_resources.parse_version("5.12.9")) and subdir == "linux-64":
             _replace_pin("openssl", "openssl <3", record["depends"], record)
 
+        # importlib_resources requires Python >=3.7 since 5.5.0, but it was missed
+        # Was fixed in 5.10.1 build 1
+        # See https://github.com/conda-forge/importlib_resources-feedstock/issues/56
+        if record_name in ("importlib_resources", "importlib-resources") and (
+            pkg_resources.parse_version("5.5.0")
+            <= pkg_resources.parse_version(record["version"])
+            <= pkg_resources.parse_version("5.10.0")
+            or (record["version"] == "5.10.1" and record["build_number"] == 0)
+        ):
+            _replace_pin("python >=3.6", "python >=3.7", record["depends"], record)
+
         # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
         # issues in click 8.1.0 cause failures for older versions of dask-cuda
         if record_name == "dask-cuda" and record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
