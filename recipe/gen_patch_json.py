@@ -2255,52 +2255,25 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             )
             _replace_pin("pandas >=1.1", "pandas >=1.3", record["depends"], record)
 
-        # fix numba / numpy compatibility, see
-        # https://github.com/conda-forge/numba-feedstock/issues/90
-        # based on
-        # https://numba.readthedocs.io/en/stable/user/installing.html#version-support-information
-        numba_numpy_depends = {
-            # format: numba_version: numpy lower bound (">="), numpy upper bound ("<")
-            "0.57": ("1.19", "1.24"),
-            "0.56.4": ("1.18", "1.24"),
-            "0.56.3": ("1.18", "1.24"),
-            "0.56.2": ("1.18", "1.24"),
-            "0.56.0": ("1.18", "1.23"),
-            "0.55.2": ("1.18", "1.23"),
-            "0.55.1": ("1.18", "1.22"),
-            "0.55.0": ("1.18", "1.22"),
-            "0.54": ("1.17", "1.21"),
-            "0.53": ("1.15", "1.21"),
-            "0.52": ("1.15", "1.20"),
-            "0.51": ("1.15", "1.19"),
-            "0.50": ("1.15", "1.19"),
-            "0.49": ("1.15", "1.18"),
-            "0.48": ("1.15", "1.18"),
-            "0.47": ("1.15", "1.18"),
-        }
-
-        def _approx_compare_versions(v1, v2):
-            """Compare two versions so that 0.52 is the same as 0.52.1."""
-            for x, y in zip(
-                pkg_resources.parse_version(v1).release,
-                pkg_resources.parse_version(v2).release,
-            ):
-                if x != y:
-                    return False
-            return True
-
-
-        if record_name == "numba" and record.get("timestamp", 0) <= 1671537177000:
-            # pin packages that are not listed in the table at <1.18
-            if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version(
-                "0.47"
-            ):
-                _pin_stricter(fn, record, "numpy", "x.x", "1.18")
-            else:
-                for numba_version, (_, numpy_ub) in numba_numpy_depends.items():
-                    if _approx_compare_versions(numba_version, record["version"]):
-                        _pin_stricter(fn, record, "numpy", "x.x", numpy_ub)
-                        break
+        # fix numba / numpy compatibility; numba added a run_constrained entry
+        # for numpy as of version=0.54.0; numpy<1.21a0 is a conservative upper
+        # bound that may not be strict enough for old versions of numba
+        if (
+            record_name == "numba"
+            and record.get("timestamp", 0) <= 1671537177000
+            and pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("0.54")
+        ):
+            deps = record["depends"]
+            for i, dep in enumerate(deps):
+                if dep == "numpy":
+                    deps[i] = "numpy <1.21.0a0"
+                    break
+                if dep.startswith("numpy ") and "<" in dep:
+                    _pin_stricter(fn, record, "numpy", "x.x", "1.21")
+                    break
+                if dep.startswith("numpy ") and ">" in dep:
+                    deps[i] += ",<1.21.0a0"
+                    break
 
     return index
 
