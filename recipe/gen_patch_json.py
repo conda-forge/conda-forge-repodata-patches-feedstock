@@ -2270,10 +2270,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # PR to fix: https://github.com/conda-forge/napari-svg-feedstock/pull/7
         if (
             record_name == "napari-svg"
-            and record["version"] == "0.1.6"
-            and record["build_number"] == 0
+            and record.get('timestamp', 0) < 1671814614198
         ):
-            record["depends"].remove("napari")
+            if "napari" in record["depends"]:
+                record["depends"].remove("napari")
 
     return index
 
