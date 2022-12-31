@@ -1604,6 +1604,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             deps = record["depends"]
             _replace_pin("docutils >=0.12", "docutils >=0.12,<0.17", deps, record)
 
+        # Fix minimum version of docutils and requests for sphinx 6.0.0:
+        # https://github.com/conda-forge/sphinx-feedstock/pull/136
+        if record_name == "sphinx" and record["version"] == "6.0.0" and record.get("timestamp", 0) < 1672386194000:
+            deps = record["depends"]
+            _replace_pin("docutils >=0.14,<0.20", "docutils >=0.18,<0.20", deps, record)
+            _replace_pin("requests >=2.5.0", "requests >=2.25.0", deps, record)
+
         # Retroactively pin a max version of openlibm for julia 1.6.* and 1.7.*:
         # https://github.com/conda-forge/julia-feedstock/issues/169
         # timestamp: 29 December 2021 (osx-64/julia-1.7.1-h132cb31_1.tar.bz2) (+ 1)
