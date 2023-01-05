@@ -2273,6 +2273,26 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             )
             _replace_pin("pandas >=1.1", "pandas >=1.3", record["depends"], record)
 
+        # fix numba / numpy compatibility; numba added a run_constrained entry
+        # for numpy as of version=0.54.0; numpy<1.21a0 is a conservative upper
+        # bound that may not be strict enough for old versions of numba
+        if (
+            record_name == "numba"
+            and record.get("timestamp", 0) <= 1671537177000
+            and pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("0.54")
+        ):
+            deps = record["depends"]
+            for i, dep in enumerate(deps):
+                if dep == "numpy":
+                    deps[i] = "numpy <1.21.0a0"
+                    break
+                if dep.startswith("numpy ") and "<" in dep:
+                    _pin_stricter(fn, record, "numpy", "x.x", "1.21")
+                    break
+                if dep.startswith("numpy ") and ">" in dep:
+                    deps[i] += ",<1.21.0a0"
+                    break
+
     return index
 
 
