@@ -1446,6 +1446,25 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record["depends"].index("jupyterlab")
                 record["depends"][i] = "jupyterlab <1.0.0"
 
+        # Version constraints for dependencies in jupyter_events 0.5.0_0
+        # were insufficient.
+        # These have been corrected in PR
+        # https://github.com/conda-forge/jupyter_events-feedstock/pull/6
+        if (record_name == "jupyter_events" and record["version"] == "0.5.0"
+            and record["build_number"] == 0):
+            if "jsonschema" in record["depends"]:
+                i = record["depends"].index("jsonschema")
+                record["depends"][i] = "jsonschema >=4.3"
+            if "python-json-logger" in record["depends"]:
+                i = record["depends"].index("python-json-logger")
+                record["depends"][i] = "python-json-logger >=2.0.4"
+            if "traitlets" in record["depends"]:
+                i = record["depends"].index("traitlets")
+                record["depends"][i] = "traitlets >=5.3"
+            if "pyyaml" in record["depends"]:
+                i = record["depends"].index("pyyaml")
+                record["depends"][i] = "pyyaml >=6.0"
+
         # librmm 0.19 missed spdlog 1.7.0 in build 1
         # due to spdlog 1.7.0 not having run_exports.
         # This hotfixes those packages
