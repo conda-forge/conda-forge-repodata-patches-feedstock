@@ -606,13 +606,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # osx only got built for OpenSSL 3 --> no collision of wrappers
             and subdir == "linux-64"
         ):
-            tfbase = [r for r in record["depends"] if r.startswith("tensorflow-base")][0]
-            i = record["depends"].index(tfbase)
-            # replace with less tight pin that does not go down to hash of tf-base,
-            # but keep distinction between cpu/cuda, as well as the python version
-            cpu_or_cuda = "cpu_" if ("cpu_" in tfbase) else "cuda112"  # no other CUDA ver
-            pyver = tfbase[len(f"tensorflow-base 2.11.0 {cpu_or_cuda}"):-len("h1234567_0")]
-            record["depends"][i] = f"tensorflow-base 2.11.0 {cpu_or_cuda}{pyver}*_0"
+            for dep in ["tensorflow-base", "tensorflow-estimator"]:
+                sub_pin = [r for r in record["depends"] if r.startswith(dep)][0]
+                i = record["depends"].index(sub_pin)
+                # replace with less tight pin that does not go down to hash of `dep`,
+                # but keep distinction between cpu/cuda, as well as the python version
+                cpu_or_cuda = "cpu_" if ("cpu_" in sub_pin) else "cuda112"  # no other CUDA ver
+                pyver = sub_pin[len(f"{dep} 2.11.0 {cpu_or_cuda}"):-len("h1234567_0")]
+                record["depends"][i] = f"{dep} 2.11.0 {cpu_or_cuda}{pyver}*_0"
 
         if ((record.get('timestamp', 0) < 1670685160000) and
                 any(dep == "flatbuffers >=2"
