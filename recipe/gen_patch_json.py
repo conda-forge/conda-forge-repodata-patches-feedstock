@@ -1648,7 +1648,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _replace_pin("docutils >=0.14,<0.20", "docutils >=0.18,<0.20", deps, record)
             _replace_pin("requests >=2.5.0", "requests >=2.25.0", deps, record)
 
-        # Retoractively pin a min version of Python for sphinx 6.0.0 build 0 (was fixed in build 2)
+        # Retroactively pin a min version of Python for sphinx 6.0.0 builds 0 and 1 (was fixed in build 2)
         if record_name == "sphinx" and record["version"] == "6.0.0" and record["build_number"] < 2:
             deps = record["depends"]
             _replace_pin("python >=3.7", "python >=3.8", deps, record)
