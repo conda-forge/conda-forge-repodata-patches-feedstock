@@ -2330,6 +2330,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     deps[i] += ",<1.21.0a0"
                     break
 
+        # Fix missing dependency in Calliope that is required by some methods in
+        # xarray=2022.3, but is not a dependency in their recipe.
+        # This was fixed in https://github.com/conda-forge/calliope-feedstock/pull/30
+        # This patches build 0 with the right information too.
+        if (
+            record_name == "calliope"
+            and record.get("timestamp", 0) <= 1673531497000
+            and record["build_number"] == 0
+            and pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("0.6.9")
+        ):
+            record["depends"].append("bottleneck")
+
     return index
 
 
