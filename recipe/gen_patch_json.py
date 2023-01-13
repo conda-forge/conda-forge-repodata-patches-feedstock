@@ -1841,7 +1841,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # there are various inconsistencies between the pinnings of dask-cuda on `rapidsai` and `conda-forge`,
             # this makes the packages roughly consistent while also removing the python upper bound where present
             if record["version"] == "0.18.0":
-                _replace_pin("dask >=2.9.0", "dask >=2.4.0", record["depends"], record)
+                _replace_pin("dask >=2.9.0", "dask >=2.4.0,<=2.22.0", record["depends"], record)
             elif record["version"] == "0.19.0":
                 _replace_pin("dask >=2.9.0", "dask >=2.22.0,<=2021.4.0", record["depends"], record)
                 _replace_pin("distributed >=2.18.0", "distributed >=2.22.0,<=2021.4.0", record["depends"], record)
