@@ -1835,10 +1835,28 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
         # issues in click 8.1.0 cause failures for older versions of dask-cuda
-        if record_name == "dask-cuda" and record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
-            new_depends = record.get("depends", [])
-            new_depends += ["click ==8.0.4", "__linux"]
-            record["depends"] = new_depends
+        if record_name == "dask-cuda":
+            # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
+            # issues in click 8.1.0 cause failures for older versions of dask-cuda
+            if record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
+                new_depends = record.get("depends", [])
+                new_depends += ["click ==8.0.4", "__linux"]
+                record["depends"] = new_depends
+
+            # there are various inconsistencies between the pinnings of dask-cuda on `rapidsai` and `conda-forge`,
+            # this makes the packages roughly consistent while also removing the python upper bound where present
+            if record["version"] == "0.18.0":
+                _replace_pin("dask >=2.9.0", "dask >=2.4.0,<=2.22.0", record["depends"], record)
+            elif record["version"] == "0.19.0":
+                _replace_pin("dask >=2.9.0", "dask >=2.22.0,<=2021.4.0", record["depends"], record)
+                _replace_pin("distributed >=2.18.0", "distributed >=2.22.0,<=2021.4.0", record["depends"], record)
+            elif record["version"] == "21.6.0":
+                _replace_pin("distributed >=2.22.0,<=2021.5.1", "distributed >=2.22.0,<2021.5.1", record["depends"], record)
+            elif record["version"] in ("21.10.0", "22.2.0"):
+                _replace_pin("pynvml >=11.0.0", "pynvml >=8.0.3", record["depends"], record)
+            elif record["version"] == "22.4.0":
+                _replace_pin("python >=3.8,<3.10", "python >=3.8", record["depends"], record)
+
 
         # conda-libmamba-solver uses calver YY.MM.micro
         if record_name == "conda-libmamba-solver" and record.get("timestamp", 0) <= 1669391735453:  # 2022-11-25
