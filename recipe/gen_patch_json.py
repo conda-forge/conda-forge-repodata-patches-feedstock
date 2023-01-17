@@ -2031,6 +2031,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "conda":
                     record["depends"][i] = "conda >=4.8,<5"
 
+        if record_name == "mamba" and record["version"] == "1.2.0":
+            _replace_pin("conda >=4.8,<23.4", "conda >=22.11.0,<23.4", record["depends"], record)
+
+
         # Bump minimum `requests` requirement of `anaconda-client` 1.11.0
         #
         # https://github.com/conda-forge/anaconda-client-feedstock/pull/35
