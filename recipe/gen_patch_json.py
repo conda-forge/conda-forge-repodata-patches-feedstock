@@ -1976,22 +1976,33 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # other, but they are not compatible with the recently
             # released 1.1.0
             _replace_pin("svt-av1", "svt-av1 <1.0.0a0", record["depends"], record)
-
-        # Code removed in conda 4.13.0 broke older conda-build releases;
-        # x-ref issue: conda/conda-build#4481
-        if record_name == "conda-build" and (
+        
+        if record_name == "conda-build":
+            # Code removed in conda 4.13.0 broke older conda-build releases;
+            # x-ref issue: conda/conda-build#4481
+            if (
                 pkg_resources.parse_version(record["version"]) <=
                 pkg_resources.parse_version("3.21.7") or
                 # backported fix in 3.21.8, build 1
                 # (PR: conda-forge/conda-build-feedstock#176)
                 record["version"] == "3.21.8" and record["build_number"] == 0
-                ):
-            for i, dep in enumerate(record["depends"]):
-                dep_name, *dep_other = dep.split()
-                if dep_name == "conda" and ",<" not in dep:
-                    record["depends"][i] = "{} {}<4.13.0".format(
-                        dep_name, dep_other[0] + "," if dep_other else ""
+            ):
+                for i, dep in enumerate(record["depends"]):
+                    dep_name, *dep_other = dep.split()
+                    if dep_name == "conda" and ",<" not in dep:
+                        record["depends"][i] = "{} {}<4.13.0".format(
+                            dep_name, dep_other[0] + "," if dep_other else ""
                         )
+            # pin setuptools to <66 to avoid `pkg_resources.parse_version` issues
+            # see https://github.com/conda-forge/conda-forge-pinning-feedstock/issues/3973
+            if record.get("timestamp", 0) <= 1674131439051:  # 2023-01-19
+                for i, dep in enumerate(record["depends"]):
+                    dep_name, *dep_other = dep.split()
+                    if dep_name == "setuptools" and ",<" not in dep:
+                        record["depends"][i] = "{} {}<66.0.0a0".format(
+                            dep_name, dep_other[0] + "," if dep_other else ""
+                        )
+
         if (record_name == "conda" and
             record["version"] == "22.11.1" and
             record["build_number"] == 0):
