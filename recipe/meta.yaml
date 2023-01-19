@@ -16,7 +16,7 @@ build:
 requirements:
   build:
     - python 3.*
-    - setuptools
+    - setuptools <66.0.0a
     - requests
     - tqdm
     - license-expression
@@ -31,7 +31,7 @@ test:
     - show_diff.py
   requires:
     - python 3.*
-    - setuptools
+    - setuptools <66.0.0a
     - requests
     - tqdm
     - license-expression
