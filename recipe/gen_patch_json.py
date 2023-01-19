@@ -1999,7 +1999,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 for i, dep in enumerate(record["depends"]):
                     dep_name, *dep_other = dep.split()
                     if dep_name == "setuptools" and ",<" not in dep:
-                        record["depends"][i] = "{} {}<66.0.0a".format(
+                        record["depends"][i] = "{} {}<66.0.0a0".format(
                             dep_name, dep_other[0] + "," if dep_other else ""
                         )
 
