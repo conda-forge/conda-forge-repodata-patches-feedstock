@@ -482,16 +482,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
     for fn, record in index.items():
         record_name = record["name"]
 
-        if record_name == "dill":
-            pversion = pkg_resources.parse_version(record["version"])
-            zero_three_five = pkg_resources.parse_version("0.3.5")
-            zero_three_six = pkg_resources.parse_version("0.3.6")
-
-            if (pversion >= zero_three_five and pversion < zero_three_six) or (
-                pversion == zero_three_six and record["build"].endswith("_0")
-            ):
-                _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
-
         if record_name == "great-expectations" and record.get("timestamp", 0) < 1616454000000:
             old_constrains = record.get("constrains", [])
             new_constrains = [f"{constraint},<1.4" if constraint == "sqlalchemy >=1.2" else constraint for constraint in old_constrains]
@@ -2389,6 +2379,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("0.6.9")
         ):
             record["depends"].append("bottleneck")
+
+        # Dill dropped support for python <3.7 starting in version 0.3.5
+        # Fixed in https://github.com/conda-forge/dill-feedstock/pull/35
+        if record_name == "dill":
+            pversion = pkg_resources.parse_version(record["version"])
+            zero_three_five = pkg_resources.parse_version("0.3.5")
+            zero_three_six = pkg_resources.parse_version("0.3.6")
+
+            if (pversion >= zero_three_five and pversion < zero_three_six) or (
+                pversion == zero_three_six and record["build"].endswith("_0")
+            ):
+                _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
 
     return index
 
