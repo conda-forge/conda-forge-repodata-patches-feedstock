@@ -2380,6 +2380,25 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             record["depends"].append("bottleneck")
 
+        # altair 4.2.0 and below are incompatible with jsonschema>=4.17 when certain
+        # other packages are installed; this was fixed in
+        # https://github.com/conda-forge/altair-feedstock/pull/41
+        if (
+            record_name == "altair"
+            and pkg_resources.parse_version(record["version"]).major == 4
+            and record.get("timestamp", 0) <= 1673569551000
+        ):
+
+            if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("4.2.0"):
+                _replace_pin("jsonschema", "jsonschema <4.17", record["depends"], record)
+
+            if pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("4.2.0"):
+                _replace_pin("jsonschema >=3.0", "jsonschema >=3.0,<4.17", record["depends"], record)
+                
+                # this also applies the fix from https://github.com/conda-forge/altair-feedstock/pull/40
+                _replace_pin("jsonschema", "jsonschema >=3.0,<4.17", record["depends"], record)
+
+
     return index
 
 
