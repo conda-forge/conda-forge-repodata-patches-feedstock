@@ -2170,10 +2170,20 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "importlib_metadata" and ">=" not in dep:
                     record["depends"][i] = "importlib_metadata >=3.6"
 
-        # Pin NSIS on constructor
-        # https://github.com/conda/constructor/issues/526
-        if record_name == "constructor" and record.get("timestamp", 0) <= 1658913358571:
-            _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
+        if record_name == "constructor":
+            # constructor 2.x incompatible with conda 4.6+
+            # see https://github.com/jaimergp/anaconda-repodata-hotfixes/blob/229c10f6/main.py#L834
+            if int(record["version"].split(".")[0]) < 3:
+                _replace_pin("conda", "conda <4.6.0a0", record["depends"], record)
+            # Pin NSIS on constructor
+            # https://github.com/conda/constructor/issues/526
+            if record.get("timestamp", 0) <= 1658913358571:
+                _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
+            # conda 23.1 broke constructor
+            # https://github.com/conda/constructor/pull/627
+            if record.get("timestamp", 0) <= 1674637311000:
+                _replace_pin("conda >=4.6", "conda >=4.6,<23.1.0a0", record["depends"], record)
+            
 
         if (record_name == "grpcio-status" and
                 record["version"] == "1.48.0" and
