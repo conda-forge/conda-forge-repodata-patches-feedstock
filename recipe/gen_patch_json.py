@@ -1859,12 +1859,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
 
         # conda-libmamba-solver uses calver YY.MM.micro
-        if record_name == "conda-libmamba-solver" and record.get("timestamp", 0) <= 1669391735453:  # 2022-11-25
-            # libmamba 0.23 introduces API breaking changes, pin to v0.22
-            _replace_pin("libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record)
-            # conda 22.11 introduces the plugin system, which needs a new release
-            _replace_pin("conda >=4.12", "conda >=4.12,<22.11.0a", record["depends"], record)
-            _replace_pin("conda >=4.13", "conda >=4.13,<22.11.0a", record["depends"], record)
+        if record_name == "conda-libmamba-solver":
+            if record.get("timestamp", 0) <= 1669391735453:  # 2022-11-25
+                # libmamba 0.23 introduces API breaking changes, pin to v0.22
+                _replace_pin("libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record)
+                # conda 22.11 introduces the plugin system, which needs a new release
+                _replace_pin("conda >=4.12", "conda >=4.12,<22.11.0a", record["depends"], record)
+                _replace_pin("conda >=4.13", "conda >=4.13,<22.11.0a", record["depends"], record)
+            elif record.get("timestamp", 0) <= 1674230331000:  # 2023-01-20
+                # conda 23.1 changed an internal SubdirData API needed with S3/FTP channels
+                _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.1.0a", record["depends"], record)
 
         if subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"] and \
             record_name in {"libmamba", "libmambapy"} \
@@ -2166,10 +2170,20 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "importlib_metadata" and ">=" not in dep:
                     record["depends"][i] = "importlib_metadata >=3.6"
 
-        # Pin NSIS on constructor
-        # https://github.com/conda/constructor/issues/526
-        if record_name == "constructor" and record.get("timestamp", 0) <= 1658913358571:
-            _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
+        if record_name == "constructor":
+            # constructor 2.x incompatible with conda 4.6+
+            # see https://github.com/jaimergp/anaconda-repodata-hotfixes/blob/229c10f6/main.py#L834
+            if int(record["version"].split(".")[0]) < 3:
+                _replace_pin("conda", "conda <4.6.0a0", record["depends"], record)
+            # Pin NSIS on constructor
+            # https://github.com/conda/constructor/issues/526
+            if record.get("timestamp", 0) <= 1658913358571:
+                _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
+            # conda 23.1 broke constructor
+            # https://github.com/conda/constructor/pull/627
+            if record.get("timestamp", 0) <= 1674637311000:
+                _replace_pin("conda >=4.6", "conda >=4.6,<23.1.0a0", record["depends"], record)
+            
 
         if (record_name == "grpcio-status" and
                 record["version"] == "1.48.0" and
@@ -2391,6 +2405,26 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 pversion == zero_three_six and record["build"].endswith("_0")
             ):
                 _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
+
+        # altair 4.2.0 and below are incompatible with jsonschema>=4.17 when certain
+        # other packages are installed; this was fixed in
+        # https://github.com/conda-forge/altair-feedstock/pull/41
+        if (
+            record_name == "altair"
+            and pkg_resources.parse_version(record["version"]).major == 4
+            and record.get("timestamp", 0) <= 1673569551000
+        ):
+
+            if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("4.2.0"):
+                _replace_pin("jsonschema", "jsonschema <4.17", record["depends"], record)
+
+            if pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("4.2.0"):
+                _replace_pin("jsonschema >=3.0", "jsonschema >=3.0,<4.17", record["depends"], record)
+                
+                # this also applies the fix from https://github.com/conda-forge/altair-feedstock/pull/40
+                _replace_pin("jsonschema", "jsonschema >=3.0,<4.17", record["depends"], record)
+
+
 
     return index
 
