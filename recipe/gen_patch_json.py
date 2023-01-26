@@ -2425,7 +2425,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _replace_pin("jsonschema", "jsonschema >=3.0,<4.17", record["depends"], record)
 
 
-
     return index
 
 
