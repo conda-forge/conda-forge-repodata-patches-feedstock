@@ -2394,6 +2394,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             record["depends"].append("bottleneck")
 
+        # Dill dropped support for python <3.7 starting in version 0.3.5
+        # Fixed in https://github.com/conda-forge/dill-feedstock/pull/35
+        if record_name == "dill":
+            pversion = pkg_resources.parse_version(record["version"])
+            zero_three_five = pkg_resources.parse_version("0.3.5")
+            zero_three_six = pkg_resources.parse_version("0.3.6")
+
+            if (pversion >= zero_three_five and pversion < zero_three_six) or (
+                pversion == zero_three_six and record["build"].endswith("_0")
+            ):
+                _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
+
         # altair 4.2.0 and below are incompatible with jsonschema>=4.17 when certain
         # other packages are installed; this was fixed in
         # https://github.com/conda-forge/altair-feedstock/pull/41
