@@ -2424,6 +2424,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 # this also applies the fix from https://github.com/conda-forge/altair-feedstock/pull/40
                 _replace_pin("jsonschema", "jsonschema >=3.0,<4.17", record["depends"], record)
 
+        # isort dropped support for python 3.6 in version 5.11.0 and dropped support
+        # for python 3.7 in version 5.12.0, but did not update the dependency in their recipe
+        # Fixed in https://github.com/conda-forge/isort-feedstock/pull/78
+        if record_name == "isort":
+            pversion = pkg_resources.parse_version(record["version"])
+            five_eleven_zero = pkg_resources.parse_version("5.11.0")
+            five_twelve_zero = pkg_resources.parse_version("5.12.0")
+            if pversion >= five_eleven_zero and pversion < five_twelve_zero:
+                _replace_pin("python >=3.6,<4.0", "python >=3.7,<4.0", record["depends"], record)
+            elif pversion == five_twelve_zero:
+                _replace_pin("python >=3.6,<4.0", "python >=3.8,<4.0", record["depends"], record)
+
 
     return index
 
