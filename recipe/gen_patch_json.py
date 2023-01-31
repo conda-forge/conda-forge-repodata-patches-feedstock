@@ -577,7 +577,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record['depends'][i] = 'smmap >=3.0.1,<4'
 
         if record_name == "arrow-cpp":
-            if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
+            if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())) and record.get('timestamp', 0) < 1675198779000:
                 if 'constrains' in record:
                     record['constrains'].append("arrow-cpp-proc * cpu")
                 else:
