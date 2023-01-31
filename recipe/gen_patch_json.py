@@ -1653,6 +1653,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             deps = record["depends"]
             _replace_pin("python >=3.7", "python >=3.8", deps, record)
 
+        # sphinx_rtd_theme<=1.1 requires sphinx<6
+        if record_name == "sphinx_rtd_theme" and pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("1.1.0"):
+            deps = record["depends"]
+            _replace_pin("sphinx >=1.6", "sphinx >=1.6,<6", deps, record)
+            _replace_pin("sphinx", "sphinx <6", deps, record)
+            if not any(x.startswith("sphinx") for x in deps):
+                deps.append("sphinx <6")
+
         # Retroactively pin a max version of openlibm for julia 1.6.* and 1.7.*:
         # https://github.com/conda-forge/julia-feedstock/issues/169
         # timestamp: 29 December 2021 (osx-64/julia-1.7.1-h132cb31_1.tar.bz2) (+ 1)
