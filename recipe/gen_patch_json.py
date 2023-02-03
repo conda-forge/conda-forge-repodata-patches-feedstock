@@ -568,6 +568,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record['depends'].index('zstandard')
                 record['depends'][i] = 'zstandard <0.15'
 
+        if record_name == "pytorch" and record["version"] == "1.13.1" and record['build_number'] == 0 and record.get('timestamp', 0) < 1675431752816:
+            # https://github.com/conda-forge/pytorch-cpu-feedstock/issues/161
+            i = record['depends'].index('ninja')
+            record['depends'].pop(i)
+
         if record_name == "packaging" and record["version"] in ["21.1", "21.2"]:
             # https://github.com/conda-forge/packaging-feedstock/pull/21
             deps = record["depends"]
