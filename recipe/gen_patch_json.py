@@ -521,6 +521,20 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 else:
                     record['constrains'] = [f"starlette {record['version']}"]
 
+        # spacy-models-* needs to match spacy's maj.minor version, but old builds don't
+        # have that constraint correctly, leading to them being pulled in when a new
+        # spacy version releases, but before spacy-models-* is built in c-f, see
+        # https://github.com/conda-forge/spacy-models-feedstock/issues/5
+        if (
+            record_name.startswith("spacy-model")
+            and record["version"].split(".")[0] < "3"
+            and subdir == "noarch"
+            and record.get('timestamp', 0) < 1675431752816
+        ):
+            # to limit breakage of old environments that worked regardless of the wrong
+            # constraints, just ensure we don't get new spacy for old spacy-model-* builds
+            record['depends'].append("spacy <3")
+
         if record_name == "pytorch" and record.get('timestamp', 0) < 1610297816658:
             # https://github.com/conda-forge/pytorch-cpu-feedstock/issues/29
             if not any(dep.split(' ')[0] == 'typing_extensions'
