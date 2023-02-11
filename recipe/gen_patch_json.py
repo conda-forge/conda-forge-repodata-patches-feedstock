@@ -2474,6 +2474,25 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("python >=3.7", "python >=3.9", record["depends"], record)
 
+        # https://github.com/conda-forge/conda-forge.github.io/issues/673
+        if (
+            record_name == "jpeg"
+            and record.get("timestamp", 0) <= 1676152037000
+            and len(record.get("constraints", [])) == 0
+        ):
+            record.setdefault('constrains', []).extend((
+                "libjpeg-turbo <0.0.0a",
+            ))
+
+        # https://github.com/conda-forge/conda-forge.github.io/issues/673
+        if (
+            record_name == "libjpeg-turbo"
+            and record.get("timestamp", 0) <= 1676152037000
+            and len(record.get("constraints", [])) == 0
+        ):
+            record.setdefault('constrains', []).extend((
+                "jpeg <0.0.0a",
+            ))
 
     return index
 
