@@ -2007,7 +2007,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # other, but they are not compatible with the recently
             # released 1.1.0
             _replace_pin("svt-av1", "svt-av1 <1.0.0a0", record["depends"], record)
-        
+
         if record_name == "conda-build":
             # Code removed in conda 4.13.0 broke older conda-build releases;
             # x-ref issue: conda/conda-build#4481
@@ -2210,7 +2210,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # https://github.com/conda/constructor/pull/627
             if record.get("timestamp", 0) <= 1674637311000:
                 _replace_pin("conda >=4.6", "conda >=4.6,<23.1.0a0", record["depends"], record)
-            
+
 
         if (record_name == "grpcio-status" and
                 record["version"] == "1.48.0" and
@@ -2447,7 +2447,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
             if pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("4.2.0"):
                 _replace_pin("jsonschema >=3.0", "jsonschema >=3.0,<4.17", record["depends"], record)
-                
+
                 # this also applies the fix from https://github.com/conda-forge/altair-feedstock/pull/40
                 _replace_pin("jsonschema", "jsonschema >=3.0,<4.17", record["depends"], record)
 
@@ -2462,6 +2462,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _replace_pin("python >=3.6,<4.0", "python >=3.7,<4.0", record["depends"], record)
             elif pversion == five_twelve_zero:
                 _replace_pin("python >=3.6,<4.0", "python >=3.8,<4.0", record["depends"], record)
+
+        # sdt-python 17.5 needs Python >= 3.9 beacause of typing.Literal, but feedstock
+        # specified >= 3.7
+        # Fixed in https://github.com/conda-forge/sdt-python-feedstock/pull/20
+        if (
+            record_name == "sdt-python" and
+            record["version"] == "17.5" and
+            record["build_number"] == 0 and
+            record.get("timestamp", 0) < 1676036991000
+        ):
+            _replace_pin("python >=3.7", "python >=3.9", record["depends"], record)
 
 
     return index
