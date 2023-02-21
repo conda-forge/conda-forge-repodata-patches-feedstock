@@ -672,7 +672,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         deps,
                         record
                     )
-        
+
         # In 1.4.1 bayesian-optimization fixes colors not displaying correctly on windows.
         # This is done using colorama, however the function used by colorama was only introduced in
         # colorama 0.4.6, which is only available for python >=3.7
