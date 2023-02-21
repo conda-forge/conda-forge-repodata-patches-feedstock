@@ -689,8 +689,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 ]
                 for pinning in colorama_pinning:
                     _replace_pin(pinning, 'colorama >=0.4.6', record['depends'], record)
-                
-
             
         if record_name == 'ratelimiter':
             if record.get('timestamp', 0) < 1667804400000 and subdir == "noarch":  # noarch builds prior to 2022/11/7
