@@ -846,10 +846,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "airflow-with-async":
             _rename_dependency(fn, record, "evenlet", "eventlet")
 
-        # Current implementation in iris allows for frequent SegFaults
-        # when netCDF4>1.6.0; iris devs are working on a solution and
-        # discussing it in https://github.com/SciTools/iris/issues/5016
-        # but a wide repodata patch is needed before a permanent solution
+        # iris<3.4.1 is not thread safe with netCDF4>1.6.0. Iris v3.4.1
+        #  introduces a fix that allows it to work with the later versions of
+        #  NetCDF4 in a thread safe manner.
         iris_deps = [
             "netcdf4 <1.6.1",
         ]
