@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
+from collections import defaultdict
+from contextlib import suppress
 import copy
 import json
 import os
-import re
-import sys
-from collections import defaultdict
-from contextlib import suppress
 from os.path import join, isdir
-
-import pkg_resources
-import requests
+import sys
 import tqdm
+import re
+import requests
+import pkg_resources
 
 from get_license_family import get_license_family
 
@@ -503,9 +502,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # test dot-conda patches
         if (
-                record_name == "cf-autotick-bot-test-package"
-                and record["version"] == "0.14"
-                and fn.rsplit(".", 1)[0].endswith("_2")
+            record_name == "cf-autotick-bot-test-package"
+            and record["version"] == "0.14"
+            and fn.rsplit(".", 1)[0].endswith("_2")
         ):
             record["depends"].append("tqdm")
 
@@ -528,10 +527,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # spacy version releases, but before spacy-models-* is built in c-f, see
         # https://github.com/conda-forge/spacy-models-feedstock/issues/5
         if (
-                record_name.startswith("spacy-model")
-                and record["version"].split(".")[0] < "3"
-                and subdir == "noarch"
-                and record.get('timestamp', 0) < 1675431752816
+            record_name.startswith("spacy-model")
+            and record["version"].split(".")[0] < "3"
+            and subdir == "noarch"
+            and record.get('timestamp', 0) < 1675431752816
         ):
             # to limit breakage of old environments that worked regardless of the wrong
             # constraints, just ensure we don't get new spacy for old spacy-model-* builds
@@ -621,11 +620,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # missing OpenSSL-distinction in tensorflow wrapper, see
         # https://github.com/conda-forge/tensorflow-feedstock/issues/295
         if (
-                record_name == "tensorflow"
-                and record["version"] == "2.11.0"
-                and record["build"].endswith("_0")
-                # osx only got built for OpenSSL 3 --> no collision of wrappers
-                and subdir == "linux-64"
+            record_name == "tensorflow"
+            and record["version"] == "2.11.0"
+            and record["build"].endswith("_0")
+            # osx only got built for OpenSSL 3 --> no collision of wrappers
+            and subdir == "linux-64"
         ):
             for dep in ["tensorflow-base", "tensorflow-estimator"]:
                 sub_pin = [r for r in record["depends"] if r.startswith(dep)][0]
