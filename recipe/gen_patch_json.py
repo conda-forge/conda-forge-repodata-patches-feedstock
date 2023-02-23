@@ -1869,6 +1869,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_depends += ["click ==8.0.4", "__linux"]
                 record["depends"] = new_depends
 
+            # older versions of dask-cuda do not work with pynvml 11.5+
+            if record.get("timestamp", 0) <= 1676966400000:  # 23.2.0 and prior
+                depends = record.get("depends", [])
+                new_depends = [d + ",<11.5" if d.startswith("pynvml") else d
+                               for d in depends]
+                record["depends"] = new_depends
+
             # there are various inconsistencies between the pinnings of dask-cuda on `rapidsai` and `conda-forge`,
             # this makes the packages roughly consistent while also removing the python upper bound where present
             if record["version"] == "0.18.0":
