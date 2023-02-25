@@ -2361,6 +2361,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 "gxx_linux-64 !=9.5.0",
             ))
 
+        # `python-slugify` clobbers these other, unmaintained `slugify`s in lib and bin
+        if record_name == "python-slugify":
+            record.setdefault('constrains', []).extend([
+                "slugify <0",
+                "awesome-slugify <0",
+            ])
+
         # Flake8 6 removed some deprecated option parsing APIs and broke these plugins
         if ((record_name == 'flake8-copyright'
              and pkg_resources.parse_version(record['version']) <= pkg_resources.parse_version('0.2.3'))
