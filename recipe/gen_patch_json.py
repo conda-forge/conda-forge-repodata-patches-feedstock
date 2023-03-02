@@ -2487,6 +2487,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("python >=3.7", "python >=3.9", record["depends"], record)
 
+        # babel >=2.12 requires Python 3.7, but feedstock specified >= 3.6
+        # Fixed in https://github.com/conda-forge/babel-feedstock/pull/26
+        if (
+            record_name == "babel" and
+            record["version"] in {"2.12.0", "2.12.1"} and
+            record["build_number"] == 0 and
+            record.get("timestamp", 0) < 1677771669000
+        ):
+            _replace_pin("python >=3.6", "python >=3.7", record["depends"], record)
 
     return index
 
