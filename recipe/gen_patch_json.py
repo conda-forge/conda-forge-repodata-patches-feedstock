@@ -754,6 +754,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record['depends'].index('python >=3.6')
                 record['depends'][i] = 'python >=3.7'
 
+        # babel >=0.12 does not work with python 3.6
+        # babel >=0.12,<=0.12.1 allowed python 3.6 to be installed
+        # this fixes those versions to require python >=3.7
+        # See https://github.com/conda-forge/babel-feedstock/pull/26
+        if record_name == 'babel':
+            pversion = pkg_resources.parse_version(record['version'])
+            vmin = pkg_resources.parse_version('0.12')
+            vmax = pkg_resources.parse_version('0.12.1')
+            if vmin <= pversion <= vmax and 'python >=3.6' in record['depends']:
+                i = record['depends'].index('python >=3.6')
+                record['depends'][i] = 'python >=3.7'
+
         # python-language-server <=0.31.9 requires pyflakes <2.2.2
         # included explicitly in 0.31.10+
         # https://github.com/conda-forge/python-language-server-feedstock/pull/50
