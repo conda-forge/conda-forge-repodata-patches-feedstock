@@ -2332,6 +2332,22 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         parts[1] = parts[1] + ",<2a0"
                     record["depends"][i] = " ".join(parts)
 
+        # Earlier versions of switch_model are marked as compatible with all
+        # versions of pyomo and pyutilib, but are actually incompatible with
+        # some later versions.
+        switch_model_updates = {
+            "2.0.4": [
+                "glpk", "pandas", "pint", "pyomo <=5.6.5", "pyutilib <=5.7.0",
+                "python", "testfixtures"
+            ],
+            "2.0.5": [
+                "glpk", "pandas", "pint", "pyomo <=5.6.8", "pyutilib <=5.7.3",
+                "python", "testfixtures"
+            ]
+        }
+        if record_name == "switch_model" and record["version"] in switch_model_updates:
+            record["depends"] = switch_model_updates[record["version"]]
+
         # conda moved to calvar from semver and this broke old versions of
         # conda smithy that do on-the-fly version checks
         if (
