@@ -2502,6 +2502,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("conda >=4.8,<23.4", "conda >=4.14,<23.4", record["depends"], record)
 
+        # pyopenssl 22 used in combination with Cryptography 39 breaks with error
+        # "AttributeError: module 'lib' has no attribute 'OpenSSL_add_all_algorithms'".
+        # We must pin down cryptography to <39
+        if (
+            record_name == "pyopenssl" and
+            record["version"] == "22.0.0" and
+            record.get("timestamp", 0) < 1678096271000
+        ):
+            _replace_pin("cryptography >=35.0", "cryptography >=35.0,<39", record["depends"], record)
 
     return index
 
