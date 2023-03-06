@@ -2497,6 +2497,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("python >=3.6", "python >=3.7", record["depends"], record)
 
+        # mamba >= 1.2.0 requires conda>=4.14.0, but feedstock specified >= 4.8
+        # Fixed in https://github.com/conda-forge/mamba-feedstock/pull/175
+        if (
+            record_name == "mamba" and
+            record["version"] in {"1.2.0", "1.3.0", "1.3.1"} and
+            record.get("timestamp", 0) < 1678096271000
+        ):
+            _replace_pin("conda >=4.8", "conda >=4.14", record["depends"], record)
+
+
     return index
 
 
