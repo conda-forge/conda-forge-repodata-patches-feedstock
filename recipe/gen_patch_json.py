@@ -2548,6 +2548,26 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_constrains.append("jpeg <0.0.0a")
             record["constrains"] = new_constrains
 
+        # cppyy <3 uses a version of Cling that is based on Clang 9. libcxx 15
+        # headers for macOS do not compile with such an old Clang anymore, see
+        # https://github.com/conda-forge/libcxx-feedstock/issues/111
+        # So, if there's is no "<" pin on libcxx already, we add a "<15".
+        if (
+            record_name == "cppyy" and
+            pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("3.0.0")
+        ):
+            depends = record.get("depends", [])
+            for i, depend in enumerate(depends):
+                if depend.split()[0] == "libcxx":
+                    if "<" not in depend:
+                        if " " not in depend:
+                            depend += " "
+                        else:
+                            depend += ","
+                        depend += "<15"
+                    depends[i] = depend
+            record["depends"] = depends
+
     return index
 
 
