@@ -2512,6 +2512,42 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("cryptography >=35.0", "cryptography >=35.0,<39", record["depends"], record)
 
+        if (
+            record_name == "libtiff" and
+            record["version"] == "4.5.0" and
+            record["build_number"] == 3 and
+            any(d.startswith("libjpeg-turbo")
+                for d in record.get("depends", [])) and
+            record.get("timestamp", 0) < 1678151067000
+        ):
+            new_constrains = record.get("constrains", [])
+            new_constrains.append("jpeg <0.0.0a")
+            record["constrains"] = new_constrains
+
+        if (
+            record_name == "libwebp" and
+            record["version"] == "1.2.4" and
+            record["build_number"] == 2 and
+            any(d.startswith("libjpeg-turbo")
+                for d in record.get("depends", [])) and
+            record.get("timestamp", 0) < 1678151067000
+        ):
+            new_constrains = record.get("constrains", [])
+            new_constrains.append("jpeg <0.0.0a")
+            record["constrains"] = new_constrains
+
+        if (
+            record_name == "gst-plugins-good" and
+            record["version"] == "1.22.0" and
+            record["build_number"] == 1 and
+            any(d.startswith("libjpeg-turbo")
+                for d in record.get("depends", [])) and
+            record.get("timestamp", 0) < 1678151067000
+        ):
+            new_constrains = record.get("constrains", [])
+            new_constrains.append("jpeg <0.0.0a")
+            record["constrains"] = new_constrains
+
     return index
 
 
