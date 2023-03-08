@@ -2547,6 +2547,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_constrains = record.get("constrains", [])
             new_constrains.append("jpeg <0.0.0a")
             record["constrains"] = new_constrains
+            
+            
+        # imath 3.1.7 change its SOVERSION so it is not not ABI compatible
+        # with imath 3.1.4, 3.1.5, and 3.1.6
+        # See https://github.com/conda-forge/imath-feedstock/issues/7
+        if has_dep(record, "imath") and record.get('timestamp', 0) < 1678196668497:
+            _pin_stricter(fn, record, "imath", "x", upper_bound="3.1.7")
 
     return index
 
