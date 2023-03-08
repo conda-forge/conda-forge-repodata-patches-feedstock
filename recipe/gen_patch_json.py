@@ -2570,7 +2570,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if (
             record_name == "fsspec" and
             record["version"] == "2023.3.0" and
-            record["build_number"] == 0
+            record["build_number"] == 0 and
+            record.get("timestamp", 0) < 1678285727000
         ):
             _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
 
