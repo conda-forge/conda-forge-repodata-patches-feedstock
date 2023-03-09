@@ -634,6 +634,46 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 pyver = sub_pin[len(f"{dep} 2.11.0 {cpu_or_cuda}"):-len("h1234567_0")]
                 record["depends"][i] = f"{dep} 2.11.0 {cpu_or_cuda}{pyver}*_0"
 
+        # TensorFlow Probability was published with loose constraints on TensorFlow-base leading to broken dependencies.
+        # Each release actually specifies the exact version of TensorFlow and JAX that it supports, therefore we need to
+        # pin the dependencies to the exact version that was used to build the package.
+        # See also issue:
+        if (record.get("timestamp", 0) < 1676674332000) and (record_name == "tensorflow-probability"):
+            version_matrix = {
+                "0.17.0": {"tensorflow-base": ">=2.9,<2.10", "jax": ">=0.3.13,<0.4.0"},
+                "0.15.0": {"tensorflow-base": ">=2.7,<2.8", "jax": ">=0.2.21,<0.3.0"},  # actual jax minimum not mention in release notes
+                "0.14.1": {"tensorflow-base": ">=2.6,<2.7", "jax": ">=0.2.21,<0.3.0"},
+                "0.14.0": {"tensorflow-base": ">=2.6,<2.7", "jax": ">=0.2.20,<0.3.0"},
+                "0.13.0": {"tensorflow-base": ">=2.5,<2.6"},  # no JAX as it isn't mentioned anymore, is it needed to re-add?
+                "0.12.2": {"tensorflow-base": ">=2.4,<2.5"},
+                "0.12.1": {"tensorflow-base": ">=2.4,<2.5"},
+                "0.12.0": {"tensorflow-base": ">=2.4,<2.5"},
+                "0.10.1": {"tensorflow-base": ">=2.2,<2.3"},
+                "0.10.0": {"tensorflow-base": ">=2.2,<2.3"},
+                "0.8.0": {"tensorflow-base": ">=1.15,<2.1"},
+                # Older versions are TF V1, too old to bother with but restricting them to <2 s.t. the solver doesn't pick them up
+                "0.7": {"tensorflow-base": ">=1.13.1,<2"},
+                "0.6.0": {"tensorflow-base": ">=1.13.1,<2"},
+                "0.5.0": {"tensorflow-base": ">=1.11.0,<2"},
+
+            }
+            version = record["version"]
+            if version in version_matrix:
+                deps = version_matrix[version]
+                dependencies = record['depends']
+                for newdep, newrequ in deps.items():
+                    found = False
+                    for i, curdep in enumerate(dependencies):
+                        curdep_pkg = curdep.split(" ")[0]
+                        if curdep_pkg == 'tensorflow':  # remove it, will be replaced with tf-base if needed
+                            del dependencies[i]
+                        elif curdep_pkg == newdep:
+                            found = True
+                            dependencies[i] = f'{newdep} {newrequ}'
+                            # NO break, the loop needs also to make sure that all the tensorflow deps are removed.
+                    if not found:  # It wasn't in the dependencies so we add it
+                        dependencies.append(f'{newdep} {newrequ}')
+
         if ((record.get('timestamp', 0) < 1670685160000) and
                 any(dep == "flatbuffers >=2"
                     for dep in record.get('depends', ()))):
@@ -673,6 +713,23 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         record
                     )
 
+        # In 1.4.1 bayesian-optimization fixes colors not displaying correctly on windows.
+        # This is done using colorama, however the function used by colorama was only introduced in
+        # colorama 0.4.6, which is only available for python >=3.7
+        if record_name == 'bayesian-optimization' and record.get('timestamp') < 1676994963000:
+            if record["version"] == "1.4.1" or (record["version"] == "1.4.2" and record["build_number"] == 0):
+                python_pinning = [
+                    x for x in record['depends'] if x.startswith('python')
+                ]
+                for pinning in python_pinning:
+                    _replace_pin(pinning, 'python >=3.7', record['depends'], record)
+                
+                colorama_pinning = [
+                    x for x in record['depends'] if x.startswith('colorama')
+                ]
+                for pinning in colorama_pinning:
+                    _replace_pin(pinning, 'colorama >=0.4.6', record['depends'], record)
+            
         if record_name == 'ratelimiter':
             if record.get('timestamp', 0) < 1667804400000 and subdir == "noarch":  # noarch builds prior to 2022/11/7
                 python_pinning = [
@@ -2547,6 +2604,23 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_constrains = record.get("constrains", [])
             new_constrains.append("jpeg <0.0.0a")
             record["constrains"] = new_constrains
+            
+        # fsspec ==2023.3.1 requires Python 3.8
+        # Fixed in https://github.com/conda-forge/babel-feedstock/pull/26
+        if (
+            record_name == "fsspec" and
+            record["version"] == "2023.3.0" and
+            record["build_number"] == 0 and
+            record.get("timestamp", 0) < 1678285727000
+        ):
+            _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+
+
+        # imath 3.1.7 change its SOVERSION so it is not not ABI compatible
+        # with imath 3.1.4, 3.1.5, and 3.1.6
+        # See https://github.com/conda-forge/imath-feedstock/issues/7
+        if has_dep(record, "imath") and record.get('timestamp', 0) < 1678196668497:
+            _pin_stricter(fn, record, "imath", "x", upper_bound="3.1.7")
 
         # cppyy <3 uses a version of Cling that is based on Clang 9. libcxx 15
         # headers for macOS do not compile with such an old Clang anymore, see
