@@ -2554,7 +2554,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # So, if there's is no "<" pin on libcxx already, we add a "<15".
         if (
             record_name == "cppyy" and
-            pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("3.0.0")
+            pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("3.0.0") and
+            record.get("timestamp", 0) < 1678353800000
         ):
             depends = record.get("depends", [])
             for i, depend in enumerate(depends):
