@@ -2635,6 +2635,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _pin_stricter(fn, record, "imath", "x", upper_bound="3.1.7")
 
+        # related to https://github.com/conda-forge/nvidia-apex-feedstock/issues/29
+        if (
+            record_name == "nvidia-apex" and
+            any("=*=cuda|=*=gpu" in constr for constr in record.get("constrains", [""])) and
+            record.get("timestamp", 0) < 1678454014000
+        ):
+            record["constrains"] = ["pytorch =*=cuda*", "nvidia-apex-proc =*=cuda"]
+
     return index
 
 
