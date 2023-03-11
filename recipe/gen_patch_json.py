@@ -2635,6 +2635,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _pin_stricter(fn, record, "imath", "x", upper_bound="3.1.7")
 
+        # tensorly 0.8.0+ need python 3.8+
+        # https://github.com/conda-forge/tensorly-feedstock/issues/12
+        # Fixed in https://github.com/conda-forge/tensorly-feedstock/pull/14
+        if (
+            record_name == "tensorly" and
+            (record["version"] == "0.8.0" or record["version"] == "0.8.1") and
+            record["build_number"] == 0 and
+            record.get("timestamp", 0) < 1678253357320
+        ):
+            _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+
     return index
 
 
