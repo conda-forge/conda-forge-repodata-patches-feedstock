@@ -2475,17 +2475,35 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     deps[i] += ",<1.21.0a0"
                     break
 
-        # Fix missing dependency in Calliope that is required by some methods in
-        # xarray=2022.3, but is not a dependency in their recipe.
-        # This was fixed in https://github.com/conda-forge/calliope-feedstock/pull/30
-        # This patches build 0 with the right information too.
-        if (
-            record_name == "calliope"
-            and record.get("timestamp", 0) <= 1673531497000
-            and record["build_number"] == 0
-            and pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("0.6.9")
-        ):
-            record["depends"].append("bottleneck")
+        if record_name == "calliope":
+            # Fix missing dependency in Calliope that is required by some methods in
+            # xarray=2022.3, but is not a dependency in their recipe.
+            # This was fixed in https://github.com/conda-forge/calliope-feedstock/pull/30
+            # This patches build 0 with the right information too.
+            if (
+                record.get("timestamp", 0) <= 1673531497000
+                and record["build_number"] == 0
+                and pkg_resources.parse_version(record["version"])
+                == pkg_resources.parse_version("0.6.9")
+            ):
+                record["depends"].append("bottleneck")
+
+            # Pin libnetcdf upper bound due to breaking change in version >=4.9
+            # This was fixed in https://github.com/conda-forge/calliope-feedstock/pull/32
+            # This patches build 0 of latest release and all previous versions.
+            if record.get("timestamp", 0) <= 1677053718000 and (
+                pkg_resources.parse_version(record["version"])
+                < pkg_resources.parse_version("0.6.10")
+                or (
+                    pkg_resources.parse_version(record["version"])
+                    == pkg_resources.parse_version("0.6.10")
+                    and record["build_number"] == 0
+                )
+            ):
+                if "libnetcdf" in record["depends"]:
+                    _replace_pin(
+                        "libnetcdf", "libnetcdf <4.9", record["depends"], record
+                    )
 
         # Dill dropped support for python <3.7 starting in version 0.3.5
         # Fixed in https://github.com/conda-forge/dill-feedstock/pull/35
