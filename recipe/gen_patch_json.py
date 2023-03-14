@@ -2653,6 +2653,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _pin_stricter(fn, record, "imath", "x", upper_bound="3.1.7")
 
+        # related to https://github.com/conda-forge/nvidia-apex-feedstock/issues/29
+        if (
+            record_name == "nvidia-apex" and
+            any("=*=cuda|=*=gpu" in constr for constr in record.get("constrains", [""])) and
+            record.get("timestamp", 0) < 1678454014000
+        ):
+            record["constrains"] = ["pytorch =*=cuda*", "nvidia-apex-proc =*=cuda"]
+
         # tensorly 0.8.0+ need python 3.8+
         # https://github.com/conda-forge/tensorly-feedstock/issues/12
         # Fixed in https://github.com/conda-forge/tensorly-feedstock/pull/14
