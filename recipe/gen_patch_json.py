@@ -723,13 +723,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 ]
                 for pinning in python_pinning:
                     _replace_pin(pinning, 'python >=3.7', record['depends'], record)
-                
+
                 colorama_pinning = [
                     x for x in record['depends'] if x.startswith('colorama')
                 ]
                 for pinning in colorama_pinning:
                     _replace_pin(pinning, 'colorama >=0.4.6', record['depends'], record)
-            
+
         if record_name == 'ratelimiter':
             if record.get('timestamp', 0) < 1667804400000 and subdir == "noarch":  # noarch builds prior to 2022/11/7
                 python_pinning = [
@@ -2475,17 +2475,35 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     deps[i] += ",<1.21.0a0"
                     break
 
-        # Fix missing dependency in Calliope that is required by some methods in
-        # xarray=2022.3, but is not a dependency in their recipe.
-        # This was fixed in https://github.com/conda-forge/calliope-feedstock/pull/30
-        # This patches build 0 with the right information too.
-        if (
-            record_name == "calliope"
-            and record.get("timestamp", 0) <= 1673531497000
-            and record["build_number"] == 0
-            and pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("0.6.9")
-        ):
-            record["depends"].append("bottleneck")
+        if record_name == "calliope":
+            # Fix missing dependency in Calliope that is required by some methods in
+            # xarray=2022.3, but is not a dependency in their recipe.
+            # This was fixed in https://github.com/conda-forge/calliope-feedstock/pull/30
+            # This patches build 0 with the right information too.
+            if (
+                record.get("timestamp", 0) <= 1673531497000
+                and record["build_number"] == 0
+                and pkg_resources.parse_version(record["version"])
+                == pkg_resources.parse_version("0.6.9")
+            ):
+                record["depends"].append("bottleneck")
+
+            # Pin libnetcdf upper bound due to breaking change in version >=4.9
+            # This was fixed in https://github.com/conda-forge/calliope-feedstock/pull/32
+            # This patches build 0 of latest release and all previous versions.
+            if record.get("timestamp", 0) <= 1677053718000 and (
+                pkg_resources.parse_version(record["version"])
+                < pkg_resources.parse_version("0.6.10")
+                or (
+                    pkg_resources.parse_version(record["version"])
+                    == pkg_resources.parse_version("0.6.10")
+                    and record["build_number"] == 0
+                )
+            ):
+                if "libnetcdf" in record["depends"]:
+                    _replace_pin(
+                        "libnetcdf", "libnetcdf <4.9", record["depends"], record
+                    )
 
         # Dill dropped support for python <3.7 starting in version 0.3.5
         # Fixed in https://github.com/conda-forge/dill-feedstock/pull/35
@@ -2604,7 +2622,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_constrains = record.get("constrains", [])
             new_constrains.append("jpeg <0.0.0a")
             record["constrains"] = new_constrains
-            
+
         # fsspec ==2023.3.1 requires Python 3.8
         # Fixed in https://github.com/conda-forge/babel-feedstock/pull/26
         if (
@@ -2615,11 +2633,24 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
 
-
         # imath 3.1.7 change its SOVERSION so it is not not ABI compatible
         # with imath 3.1.4, 3.1.5, and 3.1.6
         # See https://github.com/conda-forge/imath-feedstock/issues/7
-        if has_dep(record, "imath") and record.get('timestamp', 0) < 1678196668497:
+        if (
+            has_dep(record, "imath") and
+            record.get('timestamp', 0) < 1678196668497
+        ):
+            _pin_stricter(fn, record, "imath", "x", upper_bound="3.1.7")
+
+        if (
+            record_name == "openexr" and
+            record["version"] == "3.1.5" and
+            # build 2 was built after the repo data patch above went into place
+            # but erroneously used an old version of imath without
+            # the stricter pin
+            record["build_number"] == 2 and
+            record.get('timestamp', 0) < 1678332917000
+        ):
             _pin_stricter(fn, record, "imath", "x", upper_bound="3.1.7")
 
         # cppyy <3 uses a version of Cling that is based on Clang 9. libcxx 15
@@ -2642,6 +2673,25 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         depend += "<15"
                     depends[i] = depend
             record["depends"] = depends
+
+        # related to https://github.com/conda-forge/nvidia-apex-feedstock/issues/29
+        if (
+            record_name == "nvidia-apex" and
+            any("=*=cuda|=*=gpu" in constr for constr in record.get("constrains", [""])) and
+            record.get("timestamp", 0) < 1678454014000
+        ):
+            record["constrains"] = ["pytorch =*=cuda*", "nvidia-apex-proc =*=cuda"]
+
+        # tensorly 0.8.0+ need python 3.8+
+        # https://github.com/conda-forge/tensorly-feedstock/issues/12
+        # Fixed in https://github.com/conda-forge/tensorly-feedstock/pull/14
+        if (
+            record_name == "tensorly" and
+            (record["version"] == "0.8.0" or record["version"] == "0.8.1") and
+            record["build_number"] == 0 and
+            record.get("timestamp", 0) < 1678253357320
+        ):
+            _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
 
     return index
 
