@@ -1959,6 +1959,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             elif record.get("timestamp", 0) <= 1674230331000:  # 2023-01-20
                 # conda 23.1 changed an internal SubdirData API needed with S3/FTP channels
                 _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.1.0a", record["depends"], record)
+            elif record.get("timestamp", 0) <= 1678721528000: # 2023-03-13:
+                # conda 23.3 changed an internal SubdirData API needed with S3/FTP channels
+                # conda depricated Boltons leading to a breakage in the solver api interface
+                _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.2.0a", record["depends"], record)
 
         if subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"] and \
             record_name in {"libmamba", "libmambapy"} \
