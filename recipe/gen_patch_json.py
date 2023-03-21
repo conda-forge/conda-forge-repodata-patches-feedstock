@@ -2676,6 +2676,21 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
 
+        # cmor <= 3.7.1 needs numpy <1.24
+        # https://github.com/conda-forge/cmor-feedstock/issues/59
+        # Fixed in https://github.com/conda-forge/cmor-feedstock/pull/60
+        if (
+            record_name == "cmor" and
+            record.get("timestamp", 0) < 1679388583000
+        ):
+            pversion = pkg_resources.parse_version(record["version"])
+            v371 = pkg_resources.parse_version("3.7.1")
+            if (
+                pversion < v371 or
+                (pversion == v371 and record["build_number"] < 4)
+            ):
+                _pin_stricter(fn, record, "numpy", "x", upper_bound="1.24")
+
     return index
 
 
