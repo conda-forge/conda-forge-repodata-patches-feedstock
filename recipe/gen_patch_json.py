@@ -1603,7 +1603,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and record.get("timestamp", 0) < 1679524270000
         ):
             _replace_pin("python >=3.8", "python >=3.9", deps, record)
-            _replace_pin("rasterio >=1.1.1", "python >=1.2", deps, record)
+            _replace_pin("rasterio >=1.1.1", "rasterio >=1.2", deps, record)
 
         # tensorboard had incorrect dependencies between 2.4.0 and 2.6.0
         if record_name == "tensorboard" and record["version"] in ("2.4.0", "2.4.1", "2.5.0", "2.6.0"):
