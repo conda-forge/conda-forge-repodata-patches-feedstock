@@ -1594,6 +1594,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "xarray" and record["version"] == "0.19.0":
             _replace_pin("python >=3.6", "python >=3.7", deps, record)
 
+        # Rioxarray 0.14.0 dropped Python 3.8 and rasterio 1.1, need to patch
+        # first build to use a minimum of Python 3.9 and rasterio 1.2
+        # See https://github.com/conda-forge/rioxarray-feedstock/pull/70
+        if (
+            record_name == "rioxarray"
+            and record["version"] == "0.14.0"
+            and record.get("timestamp", 0) < 1679524270000
+        ):
+            _replace_pin("python >=3.8", "python >=3.9", deps, record)
+            _replace_pin("rasterio >=1.1.1", "rasterio >=1.2", deps, record)
+
         # tensorboard had incorrect dependencies between 2.4.0 and 2.6.0
         if record_name == "tensorboard" and record["version"] in ("2.4.0", "2.4.1", "2.5.0", "2.6.0"):
             _replace_pin("google-auth-oauthlib 0.4.1", "google-auth-oauthlib >=0.4.1,<0.5", deps, record)
