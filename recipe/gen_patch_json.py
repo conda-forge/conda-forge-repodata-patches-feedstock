@@ -2400,6 +2400,33 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         parts[1] = parts[1] + ",<2a0"
                     record["depends"][i] = " ".join(parts)
 
+        # nbconvert(-core) did not provide top pins of pandoc until 7.2.1=*_1
+        # see https://github.com/conda-forge/nbconvert-feedstock/issues/94
+        # fixed in https://github.com/conda-forge/nbconvert-feedstock/pull/96
+        if (
+            record.get("timestamp", 0) <= 1680046165000
+            and record_name in ["nbconvert", "nbconvert-core"]
+            and (
+                pkg_resources.parse_version(record["version"]) <
+                pkg_resources.parse_version("7.2.2")
+            )
+        ):
+            nbconvert_version = pkg_resources.parse_version(record["version"])
+            for field in ["depends", "constrains"]:
+                for i in range(len(record.get(field, []))):
+                    parts = record[field][i].split(" ")
+                    if parts[0] == "pandoc":
+                        if nbconvert_version < pkg_resources.parse_version("5.5.0"):
+                            parts = [parts[0], ">=1.12.1,<2.0.0"]
+                        elif (
+                            nbconvert_version < pkg_resources.parse_version("7.2.1")
+                        ) or (
+                            nbconvert_version == pkg_resources.parse_version("7.2.1")
+                            and record["build_number"] < 1
+                        ):
+                            parts = [parts[0], ">=1.12.1,<3.0.0"]
+                        record[field][i] = " ".join(parts)
+
         # conda moved to calvar from semver and this broke old versions of
         # conda smithy that do on-the-fly version checks
         if (
