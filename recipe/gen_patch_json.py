@@ -1124,7 +1124,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if (
             record_name == "pennylane-lightning-gpu" and
             record["version"] == "0.29.0" and
-            record['build_number'] == 0
+            record['build_number'] == 0 and
+            record.get("timestamp", 0) < 1680553268000
         ):
             _replace_pin("pennylane", "pennylane >=0.28.0", record["depends"], record)
 
