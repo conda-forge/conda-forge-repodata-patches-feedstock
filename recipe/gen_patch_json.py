@@ -1595,10 +1595,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "xarray" and record["version"] == "0.19.0":
             _replace_pin("python >=3.6", "python >=3.7", deps, record)
 
-        # Xarray <=2023.1.0 doesn't support pandas 2.0 yet.
+        # Xarray <=2023.2.0 doesn't support pandas 2.0.
         # https://github.com/pydata/xarray/issues/7716
-        if record_name == "xarray" and packaging.version.Version(record["version"]) < packaging.version.Version("2023.3.0"):
+        if record_name == "xarray" and packaging.version.Version(record["version"]) <= packaging.version.Version("2023.1.0"):
             _replace_pin("pandas >=1.3", "pandas >=1.3,<2", deps, record)
+
+        if record_name == "xarray" and packaging.version.Version(record["version"]) == packaging.version.Version("2023.2.0"):
+            _replace_pin("pandas >=1.4", "pandas >=1.4,<2", deps, record)
 
         # erddapy doesn't support pandas 2.0 yet.
         # https://github.com/ioos/erddapy/issues/299
