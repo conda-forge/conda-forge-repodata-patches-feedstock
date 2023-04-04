@@ -1598,15 +1598,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # Xarray <=2023.2.0 doesn't support pandas 2.0.
         # https://github.com/pydata/xarray/issues/7716
         if record_name == "xarray" and packaging.version.Version(record["version"]) <= packaging.version.Version("2023.1.0"):
-            _replace_pin("pandas >=1.3", "pandas >=1.3,<2", deps, record)
+            _replace_pin("pandas >=1.3", "pandas >=1.3,<2a0", deps, record)
 
         if record_name == "xarray" and packaging.version.Version(record["version"]) == packaging.version.Version("2023.2.0"):
-            _replace_pin("pandas >=1.4", "pandas >=1.4,<2", deps, record)
+            _replace_pin("pandas >=1.4", "pandas >=1.4,<2a0", deps, record)
 
-        # erddapy doesn't support pandas 2.0 yet.
+        # erddapy <=1.3 doesn't support pandas 2.0.
         # https://github.com/ioos/erddapy/issues/299
         if record_name == "erddapy" and packaging.version.Version(record["version"]) < packaging.version.Version("1.3"):
-            _replace_pin("pandas >=0.20.3", "pandas >=0.20.3,<2", deps, record)
+            _replace_pin("pandas >=0.20.3", "pandas >=0.20.3,<2a0", deps, record)
 
         # Rioxarray 0.14.0 dropped Python 3.8 and rasterio 1.1, need to patch
         # first build to use a minimum of Python 3.9 and rasterio 1.2
