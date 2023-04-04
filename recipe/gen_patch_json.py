@@ -11,6 +11,7 @@ import sys
 import tqdm
 import re
 import requests
+import packaging.version
 import pkg_resources
 
 from get_license_family import get_license_family
@@ -1593,6 +1594,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # https://github.com/conda-forge/xarray-feedstock/pull/66
         if record_name == "xarray" and record["version"] == "0.19.0":
             _replace_pin("python >=3.6", "python >=3.7", deps, record)
+
+        # Xarray <=2023.1.0 doesn't support pandas 2.0 yet.
+        # https://github.com/pydata/xarray/issues/7716
+        if record_name == "xarray" and packaging.version.Version(record["version"]) < packaging.version.Version("2023.3.0"):
+            _replace_pin("pandas >=1.3", "pandas >=1.3,<2", deps, record)
+
+        # erddapy doesn't support pandas 2.0 yet.
+        # https://github.com/ioos/erddapy/issues/299
+        if record_name == "erddapy" and packaging.version.Version(record["version"]) < packaging.version.Version("1.3"):
+            _replace_pin("pandas >=0.20.3", "pandas >=0.20.3,<2", deps, record)
 
         # Rioxarray 0.14.0 dropped Python 3.8 and rasterio 1.1, need to patch
         # first build to use a minimum of Python 3.9 and rasterio 1.2
