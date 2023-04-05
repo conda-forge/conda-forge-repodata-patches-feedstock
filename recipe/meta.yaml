@@ -20,6 +20,7 @@ requirements:
     - requests
     - tqdm
     - license-expression
+    - packaging
   host:
   run:
 
