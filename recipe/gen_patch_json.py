@@ -2750,6 +2750,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             ):
                 _pin_stricter(fn, record, "numpy", "x", upper_bound="1.24")
 
+        # cuda-cccl and cuda-cccl-impl (released with CUDA 12) ship the same
+        # files as existing thrust/cub packages. These should conflict.
+        # Eventually users of thrust/cub should migrate to cuda-cccl[-impl]
+        if record_name in {"thrust", "cub"}:
+            new_constrains = record.get('constrains', [])
+            new_constrains.append("cuda-cccl <0.0.0a0")
+            new_constrains.append("cuda-cccl-impl <0.0.0a0")
+            new_constrains.append(f"cuda-cccl_{subdir} <0.0.0a0")
+            record['constrains'] = new_constrains
+
     return index
 
 
