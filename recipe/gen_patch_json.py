@@ -1602,10 +1602,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and packaging.version.Version(record["version"]) <= packaging.version.Version("2023.1.0")
             and record.get("timestamp", 0) < 1680700334000
         ):
-            _replace_pin("pandas >=1.0", "pandas >=1.0,<2a0", deps, record)
-            _replace_pin("pandas >=1.1", "pandas >=1.1,<2a0", deps, record)
-            _replace_pin("pandas >=1.2", "pandas >=1.2,<2a0", deps, record)
-            _replace_pin("pandas >=1.3", "pandas >=1.3,<2a0", deps, record)
+            for d in deps:
+                # really old version of xarray e.g. 0.8 didn't specify any lower bound
+                if d == "pandas":
+                    _replace_pin("pandas", "pandas <2.0a", deps, record)
+                    break
+                elif d in ["pandas >=1.3", "pandas >=1.2", "pandas >=1.1", "pandas >=1.0", "pandas >=0.25", "pandas >=0.24", "pandas >=0.18", "pandas >=0.19.2"]:
+                    _replace_pin(d, d + ",<2a0", deps, record)
+                    break
 
         if record_name == "xarray" and packaging.version.Version(record["version"]) == packaging.version.Version("2023.2.0"):
             _replace_pin("pandas >=1.4", "pandas >=1.4,<2a0", deps, record)
