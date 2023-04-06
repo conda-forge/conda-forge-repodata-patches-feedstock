@@ -1120,6 +1120,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     deps.append("tbb <2021.0.0a0")
                     break
 
+        # pennylane-lightning-gpu 0.29.0 requires pennylane>=0.28.0, but build 0 left it unspecified,
+        # fixed in https://github.com/conda-forge/pennylane-lightning-gpu-feedstock/pull/2
+        if (
+            record_name == "pennylane-lightning-gpu" and
+            record["version"] == "0.29.0" and
+            record['build_number'] == 0 and
+            record.get("timestamp", 0) < 1680553268000
+        ):
+            _replace_pin("pennylane", "pennylane >=0.28.0", record["depends"], record)
+
         # cuTENSOR 1.3.x is binary incompatible with 1.2.x. Let's just pin exactly since
         # it appears semantic versioning is not guaranteed.
         _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", deps, record)
