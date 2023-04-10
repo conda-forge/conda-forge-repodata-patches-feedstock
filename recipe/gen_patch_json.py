@@ -2795,6 +2795,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_constrains.append(f"cuda-cccl_{subdir} <0.0.0a0")
             record['constrains'] = new_constrains
 
+        # pystac >=1.6.0 dropped Python < 3.8. This only affects 1.6.0, >=1.6.0 were fixed already.
+        # https://github.com/conda-forge/pystac-feedstock/issues/22
+        if record_name == "pystac" and record["version"] == "1.6.0" and record.get("timestamp", 0) < 1681128912000:
+            _replace_pin("python >=3.6", "python >=3.8", deps, record)
+
     return index
 
 
