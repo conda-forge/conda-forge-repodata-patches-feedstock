@@ -2794,6 +2794,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_constrains.append("cuda-cccl-impl <0.0.0a0")
             new_constrains.append(f"cuda-cccl_{subdir} <0.0.0a0")
             record['constrains'] = new_constrains
+        
+        if record.get('timestamp', 0) < 1681344601000:
+            deps = record.get("depends", [])
+            if any(dep.startswith(("libcurl", "curl")) and dep.endswith("<8.0a0") for dep in deps):
+                _pin_looser(fn, record, "curl", upper_bound="9.0")
+                _pin_looser(fn, record, "libcurl", upper_bound="9.0")
 
     return index
 
