@@ -983,7 +983,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         if record_name == "cudatoolkit" and record.get('timestamp', 0) < 1681349920000:
             cuda_major_minor = ".".join(record["version"].split(".")[:2])
-            record['depends'].append(f"cuda-version {cuda_major_minor}")
+            constrains = record.get('constrains', [])
+            constrains.append(f"cuda-version {cuda_major_minor}")
+            record['constrains'] = constrains
 
         if record.get('timestamp', 0) < 1663795137000:
             if any(dep.startswith("arpack >=3.7") for dep in deps):
