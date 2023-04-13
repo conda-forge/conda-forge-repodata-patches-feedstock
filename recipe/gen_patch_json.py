@@ -981,6 +981,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if i >= 0:
             deps[i] = "cudatoolkit >=11.2,<12.0a0"
 
+        if record_name == "cudatoolkit" and record.get('timestamp', 0) < 1681349920000:
+            cuda_major_minor = ".".join(record["version"].split(".")[:2])
+            record['depends'].append(f"cuda-version {cuda_major_minor}")
+
         if record.get('timestamp', 0) < 1663795137000:
             if any(dep.startswith("arpack >=3.7") for dep in deps):
                 _pin_looser(fn, record, "arpack", max_pin="x.x")
