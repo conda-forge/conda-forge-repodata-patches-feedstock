@@ -2804,6 +2804,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _pin_looser(fn, record, "curl", upper_bound="9.0")
                 _pin_looser(fn, record, "libcurl", upper_bound="9.0")
 
+        # anndata 0.9.0 dropped support for Python 3.7 but build 0 didn't
+        # update the Python pin. Fixed for build_number 1 in
+        # https://github.com/conda-forge/anndata-feedstock/pull/28
+        if (
+            record_name == "anndata"
+            and record["version"] == "0.9.0"
+            and record["build_number"] == 0
+            and record.get("timestamp", 0) < 1681324213000
+           ):
+            _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+
     return index
 
 
