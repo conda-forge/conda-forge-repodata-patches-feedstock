@@ -1962,22 +1962,25 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("python >=3.6", "python >=3.7", record["depends"], record)
 
-        # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
-        # issues in click 8.1.0 cause failures for older versions of dask-cuda
         if record_name == "dask-cuda":
+            timestamp = record.get("timestamp", 0)
             # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
             # issues in click 8.1.0 cause failures for older versions of dask-cuda
-            if record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
+            if timestamp <= 1645130882435:  # 22.2.0 and prior
                 new_depends = record.get("depends", [])
                 new_depends += ["click ==8.0.4", "__linux"]
                 record["depends"] = new_depends
 
             # older versions of dask-cuda do not work with pynvml 11.5+
-            if record.get("timestamp", 0) <= 1676966400000:  # 23.2.0 and prior
+            if timestamp <= 1676966400000:  # 23.2.0 and prior
                 depends = record.get("depends", [])
                 new_depends = [d + ",<11.5" if d.startswith("pynvml") else d
                                for d in depends]
                 record["depends"] = new_depends
+
+            # older versions of dask-cuda pulling in pandas are incompatible with pandas 2.0 and must be constrained to pandas 1
+            if timestamp <= 1677122851413 and timestamp >= 1670873028930: # 22.12 to 23.2.1
+                _replace_pin("pandas >=1.0", "pandas >=1.0,<1.6.0dev0", record["depends"], record)
 
             # there are various inconsistencies between the pinnings of dask-cuda on `rapidsai` and `conda-forge`,
             # this makes the packages roughly consistent while also removing the python upper bound where present
