@@ -981,10 +981,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if i >= 0:
             deps[i] = "cudatoolkit >=11.2,<12.0a0"
 
-        if record_name == "cudatoolkit" and record.get('timestamp', 0) < 1681349920000:
+        if record_name == "cuda-version" and record.get('timestamp', 0) < 1681952850000:
             cuda_major_minor = ".".join(record["version"].split(".")[:2])
             constrains = record.get('constrains', [])
-            constrains.append(f"cuda-version {cuda_major_minor}")
+            constrains.append(f"cudatoolkit {cuda_major_minor}")
             record['constrains'] = constrains
 
         if record.get('timestamp', 0) < 1663795137000:
