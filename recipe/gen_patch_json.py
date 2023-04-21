@@ -1830,6 +1830,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if timestamp < 1661793597230:  # 2022-08-29
                 _replace_pin("vispy >=0.9.4", "vispy >=0.9.4,<0.10", record.get("depends", []), record)
                 _replace_pin("vispy >=0.6.4", "vispy >=0.6.4,<0.10", record.get("depends", []), record)
+            if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("0.4.18"):
+                _replace_pin("python >=3.8", "python >=3.8,<3.11", record.get("depends", []), record)
 
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
@@ -2797,7 +2799,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_constrains.append("cuda-cccl-impl <0.0.0a0")
             new_constrains.append(f"cuda-cccl_{subdir} <0.0.0a0")
             record['constrains'] = new_constrains
-        
+
         if record.get('timestamp', 0) < 1681344601000:
             deps = record.get("depends", [])
             if any(dep.startswith(("libcurl", "curl")) and dep.endswith("<8.0a0") for dep in deps):
