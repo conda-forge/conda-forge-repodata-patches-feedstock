@@ -1259,6 +1259,22 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
 
+        # when making the glibc 2.28 sysroots, we found we needed to go back
+        # and add the current repodata hack packages to the cos7 sysroots
+        # for aarch64, ppc64le and s390x
+        if (
+            subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
+            and record_name in [
+                "kernel-headers_" + subdir, "sysroot_" + subdir
+            ]
+            and record.get('timestamp', 0) < 1682273081000  # 2023-04-23
+        ):
+            new_depends = record.get("depends", [])
+            new_depends.append(
+                "_sysroot_" + subdir + "_curr_repodata_hack 4.*"
+            )
+            record["depends"] = new_depends
+
         # make old binutils packages conflict with the new sysroot packages
         # that have renamed the sysroot from conda_cos6 or conda_cos7 to just
         # conda
@@ -2821,7 +2837,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
 
         # intake-esm v2023.4.20 dropped support for Python 3.8 but build 0 didn't update
-        # the Python version pin. 
+        # the Python version pin.
         if (
             record_name == "intake-esm"
             and record["version"] == "2023.4.20"
