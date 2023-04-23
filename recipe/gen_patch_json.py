@@ -2821,6 +2821,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record_name == "intake-esm"
             and record["version"] == "2023.4.20"
             and record["build_number"] == 0
+            and record.get("timestamp", 0) < 1682227052000
         ):
             _replace_pin("python >=3.8", "python >=3.9", record["depends"], record)
 
