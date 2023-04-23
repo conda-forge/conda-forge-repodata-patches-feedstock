@@ -1262,18 +1262,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # when making the glibc 2.28 sysroots, we found we needed to go back
         # and add the current repodata hack packages to the cos7 sysroots
         # for aarch64, ppc64le and s390x
-        if (
-            subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
-            and record_name in [
-                "kernel-headers_" + subdir, "sysroot_" + subdir
-            ]
-            and record.get('timestamp', 0) < 1682273081000  # 2023-04-23
-        ):
-            new_depends = record.get("depends", [])
-            new_depends.append(
-                "_sysroot_" + subdir + "_curr_repodata_hack 4.*"
-            )
-            record["depends"] = new_depends
+        for __subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]:
+            if (
+                record_name in [
+                    "kernel-headers_" + __subdir, "sysroot_" + __subdir
+                ]
+                and record.get('timestamp', 0) < 1682273081000  # 2023-04-23
+                and record["version"] == "2.17"
+            ):
+                new_depends = record.get("depends", [])
+                new_depends.append(
+                    "_sysroot_" + __subdir + "_curr_repodata_hack 4.*"
+                )
+                record["depends"] = new_depends
 
         # make old binutils packages conflict with the new sysroot packages
         # that have renamed the sysroot from conda_cos6 or conda_cos7 to just
