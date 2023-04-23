@@ -1262,7 +1262,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # when making the glibc 2.28 sysroots, we found we needed to go back
         # and add the current repodata hack packages to the cos7 sysroots
         # for aarch64, ppc64le and s390x
-        for __subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]:
+        for __subdir in ["linux-s390x", "linux-aarch64", "linux-ppc64le"]:
             if (
                 record_name in [
                     "kernel-headers_" + __subdir, "sysroot_" + __subdir
