@@ -1822,16 +1822,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 deps[i] = dep
             record["depends"] = deps
 
-        # pillow 7.1.0 and 7.1.1 break napari viewer but this wasn't dealt with til latest release
         if record_name == "napari":
             timestamp = record.get("timestamp", 0)
             if timestamp < 1642529454000:  # 2022-01-18
+                # pillow 7.1.0 and 7.1.1 break napari viewer but this wasn't dealt with til latest release
                 _replace_pin("pillow", "pillow !=7.1.0,!=7.1.1", record.get("depends", []), record)
             if timestamp < 1661793597230:  # 2022-08-29
                 _replace_pin("vispy >=0.9.4", "vispy >=0.9.4,<0.10", record.get("depends", []), record)
                 _replace_pin("vispy >=0.6.4", "vispy >=0.6.4,<0.10", record.get("depends", []), record)
-            if pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("0.4.18"):
-                _replace_pin("python >=3.8", "python >=3.8,<3.11", record.get("depends", []), record)
+            if timestamp < 1682243307685:  # 2023-04-23
+                # https://github.com/napari/napari/issues/5705#issuecomment-1502901099
+                _replace_pin("python >=3.6", "python >=3.6,<3.11.0a0", record.get("depends", []), record)
+                _replace_pin("python >=3.7", "python >=3.7,<3.11.0a0", record.get("depends", []), record)
+                _replace_pin("python >=3.8", "python >=3.8,<3.11.0a0", record.get("depends", []), record)
 
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
