@@ -2826,6 +2826,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
            ):
             _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
 
+        # scikit-image 0.20.0 needs scipy scipy >=1.8,<1.9.2 for python <= 3.9
+        # Fixed in https://github.com/conda-forge/scikit-image-feedstock/pull/102
+        if (
+            record_name == "scikit-image" and
+            record["version"] == "0.20.0" and
+            record["build_number"] == 0 and
+            record.get('timestamp', 0) < 1681732616000 and
+            ('python >=3.8,<3.9.0a0' in record["depends"] or
+             'python >=3.9,<3.10.0a0' in record["depends"])
+        ):
+            _replace_pin("scipy >=1.8", "scipy >=1.8,<1.9.2",
+                         record["depends"], record)
+
         # intake-esm v2023.4.20 dropped support for Python 3.8 but build 0 didn't update
         # the Python version pin. 
         if (
