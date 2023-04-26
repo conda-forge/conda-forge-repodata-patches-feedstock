@@ -2856,6 +2856,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record.get("timestamp", 0) <= 1680784303548
         ):
             _replace_pin("sqlalchemy <2.0.0", "sqlalchemy >=2.0.0", record["depends"], record)
+        
+        # gensim recipe forot to include FuzzyTM (only) in version 4.3.0
+        # gensim recipe: https://github.com/conda-forge/gensim-feedstock/blob/881265555a2e772a8183ca7afd436b17980c48a7/recipe/meta.yaml
+        # gensim package reuqirements: https://github.com/RaRe-Technologies/gensim/blob/adf393cdfc9443fa96abec3996b2e134a757d24b/setup.py#L340-L345
+        if (
+            record_name == "gensim"
+            and record["version"] == "4.3.0"
+            and record["build_number"] == 1
+        ):
+            record['depends'].append("fuzzytm >= 0.4.0")
 
     return index
 
