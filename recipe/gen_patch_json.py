@@ -2857,6 +2857,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("sqlalchemy <2.0.0", "sqlalchemy >=2.0.0", record["depends"], record)
 
+        if (
+            record_name == "libtensorlight" and
+            record["version"] == "3.0.1" and
+            record["build_number"] == 0 and
+            record.get("timestamp", 0) <= 1682609291000
+        ):
+            record["depends"].append("libblas * *mkl")
+
     return index
 
 
