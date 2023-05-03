@@ -987,6 +987,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             constrains.append(f"cudatoolkit {cuda_major_minor}")
             record['constrains'] = constrains
 
+        if record_name == "ucx" and record.get('timestamp', 0) < 1682924400000:
+            constrains = record.get('constrains', [])
+            for i, c in enumerate(constrains):
+                if c.startswith('cudatoolkit'):
+                    v = c.split()[-1]
+                    if v != '>=11.2,<12':
+                        constrains[i] = c = f'cudatoolkit {v}|{v}.*'
+            record['constrains'] = constrains
+
         if record.get('timestamp', 0) < 1663795137000:
             if any(dep.startswith("arpack >=3.7") for dep in deps):
                 _pin_looser(fn, record, "arpack", max_pin="x.x")
