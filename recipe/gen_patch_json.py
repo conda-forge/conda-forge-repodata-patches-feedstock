@@ -2866,6 +2866,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("sqlalchemy <2.0.0", "sqlalchemy >=2.0.0", record["depends"], record)
 
+        # Connexion 2.X is not compatible with Flask 2.3+
+        # https://github.com/spec-first/connexion/issues/1699#issuecomment-1524042812
+        if (
+            record_name == "connexion" and
+            record["version"][0] == "2" and
+            record.get("timestamp", 0) <= 1680300000000
+        ):
+            _replace_pin("flask >=1.0.4,<3", "flask >=1.0.4,<2.3", record["depends"], record)
+
     return index
 
 
