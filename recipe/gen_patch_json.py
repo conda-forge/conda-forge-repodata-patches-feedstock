@@ -894,7 +894,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # https://gitlab.com/taurus-org/taurus/-/issues/1290
         # It's not compatible with Python 3.11 either
         # https://gitlab.com/taurus-org/taurus/-/merge_requests/1254
-        if record_name == "taurus-core" and packaging.version.Version(record["version"]) <= packaging.version.Version("5.1.5"):
+        if (
+            record_name == "taurus-core"
+            and packaging.version.Version(record["version"]) <= packaging.version.Version("5.1.5")
+            and record.get("timestamp", 0) < 1683637693000
+        ):
             _replace_pin("pint >=0.8", "pint >=0.8,<0.21", record["depends"], record)
             _replace_pin("python >=3.6", "python >=3.6,<3.11", record["depends"], record)
 
