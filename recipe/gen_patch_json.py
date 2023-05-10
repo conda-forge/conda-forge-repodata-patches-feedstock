@@ -1822,6 +1822,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             elif record["version"] == "0.7.14":
                 _replace_pin("python >=2.7", "python >=2.7,<3.10", deps, record)
 
+        # Retroactively pin Python <3.11 for older versions of Agate since they
+        # import collections.Sequence instead of collections.abc.Sequence.
+        # Upstream fix: <https://github.com/wireservice/agate/pull/737>
+        if record_name == "agate" and subdir == "noarch" and record.get("timestamp", 0) < 1683708375000:
+            pversion = pkg_resources.parse_version(record['version'])
+            fixed_version = pkg_resources.parse_version("1.6.3")
+            if pversion < fixed_version:
+                _replace_pin("python", "python <3.11", deps, record)
+                _replace_pin("python >=3.6", "python >=3.6,<3.11", deps, record)
+
         # Properly depend on clangdev 5.0.0 flang* for flang 5.0
         if record_name == "flang":
             deps = record["depends"]
