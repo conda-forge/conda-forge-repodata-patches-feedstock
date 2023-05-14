@@ -2340,6 +2340,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             record["depends"].append("abseil-cpp ==20220623.0")
 
+        if (record.get("timestamp", 0) < 1684087258848
+                and any(
+                    depend.startswith("libabseil 20230125.0 cxx17*")
+                    for depend in record["depends"]
+                )
+        ):
+            # loosen abseil's run-export to major version, see
+            # https://github.com/conda-forge/abseil-cpp-feedstock/pull/63
+            i = record["depends"].index("libabseil 20230125.0 cxx17*")
+            record["depends"][i] = "libabseil 20230125 cxx17*"
+
         # Different patch versions of ipopt can be ABI incompatible
         # See https://github.com/conda-forge/ipopt-feedstock/issues/85
         if has_dep(record, "ipopt") and record.get('timestamp', 0) < 1656352053694:
