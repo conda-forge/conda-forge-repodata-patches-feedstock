@@ -714,6 +714,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         record
                     )
 
+            # older versions of dask are incompatibile with pandas=2
+            if record.get('timestamp', 0) < 1676063992630:  # releases prior to 2023.2.0
+                pandas_pinning = [x for x in record['depends'] if x.startswith('pandas')]
+                if pandas_pinning:
+                    pandas_pinning = pandas_pinning[0]
+                    _replace_pin(
+                        pandas_pinning,
+                        pandas_pinning + (",<2" if pandas_pinning[-1].isdigit() else " <2"),
+                        deps,
+                        record
+                    )
+
         # In 1.4.1 bayesian-optimization fixes colors not displaying correctly on windows.
         # This is done using colorama, however the function used by colorama was only introduced in
         # colorama 0.4.6, which is only available for python >=3.7
