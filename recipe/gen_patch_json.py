@@ -714,6 +714,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         record
                     )
 
+            # older versions of dask are incompatibile with pandas=2
+            if record.get('timestamp', 0) < 1676063992630:  # releases prior to 2023.2.0
+                pandas_pinning = [x for x in record['depends'] if x.startswith('pandas')]
+                if pandas_pinning:
+                    pandas_pinning = pandas_pinning[0]
+                    _replace_pin(
+                        pandas_pinning,
+                        pandas_pinning + (",<2" if pandas_pinning[-1].isdigit() else " <2"),
+                        deps,
+                        record
+                    )
+
         # In 1.4.1 bayesian-optimization fixes colors not displaying correctly on windows.
         # This is done using colorama, however the function used by colorama was only introduced in
         # colorama 0.4.6, which is only available for python >=3.7
@@ -889,6 +901,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if 'taurus >=4.7.0' in record['depends']:
                 i = record['depends'].index('taurus >=4.7.0')
                 record['depends'][i] = 'taurus >=4.7.0,<5'
+
+        # pint 0.21 breaks taurus <= 5.1.5
+        # https://gitlab.com/taurus-org/taurus/-/issues/1290
+        # It's not compatible with Python 3.11 either
+        # https://gitlab.com/taurus-org/taurus/-/merge_requests/1254
+        if (
+            record_name == "taurus-core"
+            and packaging.version.Version(record["version"]) <= packaging.version.Version("5.1.5")
+            and record.get("timestamp", 0) < 1683637693000
+        ):
+            _replace_pin("pint >=0.8", "pint >=0.8,<0.21", record["depends"], record)
+            _replace_pin("python >=3.6", "python >=3.6,<3.11", record["depends"], record)
 
         if record_name == 'zipp':
             # zipp >=3.7 requires python >=3.7 but it was missed
@@ -1278,6 +1302,23 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             full_pkg_name = fn.replace('.tar.bz2', '')
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
+
+        # when making the glibc 2.28 sysroots, we found we needed to go back
+        # and add the current repodata hack packages to the cos7 sysroots
+        # for aarch64, ppc64le and s390x
+        for __subdir in ["linux-s390x", "linux-aarch64", "linux-ppc64le"]:
+            if (
+                record_name in [
+                    "kernel-headers_" + __subdir, "sysroot_" + __subdir
+                ]
+                and record.get('timestamp', 0) < 1682273081000  # 2023-04-23
+                and record["version"] == "2.17"
+            ):
+                new_depends = record.get("depends", [])
+                new_depends.append(
+                    "_sysroot_" + __subdir + "_curr_repodata_hack 4.*"
+                )
+                record["depends"] = new_depends
 
         # make old binutils packages conflict with the new sysroot packages
         # that have renamed the sysroot from conda_cos6 or conda_cos7 to just
@@ -1822,6 +1863,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             elif record["version"] == "0.7.14":
                 _replace_pin("python >=2.7", "python >=2.7,<3.10", deps, record)
 
+        # Retroactively pin Python <3.11 for older versions of Agate since they
+        # import collections.Sequence instead of collections.abc.Sequence.
+        # Upstream fix: <https://github.com/wireservice/agate/pull/737>
+        if record_name == "agate" and subdir == "noarch" and record.get("timestamp", 0) < 1683708375000:
+            pversion = pkg_resources.parse_version(record['version'])
+            fixed_version = pkg_resources.parse_version("1.6.3")
+            if pversion < fixed_version:
+                _replace_pin("python", "python <3.11", deps, record)
+                _replace_pin("python >=3.6", "python >=3.6,<3.11", deps, record)
+
         # Properly depend on clangdev 5.0.0 flang* for flang 5.0
         if record_name == "flang":
             deps = record["depends"]
@@ -2300,6 +2351,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record["build_number"] == 0
         ):
             record["depends"].append("abseil-cpp ==20220623.0")
+
+        if (record.get("timestamp", 0) < 1684087258848
+                and any(
+                    depend.startswith("libabseil 20230125.0 cxx17*")
+                    for depend in record["depends"]
+                )
+        ):
+            # loosen abseil's run-export to major version, see
+            # https://github.com/conda-forge/abseil-cpp-feedstock/pull/63
+            i = record["depends"].index("libabseil 20230125.0 cxx17*")
+            record["depends"][i] = "libabseil 20230125 cxx17*"
 
         # Different patch versions of ipopt can be ABI incompatible
         # See https://github.com/conda-forge/ipopt-feedstock/issues/85
@@ -2854,7 +2916,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                          record["depends"], record)
 
         # intake-esm v2023.4.20 dropped support for Python 3.8 but build 0 didn't update
-        # the Python version pin. 
+        # the Python version pin.
         if (
             record_name == "intake-esm"
             and record["version"] == "2023.4.20"
@@ -2870,6 +2932,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record.get("timestamp", 0) <= 1680784303548
         ):
             _replace_pin("sqlalchemy <2.0.0", "sqlalchemy >=2.0.0", record["depends"], record)
+
+        # Connexion 2.X is not compatible with Flask 2.3+
+        # https://github.com/spec-first/connexion/issues/1699#issuecomment-1524042812
+        if (
+            record_name == "connexion" and
+            record["version"][0] == "2" and
+            record.get("timestamp", 0) <= 1680300000000
+        ):
+            _replace_pin("flask >=1.0.4,<3", "flask >=1.0.4,<2.3", record["depends"], record)
 
         # attrs >=22.2.0 requires Python 3.6, and >=23.1.0 requires 3.7, but feedstock specified >= 3.5
         # Fixed in https://github.com/conda-forge/attrs-feedstock/pull/32
