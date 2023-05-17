@@ -2958,6 +2958,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)            
 
+        # connexion 2.14.2=0 has incorrect dependencies
+        # fixed for 2.14.2=1 in https://github.com/conda-forge/connexion-feedstock/pull/35/files
+        if (
+            record_name == "connexion"
+            and record["version"] in {"2.14.2"}
+            and record["build_number"] == 0
+            and record.get("timestamp", 0) < 1684322706000
+        ):
+            _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+            _replace_pin("werkzeug >=1.0,<3.0", "werkzeug >=1.0,<2.3", record["depends"], record)
+            record["depends"].remove("importlib-metadata >=1")
+
     return index
 
 
