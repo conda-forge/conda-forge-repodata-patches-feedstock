@@ -948,6 +948,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _rename_dependency(fn, record, "nc_time_axis", "nc-time-axis")
             if record["version"] in iris_updates:
                 record["depends"].extend(iris_updates[record["version"]])
+            # avoid known numpy 1.24.3 masking issues
+            # https://github.com/SciTools/iris/pull/5274 and https://github.com/SciTools/iris/issues/5329
+            pversion = pkg_resources.parse_version(record["version"])
+            v3_2_0, v3_6_0 = pkg_resources.parse_version("3.2.0"), pkg_resources.parse_version("3.6.0")
+            if v3_2_0 <= pversion < v3_6_0 and record.get("timestamp", 0) < 1684507640000:
+                _replace_pin("numpy >=1.19", "numpy >=1.19,!=1.24.3", record["depends"], record)
 
         if record_name == "nordugrid-arc" and record.get("timestamp", 0) < 1666690884000:
             record["depends"].append("glibmm-2.4 >=2.58.1")
