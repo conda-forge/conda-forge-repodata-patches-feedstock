@@ -2274,16 +2274,25 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # Bump minimum `requests` requirement of `anaconda-client` 1.11.0
         #
         # https://github.com/conda-forge/anaconda-client-feedstock/pull/35
-        if record_name == "anaconda-client" and (
+        if record_name == "anaconda-client":
+            if (
             pkg_resources.parse_version(record["version"]) ==
             pkg_resources.parse_version("1.11.0")):
-
-            i = -1
-            deps = record["depends"]
-            with suppress(ValueError):
-                i = deps.index("requests >=2.9.1")
-            if i >= 0:
-                deps[i] = "requests >=2.20.0"
+                i = -1
+                deps = record["depends"]
+                with suppress(ValueError):
+                    i = deps.index("requests >=2.9.1")
+                if i >= 0:
+                    deps[i] = "requests >=2.20.0"
+            if record.get("timestamp", 0) <= 1684878992896:  # 2023-05-23
+                # https://github.com/conda-forge/conda-forge-ci-setup-feedstock/issues/242
+                # https://github.com/conda-forge/anaconda-client-feedstock/issues/40
+                _replace_pin(
+                    "urllib3 >=1.26.4",
+                    "urllib3 >=1.26.4,<2.0.0a0",
+                    record["depends"],
+                    record,
+                )
 
         if record_name == "aesara" and (
             pkg_resources.parse_version(record["version"]) >
