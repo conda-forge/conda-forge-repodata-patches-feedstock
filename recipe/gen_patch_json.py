@@ -2287,12 +2287,23 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if record.get("timestamp", 0) <= 1684878992896:  # 2023-05-23
                 # https://github.com/conda-forge/conda-forge-ci-setup-feedstock/issues/242
                 # https://github.com/conda-forge/anaconda-client-feedstock/issues/40
-                _replace_pin(
-                    "urllib3 >=1.26.4",
-                    "urllib3 >=1.26.4,<2.0.0a0",
-                    record["depends"],
-                    record,
-                )
+                if any("urllib3" in dep for dep in record["depends"]):
+                    _replace_pin(
+                        "urllib3 >=1.26.4",
+                        "urllib3 >=1.26.4,<2.0.0a0",
+                        record["depends"],
+                        record,
+                    )
+                else:
+                    # old versions depended on urllib3 via requests; 
+                    # requests 2.30+ allows urllib3 2.x
+                    for lower_bound in (">=2.9.1", ">=2.0", ">=2.20.0"):
+                        _replace_pin(
+                            f"requests {lower_bound}",
+                            f"requests {lower_bound},<2.30.0a0",
+                            record["depends"],
+                            record,
+                        )
 
         if record_name == "aesara" and (
             pkg_resources.parse_version(record["version"]) >
