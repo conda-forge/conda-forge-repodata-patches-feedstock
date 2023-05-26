@@ -574,6 +574,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             i = record['depends'].index('ninja')
             record['depends'].pop(i)
 
+        if (
+                record_name == "transformers"
+                and (packaging.version.parse(record['version']) < packaging.version.parse('4.23'))
+                and (packaging.version.parse(record['version']) >= packaging.version.parse('4.18'))
+                and record.get('timestamp', 0) < 1685092335000
+        ):
+            tokenizers_pin = [r for r in record["depends"] if r.startswith('tokenizers')][0]
+            i = record["depends"].index(tokenizers_pin)
+            record["depends"][i] = tokenizers_pin + ',<0.13'
+
         if record_name == "packaging" and record["version"] in ["21.1", "21.2"]:
             # https://github.com/conda-forge/packaging-feedstock/pull/21
             deps = record["depends"]
