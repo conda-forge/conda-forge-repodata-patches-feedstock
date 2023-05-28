@@ -1957,6 +1957,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     depends[i] = " ".join(_dep_parts)
             record["depends"] = depends
 
+        if record_name == "conda-lock" and record.get("timestamp", 0) < 1685186303000:
+            assert "constrains" not in record
+            record["constrains"] = ["urllib3 <2"]
+
         if record_name == "proplot" and record.get("timestamp", 0) < 1634670686970:
             depends = record.get("depends", [])
             for i, dep in enumerate(depends):
