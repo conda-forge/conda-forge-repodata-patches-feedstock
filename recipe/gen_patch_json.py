@@ -574,6 +574,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             i = record['depends'].index('ninja')
             record['depends'].pop(i)
 
+        if (
+                record_name == "transformers"
+                and (packaging.version.parse(record['version']) < packaging.version.parse('4.23'))
+                and (packaging.version.parse(record['version']) >= packaging.version.parse('4.18'))
+                and record.get('timestamp', 0) < 1685092335000
+        ):
+            tokenizers_pin = [r for r in record["depends"] if r.startswith('tokenizers')][0]
+            i = record["depends"].index(tokenizers_pin)
+            record["depends"][i] = tokenizers_pin + ',<0.13'
+
         if record_name == "packaging" and record["version"] in ["21.1", "21.2"]:
             # https://github.com/conda-forge/packaging-feedstock/pull/21
             deps = record["depends"]
@@ -710,6 +720,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     _replace_pin(
                         bokeh_pinning,
                         bokeh_pinning + (",<3" if bokeh_pinning[-1].isdigit() else " <3"),
+                        deps,
+                        record
+                    )
+
+            # older versions of dask are incompatibile with pandas=2
+            if record.get('timestamp', 0) < 1676063992630:  # releases prior to 2023.2.0
+                pandas_pinning = [x for x in record['depends'] if x.startswith('pandas')]
+                if pandas_pinning:
+                    pandas_pinning = pandas_pinning[0]
+                    _replace_pin(
+                        pandas_pinning,
+                        pandas_pinning + (",<2" if pandas_pinning[-1].isdigit() else " <2"),
                         deps,
                         record
                     )
@@ -890,6 +912,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record['depends'].index('taurus >=4.7.0')
                 record['depends'][i] = 'taurus >=4.7.0,<5'
 
+        # pint 0.21 breaks taurus <= 5.1.5
+        # https://gitlab.com/taurus-org/taurus/-/issues/1290
+        # It's not compatible with Python 3.11 either
+        # https://gitlab.com/taurus-org/taurus/-/merge_requests/1254
+        if (
+            record_name == "taurus-core"
+            and packaging.version.Version(record["version"]) <= packaging.version.Version("5.1.5")
+            and record.get("timestamp", 0) < 1683637693000
+        ):
+            _replace_pin("pint >=0.8", "pint >=0.8,<0.21", record["depends"], record)
+            _replace_pin("python >=3.6", "python >=3.6,<3.11", record["depends"], record)
+
         if record_name == 'zipp':
             # zipp >=3.7 requires python >=3.7 but it was missed
             # https://github.com/conda-forge/zipp-feedstock/pull/29
@@ -924,6 +958,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _rename_dependency(fn, record, "nc_time_axis", "nc-time-axis")
             if record["version"] in iris_updates:
                 record["depends"].extend(iris_updates[record["version"]])
+            # avoid known numpy 1.24.3 masking issues
+            # https://github.com/SciTools/iris/pull/5274 and https://github.com/SciTools/iris/issues/5329
+            pversion = pkg_resources.parse_version(record["version"])
+            v3_2_0, v3_6_0 = pkg_resources.parse_version("3.2.0"), pkg_resources.parse_version("3.6.0")
+            if v3_2_0 <= pversion < v3_6_0 and record.get("timestamp", 0) < 1684507640000:
+                _replace_pin("numpy >=1.19", "numpy >=1.19,!=1.24.3", record["depends"], record)
 
         if record_name == "nordugrid-arc" and record.get("timestamp", 0) < 1666690884000:
             record["depends"].append("glibmm-2.4 >=2.58.1")
@@ -980,6 +1020,26 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             i = deps.index("cudatoolkit 11.2|11.2.*")
         if i >= 0:
             deps[i] = "cudatoolkit >=11.2,<12.0a0"
+
+        if record_name == "cuda-version" and record['build_number'] < 2 and record.get('timestamp', 0) < 1683211961000:
+            cuda_major_minor = ".".join(record["version"].split(".")[:2])
+            constrains = record.get('constrains', [])
+            for i, c in enumerate(constrains):
+                if c.startswith('cudatoolkit'):
+                    constrains[i] = f'cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*'
+                    break
+            else:
+                constrains.append( f'cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*' )
+            record['constrains'] = constrains
+
+        if record_name == "ucx" and record.get('timestamp', 0) < 1682924400000:
+            constrains = record.get('constrains', [])
+            for i, c in enumerate(constrains):
+                if c.startswith('cudatoolkit'):
+                    v = c.split()[-1]
+                    if v != '>=11.2,<12':
+                        constrains[i] = c = f'cudatoolkit {v}|{v}.*'
+            record['constrains'] = constrains
 
         if record.get('timestamp', 0) < 1663795137000:
             if any(dep.startswith("arpack >=3.7") for dep in deps):
@@ -1258,6 +1318,23 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             full_pkg_name = fn.replace('.tar.bz2', '')
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
+
+        # when making the glibc 2.28 sysroots, we found we needed to go back
+        # and add the current repodata hack packages to the cos7 sysroots
+        # for aarch64, ppc64le and s390x
+        for __subdir in ["linux-s390x", "linux-aarch64", "linux-ppc64le"]:
+            if (
+                record_name in [
+                    "kernel-headers_" + __subdir, "sysroot_" + __subdir
+                ]
+                and record.get('timestamp', 0) < 1682273081000  # 2023-04-23
+                and record["version"] == "2.17"
+            ):
+                new_depends = record.get("depends", [])
+                new_depends.append(
+                    "_sysroot_" + __subdir + "_curr_repodata_hack 4.*"
+                )
+                record["depends"] = new_depends
 
         # make old binutils packages conflict with the new sysroot packages
         # that have renamed the sysroot from conda_cos6 or conda_cos7 to just
@@ -1802,6 +1879,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             elif record["version"] == "0.7.14":
                 _replace_pin("python >=2.7", "python >=2.7,<3.10", deps, record)
 
+        # Retroactively pin Python <3.11 for older versions of Agate since they
+        # import collections.Sequence instead of collections.abc.Sequence.
+        # Upstream fix: <https://github.com/wireservice/agate/pull/737>
+        if record_name == "agate" and subdir == "noarch" and record.get("timestamp", 0) < 1683708375000:
+            pversion = pkg_resources.parse_version(record['version'])
+            fixed_version = pkg_resources.parse_version("1.6.3")
+            if pversion < fixed_version:
+                _replace_pin("python", "python <3.11", deps, record)
+                _replace_pin("python >=3.6", "python >=3.6,<3.11", deps, record)
+
         # Properly depend on clangdev 5.0.0 flang* for flang 5.0
         if record_name == "flang":
             deps = record["depends"]
@@ -1822,14 +1909,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 deps[i] = dep
             record["depends"] = deps
 
-        # pillow 7.1.0 and 7.1.1 break napari viewer but this wasn't dealt with til latest release
         if record_name == "napari":
             timestamp = record.get("timestamp", 0)
             if timestamp < 1642529454000:  # 2022-01-18
+                # pillow 7.1.0 and 7.1.1 break napari viewer but this wasn't dealt with til latest release
                 _replace_pin("pillow", "pillow !=7.1.0,!=7.1.1", record.get("depends", []), record)
             if timestamp < 1661793597230:  # 2022-08-29
                 _replace_pin("vispy >=0.9.4", "vispy >=0.9.4,<0.10", record.get("depends", []), record)
                 _replace_pin("vispy >=0.6.4", "vispy >=0.6.4,<0.10", record.get("depends", []), record)
+            if timestamp < 1682243307685:  # 2023-04-23
+                # https://github.com/napari/napari/issues/5705#issuecomment-1502901099
+                _replace_pin("python >=3.6", "python >=3.6,<3.11.0a0", record.get("depends", []), record)
+                _replace_pin("python >=3.7", "python >=3.7,<3.11.0a0", record.get("depends", []), record)
+                _replace_pin("python >=3.8", "python >=3.8,<3.11.0a0", record.get("depends", []), record)
 
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
@@ -1864,6 +1956,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     _dep_parts[1] = _dep_parts[1] + ",<0.15a0"
                     depends[i] = " ".join(_dep_parts)
             record["depends"] = depends
+
+        if record_name == "conda-lock" and record.get("timestamp", 0) < 1685186303000:
+            assert "constrains" not in record
+            record["constrains"] = ["urllib3 <2"]
 
         if record_name == "proplot" and record.get("timestamp", 0) < 1634670686970:
             depends = record.get("depends", [])
@@ -1962,22 +2058,25 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("python >=3.6", "python >=3.7", record["depends"], record)
 
-        # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
-        # issues in click 8.1.0 cause failures for older versions of dask-cuda
         if record_name == "dask-cuda":
+            timestamp = record.get("timestamp", 0)
             # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
             # issues in click 8.1.0 cause failures for older versions of dask-cuda
-            if record.get("timestamp", 0) <= 1645130882435:  # 22.2.0 and prior
+            if timestamp <= 1645130882435:  # 22.2.0 and prior
                 new_depends = record.get("depends", [])
                 new_depends += ["click ==8.0.4", "__linux"]
                 record["depends"] = new_depends
 
             # older versions of dask-cuda do not work with pynvml 11.5+
-            if record.get("timestamp", 0) <= 1676966400000:  # 23.2.0 and prior
+            if timestamp <= 1676966400000:  # 23.2.0 and prior
                 depends = record.get("depends", [])
                 new_depends = [d + ",<11.5" if d.startswith("pynvml") else d
                                for d in depends]
                 record["depends"] = new_depends
+
+            # older versions of dask-cuda pulling in pandas are incompatible with pandas 2.0 and must be constrained to pandas 1
+            if timestamp <= 1677122851413 and timestamp >= 1670873028930: # 22.12 to 23.2.1
+                _replace_pin("pandas >=1.0", "pandas >=1.0,<1.6.0dev0", record["depends"], record)
 
             # there are various inconsistencies between the pinnings of dask-cuda on `rapidsai` and `conda-forge`,
             # this makes the packages roughly consistent while also removing the python upper bound where present
@@ -2189,16 +2288,36 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # Bump minimum `requests` requirement of `anaconda-client` 1.11.0
         #
         # https://github.com/conda-forge/anaconda-client-feedstock/pull/35
-        if record_name == "anaconda-client" and (
+        if record_name == "anaconda-client":
+            if (
             pkg_resources.parse_version(record["version"]) ==
             pkg_resources.parse_version("1.11.0")):
-
-            i = -1
-            deps = record["depends"]
-            with suppress(ValueError):
-                i = deps.index("requests >=2.9.1")
-            if i >= 0:
-                deps[i] = "requests >=2.20.0"
+                i = -1
+                deps = record["depends"]
+                with suppress(ValueError):
+                    i = deps.index("requests >=2.9.1")
+                if i >= 0:
+                    deps[i] = "requests >=2.20.0"
+            if record.get("timestamp", 0) <= 1684878992896:  # 2023-05-23
+                # https://github.com/conda-forge/conda-forge-ci-setup-feedstock/issues/242
+                # https://github.com/conda-forge/anaconda-client-feedstock/issues/40
+                if any("urllib3" in dep for dep in record["depends"]):
+                    _replace_pin(
+                        "urllib3 >=1.26.4",
+                        "urllib3 >=1.26.4,<2.0.0a0",
+                        record["depends"],
+                        record,
+                    )
+                else:
+                    # old versions depended on urllib3 via requests; 
+                    # requests 2.30+ allows urllib3 2.x
+                    for lower_bound in (">=2.9.1", ">=2.0", ">=2.20.0"):
+                        _replace_pin(
+                            f"requests {lower_bound}",
+                            f"requests {lower_bound},<2.30.0a0",
+                            record["depends"],
+                            record,
+                        )
 
         if record_name == "aesara" and (
             pkg_resources.parse_version(record["version"]) >
@@ -2272,6 +2391,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record["build_number"] == 0
         ):
             record["depends"].append("abseil-cpp ==20220623.0")
+
+        if (record.get("timestamp", 0) < 1684087258848
+                and any(
+                    depend.startswith("libabseil 20230125.0 cxx17*")
+                    for depend in record["depends"]
+                )
+        ):
+            # loosen abseil's run-export to major version, see
+            # https://github.com/conda-forge/abseil-cpp-feedstock/pull/63
+            i = record["depends"].index("libabseil 20230125.0 cxx17*")
+            record["depends"][i] = "libabseil 20230125 cxx17*"
 
         # Different patch versions of ipopt can be ABI incompatible
         # See https://github.com/conda-forge/ipopt-feedstock/issues/85
@@ -2799,6 +2929,98 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # https://github.com/conda-forge/pystac-feedstock/issues/22
         if record_name == "pystac" and record["version"] == "1.6.0" and record.get("timestamp", 0) < 1681128912000:
             _replace_pin("python >=3.6", "python >=3.8", deps, record)
+
+        if record.get('timestamp', 0) < 1681344601000:
+            deps = record.get("depends", [])
+            if any(dep.startswith(("libcurl", "curl")) and dep.endswith("<8.0a0") for dep in deps):
+                _pin_looser(fn, record, "curl", upper_bound="9.0")
+                _pin_looser(fn, record, "libcurl", upper_bound="9.0")
+
+        # anndata 0.9.0 dropped support for Python 3.7 but build 0 didn't
+        # update the Python pin. Fixed for build_number 1 in
+        # https://github.com/conda-forge/anndata-feedstock/pull/28
+        if (
+            record_name == "anndata"
+            and record["version"] == "0.9.0"
+            and record["build_number"] == 0
+            and record.get("timestamp", 0) < 1681324213000
+           ):
+            _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+
+        # scikit-image 0.20.0 needs scipy scipy >=1.8,<1.9.2 for python <= 3.9
+        # Fixed in https://github.com/conda-forge/scikit-image-feedstock/pull/102
+        if (
+            record_name == "scikit-image" and
+            record["version"] == "0.20.0" and
+            record["build_number"] == 0 and
+            record.get('timestamp', 0) < 1681732616000 and
+            ('python >=3.8,<3.9.0a0' in record["depends"] or
+             'python >=3.9,<3.10.0a0' in record["depends"])
+        ):
+            _replace_pin("scipy >=1.8", "scipy >=1.8,<1.9.2",
+                         record["depends"], record)
+
+        # intake-esm v2023.4.20 dropped support for Python 3.8 but build 0 didn't update
+        # the Python version pin.
+        if (
+            record_name == "intake-esm"
+            and record["version"] == "2023.4.20"
+            and record["build_number"] == 0
+            and record.get("timestamp", 0) < 1682227052000
+        ):
+            _replace_pin("python >=3.8", "python >=3.9", record["depends"], record)
+
+        if (
+            record_name == "sqlalchemy-cockroachdb" and
+            record["version"] == "2.0.0" and
+            record["build_number"] == 0 and
+            record.get("timestamp", 0) <= 1680784303548
+        ):
+            _replace_pin("sqlalchemy <2.0.0", "sqlalchemy >=2.0.0", record["depends"], record)
+            
+        if (
+            record_name == "etils" and
+            record["version"].startswith("1.") and
+            record.get("timestamp", 0) < 1683949458062
+        ):
+            _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
+
+        # Connexion 2.X is not compatible with Flask 2.3+
+        # https://github.com/spec-first/connexion/issues/1699#issuecomment-1524042812
+        if (
+            record_name == "connexion" and
+            record["version"][0] == "2" and
+            record.get("timestamp", 0) <= 1680300000000
+        ):
+            _replace_pin("flask >=1.0.4,<3", "flask >=1.0.4,<2.3", record["depends"], record)
+
+        # attrs >=22.2.0 requires Python 3.6, and >=23.1.0 requires 3.7, but feedstock specified >= 3.5
+        # Fixed in https://github.com/conda-forge/attrs-feedstock/pull/32
+        if (
+            record_name == "attrs"
+            and record["version"] in {"22.2.0"}
+            and record.get("timestamp", 0) < 1683636279000
+        ):
+            _replace_pin("python >=3.5", "python >=3.6", record["depends"], record)            
+        if (
+            record_name == "attrs"
+            and record["version"] in {"23.1.0"}
+            and record["build_number"] == 0
+            and record.get("timestamp", 0) < 1683636279000
+        ):
+            _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)            
+
+        # connexion 2.14.2=0 has incorrect dependencies
+        # fixed for 2.14.2=1 in https://github.com/conda-forge/connexion-feedstock/pull/35/files
+        if (
+            record_name == "connexion"
+            and record["version"] in {"2.14.2"}
+            and record["build_number"] == 0
+            and record.get("timestamp", 0) < 1684322706000
+        ):
+            _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+            _replace_pin("werkzeug >=1.0,<3.0", "werkzeug >=1.0,<2.3", record["depends"], record)
+            record["depends"].remove("importlib-metadata >=1")
 
     return index
 
