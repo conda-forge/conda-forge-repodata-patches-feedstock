@@ -691,6 +691,28 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             i = record["depends"].index("flatbuffers >=2")
             record["depends"][i] = "flatbuffers >=2,<3.0.0.0a0"
 
+        if ((record.get('timestamp', 0) < 1685293591000 and
+             any(dep.startswith("flatbuffers >=23")
+                 for dep in record.get('depends', ())))):
+            # Not sure why the following doesn't work
+            # _pin_stricter(fn, record, "flatbuffers", "x.x.x")
+
+            # https://github.com/conda-forge/flatbuffers-feedstock/issues/44
+            idx = [dep.startswith("flatbuffers") for dep in record['depends']].index(True)
+            dep = record['depends'][idx]
+            if dep.startswith("flatbuffers >=23.1.4"):
+                new_dep = "flatbuffers >=23.1.4,<23.1.5.0a0"
+            elif dep.startswith("flatbuffers >=23.1.21"):
+                new_dep = "flatbuffers >=23.1.21,<23.1.22.0a0"
+            elif dep.startswith("flatbuffers >=23.3.3"):
+                new_dep = "flatbuffers >=23.3.3,<23.3.4.0a0"
+            elif dep.startswith("flatbuffers >=23.5.26"):
+                new_dep = "flatbuffers >=23.5.26,<23.5.27.0a0"
+            else:
+                new_dep = dep
+
+            record['depends'][idx] = new_dep
+
         if record_name == "pyarrow" and record.get('timestamp', 0) < 1675198779000:
             if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
                 if 'constrains' in record:
@@ -2309,7 +2331,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         record,
                     )
                 else:
-                    # old versions depended on urllib3 via requests; 
+                    # old versions depended on urllib3 via requests;
                     # requests 2.30+ allows urllib3 2.x
                     for lower_bound in (">=2.9.1", ">=2.0", ">=2.20.0"):
                         _replace_pin(
@@ -2972,7 +2994,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record.get("timestamp", 0) <= 1680784303548
         ):
             _replace_pin("sqlalchemy <2.0.0", "sqlalchemy >=2.0.0", record["depends"], record)
-            
+
         if (
             record_name == "etils" and
             record["version"].startswith("1.") and
@@ -2996,14 +3018,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and record["version"] in {"22.2.0"}
             and record.get("timestamp", 0) < 1683636279000
         ):
-            _replace_pin("python >=3.5", "python >=3.6", record["depends"], record)            
+            _replace_pin("python >=3.5", "python >=3.6", record["depends"], record)
         if (
             record_name == "attrs"
             and record["version"] in {"23.1.0"}
             and record["build_number"] == 0
             and record.get("timestamp", 0) < 1683636279000
         ):
-            _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)            
+            _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
 
         # connexion 2.14.2=0 has incorrect dependencies
         # fixed for 2.14.2=1 in https://github.com/conda-forge/connexion-feedstock/pull/35/files
