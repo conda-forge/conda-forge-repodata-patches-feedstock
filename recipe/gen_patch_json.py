@@ -2816,6 +2816,20 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("cryptography >=35.0", "cryptography >=35.0,<39", record["depends"], record)
 
+        # more generally, the issue with OpenSSL_add_all_algorithms is that it was deprecated
+        # and is not available in OpenSSL 3 anymore (by default), yet it was still used in
+        # pyopenssl until https://github.com/pyca/pyopenssl/commit/382e5e04410b8f07383b5fc5244a2d93b07b0baf
+        # avoid pulling in old pyopenssl builds incompatible with OpenSSL 3, which can break conda, see also
+        # https://github.com/conda-forge/pyopenssl-feedstock/issues/30
+        if (
+            record_name == "openssl" and
+            record["version"].startswith("3") and
+            record.get("timestamp", 0) < 1685514474000
+        ):
+            new_constrains = record.get("constrains", [])
+            new_constrains.append("pyopenssl >=22.1")
+            record["constrains"] = new_constrains
+
         if (
             record_name == "libtiff" and
             record["version"] == "4.5.0" and
