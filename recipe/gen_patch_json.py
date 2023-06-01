@@ -3044,6 +3044,26 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _replace_pin("werkzeug >=1.0,<3.0", "werkzeug >=1.0,<2.3", record["depends"], record)
             record["depends"].remove("importlib-metadata >=1")
 
+        # noarch depfinder packages are broken for python >=3.10
+        if (
+            record_name == "depfinder"
+            and record.get("timestamp", 0) < 1658449202098
+            and subdir == "noarch"
+            and any(
+                "<3.10" not in dep
+                for dep in record.get("depends", [])
+                if dep.startswith("python ")
+            )
+        ):
+            pind = None
+            for i, dep in enumerate(record.get("depends", [])):
+                if dep.startswith("python "):
+                    pind = i
+                    break
+
+            if pind is not None and "<3.10" not in record["depends"][pind]:
+                record["depends"][pind] = record["depends"][pind] + ",<3.10"
+
     return index
 
 
