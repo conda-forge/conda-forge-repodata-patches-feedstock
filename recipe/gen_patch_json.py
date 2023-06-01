@@ -3047,10 +3047,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # noarch depfinder packages are broken for python >=3.10
         if (
             record_name == "depfinder"
-            and record.get("timestamp", 0) < 1658449202098
+            and record.get("timestamp", 0) < 1659704295850
             and subdir == "noarch"
             and any(
-                "<3.10" not in dep
+                "<" not in dep
                 for dep in record.get("depends", [])
                 if dep.startswith("python ")
             )
@@ -3061,7 +3061,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     pind = i
                     break
 
-            if pind is not None and "<3.10" not in record["depends"][pind]:
+            if pind is not None:
                 record["depends"][pind] = record["depends"][pind] + ",<3.10"
 
     return index
