@@ -3044,6 +3044,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _replace_pin("werkzeug >=1.0,<3.0", "werkzeug >=1.0,<2.3", record["depends"], record)
             record["depends"].remove("importlib-metadata >=1")
 
+        if record_name == "conda-content-trust" and record["version"] == "0.1.3" and record.get("timestamp", 0) < 1685589411000:
+            _replace_pin("cryptography", "cryptography <41.0.0", record["depends"], record)
+
     return index
 
 
