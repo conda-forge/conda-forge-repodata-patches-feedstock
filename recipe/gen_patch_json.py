@@ -905,6 +905,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # Need to patch modest image for numpy 1.24 removal of np.float
         if (
             record_name == "modestimage" and record['version'] == '0.2' and record['build'] in {'pyhd8ed1ab_0', 'pyhd8ed1ab_1' }
+            and record.get('timestamp', 0) < 1686071355
         ):
             i = record['depends'].index('numpy')
             record['depends'][i] = 'numpy <1.24'
