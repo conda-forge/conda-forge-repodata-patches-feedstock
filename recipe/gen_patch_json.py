@@ -1062,6 +1062,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 constrains.append( f'cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*' )
             record['constrains'] = constrains
 
+        if record_name == "nccl" and 1681282800000 < record.get("timestamp", 0) < 1686034800000:
+            deps = record.get("depends", [])
+            for i in range(len(deps)):
+                dep = deps[i]
+                if dep.startswith("cudatoolkit"):
+                    spec = dep[11:]
+                    dep = f"cuda-version{spec}"
+                deps[i] = dep
+
         if record_name == "ucx" and record.get('timestamp', 0) < 1682924400000:
             constrains = record.get('constrains', [])
             for i, c in enumerate(constrains):
