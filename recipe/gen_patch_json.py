@@ -2631,6 +2631,22 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                             parts = [parts[0], ">=1.12.1,<3.0.0"]
                         record[field][i] = " ".join(parts)
 
+        # selenium 4.10 removes code used by robotframework-seleniumlibrary <6.1.1
+        if (
+            record.get("timestamp", 0) <= 1686323537000
+            and record_name == "robotframework-seleniumlibrary"
+            and (
+                pkg_resources.parse_version(record["version"]) <=
+                pkg_resources.parse_version("6.1.0")
+            )
+        ):
+            for i in range(len(record["depends"])):
+                parts = record["depends"][i].split(" ")
+                if parts[0] == "selenium":
+                    if len(parts) == 2 and "<" not in parts[1]:
+                        parts[1] = parts[1] + ",<4.10"
+                    record["depends"][i] = " ".join(parts)
+
         # conda moved to calvar from semver and this broke old versions of
         # conda smithy that do on-the-fly version checks
         if (
