@@ -3088,6 +3088,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "conda-content-trust" and record.get("timestamp", 0) < 1685589411000:  # 2023-06-01
             _replace_pin("cryptography", "cryptography <41.0.0a0", record["depends"], record)
 
+        # skl2onnx requires onnx<1.15 for versions older than 1.14.1
+        # see https://github.com/onnx/onnx/issues/5202
+        if (
+            record_name == "skl2onnx"
+            and pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("1.14.1")
+            and record.get("timestamp", 0) < 1686557425000
+        ):
+            _replace_pin("onnx >=1.2.1", "onnx >=1.2.1,<1.15", record["depends"], record)
+
         # noarch depfinder packages are broken for python >=3.10
         if (
             record_name == "depfinder"
