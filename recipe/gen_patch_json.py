@@ -725,6 +725,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # The underlying issue is https://github.com/numpy/numpy/issues/17913
             if record.get('timestamp', 0) < 1607959235411 and any(dep.split(' ')[0] == 'numpy' for dep in record.get('depends', ())):
                 _pin_stricter(fn, record, "numpy", "x", "1.20")
+            # these versions actually require symbols only present in libstdc++ >=12
+            if subdir == 'linux-64' and 'cpu' in record['build'] and (record['version'], record['build_number']) in [('8.0.0', 1), ('7.0.0', 6), ('6.0.1', 18)]:
+                for i, dep in enumerate(record['depends']):
+                    if dep.split(' ')[0] == 'libstdcxx-ng':
+                        record['depends'][i] = 'libstdcxx-ng >=12'
 
         if record_name == "kartothek":
             if record["version"] in ["3.15.0", "3.15.1", "3.16.0"] \
