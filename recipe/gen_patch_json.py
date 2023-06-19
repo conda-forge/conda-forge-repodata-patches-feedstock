@@ -2352,7 +2352,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         record,
                     )
                 else:
-                    # old versions depended on urllib3 via requests; 
+                    # old versions depended on urllib3 via requests;
                     # requests 2.30+ allows urllib3 2.x
                     for lower_bound in (">=2.9.1", ">=2.0", ">=2.20.0"):
                         _replace_pin(
