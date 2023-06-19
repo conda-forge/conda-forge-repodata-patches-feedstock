@@ -2292,6 +2292,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     if dep_name.startswith("conda-libmamba-solver"):
                         record["constrains"][i] = "conda-libmamba-solver >=22.12.0"
             if record["timestamp"] <= 1687186972730:
+                # https://github.com/conda/conda/issues/12808
                 _replace_pin("pluggy >=1.0.0", "pluggy >=1.0.0,<1.1.0a0", deps, record)
 
 
