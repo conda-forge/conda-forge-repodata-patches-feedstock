@@ -2285,13 +2285,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                             dep_name, dep_other[0] + "," if dep_other else ""
                         )
 
-        if (record_name == "conda" and
-            record["version"] == "22.11.1" and
-            record["build_number"] == 0):
-            for i, dep in enumerate(record["constrains"]):
-                dep_name, *dep_other = dep.split()
-                if dep_name.startswith("conda-libmamba-solver"):
-                    record["constrains"][i] = "conda-libmamba-solver >=22.12.0"
+        if record_name == "conda":
+            if record["version"] == "22.11.1" and record["build_number"] == 0:
+                for i, dep in enumerate(record["constrains"]):
+                    dep_name, *dep_other = dep.split()
+                    if dep_name.startswith("conda-libmamba-solver"):
+                        record["constrains"][i] = "conda-libmamba-solver >=22.12.0"
+            if record["timestamp"] <= 1687186972730:
+                _replace_pin("pluggy >=1.0.0", "pluggy >=1.0.0,<1.1.0a0", deps, record)
+
+
         if record_name == "mamba" and (
             pkg_resources.parse_version(record["version"]) <
             pkg_resources.parse_version("0.24.0") or (
@@ -2348,7 +2351,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         record,
                     )
                 else:
-                    # old versions depended on urllib3 via requests;
+                    # old versions depended on urllib3 via requests; 
                     # requests 2.30+ allows urllib3 2.x
                     for lower_bound in (">=2.9.1", ">=2.0", ">=2.20.0"):
                         _replace_pin(
