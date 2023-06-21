@@ -1270,6 +1270,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # gct should have been pinned at x.x.x rather than x.x
         _replace_pin('gct >=6.2.1550507116,<6.3.0a0', "gct >=6.2.1550507116,<6.2.1550507117", deps, record)
 
+        # hdf5 1.14.1 fixes issues in 1.14.0
+        # it is abi-compatible, but 1.14.0 has x.x.x run_exports
+        for mpi_pin in ("", "mpi_openmpi_*", "mpi_mpich_*"):
+            before = f"hdf5 >=1.14.0,<1.14.1.0a0 {mpi_pin}".rstrip()
+            after = f"hdf5 >=1.14.0,<1.14.2.0a0 {mpi_pin}".rstrip()
+            _replace_pin(before, after, deps, record)
+
         # remove features for openjdk and rb2
         if ("track_features" in record and
                 record['track_features'] is not None):
