@@ -1068,7 +1068,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 dep = deps[i]
                 if dep.startswith("cudatoolkit"):
                     spec = dep[11:]
-                    dep = f"cuda-version{spec}"
+                    dep = f"__cuda{spec}"
                 deps[i] = dep
 
         if record_name == "ucx" and record.get('timestamp', 0) < 1682924400000:
