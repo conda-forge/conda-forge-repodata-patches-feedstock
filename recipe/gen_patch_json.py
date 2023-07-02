@@ -1785,6 +1785,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             depends = record["depends"]
             depends[depends.index("sqlalchemy <2.0.0")] = "sqlalchemy <1.4.42"
 
+        # copier <8.0.? not compatible with pydantic>=2
+        if record_name == "copier" and record.get("timestamp", 0) <= 1688310318000:
+            for old_pin in ["pydantic >=1.10.2", "pydantic >=1.9.0"]:
+                if old_pin in record["depends"]:
+                    _replace_pin(old_pin, f"{old_pin},<2", deps, record)
+
         # tzlocal 3.0 needs Python 3.9 (or backports.zoneinfo)
         # fixed in https://github.com/conda-forge/tzlocal-feedstock/pull/10
         if record_name == "tzlocal" and record["version"] == "3.0" and "python >=3.6" in record["depends"]:
