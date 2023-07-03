@@ -3013,7 +3013,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record_name == "emmet-core" and
             record["version"] < "0.58.0" or
             (
-                record["version"] == "0.58.0 and 
+                record["version"] == "0.58.0" and 
                 record["build_number"] == 0
             )
         ):
