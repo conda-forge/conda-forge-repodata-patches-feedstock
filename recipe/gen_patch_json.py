@@ -3017,7 +3017,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 record["build_number"] == 0
             )
         ):
-            _replace_pin("pydantic >=1.10.2", "pydantic <2",
+            _replace_pin("pydantic >=1.10.2", "pydantic >=1.10.2,<2",
                          record["depends"], record)
 
         if (
@@ -3025,7 +3025,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record["version"] == "0.58.0" and 
             record["build_number"] == 2
         ):
-            _replace_pin("pydantic >=2", "pydantic <2",
+            _replace_pin("pydantic >=2", "pydantic >=1.10.2,<2",
                          record["depends"], record)
         
         # scikit-image 0.20.0 needs scipy scipy >=1.8,<1.9.2 for python <= 3.9
