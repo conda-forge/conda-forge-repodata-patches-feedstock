@@ -1967,6 +1967,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _replace_pin("python >=3.6", "python >=3.6,<3.11.0a0", record.get("depends", []), record)
                 _replace_pin("python >=3.7", "python >=3.7,<3.11.0a0", record.get("depends", []), record)
                 _replace_pin("python >=3.8", "python >=3.8,<3.11.0a0", record.get("depends", []), record)
+            if timestamp < 1688456426773:  # 2023-07-04
+                # https://github.com/conda-forge/napari-feedstock/issues/49
+                _replace_pin("pydantic >=1.7.3", "pydantic >=1.7.3,<1.8.0", record.get("depends", []), record)
+                _replace_pin("pydantic >=1.8.1", "pydantic >=1.8.1,<2.0a0", record.get("depends", []), record)
+                _replace_pin("pydantic >=1.9.0", "pydantic >=1.9.0,<2.0a0", record.get("depends", []), record)
 
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
