@@ -960,6 +960,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if record['version'] == "3.7.0" and record['build'] == "pyhd8ed1ab_0":
                 i = record['depends'].index('python >=3.6')
                 record['depends'][i] = 'python >=3.7'
+            # zipp >=3.16 requires python >=3.8 but it was missed
+            # https://github.com/conda-forge/zipp-feedstock/pull/43
+            if (
+                record['version'] == "3.16.0" and record['build'] == "pyhd8ed1ab_0" 
+                and record.get("timestamp", 0) < 1689035633000
+            ):
+                i = record['depends'].index('python >=3.7')
+                record['depends'][i] = 'python >=3.8'
 
         # fix deps with wrong names
         if record_name in proj4_fixes:
