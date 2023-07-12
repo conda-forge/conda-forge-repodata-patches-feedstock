@@ -2816,6 +2816,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 # this also applies the fix from https://github.com/conda-forge/altair-feedstock/pull/40
                 _replace_pin("jsonschema", "jsonschema >=3.0,<4.17", record["depends"], record)
 
+        # jsonschema 4.18.1 broke altair and many other packages
+        # https://github.com/python-jsonschema/jsonschema/issues/1124
+        if record_name == "altair" and record["version"] == "5.0.1" and record.get("timestamp", 0) < 1689170816000:
+            _replace_pin("jsonschema >=3.0", "jsonschema >=3.0,!=4.18.1", deps, record)
+
+
         # isort dropped support for python 3.6 in version 5.11.0 and dropped support
         # for python 3.7 in version 5.12.0, but did not update the dependency in their recipe
         # Fixed in https://github.com/conda-forge/isort-feedstock/pull/78
