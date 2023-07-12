@@ -746,7 +746,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         record
                     )
 
-            # older versions of dask are incompatibile with pandas=2
+            # older versions of dask are incompatible with pandas=2
             if record.get('timestamp', 0) < 1676063992630:  # releases prior to 2023.2.0
                 pandas_pinning = [x for x in record['depends'] if x.startswith('pandas')]
                 if pandas_pinning:
@@ -2164,7 +2164,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.1.0a", record["depends"], record)
             elif record.get("timestamp", 0) <= 1678721528000: # 2023-03-13:
                 # conda 23.3 changed an internal SubdirData API needed with S3/FTP channels
-                # conda depricated Boltons leading to a breakage in the solver api interface
+                # conda deprecated Boltons leading to a breakage in the solver api interface
                 _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.2.0a", record["depends"], record)
 
         if subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"] and \
@@ -2440,7 +2440,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # jaxlib was built with grpc-cpp 1.46.4 that
         # was only available at abseil-cpp 20220623.0
-        # and thus it needs to be explicitily constrained
+        # and thus it needs to be explicitly constrained
         # no grpc-cpp fix can fix this retro
         # fixed in https://github.com/conda-forge/jaxlib-feedstock/pull/133
         if record_name == "jaxlib" and (
@@ -2828,7 +2828,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             elif pversion == five_twelve_zero:
                 _replace_pin("python >=3.6,<4.0", "python >=3.8,<4.0", record["depends"], record)
 
-        # sdt-python 17.5 needs Python >= 3.9 beacause of typing.Literal, but feedstock
+        # sdt-python 17.5 needs Python >= 3.9 because of typing.Literal, but feedstock
         # specified >= 3.7
         # Fixed in https://github.com/conda-forge/sdt-python-feedstock/pull/20
         if (
