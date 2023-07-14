@@ -963,7 +963,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # zipp >=3.16 requires python >=3.8 but it was missed
             # https://github.com/conda-forge/zipp-feedstock/pull/43
             if (
-                record['version'] == "3.16.0" and record['build'] == "pyhd8ed1ab_0" 
+                record['version'] == "3.16.0" and record['build'] == "pyhd8ed1ab_0"
                 and record.get("timestamp", 0) < 1689035633000
             ):
                 i = record['depends'].index('python >=3.7')
@@ -3026,7 +3026,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record_name == "emmet-core" and
             record["version"] < "0.58.0" or
             (
-                record["version"] == "0.58.0" and 
+                record["version"] == "0.58.0" and
                 record["build_number"] == 0
             )
         ):
@@ -3035,12 +3035,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         if (
             record_name == "emmet-core" and
-            record["version"] == "0.58.0" and 
+            record["version"] == "0.58.0" and
             record["build_number"] == 2
         ):
             _replace_pin("pydantic >=2", "pydantic >=1.10.2,<2",
                          record["depends"], record)
-        
+
         # scikit-image 0.20.0 needs scipy scipy >=1.8,<1.9.2 for python <= 3.9
         # Fixed in https://github.com/conda-forge/scikit-image-feedstock/pull/102
         if (
@@ -3155,6 +3155,17 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
             if pind is not None:
                 record["depends"][pind] = record["depends"][pind] + ",<3.10"
+
+        # apscheduler 3.8.1 through 3.10.1 has incorrect version restiction for tzlocal
+        if (
+            record_name == "apscheduler"
+            and record.get("timestamp", 0) < 1689345788000
+            and pkg_resources.parse_version(record["version"]) >= pkg_resources.parse_version("3.8.1")
+            and pkg_resources.parse_version(record["version"]) <= pkg_resources.parse_version("3.10.1")
+        ):
+            _replace_pin("tzlocal >=2.0,<3.0", "tzlocal >=2.0,!=3.*", record["depends"], record)
+
+
 
     return index
 
