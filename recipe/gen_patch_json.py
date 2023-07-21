@@ -3171,7 +3171,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("tzlocal >=2.0,<3.0", "tzlocal >=2.0,!=3.*", record["depends"], record)
 
-
+        if (
+            record_name == "zstandard"
+            and record.get("timestamp", 0) < 1689939052321
+            and record["version"] == "0.19.0"
+            and record["build_number"] == 1
+        ):
+            _replace_pin("zstd >=1.5.2", "zstd ==1.5.2", record["depends"], record)
 
     return index
 
