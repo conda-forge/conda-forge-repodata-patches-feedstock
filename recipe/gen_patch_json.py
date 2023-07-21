@@ -1623,6 +1623,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     i = record["depends"].index(wrong_version)
                     record["depends"][i] = right_version
 
+        if record_name == "xpublish":
+            # Pydantic is an indirect dependency, fixed upstream, and v2.0 broken xpublish 0.3.0.
+            # xref.: https://github.com/xpublish-community/xpublish/pull/215
+            if (
+                record.get("timestamp", 0) <= 1689955085000
+                and pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("0.3.0")
+            ):
+                record["depends"].append("pydantic<2")
+
         # Old versions of Gazebo depend on boost-cpp >= 1.71,
         # but they are actually incompatible with any boost-cpp >= 1.72
         # https://github.com/conda-forge/gazebo-feedstock/issues/52
