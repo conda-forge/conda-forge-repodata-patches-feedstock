@@ -3177,7 +3177,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and record["version"] == "0.19.0"
             and record["build_number"] == 1
         ):
-            _replace_pin("zstd >=1.5.2", "zstd ==1.5.2", record["depends"], record)
+            _replace_pin("zstd >=1.5.2,<1.6.0a0", "zstd ==1.5.2", record["depends"], record)
 
     return index
 
