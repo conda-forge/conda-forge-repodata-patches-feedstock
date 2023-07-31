@@ -33,6 +33,7 @@ SUBDIRS = (
 REMOVALS = {
     "noarch": (
         "sendgrid-5.3.0-py_0.tar.bz2",
+        "jax-0.4.14-pyhd8ed1ab_0.conda",
     ),
     "linux-64": (
         "airflow-with-gcp_api-1.9.0-1.tar.bz2",
