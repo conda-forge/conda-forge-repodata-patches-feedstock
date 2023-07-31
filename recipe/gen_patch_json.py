@@ -33,7 +33,6 @@ SUBDIRS = (
 REMOVALS = {
     "noarch": (
         "sendgrid-5.3.0-py_0.tar.bz2",
-        "jax-0.4.14-pyhd8ed1ab_0.conda",
     ),
     "linux-64": (
         "airflow-with-gcp_api-1.9.0-1.tar.bz2",
@@ -1314,6 +1313,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             deps = record.get("depends", [])
             deps.append("numba !=0.54.0")
             record["depends"] = deps
+
+        if (record_name, record["version"], record["build"]) == ("jax", "0.4.14", "pyhd8ed1ab_0"):
+            deps = record.get("depends", [])
+            deps[deps.index("python >=3.8")] = "python >=3.9"
 
         # Patch bokeh version restrictions on older panels.
         if record_name == "panel":
