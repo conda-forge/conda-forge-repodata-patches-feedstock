@@ -1316,7 +1316,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         if (record_name, record["version"], record["build"]) == ("jax", "0.4.14", "pyhd8ed1ab_0"):
             deps = record.get("depends", [])
-            deps[deps.index("python >=3.8")] = "python >=3.9"
+            _replace_pin("python >=3.8", "python >=3.9", deps, record)
 
         # Patch bokeh version restrictions on older panels.
         if record_name == "panel":
