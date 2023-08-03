@@ -1712,7 +1712,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # all versions of Notebook < 7 should at least pin to 
         # jupyter_client < 8 and pyzmq < 25 as in
         # https://github.com/jupyter/notebook/pull/6749
-        if record_name == "notebook" and int(record["version"].split(".", 1)[0]) < 7:
+        if (
+            record_name == "notebook" 
+            and int(record["version"].split(".", 1)[0]) < 7
+            and record.get("timestamp", 0 < 1691084500000)
+            ):
             if "jupyter_client>=5.3.4" in record["depends"]:
                 i = record["depends"].index("jupyter_client>=5.3.4")
                 record["depends"][i] = "jupyter_client >=5.3.4,<8"
