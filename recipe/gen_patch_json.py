@@ -1318,6 +1318,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             deps = record.get("depends", [])
             _replace_pin("python >=3.8", "python >=3.9", deps, record)
 
+        if record_name == "jaxtyping":
+            deps = record.get("depends", [])
+            if (record["version"], record["build"]) == ("0.2.20", "pyhd8ed1ab_0"):
+                _replace_pin("python >=3.7", "python >=3.9", deps, record)
+            if (record["version"], record["build"]) in (
+                ("0.2.19", "pyhd8ed1ab_0"),
+                ("0.2.18", "pyhd8ed1ab_0"),
+                ("0.2.15", "pyhd8ed1ab_0"),
+                ("0.2.14", "pyhd8ed1ab_0"),
+                ("0.2.13", "pyhd8ed1ab_0"),
+            ):
+                _replace_pin("python >=3.7", "python >=3.8", deps, record)
+
         # Patch bokeh version restrictions on older panels.
         if record_name == "panel":
             deps = record.get("depends", [])
