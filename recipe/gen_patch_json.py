@@ -963,7 +963,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # zipp >=3.16 requires python >=3.8 but it was missed
             # https://github.com/conda-forge/zipp-feedstock/pull/43
             if (
-                record['version'] == "3.16.0" and record['build'] == "pyhd8ed1ab_0" 
+                record['version'] == "3.16.0" and record['build'] == "pyhd8ed1ab_0"
                 and record.get("timestamp", 0) < 1689035633000
             ):
                 i = record['depends'].index('python >=3.7')
@@ -1314,6 +1314,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             deps.append("numba !=0.54.0")
             record["depends"] = deps
 
+        if (record_name, record["version"], record["build"]) == ("jax", "0.4.14", "pyhd8ed1ab_0"):
+            deps = record.get("depends", [])
+            _replace_pin("python >=3.8", "python >=3.9", deps, record)
+
         # Patch bokeh version restrictions on older panels.
         if record_name == "panel":
             deps = record.get("depends", [])
@@ -1622,6 +1626,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if wrong_version in record["depends"]:
                     i = record["depends"].index(wrong_version)
                     record["depends"][i] = right_version
+
+        if record_name == "xpublish":
+            # Pydantic is an indirect dependency, fixed upstream, and v2.0 broken xpublish 0.3.0.
+            # xref.: https://github.com/xpublish-community/xpublish/pull/215
+            if (
+                record.get("timestamp", 0) <= 1689955085000
+                and pkg_resources.parse_version(record["version"]) == pkg_resources.parse_version("0.3.0")
+            ):
+                record["depends"].append("pydantic<2")
 
         # Old versions of Gazebo depend on boost-cpp >= 1.71,
         # but they are actually incompatible with any boost-cpp >= 1.72
@@ -2816,6 +2829,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 # this also applies the fix from https://github.com/conda-forge/altair-feedstock/pull/40
                 _replace_pin("jsonschema", "jsonschema >=3.0,<4.17", record["depends"], record)
 
+        # jsonschema 4.18.1 broke altair and many other packages
+        # https://github.com/python-jsonschema/jsonschema/issues/1124
+        if record_name == "altair" and record["version"] == "5.0.1" and record.get("timestamp", 0) < 1689170816000:
+            _replace_pin("jsonschema >=3.0", "jsonschema >=3.0,!=4.18.1", deps, record)
+
+
         # isort dropped support for python 3.6 in version 5.11.0 and dropped support
         # for python 3.7 in version 5.12.0, but did not update the dependency in their recipe
         # Fixed in https://github.com/conda-forge/isort-feedstock/pull/78
@@ -3026,7 +3045,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record_name == "emmet-core" and
             record["version"] < "0.58.0" or
             (
-                record["version"] == "0.58.0" and 
+                record["version"] == "0.58.0" and
                 record["build_number"] == 0
             )
         ):
@@ -3035,12 +3054,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         if (
             record_name == "emmet-core" and
-            record["version"] == "0.58.0" and 
+            record["version"] == "0.58.0" and
             record["build_number"] == 2
         ):
             _replace_pin("pydantic >=2", "pydantic >=1.10.2,<2",
                          record["depends"], record)
-        
+
         # scikit-image 0.20.0 needs scipy scipy >=1.8,<1.9.2 for python <= 3.9
         # Fixed in https://github.com/conda-forge/scikit-image-feedstock/pull/102
         if (
@@ -3160,6 +3179,22 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # QCPortal does not work with Pydantic 2, and no released version has.
             record["depends"].append("pydantic<2")
 
+        # apscheduler 3.8.1 through 3.10.1 has incorrect version restiction for tzlocal
+        if (
+            record_name == "apscheduler"
+            and record.get("timestamp", 0) < 1689345788000
+            and pkg_resources.parse_version(record["version"]) >= pkg_resources.parse_version("3.8.1")
+            and pkg_resources.parse_version(record["version"]) <= pkg_resources.parse_version("3.10.1")
+        ):
+            _replace_pin("tzlocal >=2.0,<3.0", "tzlocal >=2.0,!=3.*", record["depends"], record)
+
+        if (
+            record_name == "zstandard"
+            and record.get("timestamp", 0) < 1689939052321
+            and record["version"] == "0.19.0"
+            and record["build_number"] == 1
+        ):
+            _replace_pin("zstd >=1.5.2,<1.6.0a0", "zstd ==1.5.2", record["depends"], record)
 
     return index
 
