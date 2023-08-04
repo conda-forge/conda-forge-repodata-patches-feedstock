@@ -3156,6 +3156,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if pind is not None:
                 record["depends"][pind] = record["depends"][pind] + ",<3.10"
 
+        if record_name == "qcportal":
+            # QCPortal does not work with Pydantic 2, and no released version has.
+            record["depends"].append("pydantic<2")
+
+
     return index
 
 
