@@ -3177,7 +3177,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         if record_name == "qcportal" and record.get("timestamp", 0) < 1691162578000:
             # QCPortal does not work with Pydantic 2, and no released version has.
-            record["depends"].append("pydantic<2")
+            _replace_pin("pydantic", "pydantic <2", record.get("depends", []), record)
 
         # apscheduler 3.8.1 through 3.10.1 has incorrect version restiction for tzlocal
         if (
