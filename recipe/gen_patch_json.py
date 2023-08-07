@@ -2356,10 +2356,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if dep_name == "conda":
                     record["depends"][i] = "conda >=4.8,<5"
 
-        # Bump minimum `requests` requirement of `anaconda-client` 1.11.0
-        #
-        # https://github.com/conda-forge/anaconda-client-feedstock/pull/35
         if record_name == "anaconda-client":
+            # Bump minimum `requests` requirement of `anaconda-client` 1.11.0
+            # https://github.com/conda-forge/anaconda-client-feedstock/pull/35
             if (
             pkg_resources.parse_version(record["version"]) ==
             pkg_resources.parse_version("1.11.0")):
@@ -2389,6 +2388,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                             record["depends"],
                             record,
                         )
+            # https://github.com/conda-forge/anaconda-client-feedstock/pull/44
+            # https://github.com/Anaconda-Platform/anaconda-client/issues/678
+            if (
+                pkg_resources.parse_version(record["version"])
+                == pkg_resources.parse_version("1.12.0")
+            ) and record["build_number"] == 0:
+                # Guard python-dateutil dependency with trailing space in "python "
+                python_pinning = [x for x in record["depends"] if x.startswith("python ")]
+                for pinning in python_pinning:
+                    _replace_pin(pinning, "python >=3.8", record["depends"], record)
 
         if record_name == "aesara" and (
             pkg_resources.parse_version(record["version"]) >
