@@ -1706,6 +1706,30 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record["depends"].index("pyyaml")
                 record["depends"][i] = "pyyaml >=6.0"
 
+        # Notebook 6.5.5 pins the versions of jupyter_client to < 8
+        # and pyzmq>=25 as a temporary fix for issue
+        # https://github.com/jupyter/notebook/issues/4439
+        # all versions of Notebook < 7 should at least pin to 
+        # jupyter_client < 8 and pyzmq < 25 as in
+        # https://github.com/jupyter/notebook/pull/6749
+        if (
+            record_name == "notebook" 
+            and int(record["version"].split(".", 1)[0]) < 7
+            and record.get("timestamp", 0 < 1691084500000)
+            ):
+            if "jupyter_client>=5.3.4" in record["depends"]:
+                i = record["depends"].index("jupyter_client>=5.3.4")
+                record["depends"][i] = "jupyter_client >=5.3.4,<8"
+            if "jupyter_client >=5.2.0" in record["depends"]:
+                i = record["depends"].index("jupyter_client >=5.2.0")
+                record["depends"][i] = "jupyter_client >=5.2.0,<8"
+            if "jupyter_client" in record["depends"]:
+                i = record["depends"].index("jupyter_client")
+                record["depends"][i] = "jupyter_client <8"
+            if "pyzmq >=17" in record["depends"]:
+                i = record["depends"].index("pyzmq >=17")
+                record["depends"][i] = "pyzmq >=17,<25"
+
         # librmm 0.19 missed spdlog 1.7.0 in build 1
         # due to spdlog 1.7.0 not having run_exports.
         # This hotfixes those packages
