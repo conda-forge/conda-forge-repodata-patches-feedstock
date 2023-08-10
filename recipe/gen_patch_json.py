@@ -2496,6 +2496,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             i = record["depends"].index("libabseil 20230125.0 cxx17*")
             record["depends"][i] = "libabseil 20230125 cxx17*"
 
+        # fix libabseil-tests being built without encoding a gtest run-export
+        if (record_name == "libabseil-tests"
+                and record["version"] in ("20230125.2", "20230125.3")
+                and record.get("timestamp", 0) < 1691710285000
+        ):
+            _replace_pin("gtest", "gtest >=1.13,<1.14", record["depends"], record)
+
         # Different patch versions of ipopt can be ABI incompatible
         # See https://github.com/conda-forge/ipopt-feedstock/issues/85
         if has_dep(record, "ipopt") and record.get('timestamp', 0) < 1656352053694:
