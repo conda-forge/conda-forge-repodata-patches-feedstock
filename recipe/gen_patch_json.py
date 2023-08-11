@@ -627,6 +627,20 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             i = record['depends'].index('keras >=2.6,<3')
             record['depends'][i] = 'keras >=2.6,<2.7'
 
+        # jsonschema-with-* packages were missing a pin on the parent jsonschema
+        # https://github.com/conda-forge/jsonschema-feedstock/issues/73
+        if (
+            record.get("timestamp", 0) < 1691761503000 and
+            record["name"] in [
+                "jsonschema-with-format",
+                "jsonschema-with-format-nongpl",
+                "jsonschema-with-format-all",
+            ]
+        ):
+            for i, dep in sorted(enumerate(record["depends"])):
+                if dep.startswith("jsonschema") and "=" not in dep:
+                    record["depends"][i] = f"""{dep} =={record["version"]}"""
+
         # missing OpenSSL-distinction in tensorflow wrapper, see
         # https://github.com/conda-forge/tensorflow-feedstock/issues/295
         if (
