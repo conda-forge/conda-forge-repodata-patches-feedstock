@@ -637,9 +637,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 "jsonschema-with-format-all",
             ]
         ):
-            for i, dep in sorted(enumerate(record["depends"])):
-                if dep.startswith("jsonschema") and "=" not in dep:
-                    record["depends"][i] = f"""{dep} =={record["version"]}"""
+            for dep_name in [
+                "jsonschema",
+                "jsonschema-with-format",
+                "jsonschema-with-format-nongpl",
+                "jsonschema-with-format-all",
+            ]:
+                if any(dep_name == dep.split(" ")[0] for dep in record["depends"]):
+                    _pin_stricter(fn, record, dep_name, "x.x.x")
 
         # missing OpenSSL-distinction in tensorflow wrapper, see
         # https://github.com/conda-forge/tensorflow-feedstock/issues/295
