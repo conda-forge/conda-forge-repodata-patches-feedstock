@@ -1738,6 +1738,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 i = record["depends"].index("pyyaml")
                 record["depends"][i] = "pyyaml >=6.0"
 
+        # jupyter_events 0.7.0_*_(0|1) went out with missing deps and pins
+        if record_name == "jupyter_events" and record.get("timestamp", 0) < 1691759541000:
+            version = pkg_resources.parse_version(record["version"])
+            if version == pkg_resources.parse_version("0.7.0"):
+                if "jsonschema-with-format-nongpl >=3.2" in record["depends"]:
+                    i = record["depends"].index("jsonschema-with-format-nongpl >=3.2")
+                    record["depends"][i] = "jsonschema-with-format-nongpl >=4.18.0"
+                if "referencing" not in record["depends"]:
+                    record["depends"] += ["referencing"]
+
         # librmm 0.19 missed spdlog 1.7.0 in build 1
         # due to spdlog 1.7.0 not having run_exports.
         # This hotfixes those packages
