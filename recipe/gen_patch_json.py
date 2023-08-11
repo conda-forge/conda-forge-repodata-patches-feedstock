@@ -1726,8 +1726,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 if "jsonschema-with-format-nongpl >=3.2" in record["depends"]:
                     i = record["depends"].index("jsonschema-with-format-nongpl >=3.2")
                     record["depends"][i] = "jsonschema-with-format-nongpl >=4.18.0"
-                    # this will be handled more robustly in another pin after fix in jsonschema
-                    record["depends"].append("jsonschema >=4.18.0")
                 if "referencing" not in record["depends"]:
                     record["depends"] += ["referencing"]
 
