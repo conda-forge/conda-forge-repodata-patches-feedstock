@@ -1402,6 +1402,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_constrains.append(f'{pkg} {version}.*')
             record['constrains'] = new_constrains
 
+        # some symlinks changed in gfortran, so we need to adjust things
+        # plus we missed a key version constraint
+        if (
+            subdir in ["osx-64", "osx-arm64"]
+            and record_name == "gfortran"
+        ):
+            for i, dep in enumerate(record["depends"]):
+                if dep == f"gfortran_{subdir}":
+                    record["depends"][i] = dep + " ==" + record["version"]
+
         # make sure the libgfortran version is bound from 3 to 4 for osx
         if subdir == "osx-64":
             _fix_libgfortran(fn, record)
