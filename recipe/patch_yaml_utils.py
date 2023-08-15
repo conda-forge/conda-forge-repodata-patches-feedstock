@@ -33,6 +33,10 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
             keep = keep and (subdir in v)
             if not keep:
                 break
+        elif k == "artifact_in":
+            keep = keep and any(fnmatch.fnmatch(fn, _v) for _v in v)
+            if not keep:
+                break
         elif k.endswith("_ge") and k[:-3] in record:
             subk = k[:-3]
             rv = record[subk]
@@ -75,7 +79,7 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 break
         elif k.endswith("_in") and k[:-3] in record:
             subk = k[:-3]
-            keep = keep and (record[subk] in v)
+            keep = keep and any(fnmatch.fnmatch(record[subk], _v) for _v in v)
             if not keep:
                 break
         elif k == "has_depends":
