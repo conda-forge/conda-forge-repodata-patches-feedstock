@@ -27,7 +27,6 @@ if:
 
   # any key in the repodata entry (e.g., "version" or "build_number") with an operation
   <repodata key>_<ge, gt, le, lt>: <value>
-
   # this means version > 1.0.0
   version_gt: 1.0.0
 
@@ -39,6 +38,7 @@ if:
 
   # has specific dependencies as either a list or a single string
   has_depends: numpy *  # matches any numpy entry with or without a version
+  has_depends: numpy  # matches "numpy" exactly (i.e., no pins)
 
   # single value for a key that should match
   <repodata key>: <value>
