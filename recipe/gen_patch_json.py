@@ -517,7 +517,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # rubin-env-nosysroot always needs mkl
         if (
-            subdir.startswith("linux-")
+            subdir == "linux-64"
             and record_name == "rubin-env-nosysroot"
             and record["version"] in ["7.0.0", "7.0.1"]
             and int(record["build_number"]) <= 3
