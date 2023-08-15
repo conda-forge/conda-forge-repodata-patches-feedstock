@@ -15,7 +15,7 @@ import packaging.version
 import pkg_resources
 
 from get_license_family import get_license_family
-from patch_yamls_utils import patch_yamls_edit_index
+from patch_yaml_utils import patch_yaml_edit_index
 
 
 CHANNEL_NAME = "conda-forge"
@@ -436,7 +436,7 @@ def _gen_new_index(repodata, subdir):
     indexes = {}
     for index_key in ['packages', 'packages.conda']:
         indexes[index_key] = _gen_new_index_per_key(repodata, subdir, index_key)
-        patch_yamls_edit_index(indexes[index_key], subdir)
+        patch_yaml_edit_index(indexes[index_key], subdir)
 
     return indexes
 
