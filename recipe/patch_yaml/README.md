@@ -21,18 +21,25 @@ if:
   # possible conditions
   # list of subdirs or a single subdir (e.g., "linux-64")
   subdir_in: linux-64
+
   # list of artifact names or a single name (e.g., "ngmix-2.3.0-py38h50d1736_1.conda")
   artifact_in: ngmix-2.3.0-py38h50d1736_1.conda
+
   # any key in the repodata entry (e.g., "version" or "build_number") with an operation
   <repodata key>_<ge, gt, le, lt>: <value>
+
   # this means version > 1.0.0
   version_gt: 1.0.0
+
   # any key in the repodata entry (e.g., "version" or "build_number") and a list of values or single value
   <repodata key>_in: <list or single item>
+
   # this means the build number is in the set {0, 1, 2}
   build_number_in: [0, 1, 2]
+
   # has specific dependencies as either a list or a single string
   has_depends: numpy *  # matches any numpy entry with or without a version
+
   # single value for a key that should match
   <repodata key>: <value>
   version: 1.0.0
@@ -40,10 +47,13 @@ then:
   # list of instructions to change things
   # add to the depends or constrains section of the repodata
   - add_<depends or constrains>: <list of str or single str>
+
   # remove from the depends or constrains sections of the repodata
   - remove_<depends or constrains>: <list of str or single str>
+
   # remove entries from track_features
   - remove_track_feature: <list of str or str>
+
   # replace entries via an exact match in either the depends or constrains sections
   - replace_<depends or constrains>:
       # str of thing to be replaced
@@ -51,12 +61,14 @@ then:
       # thing to replace `old` with
       new: matplotlib-base ==1.4.0
       # ^^^^^^ NOTICE the extra indent here!
+
   # rename a dependency - this preserves the version information and simply renames the package
   - rename_depends:
       # str of thing to be renamed
       old: matplotlib
       # new name for thing
       new: matplotlib-base
+
   # relax an exact pin (e.g., blah ==1.0.0) to something like blah >=1.0.0 and possibly with
   # `,<2.0a0` added if max_pin='x'
   - relax_exact_depends:
@@ -65,6 +77,7 @@ then:
       # optional string of 'x', 'x.x' etc. format specify an upper bound
       # if not given, no upper bound is applied
       # max_pin: 'x.x'
+
   # make a dependency version constraint stricter
   - tighten_depends:
       # package to pin stricter
