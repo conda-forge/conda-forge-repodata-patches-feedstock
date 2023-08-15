@@ -236,7 +236,7 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
 
 
 def _apply_patch_yaml(patch_yaml, record, subdir, fn):
-    for inst in patch_yaml["then"].items():
+    for inst in patch_yaml["then"]:
         for k, v in inst.items():
             if k.startswith("add_") and k[len("add_") :] in ["depends", "constrains"]:
                 subk = k[len("add_") :]
@@ -285,12 +285,12 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 fix_dep = v["old"]
                 max_pin = v.get("max_pin", None)
                 _relax_exact(fn, record, fix_dep, max_pin=max_pin)
-            elif k == "stricter_depends":
+            elif k == "tighten_depends":
                 fix_dep = v["old"]
-                max_pin = v["max_pin"]
+                max_pin = v.get("max_pin", None)
                 upper_bound = v.get("upper_bound", None)
                 _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=upper_bound)
-            elif k == "looser_depends":
+            elif k == "loosen_depends":
                 fix_dep = v["old"]
                 max_pin = v.get("max_pin", None)
                 upper_bound = v.get("upper_bound", None)

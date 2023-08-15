@@ -5,4 +5,3 @@ if:
   build_number: 2
 then:
   - add_depends: tqdm
-  - replace_depends: {old: tqdm, new: "tqdm >=5"}

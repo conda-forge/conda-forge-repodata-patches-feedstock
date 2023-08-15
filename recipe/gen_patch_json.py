@@ -23,6 +23,8 @@ from patch_yaml_utils import (
     _relax_exact,
     _pin_stricter,
     _pin_looser,
+    CB_PIN_REGEX,
+    pad_list,
 )
 
 CHANNEL_NAME = "conda-forge"
@@ -414,7 +416,7 @@ def add_python_abi(record, subdir):
                 elif dep_split[1] == "<3":
                     python_abi = get_python_abi("2.7", subdir, build)
                 elif dep_split[1].startswith(">="):
-                    m = cb_pin_regex.match(dep_split[1])
+                    m = CB_PIN_REGEX.match(dep_split[1])
                     if m == None:
                         python_abi = get_python_abi("", subdir, build)
                     else:
@@ -3278,7 +3280,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # jax 0.4.14 removes jax.ShapedArray, which is imported by flax<0.6.9
         if (
             record_name == "flax"
-            and pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("0.6.9")
+            and parse_version(record["version"]) < parse_version("0.6.9")
             and record.get("timestamp", 0) < 1692133728000
         ):
             _replace_pin("jax >=0.3.2", "jax >=0.3.2,<0.4.14", record["depends"], record)
