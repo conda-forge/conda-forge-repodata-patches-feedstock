@@ -9,7 +9,7 @@ Package license: CC-PDDC
 
 Summary: generate tweaks to index metadata, hosted separately from anaconda.org index
 
-See the [README](recipe/patch_yaml/README.md) for how generate patches from static YAML files.
+See the [recipe/patch_yaml/README.md](recipe/patch_yaml/README.md) for how generate patches from static YAML files.
 This mechanism should work for most things. If it does not work for your specific case, you
 can write custom code in `generate_patch_json.py`.
 
