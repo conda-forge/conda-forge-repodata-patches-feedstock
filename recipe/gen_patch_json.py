@@ -15,6 +15,8 @@ import packaging.version
 import pkg_resources
 
 from get_license_family import get_license_family
+from patch_yamls_utils import patch_yamls_edit_index
+
 
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda.anaconda.org"
@@ -434,6 +436,7 @@ def _gen_new_index(repodata, subdir):
     indexes = {}
     for index_key in ['packages', 'packages.conda']:
         indexes[index_key] = _gen_new_index_per_key(repodata, subdir, index_key)
+        patch_yamls_edit_index(indexes[index_key], subdir)
 
     return indexes
 
@@ -499,14 +502,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             family = get_license_family(record["license"])
             if family:
                 record['license_family'] = family
-
-        # test dot-conda patches
-        if (
-            record_name == "cf-autotick-bot-test-package"
-            and record["version"] == "0.14"
-            and fn.rsplit(".", 1)[0].endswith("_2")
-        ):
-            record["depends"].append("tqdm")
 
         # remove dependency from constrains for twisted
         if record_name == "twisted":

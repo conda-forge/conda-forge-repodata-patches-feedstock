@@ -30,6 +30,7 @@ test:
     - gen_patch_json.py
     - get_license_family.py
     - show_diff.py
+    patch_yamls_utils.py
   requires:
     - python 3.*
     - setuptools <66.0.0a
@@ -38,10 +39,14 @@ test:
     - license-expression
     - pytest
     - conda-build
+    - black
+    - ruff
   commands:
     {% for subdir in ("noarch", "linux-64", "linux-armv7l", "linux-ppc64le", "osx-64", "osx-arm64", "win-32", "win-64") %}
     - test -e $PREFIX/{{ subdir }}/patch_instructions.json
     {% endfor %}
+    - black --check patch_yamls_utils.py
+    - ruff patch_yamls_utils.py
     - pytest -vv test_gen_patch_json.py
     - python show_diff.py
 
