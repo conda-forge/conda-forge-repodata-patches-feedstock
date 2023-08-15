@@ -3275,6 +3275,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("zstd >=1.5.2,<1.6.0a0", "zstd ==1.5.2", record["depends"], record)
 
+        # jax 0.4.14 removes jax.ShapedArray, which is imported by flax<0.6.9
+        if (
+            record_name == "flax"
+            and pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("0.6.9")
+            and record.get("timestamp", 0) < 1692133728000
+        ):
+            _replace_pin("jax >=0.3.2", "jax >=0.3.2,<0.4.14", record["depends"], record)
+
     return index
 
 
