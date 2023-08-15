@@ -26,15 +26,21 @@ for fname in glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml"):
 print("Read %d total patch yaml docs" % len(ALL_YAMLS), flush=True)
 
 
+def _fnmatch_str_or_list(item, v):
+    if not isinstance(v, list):
+        v = [v]
+    return any(fnmatch.fnmatch(item, _v) for _v in v)
+
+
 def _apply_patch_yaml(patch_yaml, record, subdir, fn):
     keep = True
-    for k, v in patch_yaml["where"].items():
+    for k, v in patch_yaml["if"].items():
         if k == "subdir_in":
-            keep = keep and (subdir in v)
+            keep = keep and _fnmatch_str_or_list(subdir, v)
             if not keep:
                 break
         elif k == "artifact_in":
-            keep = keep and any(fnmatch.fnmatch(fn, _v) for _v in v)
+            keep = keep and _fnmatch_str_or_list(fn, v)
             if not keep:
                 break
         elif k.endswith("_ge") and k[:-3] in record:
@@ -79,19 +85,16 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 break
         elif k.endswith("_in") and k[:-3] in record:
             subk = k[:-3]
-            keep = keep and any(fnmatch.fnmatch(record[subk], _v) for _v in v)
+            keep = keep and _fnmatch_str_or_list(record[subk], v)
             if not keep:
                 break
         elif k == "has_depends":
-            if isinstance(v, list):
-                keep = keep and all(
-                    any(fnmatch.fnmatch(dep, _v) for dep in record.get("depends", []))
-                    for _v in v
-                )
-            else:
-                keep = keep and any(
-                    fnmatch.fnmatch(dep, v) for dep in record.get("depends", [])
-                )
+            if not isinstance(v, list):
+                v = [v]
+            keep = keep and all(
+                any(fnmatch.fnmatch(dep, _v) for dep in record.get("depends", []))
+                for _v in v
+            )
             if not keep:
                 break
         elif k in record:
@@ -105,7 +108,7 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
             raise KeyError("Unrecognized 'where' key '%s'!" % k)
 
     if keep:
-        for k, v in patch_yaml["do"].items():
+        for k, v in patch_yaml["then"].items():
             if k.startswith("add_") and k[len("add_") :] in ["depends", "constrains"]:
                 subk = k[len("add_") :]
                 if not isinstance(v, list):
