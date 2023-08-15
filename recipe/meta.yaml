@@ -30,7 +30,7 @@ test:
     - gen_patch_json.py
     - get_license_family.py
     - show_diff.py
-    patch_yamls_utils.py
+    - patch_yamls_utils.py
   requires:
     - python 3.*
     - setuptools <66.0.0a
