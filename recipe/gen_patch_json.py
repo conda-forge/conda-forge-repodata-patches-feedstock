@@ -12,7 +12,7 @@ import tqdm
 import re
 import requests
 import packaging.version
-import packaging.version.parse as parse_version
+from packaging.version import parse as parse_version
 
 from get_license_family import get_license_family
 from patch_yaml_utils import patch_yaml_edit_index
