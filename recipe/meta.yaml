@@ -21,6 +21,7 @@ requirements:
     - tqdm
     - license-expression
     - packaging
+    - pyyaml
   host:
   run:
 
@@ -41,6 +42,7 @@ test:
     - conda-build
     - black
     - ruff
+    - pyyaml
   commands:
     {% for subdir in ("noarch", "linux-64", "linux-armv7l", "linux-ppc64le", "osx-64", "osx-arm64", "win-32", "win-64") %}
     - test -e $PREFIX/{{ subdir }}/patch_instructions.json

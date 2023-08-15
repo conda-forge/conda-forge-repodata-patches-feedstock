@@ -53,6 +53,11 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                     record["depends"].extend(v)
                 else:
                     record["depends"].append(v)
+            elif k == "add_constrains":
+                if isinstance(v, list):
+                    record["constrains"].extend(v)
+                else:
+                    record["constrains"].append(v)
             else:
                 raise KeyError("Unrecognized 'do' key '%s'!" % k)
 
