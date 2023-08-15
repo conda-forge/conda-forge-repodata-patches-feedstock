@@ -1402,6 +1402,16 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_constrains.append(f'{pkg} {version}.*')
             record['constrains'] = new_constrains
 
+        # some symlinks changed in gfortran, so we need to adjust things
+        # plus we missed a key version constraint
+        if (
+            subdir in ["osx-64", "osx-arm64"]
+            and record_name == "gfortran"
+        ):
+            for i, dep in enumerate(record["depends"]):
+                if dep == f"gfortran_{subdir}":
+                    record["depends"][i] = dep + " ==" + record["version"]
+
         # make sure the libgfortran version is bound from 3 to 4 for osx
         if subdir == "osx-64":
             _fix_libgfortran(fn, record)
@@ -3264,6 +3274,14 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and record["build_number"] == 1
         ):
             _replace_pin("zstd >=1.5.2,<1.6.0a0", "zstd ==1.5.2", record["depends"], record)
+
+        # jax 0.4.14 removes jax.ShapedArray, which is imported by flax<0.6.9
+        if (
+            record_name == "flax"
+            and pkg_resources.parse_version(record["version"]) < pkg_resources.parse_version("0.6.9")
+            and record.get("timestamp", 0) < 1692133728000
+        ):
+            _replace_pin("jax >=0.3.2", "jax >=0.3.2,<0.4.14", record["depends"], record)
 
     return index
 
