@@ -3282,6 +3282,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and record.get("timestamp", 0) < 1692133728000
         ):
             _replace_pin("jax >=0.3.2", "jax >=0.3.2,<0.4.14", record["depends"], record)
+            _replace_pin("jax >=0.2.6", "jax >=0.2.6,<0.4.14", record["depends"], record)
 
     return index
 
