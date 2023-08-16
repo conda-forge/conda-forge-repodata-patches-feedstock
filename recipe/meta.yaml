@@ -32,6 +32,7 @@ test:
     - show_diff.py
     - patch_yaml_utils.py
     - patch_yaml
+    - test_patch_yaml_utils.py
   requires:
     - python 3.*
     - requests
