@@ -49,6 +49,9 @@ test:
     {% endfor %}
     - black --check patch_yaml_utils.py
     - ruff patch_yaml_utils.py
+    - black --check test_patch_yaml_utils.py
+    - ruff test_patch_yaml_utils.py
+    - pytest -vv test_patch_yaml_utils.py
     - pytest -vv test_gen_patch_json.py
     - python show_diff.py
 

@@ -31,7 +31,7 @@ print("Read %d total patch yaml docs" % len(ALL_YAMLS), flush=True)
 def _fnmatch_str_or_list(item, v):
     if not isinstance(v, list):
         v = [v]
-    return any(fnmatch.fnmatch(item, _v) for _v in v)
+    return any(fnmatch.fnmatch(str(item), str(_v)) for _v in v)
 
 
 def _test_patch_yaml(patch_yaml, record, subdir, fn):
@@ -46,7 +46,7 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
         elif k == "subdir_in":
             keep = keep and _fnmatch_str_or_list(subdir, v)
 
-        elif k[-3:] in ["_lt", "_le", "_gt", "_ge"] and (
+        elif k[-3:] in ["_lt", "_le", "_gt", "_ge", "_eq", "_ne"] and (
             k[:-3] in record
             or k[:-3] in ["timestamp"]  # some records do not have a timestamp
         ):
@@ -72,6 +72,10 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
                 keep = keep and (rv > v)
             elif op == "ge":
                 keep = keep and (rv >= v)
+            elif op == "eq":
+                keep = keep and (rv == v)
+            elif op == "ne":
+                keep = keep and (rv != v)
 
         elif k.endswith("_in") and k[:-3] in record:
             subk = k[:-3]
@@ -251,13 +255,19 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 for dep in deps_to_remove:
                     depends.remove(dep)
 
-                record[subk] = depends
+                if depends:
+                    record[subk] = depends
+                elif not depends and subk in record:
+                    del record[subk]
 
             elif k == "remove_track_feature":
                 if not isinstance(v, list):
                     v = [v]
                 for _v in v:
-                    _extract_track_feature(record, _v)
+                    record["track_features"] = _extract_track_feature(record, _v)
+                    if record["track_features"] is None:
+                        del record["track_features"]
+                        break
 
             elif k.startswith("replace_") and k[len("replace_") :] in [
                 "depends",
