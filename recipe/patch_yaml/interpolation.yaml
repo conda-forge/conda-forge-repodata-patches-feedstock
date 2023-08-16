@@ -1,0 +1,8 @@
+if:
+  name: interpolation
+  version: 2.2.4
+  build_number: 0
+then:
+  - replace_depends:
+      old: "packaging >=21.3"
+      new: "packaging <22.0,>=21.3"

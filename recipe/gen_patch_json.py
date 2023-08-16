@@ -3152,16 +3152,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _replace_pin("scipy >=1.8", "scipy >=1.8,<1.9.2",
                          record["depends"], record)
 
-        # interpolation 2.2.4 needs packaging packaging <22.0,>=21.3
-        # Fixed in https://github.com/conda-forge/interpolation-feedstock/pull/26 
-        if (
-            record_name == "interpolation" and
-            record["version"] == "2.2.4" and
-            record["build_number"] == 0
-        ):
-            _replace_pin("packaging >=21.3", "packaging <22.0,>=21.3",
-                         record["depends"], record)
-        
         # intake-esm v2023.4.20 dropped support for Python 3.8 but build 0 didn't update
         # the Python version pin.
         if (
