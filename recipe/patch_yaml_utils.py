@@ -37,59 +37,46 @@ def _fnmatch_str_or_list(item, v):
 def _test_patch_yaml(patch_yaml, record, subdir, fn):
     keep = True
     for k, v in patch_yaml["if"].items():
-        if k == "subdir_in":
+        if k in record:
+            if k == "version":
+                keep = keep and parse_version(record[k]) == parse_version(v)
+            else:
+                keep = keep and fnmatch.fnmatch(str(record[k]), str(v))
+
+        elif k == "subdir_in":
             keep = keep and _fnmatch_str_or_list(subdir, v)
-            if not keep:
-                break
-        elif k == "artifact_in":
-            keep = keep and _fnmatch_str_or_list(fn, v)
-            if not keep:
-                break
-        elif k.endswith("_ge") and k[:-3] in record:
+
+        elif k[-3:] in ["_lt", "_le", "_gt", "_ge"] and (
+            k[:-3] in record
+            or k[:-3] in ["timestamp"]  # some records do not have a timestamp
+        ):
             subk = k[:-3]
-            rv = record[subk]
+
+            # some records do not have some keys, so we can
+            # special case that here
+            if subk == "timestamp":
+                rv = record.get(subk, 0)
+            else:
+                rv = record[subk]
+
             if subk == "version":
                 rv = parse_version(rv)
                 v = parse_version(v)
 
-            keep = keep and (rv >= v)
-            if not keep:
-                break
-        elif k.endswith("_gt") and k[:-3] in record:
-            subk = k[:-3]
-            rv = record[subk]
-            if subk == "version":
-                rv = parse_version(rv)
-                v = parse_version(v)
+            op = k[-2:]
+            if op == "lt":
+                keep = keep and (rv < v)
+            elif op == "le":
+                keep = keep and (rv <= v)
+            elif op == "gt":
+                keep = keep and (rv > v)
+            elif op == "ge":
+                keep = keep and (rv >= v)
 
-            keep = keep and (rv > v)
-            if not keep:
-                break
-        elif k.endswith("_le") and k[:-3] in record:
-            subk = k[:-3]
-            rv = record[subk]
-            if subk == "version":
-                rv = parse_version(rv)
-                v = parse_version(v)
-
-            keep = keep and (rv <= v)
-            if not keep:
-                break
-        elif k.endswith("_lt") and k[:-3] in record:
-            subk = k[:-3]
-            rv = record[subk]
-            if subk == "version":
-                rv = parse_version(rv)
-                v = parse_version(v)
-
-            keep = keep and (rv < v)
-            if not keep:
-                break
         elif k.endswith("_in") and k[:-3] in record:
             subk = k[:-3]
             keep = keep and _fnmatch_str_or_list(record[subk], v)
-            if not keep:
-                break
+
         elif k == "has_depends":
             if not isinstance(v, list):
                 v = [v]
@@ -97,17 +84,15 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
                 any(fnmatch.fnmatch(dep, _v) for dep in record.get("depends", []))
                 for _v in v
             )
-            if not keep:
-                break
-        elif k in record:
-            if k == "version":
-                keep = keep and parse_version(record[k]) == parse_version(v)
-            else:
-                keep = keep and fnmatch.fnmatch(str(record[k]), str(v))
-            if not keep:
-                break
+
+        elif k == "artifact_in":
+            keep = keep and _fnmatch_str_or_list(fn, v)
+
         else:
             raise KeyError("Unrecognized 'where' key '%s'!" % k)
+
+        if not keep:
+            break
 
     return keep
 
@@ -247,6 +232,7 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 depends.extend(v)
 
                 record[subk] = depends
+
             elif k.startswith("remove_") and k[len("remove_") :] in [
                 "depends",
                 "constrains",
@@ -266,11 +252,13 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                     depends.remove(dep)
 
                 record[subk] = depends
+
             elif k == "remove_track_feature":
                 if not isinstance(v, list):
                     v = [v]
                 for _v in v:
                     _extract_track_feature(record, _v)
+
             elif k.startswith("replace_") and k[len("replace_") :] in [
                 "depends",
                 "constrains",
@@ -279,24 +267,29 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 _replace_pin(
                     v["old"], v["new"], record.get(subk, []), record, target=subk
                 )
+
             elif k == "rename_depends":
                 _rename_dependency(fn, record, v["old"], v["new"])
+
             elif k == "relax_exact_depends":
-                fix_dep = v["old"]
+                fix_dep = v["name"]
                 max_pin = v.get("max_pin", None)
                 _relax_exact(fn, record, fix_dep, max_pin=max_pin)
+
             elif k == "tighten_depends":
-                fix_dep = v["old"]
+                fix_dep = v["name"]
                 max_pin = v.get("max_pin", None)
                 upper_bound = v.get("upper_bound", None)
                 _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=upper_bound)
+
             elif k == "loosen_depends":
-                fix_dep = v["old"]
+                fix_dep = v["name"]
                 max_pin = v.get("max_pin", None)
                 upper_bound = v.get("upper_bound", None)
                 _pin_looser(
                     fn, record, fix_dep, max_pin=max_pin, upper_bound=upper_bound
                 )
+
             else:
                 raise KeyError("Unrecognized 'do' key '%s'!" % k)
 

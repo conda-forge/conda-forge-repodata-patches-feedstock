@@ -29,6 +29,10 @@ if:
   <repodata key>_<ge, gt, le, lt>: <value>
   # this means version > 1.0.0
   version_gt: 1.0.0
+  # keeps any record with timestamp < value
+  # you can generate the current time via
+  #  python -c "import time; print(f'{time.time():.0f}000')"
+  timestamp_lt: 1633470721000
 
   # any key in the repodata entry (e.g., "version" or "build_number") and a list of values or single value
   <repodata key>_in: <list or single item>
@@ -37,7 +41,7 @@ if:
   build_number_in: [0, 1, 2]
 
   # has specific dependencies as either a list or a single string
-  has_depends: numpy *  # matches any numpy entry with or without a version
+  has_depends: numpy*  # matches any numpy entry with or without a version
   has_depends: numpy  # matches "numpy" exactly (i.e., no pins)
 
   # single value for a key that should match
@@ -60,7 +64,6 @@ then:
       old: matplotlib ==1.3.0
       # thing to replace `old` with
       new: matplotlib-base ==1.4.0
-      # ^^^^^^ NOTICE the extra indent here!
 
   # rename a dependency - this preserves the version information and simply renames the package
   - rename_depends:
@@ -73,7 +76,7 @@ then:
   # `,<2.0a0` added if max_pin='x'
   - relax_exact_depends:
       # the package name whose constraint should be relaxed
-      old: matplotlib
+      name: matplotlib
       # optional string of 'x', 'x.x' etc. format specify an upper bound
       # if not given, no upper bound is applied
       # max_pin: 'x.x'
@@ -81,7 +84,7 @@ then:
   # make a dependency version constraint stricter
   - tighten_depends:
       # package to pin stricter
-      old: matplotlib
+      name: matplotlib
       # you must give one of max_pin or upper_bound
       # optional way to specify the new maximum pin as 'x', 'x.x', etc.
       max_pin: 'x.x'
@@ -92,7 +95,7 @@ then:
   # make a dependency version constraint looser
   - loosen_depends:
       # package to pin looser
-      old: matplotlib
+      name: matplotlib
       # you must give one of max_pin or upper_bound
       # optional pinning expression 'x', 'x.x', etc. to set how much looser to make the pin
       max_pin: 'x.x'
