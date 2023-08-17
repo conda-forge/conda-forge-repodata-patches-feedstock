@@ -3286,6 +3286,24 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _replace_pin("jax >=0.3.2", "jax >=0.3.2,<0.4.14", record["depends"], record)
             _replace_pin("jax >=0.2.6", "jax >=0.2.6,<0.4.14", record["depends"], record)
 
+       # Some libignition-msgs5 windows packages have missing libprotobuf constraints
+       # see https://github.com/conda-forge/libignition-msgs1-feedstock/issues/30
+       if record_name == "libignition-msgs5" and subdir == "win-64" and record.get("timestamp", 0) < 1611218248868:
+           if fn == "libignition-msgs5-5.3.0-h13ae965_2.tar.bz2":
+               record["depends"].append("libprotobuf >=3.13.0.1,<3.14.0a0")
+           if fn == "libignition-msgs5-5.3.0-h21ff451_1.tar.bz2":
+               record["depends"].append("libprotobuf >=3.13.0,<3.14.0a0")
+           if fn == "libignition-msgs5-5.3.0-h21ff451_0.tar.bz2:
+               record["depends"].append("libprotobuf >=3.12.3,<3.13.0a0")
+           if fn == "libignition-msgs5-5.1.0-h21ff451_4.tar.bz2 	":
+               record["depends"].append("libprotobuf >=3.12.3,<3.13.0a0")
+           if fn == "libignition-msgs5-5.1.0-h21ff451_2.tar.bz2":
+               record["depends"].append("libprotobuf >=3.12.1,<3.13.0a0")
+           if fn == "libignition-msgs5-5.1.0-h21ff451_1.tar.bz2":
+               record["depends"].append("libprotobuf >=3.11.4,<3.12.0a0")
+           if fn == "libignition-msgs5-5.1.0-h21ff451_0.tar.bz2":
+               record["depends"].append("libprotobuf >=3.11.2,<3.12.0a0")
+
     return index
 
 
