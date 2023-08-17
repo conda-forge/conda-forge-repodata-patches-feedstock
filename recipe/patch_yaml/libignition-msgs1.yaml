@@ -1,0 +1,47 @@
+# Before 2021, libignition-msgs5 had a bug for which no dependency
+# was added on protobuf, and this can create problem when a new protobuf
+# verson is relased, see 
+# https://github.com/conda-forge/libignition-msgs1-feedstock/issues/30
+if:
+  subdir_in: win-64
+  artifact_in: libignition-msgs5-5.3.0-h13ae965_2.tar.bz2
+  timestamp_lt: 1611218248868
+then:
+  - add_depends: "libprotobuf >=3.13.0.1,<3.14.0a0"
+---
+if:
+  subdir_in: win-64
+  artifact_in: libignition-msgs5-5.3.0-h21ff451_1.tar.bz2
+  timestamp_lt: 1611218248868
+then:
+  - add_depends: "libprotobuf >=3.13.0,<3.14.0a0"
+---
+if:
+  subdir_in: win-64
+  artifact_in:
+    - libignition-msgs5-5.3.0-h21ff451_0.tar.bz2
+    - libignition-msgs5-5.1.0-h21ff451_4.tar.bz2
+  timestamp_lt: 1611218248868
+then:
+  - add_depends: "libprotobuf >=3.12.3,<3.13.0a0"
+---
+if:
+  subdir_in: win-64
+  artifact_in: libignition-msgs5-5.1.0-h21ff451_2.tar.bz2
+  timestamp_lt: 1611218248868
+then:
+  - add_depends: "libprotobuf >=3.12.1,<3.13.0a0"
+---
+if:
+  subdir_in: win-64
+  artifact_in: libignition-msgs5-5.1.0-h21ff451_1.tar.bz2
+  timestamp_lt: 1611218248868
+then:
+  - add_depends: "libprotobuf >=3.11.4,<3.12.0a0"
+---
+if:
+  subdir_in: win-64
+  artifact_in: libignition-msgs5-5.1.0-h21ff451_0.tar.bz2
+  timestamp_lt: 1611218248868
+then:
+  - add_depends: "libprotobuf >=3.11.2,<3.12.0a0"
