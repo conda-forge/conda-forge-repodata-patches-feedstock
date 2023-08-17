@@ -5,6 +5,9 @@ from packaging.version import parse as parse_version
 import fnmatch
 import re
 
+from patch_yaml_model import PatchYaml, _IfClause, _ThenClauseItem
+
+
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
 ALL_YAMLS = []
@@ -35,6 +38,7 @@ def _fnmatch_str_or_list(item, v):
 
 
 def _test_patch_yaml(patch_yaml, record, subdir, fn):
+    _IfClause.model_validate(patch_yaml["if"])
     keep = True
     for k, v in patch_yaml["if"].items():
         if k in record:
@@ -226,6 +230,7 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
 
 def _apply_patch_yaml(patch_yaml, record, subdir, fn):
     for inst in patch_yaml["then"]:
+        _ThenClauseItem.model_validate(inst)
         for k, v in inst.items():
             if k.startswith("add_") and k[len("add_") :] in ["depends", "constrains"]:
                 subk = k[len("add_") :]
@@ -260,7 +265,7 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 elif not depends and subk in record:
                     del record[subk]
 
-            elif k == "remove_track_feature":
+            elif k == "remove_track_features":
                 if not isinstance(v, list):
                     v = [v]
                 for _v in v:
@@ -307,6 +312,7 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
 def patch_yaml_edit_index(index, subdir):
     for fn, record in index.items():
         for patch_yaml in ALL_YAMLS:
+            PatchYaml.model_validate(patch_yaml)
             if _test_patch_yaml(patch_yaml, record, subdir, fn):
                 _apply_patch_yaml(patch_yaml, record, subdir, fn)
 

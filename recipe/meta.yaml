@@ -21,6 +21,7 @@ requirements:
     - license-expression
     - packaging
     - pyyaml
+    - pydantic
   host:
   run:
 
@@ -30,6 +31,8 @@ test:
     - gen_patch_json.py
     - get_license_family.py
     - show_diff.py
+    - patch_yaml_model.json
+    - patch_yaml_model.py
     - patch_yaml_utils.py
     - patch_yaml
     - test_patch_yaml_utils.py
@@ -44,12 +47,15 @@ test:
     - black
     - ruff
     - pyyaml
+    - pydantic
   commands:
     {% for subdir in ("noarch", "linux-64", "linux-armv7l", "linux-ppc64le", "osx-64", "osx-arm64", "win-32", "win-64") %}
     - test -e $PREFIX/{{ subdir }}/patch_instructions.json
     {% endfor %}
     - black --check patch_yaml_utils.py
     - ruff patch_yaml_utils.py
+    - black --check patch_yaml_model.py
+    - ruff patch_yaml_model.py
     - black --check test_patch_yaml_utils.py
     - ruff test_patch_yaml_utils.py
     - pytest -vv test_patch_yaml_utils.py

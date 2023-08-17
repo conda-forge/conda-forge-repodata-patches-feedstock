@@ -1,7 +1,10 @@
+from pathlib import Path
+
 import pytest
+import yaml
 
 from patch_yaml_utils import _test_patch_yaml, _apply_patch_yaml
-
+from patch_yaml_model import generate_schema, PatchYaml
 
 def test_test_patch_yaml_record_key():
     patch_yaml = {"if": {"version": "1.0.0"}}
@@ -207,8 +210,8 @@ def test_apply_patch_yaml_remove(key):
     assert record == {"version": 10, key: ["foo"]}
 
 
-def test_apply_patch_yaml_remove_track_feature():
-    patch_yaml = {"then": [{"remove_track_feature": "blah"}]}
+def test_apply_patch_yaml_remove_track_features():
+    patch_yaml = {"then": [{"remove_track_features": "blah"}]}
     record = {"track_features": "blah"}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {}
@@ -295,3 +298,16 @@ def test_apply_patch_yaml_loosen(pre, post):
     record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"depends": pre + ["numpy >=1.0.0,<3.1.2.0a0"] + post}
+
+
+def test_schema_up_to_date():
+    schema_on_disk = (Path(__file__).parent / ("patch_yaml_model.json")).read_text()
+    schema_str = generate_schema(write=False)
+    assert schema_str == schema_on_disk
+
+
+def test_schema_validation():
+    data = Path(__file__).parent / "patch_yaml"
+    for document in data.glob("*.yaml"):
+        for patch in yaml.safe_load_all(document.read_text()):
+            PatchYaml(**patch)
