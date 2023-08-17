@@ -6,6 +6,7 @@ import yaml
 from patch_yaml_utils import _test_patch_yaml, _apply_patch_yaml
 from patch_yaml_model import generate_schema, PatchYaml
 
+
 def test_test_patch_yaml_record_key():
     patch_yaml = {"if": {"version": "1.0.0"}}
     record = {"version": "1.0.0"}

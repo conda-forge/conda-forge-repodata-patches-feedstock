@@ -40,7 +40,7 @@ scalar_repodata_keys = (
     ("version", "_NonEmptyStr"),
 )
 operators = (
-    "", # alias for eq
+    "",  # alias for eq
     "lt",
     "le",
     "gt",
@@ -77,7 +77,11 @@ class _IfClause(_ForbidExtra):
     # Dynamically create fields for each repodata key and operator
     for (key, type_hint), op in itertools.product(scalar_repodata_keys, operators):
         key_name = f"{key}_{op}" if op else key
-        if op in ("gt", "ge", "lt", "le") and "_NonEmptyStr" in type_hint and key != "version":
+        if (
+            op in ("gt", "ge", "lt", "le")
+            and "_NonEmptyStr" in type_hint
+            and key != "version"
+        ):
             continue  # no point in comparing non-version strings with gt, ge, lt, le
         if op in ("", "eq", "ne", "in") and type_hint == "_PosInt":  # accept globs too
             type_hint += " | _NonEmptyStr"
