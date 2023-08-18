@@ -11,6 +11,12 @@ build:
   noarch: generic
   number: 0
   script:
+    - black --check patch_yaml_utils.py
+    - ruff patch_yaml_utils.py
+    - black --check test_patch_yaml_utils.py
+    - ruff test_patch_yaml_utils.py
+    - pytest -vv test_patch_yaml_utils.py
+    - pytest -vv test_gen_patch_json.py
     - python gen_patch_json.py
 
 requirements:
@@ -21,6 +27,8 @@ requirements:
     - license-expression
     - packaging
     - pyyaml
+    - black
+    - ruff
   host:
   run:
 
@@ -41,19 +49,11 @@ test:
     - license-expression
     - pytest
     - conda-build
-    - black
-    - ruff
     - pyyaml
   commands:
     {% for subdir in ("noarch", "linux-64", "linux-armv7l", "linux-ppc64le", "osx-64", "osx-arm64", "win-32", "win-64") %}
     - test -e $PREFIX/{{ subdir }}/patch_instructions.json
     {% endfor %}
-    - black --check patch_yaml_utils.py
-    - ruff patch_yaml_utils.py
-    - black --check test_patch_yaml_utils.py
-    - ruff test_patch_yaml_utils.py
-    - pytest -vv test_patch_yaml_utils.py
-    - pytest -vv test_gen_patch_json.py
     - python show_diff.py
 
 about:
