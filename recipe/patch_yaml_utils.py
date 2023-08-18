@@ -2,8 +2,9 @@ import yaml
 import glob
 import os
 from packaging.version import parse as parse_version
-import fnmatch
+import fnmatch as _fnmatch
 import re
+from functools import lru_cache
 
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
@@ -16,22 +17,53 @@ for fname in glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml"):
             if patch_yaml is not None
         ]
         ALL_YAMLS += fname_yamls
-        print(
-            "Read %d patch yaml docs for file %s"
-            % (
-                len(fname_yamls),
-                os.path.basename(fname),
-            ),
-            flush=True,
-        )
 
 print("Read %d total patch yaml docs" % len(ALL_YAMLS), flush=True)
+
+
+@lru_cache(maxsize=1024)
+def _fnmatch_build_re(pat):
+    repat = (
+        "(\\ )?".join([_fnmatch.translate(p)[:-2] for p in pat.split("?( )")]) + "\\Z"
+    )
+    return re.compile(repat).match
+
+
+def fnmatch(name, pat):
+    """Test whether FILENAME matches PATTERN with custom
+    allowed optional space via '?( )'.
+
+    This is useful to match single names with or without a version
+    but not other packages.
+
+    For example, 'numpy*' will match 'numpy', 'numpy >=1', and 'numpy-blah >=10'.
+    OTOH, 'numpy?( )' will match only 'numpy', 'numpy >=1'.
+    'numpy' only matches 'numpy'
+
+    **doc string below is from python stdlib**
+
+    Patterns are Unix shell style:
+
+    *       matches everything
+    ?       matches any single character
+    [seq]   matches any character in seq
+    [!seq]  matches any char not in seq
+
+    An initial period in FILENAME is not special.
+    Both FILENAME and PATTERN are first case-normalized
+    if the operating system requires it.
+    If you don't want this, use fnmatchcase(FILENAME, PATTERN).
+    """
+    name = os.path.normcase(name)
+    pat = os.path.normcase(pat)
+    match = _fnmatch_build_re(pat)
+    return match(name) is not None
 
 
 def _fnmatch_str_or_list(item, v):
     if not isinstance(v, list):
         v = [v]
-    return any(fnmatch.fnmatch(str(item), str(_v)) for _v in v)
+    return any(fnmatch(str(item), str(_v)) for _v in v)
 
 
 def _test_patch_yaml(patch_yaml, record, subdir, fn):
@@ -41,7 +73,7 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             if k == "version":
                 keep = keep and parse_version(record[k]) == parse_version(v)
             else:
-                keep = keep and fnmatch.fnmatch(str(record[k]), str(v))
+                keep = keep and fnmatch(str(record[k]), str(v))
 
         elif k == "subdir_in":
             keep = keep and _fnmatch_str_or_list(subdir, v)
@@ -85,8 +117,7 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             if not isinstance(v, list):
                 v = [v]
             keep = keep and all(
-                any(fnmatch.fnmatch(dep, _v) for dep in record.get("depends", []))
-                for _v in v
+                any(fnmatch(dep, _v) for dep in record.get("depends", [])) for _v in v
             )
 
         elif k == "artifact_in":
@@ -249,7 +280,7 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 deps_to_remove = set()
                 for _v in v:
                     for dep in depends:
-                        if fnmatch.fnmatch(dep, _v):
+                        if fnmatch(dep, _v):
                             deps_to_remove.add(dep)
 
                 for dep in deps_to_remove:
