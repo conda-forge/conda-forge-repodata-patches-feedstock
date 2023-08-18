@@ -22,21 +22,15 @@ def test_test_patch_yaml_record_key():
     record = {"name": "blah", "version": "1.0.1"}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
 
-    patch_yaml = {"if": {"name": "blah?( )"}}
+    patch_yaml = {"if": {"name": "blah?( *)"}}
     record = {"name": "blah"}
     assert _test_patch_yaml(patch_yaml, record, None, None)
     record = {"name": "blah "}
     assert _test_patch_yaml(patch_yaml, record, None, None)
     record = {"name": "blah blah"}
+    assert _test_patch_yaml(patch_yaml, record, None, None)
+    record = {"name": "blah-blah"}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
-
-    patch_yaml = {"if": {"name": "blah?( )*"}}
-    record = {"name": "blah"}
-    assert _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"name": "blah "}
-    assert _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"name": "blah blah"}
-    assert _test_patch_yaml(patch_yaml, record, None, None)
 
 
 def test_test_patch_yaml_subdir():

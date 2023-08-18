@@ -24,21 +24,24 @@ print("Read %d total patch yaml docs" % len(ALL_YAMLS), flush=True)
 @lru_cache(maxsize=1024)
 def _fnmatch_build_re(pat):
     repat = (
-        "(\\ )?".join([_fnmatch.translate(p)[:-2] for p in pat.split("?( )")]) + "\\Z"
+        "(?s:\\ .*)?".join([_fnmatch.translate(p)[:-2] for p in pat.split("?( *)")])
+        + "\\Z"
     )
     return re.compile(repat).match
 
 
 def fnmatch(name, pat):
     """Test whether FILENAME matches PATTERN with custom
-    allowed optional space via '?( )'.
+    allowed optional space via '?( *)'.
 
     This is useful to match single names with or without a version
     but not other packages.
 
-    For example, 'numpy*' will match 'numpy', 'numpy >=1', and 'numpy-blah >=10'.
-    OTOH, 'numpy?( )' will match only 'numpy', 'numpy >=1'.
-    'numpy' only matches 'numpy'
+    Here are various cases to illustrate how this works:
+
+      - 'numpy*' will match 'numpy', 'numpy >=1', and 'numpy-blah >=10'.
+      - 'numpy?( *)' will match only 'numpy', 'numpy >=1'.
+      - 'numpy' only matches 'numpy'
 
     **doc string below is from python stdlib**
 

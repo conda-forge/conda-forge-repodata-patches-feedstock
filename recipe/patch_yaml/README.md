@@ -12,8 +12,8 @@ Patches are specified by two main blocks.
 - The `if` block specifies a set of conditions under which the changes in the `then` block are applied.
 - The different conditions in the `if` block are combined with a logical `AND`.
 - The `if` conditions can use shell glob syntax as implemented in the python `fnmatch` module in the
-  standard library. The optional "?( )" pattern from extended glob syntax is allowed to match zero or
-  one spaces.
+  standard library. The optional "?( *)" pattern from extended glob syntax is allowed to match zero or
+  one sequences of spaces plus any other characters.
 - Multiple patches can be in the same file using separate YAML documents (i.e., separate the data by `---`
   on a new line).
 
@@ -43,7 +43,7 @@ if:
 
   # has specific dependencies as either a list or a single string
   has_depends: numpy*  # matches 'numpy', 'nump-blah', or 'numpy 5.6'
-  has_depends: numpy?( )*  # matches 'numpy' or 'numpy 5.6'
+  has_depends: numpy?( *)  # matches 'numpy' or 'numpy 5.6' but not 'numpy-blah'
   has_depends: numpy  # matches "numpy" exactly (i.e., no pins)
 
   # single value for a key that should match
