@@ -11,6 +11,7 @@ Patches are specified by two main blocks.
 
 - The `if` block specifies a set of conditions under which the changes in the `then` block are applied.
 - The different conditions in the `if` block are combined with a logical `AND`.
+- Any condition may be prefixed by `not` and will be negated.
 - The `if` conditions can use shell glob syntax as implemented in the python `fnmatch` module in the
   standard library. The optional "?( *)" pattern from extended glob syntax is allowed to match zero or
   one sequences of spaces plus any other characters.
@@ -22,6 +23,8 @@ if:
   # possible conditions
   # list of subdirs or a single subdir (e.g., "linux-64")
   subdir_in: linux-64
+  # any subdir but linux-64
+  not_subdir_in: linux-64
 
   # list of artifact names or a single name (e.g., "ngmix-2.3.0-py38h50d1736_1.conda")
   artifact_in: ngmix-2.3.0-py38h50d1736_1.conda

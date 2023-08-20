@@ -72,14 +72,20 @@ def _fnmatch_str_or_list(item, v):
 def _test_patch_yaml(patch_yaml, record, subdir, fn):
     keep = True
     for k, v in patch_yaml["if"].items():
+        if k.startswith("not_"):
+            k = k[4:]
+            neg = True
+        else:
+            neg = False
+
         if k in record:
             if k == "version":
-                keep = keep and parse_version(record[k]) == parse_version(v)
+                _keep = parse_version(record[k]) == parse_version(v)
             else:
-                keep = keep and fnmatch(str(record[k]), str(v))
+                _keep = fnmatch(str(record[k]), str(v))
 
         elif k == "subdir_in":
-            keep = keep and _fnmatch_str_or_list(subdir, v)
+            _keep = _fnmatch_str_or_list(subdir, v)
 
         elif k[-3:] in ["_lt", "_le", "_gt", "_ge", "_eq", "_ne"] and (
             k[:-3] in record
@@ -100,34 +106,39 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
 
             op = k[-2:]
             if op == "lt":
-                keep = keep and (rv < v)
+                _keep = rv < v
             elif op == "le":
-                keep = keep and (rv <= v)
+                _keep = rv <= v
             elif op == "gt":
-                keep = keep and (rv > v)
+                _keep = rv > v
             elif op == "ge":
-                keep = keep and (rv >= v)
+                _keep = rv >= v
             elif op == "eq":
-                keep = keep and (rv == v)
+                _keep = rv == v
             elif op == "ne":
-                keep = keep and (rv != v)
+                _keep = rv != v
 
         elif k.endswith("_in") and k[:-3] in record:
             subk = k[:-3]
-            keep = keep and _fnmatch_str_or_list(record[subk], v)
+            _keep = _fnmatch_str_or_list(record[subk], v)
 
         elif k == "has_depends":
             if not isinstance(v, list):
                 v = [v]
-            keep = keep and all(
+            _keep = all(
                 any(fnmatch(dep, _v) for dep in record.get("depends", [])) for _v in v
             )
 
         elif k == "artifact_in":
-            keep = keep and _fnmatch_str_or_list(fn, v)
+            _keep = _fnmatch_str_or_list(fn, v)
 
         else:
             raise KeyError("Unrecognized 'where' key '%s'!" % k)
+
+        if neg:
+            keep = keep and (not _keep)
+        else:
+            keep = keep and _keep
 
         if not keep:
             break

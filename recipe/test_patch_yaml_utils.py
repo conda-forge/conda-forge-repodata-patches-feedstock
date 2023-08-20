@@ -10,6 +10,12 @@ def test_test_patch_yaml_record_key():
     record = {"version": "1.0.1"}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
 
+    patch_yaml = {"if": {"not_version": "1.0.0"}}
+    record = {"version": "1.0.0"}
+    assert not _test_patch_yaml(patch_yaml, record, None, None)
+    record = {"version": "1.0.1"}
+    assert _test_patch_yaml(patch_yaml, record, None, None)
+
     patch_yaml = {"if": {"name": "blah"}}
     record = {"name": "blah"}
     assert _test_patch_yaml(patch_yaml, record, None, None)
