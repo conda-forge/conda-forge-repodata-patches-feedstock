@@ -1,6 +1,7 @@
 import yaml
 import glob
 import os
+import sys
 from packaging.version import parse as parse_version
 import fnmatch as _fnmatch
 import re
@@ -18,7 +19,7 @@ for fname in glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml"):
         ]
         ALL_YAMLS += fname_yamls
 
-print("Read %d total patch yaml docs" % len(ALL_YAMLS), flush=True)
+print("Read %d total patch yaml docs" % len(ALL_YAMLS), flush=True, file=sys.stderr)
 
 
 @lru_cache(maxsize=1024)
