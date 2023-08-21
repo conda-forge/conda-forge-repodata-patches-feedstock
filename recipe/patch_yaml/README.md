@@ -49,6 +49,11 @@ if:
   has_depends: numpy?( *)  # matches 'numpy' or 'numpy 5.6' but not 'numpy-blah'
   has_depends: numpy  # matches "numpy" exactly (i.e., no pins)
 
+  # has specific constraints as either a list or a single key
+  has_constrains: numpy*  # matches 'numpy', 'nump-blah', or 'numpy 5.6'
+  has_constrains: numpy?( *)  # matches 'numpy' or 'numpy 5.6' but not 'numpy-blah'
+  has_constrains: numpy  # matches "numpy" exactly (i.e., no pins)
+
   # single value for a key that should match
   <repodata key>: <value>
   version: 1.0.0
