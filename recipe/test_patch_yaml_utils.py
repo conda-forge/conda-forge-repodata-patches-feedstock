@@ -158,27 +158,28 @@ def test_test_patch_yaml_in():
     assert not _test_patch_yaml(patch_yaml, record, None, "blah")
 
 
-def test_test_patch_yaml_has_depends():
-    patch_yaml = {"if": {"has_depends": "numpy"}}
-    record = {"depends": ["numpy"]}
+@pytest.mark.parametrize("sec", ["depends", "constrains"])
+def test_test_patch_yaml_has(sec):
+    patch_yaml = {"if": {f"has_{sec}": "numpy"}}
+    record = {f"{sec}": ["numpy"]}
     assert _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"depends": ["numpy 1.20"]}
+    record = {f"{sec}": ["numpy 1.20"]}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
 
-    patch_yaml = {"if": {"has_depends": "numpy*"}}
-    record = {"depends": ["numpy", "blah"]}
+    patch_yaml = {"if": {f"has_{sec}": "numpy*"}}
+    record = {f"{sec}": ["numpy", "blah"]}
     assert _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"depends": ["numpy 1.20", "foo"]}
+    record = {f"{sec}": ["numpy 1.20", "foo"]}
     assert _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"depends": ["scipy 1.20"]}
+    record = {f"{sec}": ["scipy 1.20"]}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
 
-    patch_yaml = {"if": {"has_depends": ["numpy*", "scipy"]}}
-    record = {"depends": ["numpy", "blah"]}
+    patch_yaml = {"if": {f"has_{sec}": ["numpy*", "scipy"]}}
+    record = {f"{sec}": ["numpy", "blah"]}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"depends": ["numpy 1.20", "scipy"]}
+    record = {f"{sec}": ["numpy 1.20", "scipy"]}
     assert _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"depends": ["scipy 1.20", "numpy"]}
+    record = {f"{sec}": ["scipy 1.20", "numpy"]}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
 
 

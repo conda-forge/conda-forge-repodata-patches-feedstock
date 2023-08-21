@@ -123,11 +123,12 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             subk = k[:-3]
             _keep = _fnmatch_str_or_list(record[subk], v)
 
-        elif k == "has_depends":
+        elif k.startswith("has_") and k[len("has_") :] in ["depends", "constrains"]:
+            subk = k[len("has_") :]
             if not isinstance(v, list):
                 v = [v]
             _keep = all(
-                any(fnmatch(dep, _v) for dep in record.get("depends", [])) for _v in v
+                any(fnmatch(dep, _v) for dep in record.get(subk, [])) for _v in v
             )
 
         elif k == "artifact_in":
