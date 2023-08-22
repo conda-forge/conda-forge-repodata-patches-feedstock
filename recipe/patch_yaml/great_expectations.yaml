@@ -1,0 +1,24 @@
+# from this bit of code
+# if record_name == "great-expectations" and record.get("timestamp", 0) < 1616454000000:
+#     old_constrains = record.get("constrains", [])
+#     new_constrains = [f"{constraint},<1.4" if constraint == "sqlalchemy >=1.2"
+#                       else constraint for constraint in old_constrains]
+#     new_constrains = new_constrains if new_constrains != old_constrains else new_constrains + ["sqlalchemy <1.4"]
+#     record["constrains"] = new_constrains
+# the ordering of the patches matters here since the second one modifies a key used in the if of the first one
+if:
+  name: "great-expectations"
+  timestamp_lt: 1616454000000
+  not_has_constrains:
+    - "sqlalchemy >=1.2"
+then:
+  - add_constrains: "sqlalchemy <1.4"
+---
+if:
+  name: "great-expectations"
+  timestamp_lt: 1616454000000
+  has_constrains: "sqlalchemy >=1.2"
+then:
+  - replace_constrains:
+      old: "sqlalchemy >=1.2"
+      new: "sqlalchemy >=1.2,<1.4"
