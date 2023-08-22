@@ -15,6 +15,8 @@ Patches are specified by two main blocks.
 - The `if` conditions can use shell glob syntax as implemented in the python `fnmatch` module in the
   standard library. The optional "?( *)" pattern from extended glob syntax is allowed to match zero or
   one sequences of spaces plus any other characters.
+- The `then` section uses the Python `string.Template` system to allow the `version`, `build_number`, `name`, or
+  `subdir` values to be inserted into strings via templates (e.g., `"blah <=${version}"`) at runtime.
 - Multiple patches can be in the same file using separate YAML documents (i.e., separate the data by `---`
   on a new line).
 
@@ -61,6 +63,9 @@ then:
   # list of instructions to change things
   # add to the depends or constrains section of the repodata
   - add_<depends or constrains>: <list of str or single str>
+  # you can use data from the record being patched like this
+  # only name, version, build_number and subdir are supported
+  - add_depends: mypackage <=${version}
 
   # remove from the depends or constrains sections of the repodata
   - remove_<depends or constrains>: <list of str or single str>

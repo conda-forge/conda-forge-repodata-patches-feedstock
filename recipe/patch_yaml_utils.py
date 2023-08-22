@@ -2,10 +2,13 @@ import yaml
 import glob
 import os
 import sys
+import string
 from packaging.version import parse as parse_version
 import fnmatch as _fnmatch
 import re
 from functools import lru_cache
+
+ALLOWED_TEMPLATE_KEYS = ["name", "version", "build_number", "subdir"]
 
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
@@ -22,7 +25,7 @@ for fname in glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml"):
 print("Read %d total patch yaml docs" % len(ALL_YAMLS), flush=True, file=sys.stderr)
 
 
-@lru_cache(maxsize=1024)
+@lru_cache(maxsize=10000)
 def _fnmatch_build_re(pat):
     repat = (
         "(?s:\\ .*)?".join([_fnmatch.translate(p)[:-2] for p in pat.split("?( *)")])
@@ -68,6 +71,32 @@ def _fnmatch_str_or_list(item, v):
     if not isinstance(v, list):
         v = [v]
     return any(fnmatch(str(item), str(_v)) for _v in v)
+
+
+@lru_cache(maxsize=10000)
+def _get_vars_for_template(value):
+    if value is None:
+        return []
+
+    if "$" not in value:
+        return []
+
+    vars = []
+    for key in ALLOWED_TEMPLATE_KEYS:
+        if f"${key}" in value or f"${{{key}}}" in value:
+            vars.append(key)
+    return vars
+
+
+def _maybe_process_template(value, record, subdir):
+    vars = _get_vars_for_template(value)
+    if vars:
+        data = {key: record[key] for key in vars if key in record}
+        if "subdir" in vars:
+            data["subdir"] = subdir
+        return string.Template(value).substitute(**data)
+    else:
+        return value
 
 
 def _test_patch_yaml(patch_yaml, record, subdir, fn):
@@ -280,6 +309,8 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                     v = [v]
                 depends = record.get(subk, [])
 
+                v = [_maybe_process_template(_v, record, subdir) for _v in v]
+
                 depends.extend(v)
 
                 record[subk] = depends
@@ -322,27 +353,40 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
             ]:
                 subk = k[len("replace_") :]
                 _replace_pin(
-                    v["old"], v["new"], record.get(subk, []), record, target=subk
+                    _maybe_process_template(v["old"], record, subdir),
+                    _maybe_process_template(v["new"], record, subdir),
+                    record.get(subk, []),
+                    record,
+                    target=subk,
                 )
 
             elif k == "rename_depends":
-                _rename_dependency(fn, record, v["old"], v["new"])
+                _rename_dependency(
+                    fn,
+                    record,
+                    _maybe_process_template(v["old"], record, subdir),
+                    _maybe_process_template(v["new"], record, subdir),
+                )
 
             elif k == "relax_exact_depends":
-                fix_dep = v["name"]
+                fix_dep = _maybe_process_template(v["name"], record, subdir)
                 max_pin = v.get("max_pin", None)
                 _relax_exact(fn, record, fix_dep, max_pin=max_pin)
 
             elif k == "tighten_depends":
-                fix_dep = v["name"]
+                fix_dep = _maybe_process_template(v["name"], record, subdir)
                 max_pin = v.get("max_pin", None)
-                upper_bound = v.get("upper_bound", None)
+                upper_bound = _maybe_process_template(
+                    v.get("upper_bound", None), record, subdir
+                )
                 _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=upper_bound)
 
             elif k == "loosen_depends":
-                fix_dep = v["name"]
+                fix_dep = _maybe_process_template(v["name"], record, subdir)
                 max_pin = v.get("max_pin", None)
-                upper_bound = v.get("upper_bound", None)
+                upper_bound = _maybe_process_template(
+                    v.get("upper_bound", None), record, subdir
+                )
                 _pin_looser(
                     fn, record, fix_dep, max_pin=max_pin, upper_bound=upper_bound
                 )
