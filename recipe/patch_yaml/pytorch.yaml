@@ -12,4 +12,4 @@ if:
   timestamp_lt: 1610297816658
   not_has_depends: "typing_extensions?( *)"
 then:
-  add_depends: "typing_extensions"
+  - add_depends: "typing_extensions"
