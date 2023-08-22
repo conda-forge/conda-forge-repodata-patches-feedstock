@@ -510,13 +510,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if family:
                 record['license_family'] = family
 
-        # remove dependency from constrains for twisted
-        if record_name == "twisted":
-            new_constrains = [dep for dep in record.get('constrains', ())
-                              if not dep.startswith("pyobjc-framework-cococa")]
-            if new_constrains != record.get('constrains', ()):
-                record['constrains'] = new_constrains
-
         # rubin-env-nosysroot always needs mkl
         if (
             subdir == "linux-64"

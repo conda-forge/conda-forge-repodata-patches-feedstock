@@ -1,6 +1,6 @@
 # Before 2021, libignition-msgs5 had a bug for which no dependency
 # was added on protobuf, and this can create problem when a new protobuf
-# verson is relased, see 
+# verson is relased, see
 # https://github.com/conda-forge/libignition-msgs1-feedstock/issues/30
 if:
   subdir_in: win-64

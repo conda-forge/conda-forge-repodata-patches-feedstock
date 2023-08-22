@@ -1,5 +1,5 @@
 # interpolation 2.2.4 needs packaging packaging <22.0,>=21.3
-# Fixed in https://github.com/conda-forge/interpolation-feedstock/pull/26 
+# Fixed in https://github.com/conda-forge/interpolation-feedstock/pull/26
 if:
   name: interpolation
   version: 2.2.4

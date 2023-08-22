@@ -11,6 +11,7 @@ build:
   noarch: generic
   number: 0
   script:
+    - "yamllint -d '{extends: default, rules: {document-start: disable}}' patch_yaml/."
     - black --check patch_yaml_utils.py
     - ruff patch_yaml_utils.py
     - black --check test_patch_yaml_utils.py
@@ -30,6 +31,7 @@ requirements:
     - black
     - ruff
     - pytest
+    - yamllint
   host:
   run:
 
