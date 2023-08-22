@@ -13,7 +13,7 @@ ALLOWED_TEMPLATE_KEYS = ["name", "version", "build_number", "subdir"]
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
 ALL_YAMLS = []
-for fname in glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml"):
+for fname in sorted(glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml")):
     with open(fname, "r") as fp:
         fname_yamls = [
             patch_yaml

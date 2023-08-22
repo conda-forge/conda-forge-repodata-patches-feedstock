@@ -1,0 +1,14 @@
+# from this bit of code
+# if record_name == "kartothek" and record.get('timestamp', 0) < 1611565264000:
+#     # https://github.com/conda-forge/kartothek-feedstock/issues/36
+#     if "zstandard" in record['depends']:
+#         i = record['depends'].index('zstandard')
+#         record['depends'][i] = 'zstandard <0.15'
+if:
+  name: "kartothek"
+  timestamp_lt: 1611565264000
+  has_depends: "zstandard"
+then:
+  - replace_depends:
+      old: "zstandard"
+      new: "zstandard <0.15"

@@ -1,0 +1,25 @@
+# from this bit of code
+# if record_name == "torchvision" and record["version"] == "0.11.2":
+#     if 'pytorch * cpu*' in record['depends']:
+#         i = record['depends'].index('pytorch * cpu*')
+#         record['depends'][i] = 'pytorch 1.10.* cpu*'
+#     elif 'pytorch * cuda*' in record['depends']:
+#         i = record['depends'].index('pytorch * cuda*')
+#         record['depends'][i] = 'pytorch 1.10.* cuda*'
+if:
+  name: "torchvision"
+  version: "0.11.2"
+  has_depends: "pytorch [*] cpu[*]"
+then:
+  - replace_depends:
+      old: "pytorch * cpu*"
+      new: "pytorch 1.10.* cpu*"
+---
+if:
+  name: "torchvision"
+  version: "0.11.2"
+  has_depends: "pytorch [*] cuda[*]"
+then:
+  - replace_depends:
+      old: "pytorch * cuda*"
+      new: "pytorch 1.10.* cuda*"
