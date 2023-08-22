@@ -133,6 +133,9 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             if subk == "version":
                 rv = parse_version(rv)
                 v = parse_version(v)
+            elif subk in ["build_number", "timestamp"]:
+                rv = int(rv)
+                v = int(v)
 
             op = k[-2:]
             if op == "lt":

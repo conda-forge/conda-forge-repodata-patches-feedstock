@@ -493,12 +493,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
     for fn, record in index.items():
         record_name = record["name"]
 
-        if record_name == "great-expectations" and record.get("timestamp", 0) < 1616454000000:
-            old_constrains = record.get("constrains", [])
-            new_constrains = [f"{constraint},<1.4" if constraint == "sqlalchemy >=1.2" else constraint for constraint in old_constrains]
-            new_constrains = new_constrains if new_constrains != old_constrains else new_constrains + ["sqlalchemy <1.4"]
-            record["constrains"] = new_constrains
-
         if record.get('timestamp', 0) < 1604417730000:
             if subdir == 'noarch':
                 remove_python_abi(record)
@@ -509,52 +503,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             family = get_license_family(record["license"])
             if family:
                 record['license_family'] = family
-
-        # remove dependency from constrains for twisted
-        if record_name == "twisted":
-            new_constrains = [dep for dep in record.get('constrains', ())
-                              if not dep.startswith("pyobjc-framework-cococa")]
-            if new_constrains != record.get('constrains', ()):
-                record['constrains'] = new_constrains
-
-        # rubin-env-nosysroot always needs mkl
-        if (
-            subdir == "linux-64"
-            and record_name == "rubin-env-nosysroot"
-            and record["version"] in ["7.0.0", "7.0.1"]
-            and int(record["build_number"]) <= 3
-        ):
-            record["depends"].append("mkl")
-
-        if record_name == "starlette-base":
-            if not any(dep.split(' ')[0] == "starlette" for dep in record.get('constrains', ())):
-                if 'constrains' in record:
-                    record['constrains'].append(f"starlette {record['version']}")
-                else:
-                    record['constrains'] = [f"starlette {record['version']}"]
-
-        # spacy-models-* needs to match spacy's maj.minor version, but old builds don't
-        # have that constraint correctly, leading to them being pulled in when a new
-        # spacy version releases, but before spacy-models-* is built in c-f, see
-        # https://github.com/conda-forge/spacy-models-feedstock/issues/5
-        if (
-            record_name.startswith("spacy-model")
-            and record["version"].split(".")[0] < "3"
-            and subdir == "noarch"
-            and record.get('timestamp', 0) < 1675431752816
-        ):
-            # to limit breakage of old environments that worked regardless of the wrong
-            # constraints, just ensure we don't get new spacy for old spacy-model-* builds
-            record['depends'].append("spacy <3")
-
-        if record_name == "pytorch" and record.get('timestamp', 0) < 1610297816658:
-            # https://github.com/conda-forge/pytorch-cpu-feedstock/issues/29
-            if not any(dep.split(' ')[0] == 'typing_extensions'
-                       for dep in record.get('depends', ())):
-                if 'depends' in record:
-                    record['depends'].append("typing_extensions")
-                else:
-                    record['depends'] = ["typing_extensions"]
 
         if record_name == "torchvision" and record["version"] == "0.11.2":
             if 'pytorch * cpu*' in record['depends']:
