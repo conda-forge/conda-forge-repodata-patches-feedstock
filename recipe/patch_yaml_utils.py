@@ -376,13 +376,17 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
             elif k == "tighten_depends":
                 fix_dep = _maybe_process_template(v["name"], record, subdir)
                 max_pin = v.get("max_pin", None)
-                upper_bound = v.get("upper_bound", None)
+                upper_bound = _maybe_process_template(
+                    v.get("upper_bound", None), record, subdir
+                )
                 _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=upper_bound)
 
             elif k == "loosen_depends":
                 fix_dep = _maybe_process_template(v["name"], record, subdir)
                 max_pin = v.get("max_pin", None)
-                upper_bound = v.get("upper_bound", None)
+                upper_bound = _maybe_process_template(
+                    v.get("upper_bound", None), record, subdir
+                )
                 _pin_looser(
                     fn, record, fix_dep, max_pin=max_pin, upper_bound=upper_bound
                 )
