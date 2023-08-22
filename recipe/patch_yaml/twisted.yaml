@@ -7,6 +7,5 @@
 #         record['constrains'] = new_constrains
 if:
   name: twisted
-  has_constrains: pyobjc-framework-cococa*
 then:
   - remove_constrains: pyobjc-framework-cococa*
