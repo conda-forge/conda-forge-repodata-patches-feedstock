@@ -1,6 +1,6 @@
 import pytest
 
-from patch_yaml_utils import _test_patch_yaml, _apply_patch_yaml
+from patch_yaml_utils import _test_patch_yaml, _apply_patch_yaml, ALLOWED_TEMPLATE_KEYS
 
 
 def test_test_patch_yaml_record_key():
@@ -194,6 +194,46 @@ def test_apply_patch_yaml_add(key):
     record = {"version": 10, key: ["foo"]}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"version": 10, key: ["foo", "blah"]}
+
+
+@pytest.mark.parametrize("rkey", ALLOWED_TEMPLATE_KEYS)
+@pytest.mark.parametrize("key", ["depends", "constrains"])
+def test_apply_patch_yaml_add_template(key, rkey):
+    patch_yaml = {"then": [{"add_" + key: f"blah ${rkey}"}]}
+    record = {"version": 10, "name": "foo", "build_number": 2}
+    _apply_patch_yaml(patch_yaml, record, "linux-64", None)
+    if rkey != "subdir":
+        assert record == {
+            "version": 10,
+            key: [f"blah {record[rkey]}"],
+            "name": "foo",
+            "build_number": 2,
+        }
+    else:
+        assert record == {
+            "version": 10,
+            key: ["blah linux-64"],
+            "name": "foo",
+            "build_number": 2,
+        }
+
+    patch_yaml = {"then": [{"add_" + key: f"blah ${rkey}"}]}
+    record = {"version": 10, key: ["foo"], "name": "foo", "build_number": 2}
+    _apply_patch_yaml(patch_yaml, record, "linux-64", None)
+    if rkey != "subdir":
+        assert record == {
+            "version": 10,
+            key: ["foo", f"blah {record[rkey]}"],
+            "name": "foo",
+            "build_number": 2,
+        }
+    else:
+        assert record == {
+            "version": 10,
+            key: ["foo", "blah linux-64"],
+            "name": "foo",
+            "build_number": 2,
+        }
 
 
 @pytest.mark.parametrize("key", ["depends", "constrains"])
