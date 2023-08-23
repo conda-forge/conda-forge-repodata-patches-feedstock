@@ -1,0 +1,42 @@
+# from this bit of code
+# if ((record.get('timestamp', 0) < 1670685160000) and
+#         any(dep == "flatbuffers >=2"
+#             for dep in record.get('depends', ()))):
+#     i = record["depends"].index("flatbuffers >=2")
+#     record["depends"][i] = "flatbuffers >=2,<3.0.0.0a0"
+if:
+  timestamp_lt: 1670685160000
+  has_depends: flatbuffers >=2
+then:
+  - replace_depends:
+      old: flatbuffers >=2
+      new: flatbuffers >=2,<3.0.0.0a0
+---
+# from this bit of code - I fixed a regex to make pin_stricter / tighten_epends work (MRB)
+# if ((record.get('timestamp', 0) < 1685293591000 and
+#       any(dep.startswith("flatbuffers >=23")
+#           for dep in record.get('depends', ())))):
+#     # Not sure why the following doesn't work
+#     # _pin_stricter(fn, record, "flatbuffers", "x.x.x")
+
+#     # https://github.com/conda-forge/flatbuffers-feedstock/issues/44
+#     idx = [dep.startswith("flatbuffers") for dep in record['depends']].index(True)
+#     dep = record['depends'][idx]
+#     if dep.startswith("flatbuffers >=23.1.4"):
+#         new_dep = "flatbuffers >=23.1.4,<23.1.5.0a0"
+#     elif dep.startswith("flatbuffers >=23.1.21"):
+#         new_dep = "flatbuffers >=23.1.21,<23.1.22.0a0"
+#     elif dep.startswith("flatbuffers >=23.3.3"):
+#         new_dep = "flatbuffers >=23.3.3,<23.3.4.0a0"
+#     elif dep.startswith("flatbuffers >=23.5.26"):
+#         new_dep = "flatbuffers >=23.5.26,<23.5.27.0a0"
+#     else:
+#         new_dep = dep
+#     record['depends'][idx] = new_dep
+if:
+  timestamp_lt: 1685293591000
+  has_depends: flatbuffers >=23*
+then:
+  - tighten_depends:
+      name: flatbuffers
+      max_pin: x.x.x

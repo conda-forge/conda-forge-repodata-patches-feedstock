@@ -504,25 +504,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if family:
                 record['license_family'] = family
 
-        if (
-                record_name == "transformers"
-                and (packaging.version.parse(record['version']) < packaging.version.parse('4.23'))
-                and (packaging.version.parse(record['version']) >= packaging.version.parse('4.18'))
-                and record.get('timestamp', 0) < 1685092335000
-        ):
-            tokenizers_pin = [r for r in record["depends"] if r.startswith('tokenizers')][0]
-            i = record["depends"].index(tokenizers_pin)
-            record["depends"][i] = tokenizers_pin + ',<0.13'
-
-        if record_name == "packaging" and record["version"] in ["21.1", "21.2"]:
-            # https://github.com/conda-forge/packaging-feedstock/pull/21
-            deps = record["depends"]
-            i = -1
-            with suppress(ValueError):
-                i = deps.index("pyparsing >=2.0.2")
-            if i >= 0:
-                deps[i] = "pyparsing >=2.0.2,<3"
-
         if record_name == "vs2015_runtime" and record.get('timestamp', 0) < 1633470721000:
             pversion = parse_version(record['version'])
             vs2019_version = parse_version('14.29.30037')
@@ -531,50 +512,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_constrains = record.get("constrains", [])
                 new_constrains.append("ucrt <0a0")
                 record['constrains'] = new_constrains
-
-        if record_name == "gitdb" and record['version'].startswith('4.0.') and 'smmap >=3.0.1' in record['depends']:
-            i = record['depends'].index('smmap >=3.0.1')
-            record['depends'][i] = 'smmap >=3.0.1,<4'
-
-        if record_name == "arrow-cpp":
-            if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())) and record.get('timestamp', 0) < 1675198779000:
-                if 'constrains' in record:
-                    record['constrains'].append("arrow-cpp-proc * cpu")
-                else:
-                    record['constrains'] = ["arrow-cpp-proc * cpu"]
-
-            if "aws-sdk-cpp" in record['depends']:
-                i = record['depends'].index('aws-sdk-cpp')
-                record['depends'][i] = 'aws-sdk-cpp 1.7.164'
-
-            # arrow-cpp builds done with numpy<1.16.6 are incompatible with numpy 1.20
-            # We have been building with numpy 1.16.6 since 1612266172867
-            # The underlying issue is https://github.com/numpy/numpy/issues/17913
-            if record.get('timestamp', 0) < 1607959235411 and any(dep.split(' ')[0] == 'numpy' for dep in record.get('depends', ())):
-                _pin_stricter(fn, record, "numpy", "x", "1.20")
-
-        if record_name == "tensorflow-base" and record["version"] == "2.6.0":
-            i = record['depends'].index('keras >=2.6,<3')
-            record['depends'][i] = 'keras >=2.6,<2.7'
-
-        # jsonschema-with-* packages were missing a pin on the parent jsonschema
-        # https://github.com/conda-forge/jsonschema-feedstock/issues/73
-        if (
-            record.get("timestamp", 0) < 1691761503000 and
-            record["name"] in [
-                "jsonschema-with-format",
-                "jsonschema-with-format-nongpl",
-                "jsonschema-with-format-all",
-            ]
-        ):
-            for dep_name in [
-                "jsonschema",
-                "jsonschema-with-format",
-                "jsonschema-with-format-nongpl",
-                "jsonschema-with-format-all",
-            ]:
-                if any(dep_name == dep.split(" ")[0] for dep in record["depends"]):
-                    _pin_stricter(fn, record, dep_name, "x.x.x")
 
         # missing OpenSSL-distinction in tensorflow wrapper, see
         # https://github.com/conda-forge/tensorflow-feedstock/issues/295
@@ -633,53 +570,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                             # NO break, the loop needs also to make sure that all the tensorflow deps are removed.
                     if not found:  # It wasn't in the dependencies so we add it
                         dependencies.append(f'{newdep} {newrequ}')
-
-        if ((record.get('timestamp', 0) < 1670685160000) and
-                any(dep == "flatbuffers >=2"
-                    for dep in record.get('depends', ()))):
-            i = record["depends"].index("flatbuffers >=2")
-            record["depends"][i] = "flatbuffers >=2,<3.0.0.0a0"
-
-        if ((record.get('timestamp', 0) < 1685293591000 and
-             any(dep.startswith("flatbuffers >=23")
-                 for dep in record.get('depends', ())))):
-            # Not sure why the following doesn't work
-            # _pin_stricter(fn, record, "flatbuffers", "x.x.x")
-
-            # https://github.com/conda-forge/flatbuffers-feedstock/issues/44
-            idx = [dep.startswith("flatbuffers") for dep in record['depends']].index(True)
-            dep = record['depends'][idx]
-            if dep.startswith("flatbuffers >=23.1.4"):
-                new_dep = "flatbuffers >=23.1.4,<23.1.5.0a0"
-            elif dep.startswith("flatbuffers >=23.1.21"):
-                new_dep = "flatbuffers >=23.1.21,<23.1.22.0a0"
-            elif dep.startswith("flatbuffers >=23.3.3"):
-                new_dep = "flatbuffers >=23.3.3,<23.3.4.0a0"
-            elif dep.startswith("flatbuffers >=23.5.26"):
-                new_dep = "flatbuffers >=23.5.26,<23.5.27.0a0"
-            else:
-                new_dep = dep
-
-            record['depends'][idx] = new_dep
-
-        if record_name == "pyarrow" and record.get('timestamp', 0) < 1675198779000:
-            if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in record.get('constrains', ())):
-                if 'constrains' in record:
-                    record['constrains'].append("arrow-cpp-proc * cpu")
-                else:
-                    record['constrains'] = ["arrow-cpp-proc * cpu"]
-
-            # pyarrow builds done with numpy<1.16.6 are incompatible with numpy 1.20
-            # We have been building with numpy 1.16.6 since 1612266172867
-            # The underlying issue is https://github.com/numpy/numpy/issues/17913
-            if record.get('timestamp', 0) < 1607959235411 and any(dep.split(' ')[0] == 'numpy' for dep in record.get('depends', ())):
-                _pin_stricter(fn, record, "numpy", "x", "1.20")
-
-        if record_name == "kartothek":
-            if record["version"] in ["3.15.0", "3.15.1", "3.16.0"] \
-                    and "pyarrow >=0.13.0,!=0.14.0,<2" in record["depends"]:
-                i = record["depends"].index("pyarrow >=0.13.0,!=0.14.0,<2")
-                record["depends"][i] = "pyarrow >=0.17.1,<2"
 
         if record_name == 'dask':
             # older versions of dask are incompatible with bokeh=3

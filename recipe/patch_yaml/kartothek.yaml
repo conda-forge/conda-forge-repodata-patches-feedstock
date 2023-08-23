@@ -12,3 +12,18 @@ then:
   - replace_depends:
       old: "zstandard"
       new: "zstandard <0.15"
+---
+# from this bit of code
+# if record_name == "kartothek":
+#     if record["version"] in ["3.15.0", "3.15.1", "3.16.0"] \
+#             and "pyarrow >=0.13.0,!=0.14.0,<2" in record["depends"]:
+#         i = record["depends"].index("pyarrow >=0.13.0,!=0.14.0,<2")
+#         record["depends"][i] = "pyarrow >=0.17.1,<2"
+if:
+  name: "kartothek"
+  version_in: ["3.15.0", "3.15.1", "3.16.0"]
+  has_depends: pyarrow >=0.13.0,!=0.14.0,<2
+then:
+  - replace_depends:
+      old: pyarrow >=0.13.0,!=0.14.0,<2
+      new: pyarrow >=0.17.1,<2

@@ -1,0 +1,12 @@
+# from this bit of code
+# if record_name == "gitdb" and record['version'].startswith('4.0.') and 'smmap >=3.0.1' in record['depends']:
+#     i = record['depends'].index('smmap >=3.0.1')
+#     record['depends'][i] = 'smmap >=3.0.1,<4'
+if:
+  name: gitdb
+  version_ge: "4.0"
+  version_lt: 5.0a0
+then:
+  - replace_depends:
+      old: smmap >=3.0.1
+      new: smmap >=3.0.1,<4

@@ -1,0 +1,39 @@
+# from this bit of code
+# jsonschema-with-* packages were missing a pin on the parent jsonschema
+# https://github.com/conda-forge/jsonschema-feedstock/issues/73
+# if (
+#     record.get("timestamp", 0) < 1691761503000 and
+#     record["name"] in [
+#         "jsonschema-with-format",
+#         "jsonschema-with-format-nongpl",
+#         "jsonschema-with-format-all",
+#     ]
+# ):
+#     for dep_name in [
+#         "jsonschema",
+#         "jsonschema-with-format",
+#         "jsonschema-with-format-nongpl",
+#         "jsonschema-with-format-all",
+#     ]:
+#         if any(dep_name == dep.split(" ")[0] for dep in record["depends"]):
+#             _pin_stricter(fn, record, dep_name, "x.x.x")
+if:
+  timestamp_lt: 1691761503000
+  name_in:
+    - "jsonschema-with-format"
+    - "jsonschema-with-format-nongpl"
+    - "jsonschema-with-format-all"
+then:
+  - tighten_depends:
+      name: "jsonschema"
+      max_pin: x.x.x
+  - tighten_depends:
+      name: "jsonschema-with-format"
+      max_pin: x.x.x
+  - tighten_depends:
+      name: "jsonschema-with-format-nongpl"
+      max_pin: x.x.x
+  - tighten_depends:
+      name: "jsonschema-with-format-all"
+      max_pin: x.x.x
+
