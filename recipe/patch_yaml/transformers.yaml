@@ -1,0 +1,19 @@
+# from this bit of code
+# if (
+#         record_name == "transformers"
+#         and (packaging.version.parse(record['version']) < packaging.version.parse('4.23'))
+#         and (packaging.version.parse(record['version']) >= packaging.version.parse('4.18'))
+#         and record.get('timestamp', 0) < 1685092335000
+# ):
+#     tokenizers_pin = [r for r in record["depends"] if r.startswith('tokenizers')][0]
+#     i = record["depends"].index(tokenizers_pin)
+#     record["depends"][i] = tokenizers_pin + ',<0.13'
+if:
+  name: transformers
+  version_lt: "4.23"
+  version_ge: "4.18"
+  timestamp_lt: 1685092335000
+then:
+  - replace_depends:
+      old: "tokenizers >=0.11.1,!=0.11.3"
+      new: "tokenizers >=0.11.1,!=0.11.3,<0.13"

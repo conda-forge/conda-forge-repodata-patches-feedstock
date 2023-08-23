@@ -13,7 +13,7 @@ ALLOWED_TEMPLATE_KEYS = ["name", "version", "build_number", "subdir"]
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
 ALL_YAMLS = []
-for fname in glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml"):
+for fname in sorted(glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml")):
     with open(fname, "r") as fp:
         fname_yamls = [
             patch_yaml
@@ -167,7 +167,7 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             _keep = _fnmatch_str_or_list(fn, v)
 
         else:
-            raise KeyError("Unrecognized 'where' key '%s'!" % k)
+            raise KeyError("Unrecognized 'if' key '%s'!" % k)
 
         if neg:
             keep = keep and (not _keep)
@@ -239,7 +239,7 @@ def _relax_exact(fn, record, fix_dep, max_pin=None):
             record["depends"] = depends
 
 
-CB_PIN_REGEX = re.compile(r"^>=(?P<lower>\d(\.\d+)*a?),<(?P<upper>\d(\.\d+)*)a0$")
+CB_PIN_REGEX = re.compile(r"^>=(?P<lower>\d+(\.\d+)*a?),<(?P<upper>\d+(\.\d+)*)a0$")
 
 
 def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
@@ -379,23 +379,27 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
             elif k == "tighten_depends":
                 fix_dep = _maybe_process_template(v["name"], record, subdir)
                 max_pin = v.get("max_pin", None)
-                upper_bound = _maybe_process_template(
-                    v.get("upper_bound", None), record, subdir
-                )
+                upper_bound = v.get("upper_bound", None)
+                if upper_bound is not None:
+                    upper_bound = _maybe_process_template(
+                        str(upper_bound), record, subdir
+                    )
                 _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=upper_bound)
 
             elif k == "loosen_depends":
                 fix_dep = _maybe_process_template(v["name"], record, subdir)
                 max_pin = v.get("max_pin", None)
-                upper_bound = _maybe_process_template(
-                    v.get("upper_bound", None), record, subdir
-                )
+                upper_bound = v.get("upper_bound", None)
+                if upper_bound is not None:
+                    upper_bound = _maybe_process_template(
+                        str(upper_bound), record, subdir
+                    )
                 _pin_looser(
                     fn, record, fix_dep, max_pin=max_pin, upper_bound=upper_bound
                 )
 
             else:
-                raise KeyError("Unrecognized 'do' key '%s'!" % k)
+                raise KeyError("Unrecognized 'then' key '%s'!" % k)
 
 
 def patch_yaml_edit_index(index, subdir):

@@ -1,0 +1,11 @@
+# from this bit of code
+# if record_name == "tensorflow-base" and record["version"] == "2.6.0":
+#     i = record['depends'].index('keras >=2.6,<3')
+#     record['depends'][i] = 'keras >=2.6,<2.7'
+if:
+  name: "tensorflow-base"
+  version: "2.6.0"
+then:
+  - replace_depends:
+      old: keras >=2.6,<3
+      new: keras >=2.6,<2.7

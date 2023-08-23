@@ -1,0 +1,45 @@
+# from this bit of code
+# if record_name == "arrow-cpp":
+#     if not any(dep.split(' ')[0] == "arrow-cpp-proc" for dep in
+#         record.get('constrains', ())) and record.get('timestamp', 0) < 1675198779000:
+#         if 'constrains' in record:
+#             record['constrains'].append("arrow-cpp-proc * cpu")
+#         else:
+#             record['constrains'] = ["arrow-cpp-proc * cpu"]
+if:
+  name: "arrow-cpp"
+  timestamp_lt: 1675198779000
+  not_has_constrains: "arrow-cpp-proc?( *)"
+then:
+  - add_constrains: "arrow-cpp-proc * cpu"
+---
+# from this bit of code
+# if record_name == "arrow-cpp":
+#     if "aws-sdk-cpp" in record['depends']:
+#         i = record['depends'].index('aws-sdk-cpp')
+#         record['depends'][i] = 'aws-sdk-cpp 1.7.164'
+if:
+  name: "arrow-cpp"
+  has_depends: aws-sdk-cpp
+then:
+  - replace_depends:
+      old: aws-sdk-cpp
+      new: aws-sdk-cpp 1.7.164
+---
+# from this bit of code
+# if record_name == "arrow-cpp":
+#     # arrow-cpp builds done with numpy<1.16.6 are incompatible with numpy 1.20
+#     # We have been building with numpy 1.16.6 since 1612266172867
+#     # The underlying issue is https://github.com/numpy/numpy/issues/17913
+#     if record.get('timestamp', 0) < 1607959235411 and any(dep.split(' ')[0]
+#         == 'numpy' for dep in record.get('depends', ())):
+#         _pin_stricter(fn, record, "numpy", "x", "1.20")
+if:
+  name: "arrow-cpp"
+  timestamp_lt: 1607959235411
+  has_depends: numpy?( *)
+then:
+  - tighten_depends:
+      name: numpy
+      max_pin: "x"
+      upper_bound: "1.20"
