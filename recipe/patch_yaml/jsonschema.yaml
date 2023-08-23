@@ -36,4 +36,3 @@ then:
   - tighten_depends:
       name: "jsonschema-with-format-all"
       max_pin: x.x.x
-
