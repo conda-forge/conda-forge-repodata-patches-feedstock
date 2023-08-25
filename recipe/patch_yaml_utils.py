@@ -240,6 +240,7 @@ def _relax_exact(fn, record, fix_dep, max_pin=None):
 
 
 CB_PIN_REGEX = re.compile(r"^>=(?P<lower>\d+(\.\d+)*a?),<(?P<upper>\d+(\.\d+)*)a0$")
+CB_GT_REGEX = re.compile(r"^>=(?P<lower>\d+(\.\d+)*a?)[^<*]*$")
 
 
 def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
@@ -247,11 +248,39 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
     dep_indices = [q for q, dep in enumerate(depends) if dep.split(" ")[0] == fix_dep]
     for dep_idx in dep_indices:
         dep_parts = depends[dep_idx].split(" ")
-        if len(dep_parts) not in [2, 3]:
+
+        if len(dep_parts) not in [2, 3] and upper_bound is None:
             continue
+
+        if len(dep_parts) == 1 and upper_bound is not None:
+            depends[dep_idx] = "{} <{}a0".format(
+                dep_parts[0], upper_bound,
+            )
+            record["depends"] = depends
+            continue
+
         m = CB_PIN_REGEX.match(dep_parts[1])
-        if m is None:
+
+        if m is None and upper_bound is None:
             continue
+
+        if m is None and upper_bound is not None:
+            if CB_GT_REGEX.match(dep_parts[1]) is not None:
+                if len(dep_parts) == 2:
+                    depends[dep_idx] = "{} {},<{}a0".format(
+                        dep_parts[0], dep_parts[1], upper_bound
+                    )
+                elif len(dep_parts) == 3:
+                    depends[dep_idx] = "{} {},<{}a0 {}".format(
+                        dep_parts[0], dep_parts[1], upper_bound, dep_parts[2]
+                    )
+                else:
+                    raise RuntimeError("Weird dep length!")
+
+                record["depends"] = depends
+
+            continue
+
         lower = m.group("lower")
         upper = m.group("upper").split(".")
         if upper_bound is None:

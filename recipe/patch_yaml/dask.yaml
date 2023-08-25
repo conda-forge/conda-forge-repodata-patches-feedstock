@@ -1,0 +1,8 @@
+# if:
+#   name: dask
+#   timestamp_lt: 1667000131632
+#   has_depends: bokeh*
+# then:
+#   - tighten_depends:
+#       name: bokeh
+#       upper_bound: "3"
