@@ -61,6 +61,7 @@ if:
   version: 1.0.0
 then:
   # list of instructions to change things
+
   # add to the depends or constrains section of the repodata
   - add_<depends or constrains>: <list of str or single str>
   # you can use data from the record being patched like this
@@ -77,6 +78,17 @@ then:
   - replace_<depends or constrains>:
       # str of thing to be replaced
       old: matplotlib ==1.3.0
+      # thing to replace `old` with
+      new: matplotlib-base ==1.4.0
+  # globs are allowed in the "old" field so * needs to be escaped via [*]
+  - replace_<depends or constrains>:
+      # str of thing to be replaced
+      old: matplotlib 1.3.[*]  # matches matplotlib 1.3.* exactly
+      # thing to replace `old` with
+      new: matplotlib-base ==1.4.0
+  - replace_<depends or constrains>:
+      # str of thing to be replaced
+      old: matplotlib 1.3.*  # matches matplotlib 1.3.0, matplotlib 1.3, etc.
       # thing to replace `old` with
       new: matplotlib-base ==1.4.0
 

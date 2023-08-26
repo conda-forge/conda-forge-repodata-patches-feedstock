@@ -1,0 +1,58 @@
+# from this bit of code
+# In 1.4.1 bayesian-optimization fixes colors not displaying correctly on windows.
+# This is done using colorama, however the function used by colorama was only introduced in
+# colorama 0.4.6, which is only available for python >=3.7
+# if record_name == 'bayesian-optimization' and record.get('timestamp') < 1676994963000:
+#     if record["version"] == "1.4.1" or (record["version"] == "1.4.2" and record["build_number"] == 0):
+#         python_pinning = [
+#             x for x in record['depends'] if x.startswith('python')
+#         ]
+#         for pinning in python_pinning:
+#             _replace_pin(pinning, 'python >=3.7', record['depends'], record)
+#
+#         colorama_pinning = [
+#             x for x in record['depends'] if x.startswith('colorama')
+#         ]
+#         for pinning in colorama_pinning:
+#             _replace_pin(pinning, 'colorama >=0.4.6', record['depends'], record)
+if:
+  name: bayesian-optimization
+  timestamp_lt: 1676994963000
+  version: 1.4.1
+then:
+  - replace_depends:
+      old: python*
+      new: python >=3.7
+  - replace_depends:
+      old: colorama*
+      new: colorama >=0.4.6
+---
+# from this bit of code
+# In 1.4.1 bayesian-optimization fixes colors not displaying correctly on windows.
+# This is done using colorama, however the function used by colorama was only introduced in
+# colorama 0.4.6, which is only available for python >=3.7
+# if record_name == 'bayesian-optimization' and record.get('timestamp') < 1676994963000:
+#     if record["version"] == "1.4.1" or (record["version"] == "1.4.2" and record["build_number"] == 0):
+#         python_pinning = [
+#             x for x in record['depends'] if x.startswith('python')
+#         ]
+#         for pinning in python_pinning:
+#             _replace_pin(pinning, 'python >=3.7', record['depends'], record)
+#
+#         colorama_pinning = [
+#             x for x in record['depends'] if x.startswith('colorama')
+#         ]
+#         for pinning in colorama_pinning:
+#             _replace_pin(pinning, 'colorama >=0.4.6', record['depends'], record)
+if:
+  name: bayesian-optimization
+  timestamp_lt: 1676994963000
+  version: 1.4.2
+  build_number: 0
+then:
+  - replace_depends:
+      old: python*
+      new: python >=3.7
+  - replace_depends:
+      old: colorama*
+      new: colorama >=0.4.6

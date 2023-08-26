@@ -355,13 +355,17 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 "constrains",
             ]:
                 subk = k[len("replace_") :]
-                _replace_pin(
-                    _maybe_process_template(v["old"], record, subdir),
-                    _maybe_process_template(v["new"], record, subdir),
-                    record.get(subk, []),
-                    record,
-                    target=subk,
-                )
+                pat = _maybe_process_template(v["old"], record, subdir)
+                new_dep = _maybe_process_template(v["new"], record, subdir)
+                for dep in record.get(subk, []):
+                    if fnmatch(dep, pat):
+                        _replace_pin(
+                            dep,
+                            new_dep,
+                            record.get(subk, []),
+                            record,
+                            target=subk,
+                        )
 
             elif k == "rename_depends":
                 _rename_dependency(
