@@ -301,6 +301,18 @@ def test_apply_patch_yaml_replace(key, pre, post):
 
 @pytest.mark.parametrize("pre", [[], ["foo"]])
 @pytest.mark.parametrize("post", [[], ["bar"]])
+@pytest.mark.parametrize("key", ["depends", "constrains"])
+def test_apply_patch_yaml_replace_glob(key, pre, post):
+    patch_yaml = {
+        "then": [{"replace_" + key: {"old": "numpy 1.0*", "new": "numpy 2.0"}}]
+    }
+    record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {key: pre + ["numpy 2.0", "numpy 2.0"] + post}
+
+
+@pytest.mark.parametrize("pre", [[], ["foo"]])
+@pytest.mark.parametrize("post", [[], ["bar"]])
 def test_apply_patch_yaml_rename(pre, post):
     patch_yaml = {"then": [{"rename_depends": {"old": "numpy", "new": "numppy"}}]}
     record = {"depends": pre + ["numpy 1.0 blah"] + post}

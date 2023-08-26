@@ -9,3 +9,64 @@ then:
   - replace_depends:
       old: keras >=2.6,<3
       new: keras >=2.6,<2.7
+---
+# from this bit of code
+# missing OpenSSL-distinction in tensorflow wrapper, see
+# https://github.com/conda-forge/tensorflow-feedstock/issues/295
+# if (
+#     record_name == "tensorflow"
+#     and record["version"] == "2.11.0"
+#     and record["build"].endswith("_0")
+#     # osx only got built for OpenSSL 3 --> no collision of wrappers
+#     and subdir == "linux-64"
+# ):
+#     for dep in ["tensorflow-base", "tensorflow-estimator"]:
+#         sub_pin = [r for r in record["depends"] if r.startswith(dep)][0]
+#         i = record["depends"].index(sub_pin)
+#         # replace with less tight pin that does not go down to hash of `dep`,
+#         # but keep distinction between cpu/cuda, as well as the python version
+#         cpu_or_cuda = "cpu_" if ("cpu_" in sub_pin) else "cuda112"  # no other CUDA ver
+#         pyver = sub_pin[len(f"{dep} 2.11.0 {cpu_or_cuda}"):-len("h1234567_0")]
+#         record["depends"][i] = f"{dep} 2.11.0 {cpu_or_cuda}{pyver}*_0"
+if:
+  name: tensorflow
+  version: 2.11.0
+  build_number: 0
+  subdir_in: linux-64
+then:
+  - replace_depends:
+      old: tensorflow-base * cpu_py38*
+      new: tensorflow-base 2.11.0 cpu_py38*_0
+  - replace_depends:
+      old: tensorflow-estimator * cpu_py38*
+      new: tensorflow-estimator 2.11.0 cpu_py38*_0
+  - replace_depends:
+      old: tensorflow-base * cpu_py39*
+      new: tensorflow-base 2.11.0 cpu_py39*_0
+  - replace_depends:
+      old: tensorflow-estimator * cpu_py39*
+      new: tensorflow-estimator 2.11.0 cpu_py39*_0
+  - replace_depends:
+      old: tensorflow-base * cpu_py310*
+      new: tensorflow-base 2.11.0 cpu_py310*_0
+  - replace_depends:
+      old: tensorflow-estimator * cpu_py310*
+      new: tensorflow-estimator 2.11.0 cpu_py310*_0
+  - replace_depends:
+      old: tensorflow-base * cuda112py38*
+      new: tensorflow-base 2.11.0 cuda112py38*_0
+  - replace_depends:
+      old: tensorflow-estimator * cuda112py38*
+      new: tensorflow-estimator 2.11.0 cuda112py38*_0
+  - replace_depends:
+      old: tensorflow-base * cuda112py39*
+      new: tensorflow-base 2.11.0 cuda112py39*_0
+  - replace_depends:
+      old: tensorflow-estimator * cuda112py39*
+      new: tensorflow-estimator 2.11.0 cuda112py39*_0
+  - replace_depends:
+      old: tensorflow-base * cuda112py310*
+      new: tensorflow-base 2.11.0 cuda112py310*_0
+  - replace_depends:
+      old: tensorflow-estimator * cuda112py310*
+      new: tensorflow-estimator 2.11.0 cuda112py310*_0

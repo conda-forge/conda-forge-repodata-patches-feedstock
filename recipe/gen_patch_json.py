@@ -549,24 +549,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_constrains.append("ucrt <0a0")
                 record['constrains'] = new_constrains
 
-        # missing OpenSSL-distinction in tensorflow wrapper, see
-        # https://github.com/conda-forge/tensorflow-feedstock/issues/295
-        if (
-            record_name == "tensorflow"
-            and record["version"] == "2.11.0"
-            and record["build"].endswith("_0")
-            # osx only got built for OpenSSL 3 --> no collision of wrappers
-            and subdir == "linux-64"
-        ):
-            for dep in ["tensorflow-base", "tensorflow-estimator"]:
-                sub_pin = [r for r in record["depends"] if r.startswith(dep)][0]
-                i = record["depends"].index(sub_pin)
-                # replace with less tight pin that does not go down to hash of `dep`,
-                # but keep distinction between cpu/cuda, as well as the python version
-                cpu_or_cuda = "cpu_" if ("cpu_" in sub_pin) else "cuda112"  # no other CUDA ver
-                pyver = sub_pin[len(f"{dep} 2.11.0 {cpu_or_cuda}"):-len("h1234567_0")]
-                record["depends"][i] = f"{dep} 2.11.0 {cpu_or_cuda}{pyver}*_0"
-
         # TensorFlow Probability was published with loose constraints on TensorFlow-base leading to broken dependencies.
         # Each release actually specifies the exact version of TensorFlow and JAX that it supports, therefore we need to
         # pin the dependencies to the exact version that was used to build the package.
@@ -606,31 +588,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                             # NO break, the loop needs also to make sure that all the tensorflow deps are removed.
                     if not found:  # It wasn't in the dependencies so we add it
                         dependencies.append(f'{newdep} {newrequ}')
-
-        # In 1.4.1 bayesian-optimization fixes colors not displaying correctly on windows.
-        # This is done using colorama, however the function used by colorama was only introduced in
-        # colorama 0.4.6, which is only available for python >=3.7
-        if record_name == 'bayesian-optimization' and record.get('timestamp') < 1676994963000:
-            if record["version"] == "1.4.1" or (record["version"] == "1.4.2" and record["build_number"] == 0):
-                python_pinning = [
-                    x for x in record['depends'] if x.startswith('python')
-                ]
-                for pinning in python_pinning:
-                    _replace_pin(pinning, 'python >=3.7', record['depends'], record)
-
-                colorama_pinning = [
-                    x for x in record['depends'] if x.startswith('colorama')
-                ]
-                for pinning in colorama_pinning:
-                    _replace_pin(pinning, 'colorama >=0.4.6', record['depends'], record)
-
-        if record_name == 'ratelimiter':
-            if record.get('timestamp', 0) < 1667804400000 and subdir == "noarch":  # noarch builds prior to 2022/11/7
-                python_pinning = [
-                    x for x in record['depends'] if x.startswith('python')
-                ]
-                for pinning in python_pinning:
-                    _replace_pin(pinning, 'python >=3,<3.11', record['depends'], record)
 
         if record_name == 'distributed':
             # distributed <2.11.0 does not work with msgpack-python >=1.0
