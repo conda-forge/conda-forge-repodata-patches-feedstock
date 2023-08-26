@@ -572,6 +572,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         dependencies.append(f'{newdep} {newrequ}')
 
         if record_name == 'dask':
+            deps = record.get("depends", ())
+
             # older versions of dask are incompatible with bokeh=3
             # https://github.com/dask/community/issues/283#issuecomment-1295095683
             # if record.get('timestamp', 0) < 1667000131632:  # releases prior to 2022.10.1
