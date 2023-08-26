@@ -1,8 +1,47 @@
-# if:
-#   name: dask
-#   timestamp_lt: 1667000131632
-#   has_depends: bokeh*
-# then:
-#   - tighten_depends:
-#       name: bokeh
-#       upper_bound: "3"
+# from these bits of code
+# if record_name == 'dask':
+#     deps = record.get("depends", ())
+#     # older versions of dask are incompatible with bokeh=3
+#     # https://github.com/dask/community/issues/283#issuecomment-1295095683
+#     if record.get('timestamp', 0) < 1667000131632:  # releases prior to 2022.10.1
+#         bokeh_pinning = [x for x in record['depends'] if x.startswith('bokeh')]
+#         if bokeh_pinning:
+#             bokeh_pinning = bokeh_pinning[0]
+#             _replace_pin(
+#                 bokeh_pinning,
+#                 bokeh_pinning + (",<3" if bokeh_pinning[-1].isdigit() else " <3"),
+#                 deps,
+#                 record
+#             )
+if:
+  name: dask
+  timestamp_lt: 1667000131632
+  has_depends: bokeh*
+then:
+  - tighten_depends:
+      name: bokeh
+      upper_bound: "3"
+---
+# from these bits of code
+# if record_name == 'dask':
+#     deps = record.get("depends", ())
+#     # older versions of dask are incompatible with pandas=2
+#     if record.get('timestamp', 0) < 1676063992630:  # releases prior to 2023.2.0
+#         pandas_pinning = [x for x in record['depends'] if x.startswith('pandas')]
+#         if pandas_pinning:
+#             pandas_pinning = pandas_pinning[0]
+#             _replace_pin(
+#                 pandas_pinning,
+#                 pandas_pinning + (",<2" if pandas_pinning[-1].isdigit() else " <2"),
+#                 deps,
+#                 record
+#             )
+if:
+  name: dask
+  timestamp_lt: 1676063992630
+  has_depends: pandas*
+then:
+  - tighten_depends:
+      name: pandas
+      upper_bound: "2"
+

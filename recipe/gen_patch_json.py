@@ -21,8 +21,8 @@ from patch_yaml_utils import (
     _replace_pin,
     _rename_dependency,
     _relax_exact,
-    _pin_stricter,
     _pin_looser,
+    get_upper_bound,
     CB_PIN_REGEX,
     pad_list,
 )
@@ -344,6 +344,42 @@ def _gen_patch_instructions(index, new_index, subdir):
     return instructions
 
 
+# this function is the old version of _pin_stricter
+# the version used by the patch YAML code is updated to handle
+# additional cases
+def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
+    depends = record.get("depends", ())
+    dep_indices = [q for q, dep in enumerate(depends) if dep.split(" ")[0] == fix_dep]
+    for dep_idx in dep_indices:
+        dep_parts = depends[dep_idx].split(" ")
+
+        if len(dep_parts) not in [2, 3]:
+            continue
+
+        m = CB_PIN_REGEX.match(dep_parts[1])
+
+        if m is None:
+            continue
+
+        lower = m.group("lower")
+        upper = m.group("upper").split(".")
+        if upper_bound is None:
+            new_upper = get_upper_bound(lower, max_pin).split(".")
+        else:
+            new_upper = upper_bound.split(".")
+        upper = pad_list(upper, len(new_upper))
+        new_upper = pad_list(new_upper, len(upper))
+        if tuple(upper) > tuple(new_upper):
+            if str(new_upper[-1]) != "0":
+                new_upper += ["0"]
+            depends[dep_idx] = "{} >={},<{}a0".format(
+                dep_parts[0], lower, ".".join(new_upper)
+            )
+            if len(dep_parts) == 3:
+                depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
+            record["depends"] = depends
+
+
 def has_dep(record, name):
     return any(dep.split(' ')[0] == name for dep in record.get('depends', ()))
 
@@ -570,34 +606,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                             # NO break, the loop needs also to make sure that all the tensorflow deps are removed.
                     if not found:  # It wasn't in the dependencies so we add it
                         dependencies.append(f'{newdep} {newrequ}')
-
-        if record_name == 'dask':
-            deps = record.get("depends", ())
-
-            # older versions of dask are incompatible with bokeh=3
-            # https://github.com/dask/community/issues/283#issuecomment-1295095683
-            # if record.get('timestamp', 0) < 1667000131632:  # releases prior to 2022.10.1
-            #     bokeh_pinning = [x for x in record['depends'] if x.startswith('bokeh')]
-            #     if bokeh_pinning:
-            #         bokeh_pinning = bokeh_pinning[0]
-            #         _replace_pin(
-            #             bokeh_pinning,
-            #             bokeh_pinning + (",<3" if bokeh_pinning[-1].isdigit() else " <3"),
-            #             deps,
-            #             record
-            #         )
-
-            # older versions of dask are incompatible with pandas=2
-            if record.get('timestamp', 0) < 1676063992630:  # releases prior to 2023.2.0
-                pandas_pinning = [x for x in record['depends'] if x.startswith('pandas')]
-                if pandas_pinning:
-                    pandas_pinning = pandas_pinning[0]
-                    _replace_pin(
-                        pandas_pinning,
-                        pandas_pinning + (",<2" if pandas_pinning[-1].isdigit() else " <2"),
-                        deps,
-                        record
-                    )
 
         # In 1.4.1 bayesian-optimization fixes colors not displaying correctly on windows.
         # This is done using colorama, however the function used by colorama was only introduced in

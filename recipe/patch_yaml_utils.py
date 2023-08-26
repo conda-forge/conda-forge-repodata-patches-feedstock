@@ -249,30 +249,44 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
     for dep_idx in dep_indices:
         dep_parts = depends[dep_idx].split(" ")
 
-        if len(dep_parts) not in [2, 3] and upper_bound is None:
-            continue
-
         if len(dep_parts) == 1 and upper_bound is not None:
+            upper_bound = upper_bound.split(".")
+            if str(upper_bound[-1]) != "0":
+                upper_bound += ["0"]
+            upper_bound = ".".join(upper_bound)
+
             depends[dep_idx] = "{} <{}a0".format(
                 dep_parts[0], upper_bound,
             )
             record["depends"] = depends
             continue
 
-        m = CB_PIN_REGEX.match(dep_parts[1])
-
-        if m is None and upper_bound is None:
+        if len(dep_parts) not in [2, 3]:
             continue
 
-        if m is None and upper_bound is not None:
-            if CB_GT_REGEX.match(dep_parts[1]) is not None:
+        m_gt = CB_GT_REGEX.match(dep_parts[1])
+        if m_gt is not None:
+            lower = m_gt.group("lower")
+            if upper_bound is None:
+                new_upper = get_upper_bound(lower, max_pin).split(".")
+            else:
+                new_upper = upper_bound.split(".")
+            _lower = lower.split(".")
+            _lower = pad_list(_lower, len(new_upper))
+            new_upper = pad_list(new_upper, len(_lower))
+
+            if tuple(_lower) < tuple(new_upper):
+                if str(new_upper[-1]) != "0":
+                    new_upper += ["0"]
+                new_upper = ".".join(new_upper)
+
                 if len(dep_parts) == 2:
                     depends[dep_idx] = "{} {},<{}a0".format(
-                        dep_parts[0], dep_parts[1], upper_bound
+                        dep_parts[0], dep_parts[1], new_upper
                     )
                 elif len(dep_parts) == 3:
                     depends[dep_idx] = "{} {},<{}a0 {}".format(
-                        dep_parts[0], dep_parts[1], upper_bound, dep_parts[2]
+                        dep_parts[0], dep_parts[1], new_upper, dep_parts[2]
                     )
                 else:
                     raise RuntimeError("Weird dep length!")
@@ -281,23 +295,27 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
 
             continue
 
-        lower = m.group("lower")
-        upper = m.group("upper").split(".")
-        if upper_bound is None:
-            new_upper = get_upper_bound(lower, max_pin).split(".")
-        else:
-            new_upper = upper_bound.split(".")
-        upper = pad_list(upper, len(new_upper))
-        new_upper = pad_list(new_upper, len(upper))
-        if tuple(upper) > tuple(new_upper):
-            if str(new_upper[-1]) != "0":
-                new_upper += ["0"]
-            depends[dep_idx] = "{} >={},<{}a0".format(
-                dep_parts[0], lower, ".".join(new_upper)
-            )
-            if len(dep_parts) == 3:
-                depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
-            record["depends"] = depends
+        m_pin = CB_PIN_REGEX.match(dep_parts[1])
+        if m_pin is not None:
+            lower = m_pin.group("lower")
+            upper = m_pin.group("upper").split(".")
+            if upper_bound is None:
+                new_upper = get_upper_bound(lower, max_pin).split(".")
+            else:
+                new_upper = upper_bound.split(".")
+            upper = pad_list(upper, len(new_upper))
+            new_upper = pad_list(new_upper, len(upper))
+            if tuple(upper) > tuple(new_upper):
+                if str(new_upper[-1]) != "0":
+                    new_upper += ["0"]
+                depends[dep_idx] = "{} >={},<{}a0".format(
+                    dep_parts[0], lower, ".".join(new_upper)
+                )
+                if len(dep_parts) == 3:
+                    depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
+                record["depends"] = depends
+
+            continue
 
 
 def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
@@ -384,13 +402,17 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 "constrains",
             ]:
                 subk = k[len("replace_") :]
-                _replace_pin(
-                    _maybe_process_template(v["old"], record, subdir),
-                    _maybe_process_template(v["new"], record, subdir),
-                    record.get(subk, []),
-                    record,
-                    target=subk,
-                )
+                pat = _maybe_process_template(v["old"], record, subdir)
+                new_dep = _maybe_process_template(v["new"], record, subdir)
+                for dep in record.get(subk, []):
+                    if fnmatch(dep, pat):
+                        _replace_pin(
+                            dep,
+                            new_dep,
+                            record.get(subk, []),
+                            record,
+                            target=subk,
+                        )
 
             elif k == "rename_depends":
                 _rename_dependency(
