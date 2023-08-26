@@ -12,7 +12,7 @@ if:
   has_depends: "pytorch [*] cpu[*]"
 then:
   - replace_depends:
-      old: "pytorch * cpu*"
+      old: "pytorch [*] cpu[*]"
       new: "pytorch 1.10.* cpu*"
 ---
 if:
@@ -21,5 +21,5 @@ if:
   has_depends: "pytorch [*] cuda[*]"
 then:
   - replace_depends:
-      old: "pytorch * cuda*"
+      old: "pytorch [*] cuda[*]"
       new: "pytorch 1.10.* cuda*"
