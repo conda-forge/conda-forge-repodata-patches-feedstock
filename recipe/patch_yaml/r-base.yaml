@@ -1,0 +1,12 @@
+# from this snippet
+# if (record_name == "r-base" and
+#         not any(dep.startswith("_r-mutex ")
+#                 for dep in record["depends"])):
+#     depends = record["depends"]
+#     depends.append("_r-mutex 1.* anacondar_1")
+#     record["depends"] = depends
+if:
+  name: r-base
+  not_has_depends: _r-mutex*
+then:
+  - add_depends: _r-mutex 1.* anacondar_1

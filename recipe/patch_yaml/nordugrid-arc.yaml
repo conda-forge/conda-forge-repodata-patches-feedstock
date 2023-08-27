@@ -1,0 +1,8 @@
+# from this snippet
+# if record_name == "nordugrid-arc" and record.get("timestamp", 0) < 1666690884000:
+#     record["depends"].append("glibmm-2.4 >=2.58.1")
+if:
+  name: nordugrid-arc
+  timestamp_lt: 1666690884000
+then:
+  - add_depends: glibmm-2.4 >=2.58.1

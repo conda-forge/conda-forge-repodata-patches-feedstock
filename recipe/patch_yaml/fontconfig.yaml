@@ -1,0 +1,22 @@
+# from this bit of code
+# if subdir in ["osx-64", "osx-arm64"] and record.get('timestamp', 0) < 1646796600000 and \
+#         any(dep.startswith("fontconfig") for dep in deps):
+#     for dep in deps:
+#         if not dep.startswith("fontconfig >=2.13"):
+#             continue
+#         if not dep.startswith("fontconfig >=2.13.96"):
+#             _pin_stricter(fn, record, "fontconfig", "x", upper_bound="2.13.96")
+#             break
+#         else:
+#             #FIXME: not sure how to fix these packages
+#             pass
+if:
+  subdir_in: ["osx-64", "osx-arm64"]
+  timestamp_lt: 1646796600000
+  has_depends: fontconfig >=2.13*
+  not_has_depends: fontconfig >=2.13.96*
+then:
+  - tighten_depends:
+      name: fontconfig
+      max_pin: x
+      upper_bound: 2.13.96

@@ -6,6 +6,8 @@ import json
 import os
 import sys
 import urllib
+from concurrent.futures import ProcessPoolExecutor
+
 
 from gen_patch_json import _gen_new_index, _gen_patch_instructions, SUBDIRS
 
@@ -30,6 +32,7 @@ def sort_lists(obj):
 
 
 def show_record_diffs(subdir, ref_repodata, new_repodata):
+    final_lines = []
     for index_key in ['packages', 'packages.conda']:
         for name, ref_pkg in ref_repodata[index_key].items():
             if name in new_repodata[index_key]:
@@ -58,7 +61,9 @@ def show_record_diffs(subdir, ref_repodata, new_repodata):
             for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=''):
                 if ln.startswith('+++') or ln.startswith('---') or ln.startswith('@@'):
                     continue
-                print(ln)
+                final_lines.append(ln)
+
+    return final_lines
 
 
 def do_subdir(subdir, raw_repodata_path, ref_repodata_path):
@@ -69,7 +74,7 @@ def do_subdir(subdir, raw_repodata_path, ref_repodata_path):
     new_index = _gen_new_index(raw_repodata, subdir)
     instructions = _gen_patch_instructions(raw_repodata, new_index, subdir)
     new_repodata = _apply_instructions(subdir, raw_repodata, instructions)
-    show_record_diffs(subdir, ref_repodata, new_repodata)
+    return show_record_diffs(subdir, ref_repodata, new_repodata)
 
 
 def download_subdir(subdir, raw_repodata_path, ref_repodata_path):
@@ -79,6 +84,18 @@ def download_subdir(subdir, raw_repodata_path, ref_repodata_path):
     ref_url = f"{BASE_URL}/{subdir}/repodata.json.bz2"
     print("Downloading:", ref_url, file=sys.stderr)
     urllib.request.urlretrieve(ref_url, ref_repodata_path)
+
+
+def _process_subdir(subdir, use_cache):
+    subdir_dir = os.path.join(CACHE_DIR, subdir)
+    if not os.path.exists(subdir_dir):
+        os.makedirs(subdir_dir)
+    raw_repodata_path = os.path.join(subdir_dir, "repodata_from_packages.json.bz2")
+    ref_repodata_path = os.path.join(subdir_dir, "repodata.json.bz2")
+    if not use_cache:
+        download_subdir(subdir, raw_repodata_path, ref_repodata_path)
+    vals = do_subdir(subdir, raw_repodata_path, ref_repodata_path)
+    return subdir, vals
 
 
 if __name__ == "__main__":
@@ -98,12 +115,15 @@ if __name__ == "__main__":
     else:
         subdirs = args.subdirs
 
-    for subdir in subdirs:
-        subdir_dir = os.path.join(CACHE_DIR, subdir)
-        if not os.path.exists(subdir_dir):
-            os.makedirs(subdir_dir)
-        raw_repodata_path = os.path.join(subdir_dir, "repodata_from_packages.json.bz2")
-        ref_repodata_path = os.path.join(subdir_dir, "repodata.json.bz2")
-        if not args.use_cache:
-            download_subdir(subdir, raw_repodata_path, ref_repodata_path)
-        do_subdir(subdir, raw_repodata_path, ref_repodata_path)
+    with ProcessPoolExecutor() as exc:
+        futs = [
+            exc.submit(_process_subdir, subdir, args.use_cache)
+            for subdir in subdirs
+        ]
+        for fut in futs:
+            subdir, vals = fut.result()
+            print("=" * 80, flush=True)
+            print("=" * 80, flush=True)
+            print(subdir, flush=True)
+            for val in vals:
+                print(val, flush=True)

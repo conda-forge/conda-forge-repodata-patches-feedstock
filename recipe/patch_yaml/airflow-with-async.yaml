@@ -1,0 +1,9 @@
+# from this snippet
+if record_name == "airflow-with-async":
+    _rename_dependency(fn, record, "evenlet", "eventlet")
+if:
+  name: airflow-with-async
+then:
+  - rename_depends:
+      old: evenlet
+      new: eventlet

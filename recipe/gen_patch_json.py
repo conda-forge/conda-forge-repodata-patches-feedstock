@@ -489,7 +489,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         depends.append('vc %d.*' % vc_version)
                         record['depends'] = depends
 
-    proj4_fixes = {"cartopy", "cdo", "gdal", "libspatialite", "pynio", "qgis"}
     for fn, record in index.items():
         record_name = record["name"]
 
@@ -599,40 +598,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                             dep, f"{pkg} >={version},<{next_patch_version}.0a0", record["depends"], record
                         )
 
-        # pint 0.21 breaks taurus <= 5.1.5
-        # https://gitlab.com/taurus-org/taurus/-/issues/1290
-        # It's not compatible with Python 3.11 either
-        # https://gitlab.com/taurus-org/taurus/-/merge_requests/1254
-        if (
-            record_name == "taurus-core"
-            and packaging.version.Version(record["version"]) <= packaging.version.Version("5.1.5")
-            and record.get("timestamp", 0) < 1683637693000
-        ):
-            _replace_pin("pint >=0.8", "pint >=0.8,<0.21", record["depends"], record)
-            _replace_pin("python >=3.6", "python >=3.6,<3.11", record["depends"], record)
-
-        if record_name == 'zipp':
-            # zipp >=3.7 requires python >=3.7 but it was missed
-            # https://github.com/conda-forge/zipp-feedstock/pull/29
-            if record['version'] == "3.7.0" and record['build'] == "pyhd8ed1ab_0":
-                i = record['depends'].index('python >=3.6')
-                record['depends'][i] = 'python >=3.7'
-            # zipp >=3.16 requires python >=3.8 but it was missed
-            # https://github.com/conda-forge/zipp-feedstock/pull/43
-            if (
-                record['version'] == "3.16.0" and record['build'] == "pyhd8ed1ab_0"
-                and record.get("timestamp", 0) < 1689035633000
-            ):
-                i = record['depends'].index('python >=3.7')
-                record['depends'][i] = 'python >=3.8'
-
-        # fix deps with wrong names
-        if record_name in proj4_fixes:
-            _rename_dependency(fn, record, "proj.4", "proj4")
-
-        if record_name == "airflow-with-async":
-            _rename_dependency(fn, record, "evenlet", "eventlet")
-
         # iris<3.4.1 is not thread safe with netCDF4>1.6.0. Iris v3.4.1
         #  introduces a fix that allows it to work with the later versions of
         #  NetCDF4 in a thread safe manner.
@@ -660,23 +625,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if v3_2_0 <= pversion < v3_6_0 and record.get("timestamp", 0) < 1684507640000:
                 _replace_pin("numpy >=1.19", "numpy >=1.19,!=1.24.3", record["depends"], record)
 
-        if record_name == "nordugrid-arc" and record.get("timestamp", 0) < 1666690884000:
-            record["depends"].append("glibmm-2.4 >=2.58.1")
-
-        if (record_name == "r-base" and
-                not any(dep.startswith("_r-mutex ")
-                        for dep in record["depends"])):
-            depends = record["depends"]
-            depends.append("_r-mutex 1.* anacondar_1")
-            record["depends"] = depends
-
         if record_name == "gcc_impl_{}".format(subdir):
             _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
 
-        deps = record.get("depends", ())
-        if "ntl" in deps and record_name != "sage":
-            _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
-
+        deps = record.get("depends", [])
         if (
             record_name in {"slepc", "petsc4py", "slepc4py"}
             and record.get("timestamp", 0) < 1657407373000
@@ -698,23 +650,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         new_dep = f"{dep_name} {version_pin} {new_build}"
                         _replace_pin(dep, new_dep, deps, record)
 
-        if subdir in ["osx-64", "osx-arm64"] and record.get('timestamp', 0) < 1646796600000 and \
-                any(dep.startswith("fontconfig") for dep in deps):
-            for dep in deps:
-                if not dep.startswith("fontconfig >=2.13"):
-                    continue
-                if not dep.startswith("fontconfig >=2.13.96"):
-                    _pin_stricter(fn, record, "fontconfig", "x", upper_bound="2.13.96")
-                    break
-                else:
-                    #FIXME: not sure how to fix these packages
-                    pass
-
+        deps = record.get("depends", [])
         i = -1
         with suppress(ValueError):
             i = deps.index("cudatoolkit 11.2|11.2.*")
         if i >= 0:
             deps[i] = "cudatoolkit >=11.2,<12.0a0"
+        record["depends"] = deps
 
         if record_name == "cuda-version" and record['build_number'] < 2 and record.get('timestamp', 0) < 1683211961000:
             cuda_major_minor = ".".join(record["version"].split(".")[:2])

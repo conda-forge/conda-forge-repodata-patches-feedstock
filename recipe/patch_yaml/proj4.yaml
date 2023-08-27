@@ -1,0 +1,10 @@
+# from this snippet
+# proj4_fixes = {"cartopy", "cdo", "gdal", "libspatialite", "pynio", "qgis"}
+# if record_name in proj4_fixes:
+#     _rename_dependency(fn, record, "proj.4", "proj4")
+if:
+  name_in: [cartopy, cdo, gdal, libspatialite, pynio, qgis]
+then:
+  - rename_depends:
+      old: proj.4
+      new: proj4

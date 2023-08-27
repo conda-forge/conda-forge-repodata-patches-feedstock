@@ -34,6 +34,7 @@ def _fnmatch_build_re(pat):
     return re.compile(repat).match
 
 
+@lru_cache(maxsize=10000)
 def fnmatch(name, pat):
     """Test whether FILENAME matches PATTERN with custom
     allowed optional space via '?( *)'.
