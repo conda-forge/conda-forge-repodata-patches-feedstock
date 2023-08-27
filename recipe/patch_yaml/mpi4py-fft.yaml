@@ -1,0 +1,12 @@
+# from this snippet
+# some versions mpi4py-fft are not compatible with MKL
+# https://github.com/conda-forge/mpi4py-fft-feedstock/issues/20
+# if record_name == "mpi4py-fft" and record.get('timestamp', 0) < 1619448232206:
+#     if "nomkl" not in record["depends"]:
+#         record["depends"].append("nomkl")
+if:
+  name: mpi4py-fft
+  timestamp_lt: 1619448232206
+  not_has_depends: nomkl
+then:
+  - add_depends: nomkl

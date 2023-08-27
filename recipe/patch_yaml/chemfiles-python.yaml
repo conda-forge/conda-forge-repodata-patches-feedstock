@@ -1,0 +1,16 @@
+# from this snippet
+# chemfiles-python 0.10.1 require chemfiles-lib 0.10.1 but build 0
+# asks for 0.10.*
+# https://github.com/conda-forge/chemfiles-python-feedstock/pull/18
+# if record_name == "chemfiles-python":
+#     if record["version"] == "0.10.1" and record["build"].endswith("_0"):
+#         i = record['depends'].index('chemfiles-lib 0.10.*')
+#         record['depends'][i] = 'chemfiles-lib >=0.10.1,<0.11'
+if:
+  name: chemfiles-python
+  version: 0.10.1
+  build_number: 0
+then:
+  - replace_depends:
+      old: chemfiles-lib 0.10.[*]
+      new: chemfiles-lib >=0.10.1,<0.11

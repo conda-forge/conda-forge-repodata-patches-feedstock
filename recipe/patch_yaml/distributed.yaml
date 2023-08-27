@@ -1,0 +1,64 @@
+# from this bit of code
+# if record_name == 'distributed':
+#     # distributed <2.11.0 does not work with msgpack-python >=1.0
+#     # newer versions of distributed require at least msgpack-python >=0.6.0
+#     # so we can fix cases where msgpack-python is unbounded
+#     # https://github.com/conda-forge/distributed-feedstock/pull/114
+#     if 'msgpack-python' in record['depends']:
+#         i = record['depends'].index('msgpack-python')
+#         record['depends'][i] = 'msgpack-python <1.0.0'
+if:
+  name: distributed
+  has_depends: msgpack-python
+then:
+  - replace_depends:
+      old: msgpack-python
+      new: msgpack-python <1.0.0
+---
+# from this bit of code
+# if record_name == 'distributed':
+#     # click 8 broke distributed prior to 2021.5.0.
+#     # This has been corrected in PR:
+#     # https://github.com/conda-forge/distributed-feedstock/pull/165
+#     pversion = parse_version(record['version'])
+#     v2021_5_0 = parse_version('2021.5.0')
+#     if pversion < v2021_5_0 and 'click >=6.6' in record['depends']:
+#         i = record['depends'].index('click >=6.6')
+#         record['depends'][i] = 'click >=6.6,<8.0.0'
+if:
+  name: distributed
+  version_lt: 2021.5.0
+  has_depends: click >=6.6
+then:
+  - replace_depends:
+      old: click >=6.6
+      new: click >=6.6,<8.0.0
+---
+# from this bit of code
+# if record_name == 'distributed':
+#     # click 8.1.0. broke distributed prior to 2022.4.0.
+#     v2022_4_0 = parse_version('2022.4.0')
+#     if pversion < v2022_4_0 and 'click >=6.6' in record['depends']:
+#         i = record['depends'].index('click >=6.6')
+#         record['depends'][i] = 'click >=6.6,<8.1.0'
+if:
+  name: distributed
+  version_lt: 2022.4.0
+  has_depends: click >=6.6
+then:
+  - replace_depends:
+      old: click >=6.6
+      new: click >=6.6,<8.1.0
+---
+# from this bit of code
+# if record_name == 'distributed':
+#     # Older versions of distributed break with tornado 6.2.
+#     # See https://github.com/dask/distributed/pull/6668 for more details.
+#     v2022_6_1 = parse_version('2022.6.1')
+#     if pversion < v2022_6_1:
+#         record['depends'].append('tornado <6.2')
+if:
+  name: distributed
+  version_lt: 2022.6.1
+then:
+  - add_depends: tornado <6.2
