@@ -628,7 +628,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "gcc_impl_{}".format(subdir):
             _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
 
-        deps = record.get("depends", [])
+        deps = record.get("depends", ())
         if (
             record_name in {"slepc", "petsc4py", "slepc4py"}
             and record.get("timestamp", 0) < 1657407373000
