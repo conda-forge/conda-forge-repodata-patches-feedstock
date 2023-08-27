@@ -18,6 +18,17 @@ CACHE_DIR = os.environ.get(
 BASE_URL = "https://conda.anaconda.org/conda-forge"
 
 
+def sort_lists(obj):
+    """make sure the depends and constrains fields are sorted to remove
+    false-positive diffs
+    """
+    for k in obj:
+        if k in ["depends", "constrains"]:
+            obj[k] = sorted(obj[k])
+
+    return obj
+
+
 def show_record_diffs(subdir, ref_repodata, new_repodata):
     for index_key in ['packages', 'packages.conda']:
         for name, ref_pkg in ref_repodata[index_key].items():
@@ -29,12 +40,21 @@ def show_record_diffs(subdir, ref_repodata, new_repodata):
             # license_family gets added for new packages, ignore it in the diff
             ref_pkg.pop("license_family", None)
             new_pkg.pop("license_family", None)
+
+            # list order is not significant for depends and constrains
+            ref_pkg = sort_lists(ref_pkg)
+            new_pkg = sort_lists(new_pkg)
+
             if ref_pkg == new_pkg:
                 continue
 
             print(f"{subdir}::{name}")
-            ref_lines = json.dumps(ref_pkg, indent=2).splitlines()
-            new_lines = json.dumps(new_pkg, indent=2).splitlines()
+            ref_lines = json.dumps(
+                ref_pkg, indent=2, sort_keys=True,
+            ).splitlines()
+            new_lines = json.dumps(
+                new_pkg, indent=2, sort_keys=True,
+            ).splitlines()
             for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=''):
                 if ln.startswith('+++') or ln.startswith('---') or ln.startswith('@@'):
                     continue
