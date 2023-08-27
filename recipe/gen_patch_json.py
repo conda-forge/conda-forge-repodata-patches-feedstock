@@ -13,6 +13,7 @@ import re
 import requests
 import packaging.version
 from packaging.version import parse as parse_version
+from concurrent.futures import ProcessPoolExecutor
 
 from get_license_family import get_license_family
 from patch_yaml_utils import (
@@ -3060,41 +3061,47 @@ def _extract_and_remove_vc_feature(record):
     return vc_version
 
 
+def _do_subdir(subdir):
+    repodata_url = "/".join(
+        (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata_from_packages.json"))
+    response = requests.get(repodata_url)
+    response.raise_for_status()
+    repodata = response.json()
+
+    prefix_dir = os.getenv("PREFIX", "tmp")
+    prefix_subdir = join(prefix_dir, subdir)
+    if not isdir(prefix_subdir):
+        os.makedirs(prefix_subdir)
+
+    # Step 2a. Generate a new index.
+    new_index = _gen_new_index(repodata, subdir)
+
+    # Step 2b. Generate the instructions by diff'ing the indices.
+    instructions = _gen_patch_instructions(repodata, new_index, subdir)
+
+    # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
+    patch_instructions_path = join(
+        prefix_subdir, "patch_instructions.json")
+    with open(patch_instructions_path, 'w') as fh:
+        json.dump(
+            instructions, fh, indent=2,
+            sort_keys=True, separators=(',', ': '))
+
+
 def main():
-    # Step 1. Collect initial repodata for all subdirs.
-    repodatas = {}
     if "CF_SUBDIR" in os.environ:
         # For local debugging
         subdirs = os.environ["CF_SUBDIR"].split(";")
     else:
         subdirs = SUBDIRS
-    for subdir in tqdm.tqdm(subdirs, desc="Downloading repodata"):
-        repodata_url = "/".join(
-            (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata_from_packages.json"))
-        response = requests.get(repodata_url)
-        response.raise_for_status()
-        repodatas[subdir] = response.json()
 
-    # Step 2. Create all patch instructions.
-    prefix_dir = os.getenv("PREFIX", "tmp")
-    for subdir in subdirs:
-        prefix_subdir = join(prefix_dir, subdir)
-        if not isdir(prefix_subdir):
-            os.makedirs(prefix_subdir)
-
-        # Step 2a. Generate a new index.
-        new_index = _gen_new_index(repodatas[subdir], subdir)
-
-        # Step 2b. Generate the instructions by diff'ing the indices.
-        instructions = _gen_patch_instructions(repodatas[subdir], new_index, subdir)
-
-        # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
-        patch_instructions_path = join(
-            prefix_subdir, "patch_instructions.json")
-        with open(patch_instructions_path, 'w') as fh:
-            json.dump(
-                instructions, fh, indent=2,
-                sort_keys=True, separators=(',', ': '))
+    with ProcessPoolExecutor(max_workers=None) as exc:
+        futs = [
+            exc.submit(_do_subdir, subdir)
+            for subdir in subdirs
+        ]
+        for fut in tqdm.tqdm(futs, desc="patching repodata"):
+            fut.result()
 
 
 if __name__ == "__main__":
