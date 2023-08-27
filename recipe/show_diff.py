@@ -79,10 +79,8 @@ def do_subdir(subdir, raw_repodata_path, ref_repodata_path):
 
 def download_subdir(subdir, raw_repodata_path, ref_repodata_path):
     raw_url = f"{BASE_URL}/{subdir}/repodata_from_packages.json.bz2"
-    print("Downloading:", raw_url, file=sys.stderr)
     urllib.request.urlretrieve(raw_url, raw_repodata_path)
     ref_url = f"{BASE_URL}/{subdir}/repodata.json.bz2"
-    print("Downloading:", ref_url, file=sys.stderr)
     urllib.request.urlretrieve(ref_url, ref_repodata_path)
 
 
