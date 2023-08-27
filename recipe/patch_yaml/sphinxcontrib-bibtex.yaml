@@ -1,0 +1,22 @@
+# fixing repodata issues caused by
+#  - https://github.com/conda-forge/sphinxcontrib-bibtex-feedstock/pull/25
+#  - https://github.com/conda-forge/sphinxcontrib-bibtex-feedstock/pull/26
+#  - https://github.com/conda-forge/sphinxcontrib-bibtex-feedstock/pull/28
+if:
+  name: sphinxcontrib-bibtex
+  version_in:
+    - "2.6.0"
+    - "2.6.1"
+  timestamp_lt: 1693156161000
+  has_depends: "python >=3.6"
+then:
+  - replace_depends:
+      old: "python >=3.6"
+      new: "python >=3.7"
+  - replace_depends:
+      old: "sphinx >=2.1"
+      new: "sphinx >=3.5"
+  - replace_depends:
+      old: "docutils >=0.8"
+      new: "docutils >=0.8,!=0.18.*,!=0.19.*"
+  - remove_depends: dataclasses
