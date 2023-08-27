@@ -650,7 +650,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         new_dep = f"{dep_name} {version_pin} {new_build}"
                         _replace_pin(dep, new_dep, deps, record)
 
-        deps = record.get("depends", [])
         i = -1
         with suppress(ValueError):
             i = deps.index("cudatoolkit 11.2|11.2.*")
