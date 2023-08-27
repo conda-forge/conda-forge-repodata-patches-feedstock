@@ -4,7 +4,6 @@ import bz2
 import difflib
 import json
 import os
-import sys
 import urllib
 from concurrent.futures import ProcessPoolExecutor
 
