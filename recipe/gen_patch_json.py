@@ -656,7 +656,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             i = deps.index("cudatoolkit 11.2|11.2.*")
         if i >= 0:
             deps[i] = "cudatoolkit >=11.2,<12.0a0"
-        record["depends"] = deps
 
         if record_name == "cuda-version" and record['build_number'] < 2 and record.get('timestamp', 0) < 1683211961000:
             cuda_major_minor = ".".join(record["version"].split(".")[:2])
