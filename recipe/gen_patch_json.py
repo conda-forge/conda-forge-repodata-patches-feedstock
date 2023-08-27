@@ -3089,8 +3089,6 @@ def _do_subdir(subdir):
 
 
 def main():
-
-    repodatas = {}
     if "CF_SUBDIR" in os.environ:
         # For local debugging
         subdirs = os.environ["CF_SUBDIR"].split(";")
