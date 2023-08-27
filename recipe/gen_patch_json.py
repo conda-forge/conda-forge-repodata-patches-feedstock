@@ -3090,7 +3090,6 @@ def _do_subdir(subdir):
 
 def main():
 
-    # Step 1. Collect initial repodata for all subdirs.
     repodatas = {}
     if "CF_SUBDIR" in os.environ:
         # For local debugging
