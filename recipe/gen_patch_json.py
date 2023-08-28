@@ -599,36 +599,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                             dep, f"{pkg} >={version},<{next_patch_version}.0a0", record["depends"], record
                         )
 
-        # iris<3.4.1 is not thread safe with netCDF4>1.6.0. Iris v3.4.1
-        #  introduces a fix that allows it to work with the later versions of
-        #  NetCDF4 in a thread safe manner.
-        iris_deps = [
-            "netcdf4 <1.6.1",
-        ]
-        iris_updates = {
-            "3.1.0": iris_deps,
-            "3.2.0": iris_deps,
-            "3.2.0.post0": iris_deps,
-            "3.2.1": iris_deps,
-            "3.2.1.post0": iris_deps,
-            "3.3.0": iris_deps,
-            "3.3.1": iris_deps,
-            "3.4.0": iris_deps,
-        }
-        if record_name == "iris":
-            _rename_dependency(fn, record, "nc_time_axis", "nc-time-axis")
-            if record["version"] in iris_updates:
-                record["depends"].extend(iris_updates[record["version"]])
-            # avoid known numpy 1.24.3 masking issues
-            # https://github.com/SciTools/iris/pull/5274 and https://github.com/SciTools/iris/issues/5329
-            pversion = parse_version(record["version"])
-            v3_2_0, v3_6_0 = parse_version("3.2.0"), parse_version("3.6.0")
-            if v3_2_0 <= pversion < v3_6_0 and record.get("timestamp", 0) < 1684507640000:
-                _replace_pin("numpy >=1.19", "numpy >=1.19,!=1.24.3", record["depends"], record)
-
-        if record_name == "gcc_impl_{}".format(subdir):
-            _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
-
         deps = record.get("depends", ())
         if (
             record_name in {"slepc", "petsc4py", "slepc4py"}
@@ -687,30 +657,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record['constrains'] = constrains
 
         if record.get('timestamp', 0) < 1663795137000:
-            if any(dep.startswith("arpack >=3.7") for dep in deps):
-                _pin_looser(fn, record, "arpack", max_pin="x.x")
-            if any(dep.startswith("libiconv >=1") for dep in deps):
-                _pin_looser(fn, record, "libiconv", max_pin="x")
-            if any(dep.startswith("cairo >=1") for dep in deps):
-                _pin_looser(fn, record, "cairo", max_pin="x")
-            if any(dep.startswith("glpk >=5") for dep in deps):
-                _pin_looser(fn, record, "glpk", max_pin="x")
-            if any(dep.startswith("nlopt >=2.7") for dep in deps):
-                _pin_looser(fn, record, "nlopt", max_pin="x.x")
-            if any(dep.startswith("openjpeg >=2.4") for dep in deps):
-                _pin_looser(fn, record, "openjpeg", max_pin="x")
-            if any(dep.startswith("pango >=1.48") for dep in deps):
-                _pin_looser(fn, record, "pango", max_pin="x")
             if any(dep.startswith("pango >=5.2") for dep in deps):
                 _pin_looser(fn, record, "xz", max_pin="x")
-
-        if record.get('timestamp', 0) < 1666320182000:
-            if any(dep.startswith("libxml2 >=2.9") for dep in deps):
-                _pin_looser(fn, record, "libxml2", upper_bound="2.11.0")
-
-        if any(dep.startswith("expat >=2.2.") for dep in deps) or \
-                any(dep.startswith("expat >=2.3.") for dep in deps):
-            _pin_looser(fn, record, "expat", max_pin="x")
 
         if any(dep.startswith("mysql-libs >=8.0.") for dep in deps):
             _pin_looser(fn, record, "mysql-libs", max_pin="x.x")
@@ -971,6 +919,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     continue
                 new_constrains.append(f'{pkg} {version}.*')
             record['constrains'] = new_constrains
+
+        if record_name == "gcc_impl_{}".format(subdir):
+            _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
 
         # some symlinks changed in gfortran, so we need to adjust things
         # plus we missed a key version constraint
