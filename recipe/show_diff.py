@@ -50,7 +50,7 @@ def show_record_diffs(subdir, ref_repodata, new_repodata):
             if ref_pkg == new_pkg:
                 continue
 
-            print(f"{subdir}::{name}")
+            final_lines.append(f"{subdir}::{name}")
             ref_lines = json.dumps(
                 ref_pkg, indent=2, sort_keys=True,
             ).splitlines()

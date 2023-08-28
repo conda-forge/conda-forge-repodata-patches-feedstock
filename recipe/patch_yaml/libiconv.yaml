@@ -1,0 +1,12 @@
+# from this code snippet
+# if record.get('timestamp', 0) < 1663795137000:
+#     if any(dep.startswith("libiconv >=1") for dep in deps):
+#         _pin_looser(fn, record, "libiconv", max_pin="x")
+if:
+  timestamp_lt: 1663795137000
+  has_depends:
+    - libiconv >=1*
+then:
+  - loosen_depends:
+      name: libiconv
+      max_pin: x
