@@ -1714,6 +1714,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             _replace_pin("gdal", "gdal >=3.6.0,<3.7.0a0", record["depends"], record)
 
+        # Fix qgis 3.28.1 build 0 which didn't properly set GDAL 3.6 pin
+        # See issue at https://github.com/conda-forge/qgis-feedstock/issues/276
+        if (
+            record_name == "qgis"
+            and record["version"] == "3.28.1"
+            and record["build_number"] == 0
+        ):
+            _replace_pin("gdal", "gdal >=3.6.0,<3.7.0a0", record["depends"], record)
+
         # Fix depends for pytest-flake8-1.1.1 https://github.com/conda-forge/pytest-flake8-feedstock/pull/21
         if record_name == "pytest-flake8" and record["version"] == "1.1.1" and record["build_number"] == 0:
             _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
