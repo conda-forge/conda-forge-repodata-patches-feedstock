@@ -1,5 +1,6 @@
 # from this snippet
-# if ('libthrift >=0.14.0,<0.15.0a0' in deps or 'libthrift >=0.14.1,<0.15.0a0' in deps) and record.get('timestamp', 0) < 1624268394471:
+# if ('libthrift >=0.14.0,<0.15.0a0' in deps or 'libthrift >=0.14.1,<0.15.0a0' in deps)
+#     and record.get('timestamp', 0) < 1624268394471:
 #     _pin_stricter(fn, record, "libthrift", "x.x.x")
 if:
   has_depends: libthrift >=0.14.[0-1],<0.15.0a0  # matches both 0.14.0 and 0.14.1
