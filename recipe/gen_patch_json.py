@@ -660,52 +660,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             if any(dep.startswith("pango >=5.2") for dep in deps):
                 _pin_looser(fn, record, "xz", max_pin="x")
 
-        if any(dep.startswith("mysql-libs >=8.0.") for dep in deps):
-            _pin_looser(fn, record, "mysql-libs", max_pin="x.x")
-
-        if 're2' in deps and record.get('timestamp', 0) < 1588349339243:
-            _rename_dependency(fn, record, "re2", "re2 <2020.05.01")
-
-        if 'libffi' in deps and record.get('timestamp', 0) < 1605980936031:
-            _rename_dependency(fn, record, "libffi", "libffi <3.3.0.a0")
-
-        if ('libthrift >=0.14.0,<0.15.0a0' in deps or 'libthrift >=0.14.1,<0.15.0a0' in deps) and record.get('timestamp', 0) < 1624268394471:
-            _pin_stricter(fn, record, "libthrift", "x.x.x")
-
-        if any(dep.startswith('spdlog >=1.8') for dep in deps) and record.get('timestamp', 0) < 1626942511225:
-            _pin_stricter(fn, record, "spdlog", "x.x")
-
-        if 'libffi >=3.2.1,<4.0a0' in deps and record.get('timestamp', 0) < 1605980936031:
-            _pin_stricter(fn, record, "libffi", "x.x")
-
         _relax_libssh2_1_x_pinning(fn, record)
-
-        if any(dep.startswith("gf2x") for dep in deps):
-            _pin_stricter(fn, record, "gf2x", "x.x")
-
-        if any(dep.startswith("libnetcdf >=4.7.3") for dep in deps):
-            _pin_stricter(fn, record, "libnetcdf", "x.x.x.x")
-
-        if any(dep.startswith("libarchive >=3.3") for dep in deps):
-            _pin_looser(fn, record, "libarchive", upper_bound="3.6.0")
-
-        # fix only packages built before the run_exports was corrected.
-        if any(dep == "libflang" or dep.startswith("libflang >=5.0.0") for dep in deps) and record.get('timestamp', 0) < 1611789153000:
-            record["depends"].append("libflang <6.0.0.a0")
-
-        # fix run_export from packages built against 4.3; it's corrected now, but the solver
-        # may potentially still pick up an old ffmpeg-build as build dep for something else
-        if any(dep == f"ffmpeg >=4.3.{p},<5.0a0" for dep in deps for p in [0, 1, 2]) and record.get('timestamp', 0) < 1645651093167:
-            # https://github.com/conda-forge/ffmpeg-feedstock/pull/115#issuecomment-1020619231
-            _pin_stricter(fn, record, "ffmpeg", "x.x")
-
-        if any(dep.startswith("libignition-") or dep == 'libsdformat' for dep in deps):
-            for dep_idx, _ in enumerate(deps):
-                dep = record['depends'][dep_idx]
-                if dep.startswith('libignition-'):
-                    _pin_looser(fn, record, dep.split(" ")[0], max_pin="x")
-                if dep.startswith('libsdformat '):
-                    _pin_looser(fn, record, dep.split(" ")[0], max_pin="x")
 
         # this doesn't seem to match the _pin_looser or _pin_stricter patterns
         # nor _replace_pin
@@ -715,29 +670,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     _dep_parts = dep.split(" ")
                     _dep_parts[1] = _dep_parts[1] + ",<0.8.0"
                     record["depends"][i] = " ".join(_dep_parts)
-
-        # Integration between mdtraj and astunparse 1.6.3 on python 3.8 is
-        # broken, which was pinned for new builds in
-        # https://github.com/conda-forge/mdtraj-feedstock/pull/30 but should
-        # also be corrected on older builds
-        if (record_name == "mdtraj" and
-            record["version"] == "1.9.5" and
-            "py38" in record['build'] and
-            "astunparse" in record['depends'] and
-            "astunparse <=1.6.2" not in record['depends']):
-            i = record['depends'].index('astunparse')
-            record['depends'][i] = 'astunparse <=1.6.2'
-
-        # With release of openmm 7.6 it changed package structure, breaking
-        # parmed. This is fixed for 3.4.3, but older builds should get
-        # a pin to prevent breaks for now.
-        if (record_name == "parmed" and
-            (parse_version(record["version"]) <
-             parse_version("3.4.3"))):
-            new_constrains = record.get('constrains', [])
-            new_constrains.append("openmm <7.6")
-            record['constrains'] = new_constrains
-
 
         # FIXME: disable patching-out blas_openblas feature
         # because hotfixes are not applied to gcc7 label
@@ -754,9 +686,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             #         depends = record['depends']
             #         depends.append("blas 1.* openblas")
             #         instructions["packages"][fn]["depends"] = depends
-
-        if any(dep.startswith("zstd >=1.4") for dep in deps):
-            _pin_looser(fn, record, "zstd", max_pin="x.x")
 
         # We pin MPI packages loosely so as to rely on their ABI compatibility
         if any(dep.startswith("openmpi >=4.0") for dep in deps):
@@ -905,6 +834,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 else:
                     deps.append(bokeh_dep)
                 record["depends"] = deps
+
+        # fix only packages built before the run_exports was corrected.
+        if any(dep == "libflang" or dep.startswith("libflang >=5.0.0") for dep in deps) and record.get('timestamp', 0) < 1611789153000:
+            record["depends"].append("libflang <6.0.0.a0")
 
         llvm_pkgs = ["clang", "clang-tools", "llvm", "llvm-tools", "llvmdev"]
         if record_name in llvm_pkgs:

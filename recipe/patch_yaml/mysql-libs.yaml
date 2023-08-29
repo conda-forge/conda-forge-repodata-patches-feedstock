@@ -1,0 +1,9 @@
+# from this snippet
+# if any(dep.startswith("mysql-libs >=8.0.") for dep in deps):
+#     _pin_looser(fn, record, "mysql-libs", max_pin="x.x")
+if:
+  has_depends: mysql-libs >=8.0*
+then:
+  - loosen_depends:
+      name: mysql-libs
+      max_pin: x.x

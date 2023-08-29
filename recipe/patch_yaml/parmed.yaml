@@ -1,0 +1,15 @@
+# from this snippet
+# With release of openmm 7.6 it changed package structure, breaking
+# parmed. This is fixed for 3.4.3, but older builds should get
+# a pin to prevent breaks for now.
+# if (record_name == "parmed" and
+#     (parse_version(record["version"]) <
+#       parse_version("3.4.3"))):
+#     new_constrains = record.get('constrains', [])
+#     new_constrains.append("openmm <7.6")
+#     record['constrains'] = new_constrains
+if:
+  name: parmed
+  version_lt: 3.4.3
+then:
+  - add_constrains: openmm <7.6

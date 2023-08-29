@@ -111,7 +111,7 @@ then:
   # make a dependency version constraint stricter
   - tighten_depends:
       # package to pin stricter
-      name: matplotlib
+      name: matplotlib  # this field can use the fnmatch glob syntax
       # you must give one of max_pin or upper_bound
       # optional way to specify the new maximum pin as 'x', 'x.x', etc.
       max_pin: 'x.x'
@@ -122,7 +122,7 @@ then:
   # make a dependency version constraint looser
   - loosen_depends:
       # package to pin looser
-      name: matplotlib
+      name: matplotlib  # this field can use the fnmatch glob syntax
       # you must give one of max_pin or upper_bound
       # optional pinning expression 'x', 'x.x', etc. to set how much looser to make the pin
       max_pin: 'x.x'
