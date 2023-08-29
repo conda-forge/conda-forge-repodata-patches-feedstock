@@ -1,0 +1,12 @@
+# Before September 2023, metis had run_exports with max_pin x.x
+# However, it turns out that metis 5.1.1 had ABI breakage w.r.t.
+# to metis 5.1.0, so here we correct the run_dependency of
+# packages that depends on metis, see:
+# * https://github.com/conda-forge/metis-feedstock/pull/38
+if:
+  has_depends: metis >=5.1.*
+  timestamp_lt: 1693402455000
+then:
+  - tighten_depends:
+      name: metis
+      max_pin: x.x.x
