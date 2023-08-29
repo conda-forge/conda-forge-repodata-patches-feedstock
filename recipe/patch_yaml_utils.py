@@ -1,7 +1,6 @@
 import yaml
 import glob
 import os
-import sys
 import string
 from packaging.version import parse as parse_version
 import fnmatch as _fnmatch
@@ -22,10 +21,8 @@ for fname in sorted(glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml"))
         ]
         ALL_YAMLS += fname_yamls
 
-print("Read %d total patch yaml docs" % len(ALL_YAMLS), flush=True, file=sys.stderr)
 
-
-@lru_cache(maxsize=10000)
+@lru_cache(maxsize=32768)
 def _fnmatch_build_re(pat):
     repat = (
         "(?s:\\ .*)?".join([_fnmatch.translate(p)[:-2] for p in pat.split("?( *)")])
@@ -34,7 +31,7 @@ def _fnmatch_build_re(pat):
     return re.compile(repat).match
 
 
-@lru_cache(maxsize=10000)
+@lru_cache(maxsize=32768)
 def fnmatch(name, pat):
     """Test whether FILENAME matches PATTERN with custom
     allowed optional space via '?( *)'.
@@ -74,7 +71,7 @@ def _fnmatch_str_or_list(item, v):
     return any(fnmatch(str(item), str(_v)) for _v in v)
 
 
-@lru_cache(maxsize=10000)
+@lru_cache(maxsize=32768)
 def _get_vars_for_template(value):
     if value is None:
         return []
@@ -382,26 +379,42 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 _relax_exact(fn, record, fix_dep, max_pin=max_pin)
 
             elif k == "tighten_depends":
-                fix_dep = _maybe_process_template(v["name"], record, subdir)
+                pat = _maybe_process_template(v["name"], record, subdir)
                 max_pin = v.get("max_pin", None)
                 upper_bound = v.get("upper_bound", None)
                 if upper_bound is not None:
                     upper_bound = _maybe_process_template(
                         str(upper_bound), record, subdir
                     )
-                _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=upper_bound)
+                for dep in record.get("depends", []):
+                    dep_name = dep.split(" ")[0]
+                    if fnmatch(dep_name, pat):
+                        _pin_stricter(
+                            fn,
+                            record,
+                            dep_name,
+                            max_pin,
+                            upper_bound=upper_bound,
+                        )
 
             elif k == "loosen_depends":
-                fix_dep = _maybe_process_template(v["name"], record, subdir)
+                pat = _maybe_process_template(v["name"], record, subdir)
                 max_pin = v.get("max_pin", None)
                 upper_bound = v.get("upper_bound", None)
                 if upper_bound is not None:
                     upper_bound = _maybe_process_template(
                         str(upper_bound), record, subdir
                     )
-                _pin_looser(
-                    fn, record, fix_dep, max_pin=max_pin, upper_bound=upper_bound
-                )
+                for dep in record.get("depends", []):
+                    dep_name = dep.split(" ")[0]
+                    if fnmatch(dep_name, pat):
+                        _pin_looser(
+                            fn,
+                            record,
+                            dep_name,
+                            max_pin=max_pin,
+                            upper_bound=upper_bound,
+                        )
 
             else:
                 raise KeyError("Unrecognized 'then' key '%s'!" % k)

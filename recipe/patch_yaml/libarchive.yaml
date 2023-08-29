@@ -1,0 +1,10 @@
+# from this code snippet
+# if any(dep.startswith("libarchive >=3.3") for dep in deps):
+#     _pin_looser(fn, record, "libarchive", upper_bound="3.6.0")
+if:
+  has_depends: libarchive >=3.3*
+then:
+  - loosen_depends:
+      name: libarchive
+      upper_bound: 3.6.0
+

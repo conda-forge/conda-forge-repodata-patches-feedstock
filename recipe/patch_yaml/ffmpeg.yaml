@@ -1,0 +1,13 @@
+# from this snippet
+# # fix run_export from packages built against 4.3; it's corrected now, but the solver
+# # may potentially still pick up an old ffmpeg-build as build dep for something else
+# if any(dep == f"ffmpeg >=4.3.{p},<5.0a0" for dep in deps for p in [0, 1, 2]) and record.get('timestamp', 0) < 1645651093167:
+#     # https://github.com/conda-forge/ffmpeg-feedstock/pull/115#issuecomment-1020619231
+#     _pin_stricter(fn, record, "ffmpeg", "x.x")
+if:
+  has_depends: ffmpeg >=4.3.[0-2],<5.0a0
+  timestamp_lt: 1645651093167
+then:
+  - tighten_depends:
+      name: ffmpeg
+      max_pin: x.x
