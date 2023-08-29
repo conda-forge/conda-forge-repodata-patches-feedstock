@@ -1,0 +1,20 @@
+# from this code snippet
+# numpydoc >=1.0.0 requires python >=3.5
+# https://github.com/conda-forge/numpydoc-feedstock/pull/14
+# version = record['version']
+# if record_name == 'numpydoc':
+#     pversion = parse_version(version)
+#     v1_0_0 = parse_version('1.0.0')
+#     v1_1_0 = parse_version('1.1.0')
+#     if v1_0_0 <= pversion <= v1_1_0 and 'python' in record['depends']:
+#         i = record['depends'].index('python')
+#         record['depends'][i] = 'python >=3.5'
+if:
+  name: numpydoc
+  version_ge: 1.0.0
+  version_le: 1.1.0
+  has_depends: python
+then:
+  - replace_depends:
+      old: python
+      new: python >=3.5

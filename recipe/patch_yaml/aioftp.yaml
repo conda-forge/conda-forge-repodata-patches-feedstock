@@ -1,0 +1,21 @@
+# from this bit of code
+# aioftp >=0.17.0 requires python >=3.7
+# aioftp 0.17.x was incorrectly built with 3.6 support
+# https://github.com/conda-forge/aioftp-feedstock/pull/12
+# version = record['version']
+# if record_name == 'aioftp':
+#     pversion = parse_version(version)
+#     base_version = parse_version('0.17.0')
+#     max_version = parse_version('0.17.2')
+#     if base_version <= pversion <= max_version and 'python >=3.6' in record['depends']:
+#         i = record['depends'].index('python >=3.6')
+#         record['depends'][i] = 'python >=3.7'
+if:
+  name: aioftp
+  version_ge: 0.17.0
+  version_le: 0.17.2
+  has_depends: python >=3.6
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.7

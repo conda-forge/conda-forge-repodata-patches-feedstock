@@ -1,0 +1,11 @@
+# from this snippet
+# if any(dep.startswith("expat >=2.2.") for dep in deps) or \
+#         any(dep.startswith("expat >=2.3.") for dep in deps):
+#     _pin_looser(fn, record, "expat", max_pin="x")
+if:
+  has_depends:
+    - expat >=2.[2-3].*  # "expat >=2.2.*" or "expat >=2.3.*
+then:
+  - loosen_depends:
+      name: expat
+      max_pin: x

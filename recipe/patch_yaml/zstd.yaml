@@ -1,0 +1,9 @@
+# from this snippet
+# if any(dep.startswith("zstd >=1.4") for dep in deps):
+#     _pin_looser(fn, record, "zstd", max_pin="x.x")
+if:
+  has_depends: zstd >=1.4*
+then:
+  - loosen_depends:
+      name: zstd
+      max_pin: x.x

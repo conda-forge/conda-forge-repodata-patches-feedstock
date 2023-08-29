@@ -1,0 +1,11 @@
+# from this bit of code
+# if record_name == "typer" and record.get('timestamp', 0) < 1609873200000:
+#     # https://github.com/conda-forge/typer-feedstock/issues/5
+#     if any(dep.split(' ')[0] == "click" for dep in record.get('depends', ())):
+#         record['depends'].append('click <8')
+if:
+  name: typer
+  timestamp_lt: 1609873200000
+  has_depends: "click?( *)"
+then:
+  - add_depends: "click <8"

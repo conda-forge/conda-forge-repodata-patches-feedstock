@@ -11,8 +11,12 @@ Patches are specified by two main blocks.
 
 - The `if` block specifies a set of conditions under which the changes in the `then` block are applied.
 - The different conditions in the `if` block are combined with a logical `AND`.
+- Any condition may be prefixed by `not_` and will be negated.
 - The `if` conditions can use shell glob syntax as implemented in the python `fnmatch` module in the
-  standard library.
+  standard library. The optional "?( *)" pattern from extended glob syntax is allowed to match zero or
+  one sequences of spaces plus any other characters.
+- The `then` section uses the Python `string.Template` system to allow the `version`, `build_number`, `name`, or
+  `subdir` values to be inserted into strings via templates (e.g., `"blah <=${version}"`) at runtime.
 - Multiple patches can be in the same file using separate YAML documents (i.e., separate the data by `---`
   on a new line).
 
@@ -21,6 +25,8 @@ if:
   # possible conditions
   # list of subdirs or a single subdir (e.g., "linux-64")
   subdir_in: linux-64
+  # any subdir but linux-64
+  not_subdir_in: linux-64
 
   # list of artifact names or a single name (e.g., "ngmix-2.3.0-py38h50d1736_1.conda")
   artifact_in: ngmix-2.3.0-py38h50d1736_1.conda
@@ -41,16 +47,26 @@ if:
   build_number_in: [0, 1, 2]
 
   # has specific dependencies as either a list or a single string
-  has_depends: numpy*  # matches any numpy entry with or without a version
+  has_depends: numpy*  # matches 'numpy', 'nump-blah', or 'numpy 5.6'
+  has_depends: numpy?( *)  # matches 'numpy' or 'numpy 5.6' but not 'numpy-blah'
   has_depends: numpy  # matches "numpy" exactly (i.e., no pins)
+
+  # has specific constraints as either a list or a single key
+  has_constrains: numpy*  # matches 'numpy', 'nump-blah', or 'numpy 5.6'
+  has_constrains: numpy?( *)  # matches 'numpy' or 'numpy 5.6' but not 'numpy-blah'
+  has_constrains: numpy  # matches "numpy" exactly (i.e., no pins)
 
   # single value for a key that should match
   <repodata key>: <value>
   version: 1.0.0
 then:
   # list of instructions to change things
+
   # add to the depends or constrains section of the repodata
   - add_<depends or constrains>: <list of str or single str>
+  # you can use data from the record being patched like this
+  # only name, version, build_number and subdir are supported
+  - add_depends: mypackage <=${version}
 
   # remove from the depends or constrains sections of the repodata
   - remove_<depends or constrains>: <list of str or single str>
@@ -62,6 +78,17 @@ then:
   - replace_<depends or constrains>:
       # str of thing to be replaced
       old: matplotlib ==1.3.0
+      # thing to replace `old` with
+      new: matplotlib-base ==1.4.0
+  # globs are allowed in the "old" field so * needs to be escaped via [*]
+  - replace_<depends or constrains>:
+      # str of thing to be replaced
+      old: matplotlib 1.3.[*]  # matches matplotlib 1.3.* exactly
+      # thing to replace `old` with
+      new: matplotlib-base ==1.4.0
+  - replace_<depends or constrains>:
+      # str of thing to be replaced
+      old: matplotlib 1.3.*  # matches matplotlib 1.3.0, matplotlib 1.3, etc.
       # thing to replace `old` with
       new: matplotlib-base ==1.4.0
 
@@ -84,7 +111,7 @@ then:
   # make a dependency version constraint stricter
   - tighten_depends:
       # package to pin stricter
-      name: matplotlib
+      name: matplotlib  # this field can use the fnmatch glob syntax
       # you must give one of max_pin or upper_bound
       # optional way to specify the new maximum pin as 'x', 'x.x', etc.
       max_pin: 'x.x'
@@ -95,7 +122,7 @@ then:
   # make a dependency version constraint looser
   - loosen_depends:
       # package to pin looser
-      name: matplotlib
+      name: matplotlib  # this field can use the fnmatch glob syntax
       # you must give one of max_pin or upper_bound
       # optional pinning expression 'x', 'x.x', etc. to set how much looser to make the pin
       max_pin: 'x.x'

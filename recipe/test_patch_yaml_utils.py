@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from patch_yaml_utils import _test_patch_yaml, _apply_patch_yaml
+from patch_yaml_utils import _test_patch_yaml, _apply_patch_yaml, ALLOWED_TEMPLATE_KEYS
 from patch_yaml_model import generate_schema, PatchYaml
 
 
@@ -13,6 +13,12 @@ def test_test_patch_yaml_record_key():
     assert _test_patch_yaml(patch_yaml, record, None, None)
     record = {"version": "1.0.1"}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
+
+    patch_yaml = {"if": {"not_version": "1.0.0"}}
+    record = {"version": "1.0.0"}
+    assert not _test_patch_yaml(patch_yaml, record, None, None)
+    record = {"version": "1.0.1"}
+    assert _test_patch_yaml(patch_yaml, record, None, None)
 
     patch_yaml = {"if": {"name": "blah"}}
     record = {"name": "blah"}
@@ -24,6 +30,16 @@ def test_test_patch_yaml_record_key():
     record = {"name": "blah", "version": "1.0.0"}
     assert _test_patch_yaml(patch_yaml, record, None, None)
     record = {"name": "blah", "version": "1.0.1"}
+    assert not _test_patch_yaml(patch_yaml, record, None, None)
+
+    patch_yaml = {"if": {"name": "blah?( *)"}}
+    record = {"name": "blah"}
+    assert _test_patch_yaml(patch_yaml, record, None, None)
+    record = {"name": "blah "}
+    assert _test_patch_yaml(patch_yaml, record, None, None)
+    record = {"name": "blah blah"}
+    assert _test_patch_yaml(patch_yaml, record, None, None)
+    record = {"name": "blah-blah"}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
 
 
@@ -146,27 +162,28 @@ def test_test_patch_yaml_in():
     assert not _test_patch_yaml(patch_yaml, record, None, "blah")
 
 
-def test_test_patch_yaml_has_depends():
-    patch_yaml = {"if": {"has_depends": "numpy"}}
-    record = {"depends": ["numpy"]}
+@pytest.mark.parametrize("sec", ["depends", "constrains"])
+def test_test_patch_yaml_has(sec):
+    patch_yaml = {"if": {f"has_{sec}": "numpy"}}
+    record = {f"{sec}": ["numpy"]}
     assert _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"depends": ["numpy 1.20"]}
+    record = {f"{sec}": ["numpy 1.20"]}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
 
-    patch_yaml = {"if": {"has_depends": "numpy*"}}
-    record = {"depends": ["numpy", "blah"]}
+    patch_yaml = {"if": {f"has_{sec}": "numpy*"}}
+    record = {f"{sec}": ["numpy", "blah"]}
     assert _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"depends": ["numpy 1.20", "foo"]}
+    record = {f"{sec}": ["numpy 1.20", "foo"]}
     assert _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"depends": ["scipy 1.20"]}
+    record = {f"{sec}": ["scipy 1.20"]}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
 
-    patch_yaml = {"if": {"has_depends": ["numpy*", "scipy"]}}
-    record = {"depends": ["numpy", "blah"]}
+    patch_yaml = {"if": {f"has_{sec}": ["numpy*", "scipy"]}}
+    record = {f"{sec}": ["numpy", "blah"]}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"depends": ["numpy 1.20", "scipy"]}
+    record = {f"{sec}": ["numpy 1.20", "scipy"]}
     assert _test_patch_yaml(patch_yaml, record, None, None)
-    record = {"depends": ["scipy 1.20", "numpy"]}
+    record = {f"{sec}": ["scipy 1.20", "numpy"]}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
 
 
@@ -181,6 +198,46 @@ def test_apply_patch_yaml_add(key):
     record = {"version": 10, key: ["foo"]}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"version": 10, key: ["foo", "blah"]}
+
+
+@pytest.mark.parametrize("rkey", ALLOWED_TEMPLATE_KEYS)
+@pytest.mark.parametrize("key", ["depends", "constrains"])
+def test_apply_patch_yaml_add_template(key, rkey):
+    patch_yaml = {"then": [{"add_" + key: f"blah ${rkey}"}]}
+    record = {"version": 10, "name": "foo", "build_number": 2}
+    _apply_patch_yaml(patch_yaml, record, "linux-64", None)
+    if rkey != "subdir":
+        assert record == {
+            "version": 10,
+            key: [f"blah {record[rkey]}"],
+            "name": "foo",
+            "build_number": 2,
+        }
+    else:
+        assert record == {
+            "version": 10,
+            key: ["blah linux-64"],
+            "name": "foo",
+            "build_number": 2,
+        }
+
+    patch_yaml = {"then": [{"add_" + key: f"blah ${rkey}"}]}
+    record = {"version": 10, key: ["foo"], "name": "foo", "build_number": 2}
+    _apply_patch_yaml(patch_yaml, record, "linux-64", None)
+    if rkey != "subdir":
+        assert record == {
+            "version": 10,
+            key: ["foo", f"blah {record[rkey]}"],
+            "name": "foo",
+            "build_number": 2,
+        }
+    else:
+        assert record == {
+            "version": 10,
+            key: ["foo", "blah linux-64"],
+            "name": "foo",
+            "build_number": 2,
+        }
 
 
 @pytest.mark.parametrize("key", ["depends", "constrains"])
@@ -244,6 +301,18 @@ def test_apply_patch_yaml_replace(key, pre, post):
     record = {key: pre + ["numpy 1.0"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {key: pre + ["numpy 2.0"] + post}
+
+
+@pytest.mark.parametrize("pre", [[], ["foo"]])
+@pytest.mark.parametrize("post", [[], ["bar"]])
+@pytest.mark.parametrize("key", ["depends", "constrains"])
+def test_apply_patch_yaml_replace_glob(key, pre, post):
+    patch_yaml = {
+        "then": [{"replace_" + key: {"old": "numpy 1.0*", "new": "numpy 2.0"}}]
+    }
+    record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {key: pre + ["numpy 2.0", "numpy 2.0"] + post}
 
 
 @pytest.mark.parametrize("pre", [[], ["foo"]])

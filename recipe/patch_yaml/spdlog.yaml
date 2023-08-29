@@ -1,0 +1,10 @@
+# from this code snippet
+# if any(dep.startswith('spdlog >=1.8') for dep in deps) and record.get('timestamp', 0) < 1626942511225:
+#    _pin_stricter(fn, record, "spdlog", "x.x")
+if:
+  has_depends: spdlog >=1.8*
+  timestamp_lt: 1626942511225
+then:
+  - tighten_depends:
+      name: spdlog
+      max_pin: x.x

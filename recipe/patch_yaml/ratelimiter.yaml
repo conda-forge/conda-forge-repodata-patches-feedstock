@@ -1,0 +1,16 @@
+# from this bit of code
+# if record_name == 'ratelimiter':
+#     if record.get('timestamp', 0) < 1667804400000 and subdir == "noarch":  # noarch builds prior to 2022/11/7
+#         python_pinning = [
+#             x for x in record['depends'] if x.startswith('python')
+#         ]
+#         for pinning in python_pinning:
+#             _replace_pin(pinning, 'python >=3,<3.11', record['depends'], record)
+if:
+  name: 'ratelimiter'
+  timestamp_lt: 1667804400000
+  subdir_in: noarch
+then:
+  - replace_depends:
+      old: python*
+      new: python >=3,<3.11
