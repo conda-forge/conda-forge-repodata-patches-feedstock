@@ -75,8 +75,10 @@ class _IfClause(_ForbidExtra):
     """
 
     # Dynamically create fields for each repodata key and operator
-    for (key, type_hint), op in itertools.product(scalar_repodata_keys, operators):
-        key_name = f"{key}_{op}" if op else key
+    for (negate, key, type_hint), op in itertools.product((True, False), scalar_repodata_keys, operators):
+        not_ = ("not_",) if negate else ()
+        _op = (op,) if op else ()
+        key_name = "_".join((*not_, key, *_op))
         if (
             op in ("gt", "ge", "lt", "le")
             and "_NonEmptyStr" in type_hint
@@ -90,6 +92,8 @@ class _IfClause(_ForbidExtra):
             type_hint = f"{type_hint} | list[{type_hint}]"
         else:
             descr = f"'{key}' value to compare against with `{op or 'eq'}` operator"
+        if negate:
+            descr = f"Negated condition: {descr}"
         exec(f'{key_name}: {type_hint} = Field(None, description="{descr}")')
     del key_name, key, type_hint, op, descr
 
@@ -108,6 +112,22 @@ class _IfClause(_ForbidExtra):
     artifact_in: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
         description="List of full artifact filenames to match against; e.g. `ngmix-2.3.0-py38h50d1736_1.conda`",
+    )
+    not_has_depends: _NonEmptyStr | list[_NonEmptyStr] = Field(
+        None,
+        description="Negated condition: Spec or list of specs that should be present in the 'depends' list.",
+    )
+    not_has_constrains: _NonEmptyStr | list[_NonEmptyStr] = Field(
+        None,
+        description="Negated condition: Spec or list of specs that should be present in the 'constrains' list.",
+    )
+    not_subdir_in: _NonEmptyStr | list[_NonEmptyStr] = Field(
+        None,
+        description="Negated condition: List of platforms to match against; e.g. `linux-64`",
+    )
+    not_artifact_in: _NonEmptyStr | list[_NonEmptyStr] = Field(
+        None,
+        description="Negated condition: List of full artifact filenames to match against; e.g. `ngmix-2.3.0-py38h50d1736_1.conda`",
     )
 
 
