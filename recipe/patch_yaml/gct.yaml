@@ -1,0 +1,9 @@
+# from this snippet
+# gct should have been pinned at x.x.x rather than x.x
+# _replace_pin('gct >=6.2.1550507116,<6.3.0a0', "gct >=6.2.1550507116,<6.2.1550507117", deps, record)
+if:
+  name: "*"
+then:
+  - replace_depends:
+      old: gct >=6.2.1550507116,<6.3.0a0
+      new: gct >=6.2.1550507116,<6.2.1550507117

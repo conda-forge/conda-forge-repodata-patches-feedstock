@@ -1,0 +1,17 @@
+# from this snippet
+# patch out bad numba for ngmix
+# if (
+#     record_name == "ngmix"
+#     and not any(
+#         ("!=0.54.0" in dp and "numba" in dp)
+#         for dp in record.get("depends", [])
+#     )
+# ):
+#     deps = record.get("depends", [])
+#     deps.append("numba !=0.54.0")
+#     record["depends"] = deps
+if:
+  name: ngmix
+  not_has_depends: numba *!=0.54.0*
+then:
+  - add_depends: numba !=0.54.0

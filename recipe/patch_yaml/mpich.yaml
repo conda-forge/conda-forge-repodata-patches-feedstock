@@ -1,0 +1,12 @@
+# from this snippet
+# We pin MPI packages loosely so as to rely on their ABI compatibility
+# if any(dep.startswith("mpich >=3.3") for dep in deps):
+#     _pin_looser(fn, record, "mpich", upper_bound="5.0")
+# if any(dep.startswith("mpich >=3.4") for dep in deps):
+#     _pin_looser(fn, record, "mpich", upper_bound="5.0")
+if:
+  has_depends: mpich >=3.[3-4]*
+then:
+  - loosen_depends:
+      name: mpich
+      upper_bound: "5.0"

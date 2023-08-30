@@ -1,0 +1,35 @@
+# from this snippet
+# ROOT 6.22.6 contained an ABI break, we'll always pin on patch releases from now on
+# if has_dep(record, "root_base"):
+#     for i, dep in enumerate(deps):
+#         if not ("root_base" in dep and "<6.23.0a0" in dep):
+#             continue
+#         if ">=6.22.0," in dep or ">=6.22.2," in dep or ">=6.22.4," in dep:
+#             deps.append("root_base <6.22.5a0")
+#         elif ">=6.22.6," in dep:
+#             deps.append("root_base <6.22.7a0")
+if:
+  has_depends:
+    - root_base *<6.23.0a0*
+    - root_base *>=6.22.[024],*
+then:
+  - add_depends: root_base <6.22.5a0
+---
+# from the snippet above
+if:
+  has_depends:
+    - root_base *<6.23.0a0*
+    - root_base *>=6.22.6,*
+then:
+  - add_depends: root_base <6.22.7a0
+---
+# from this snippet
+# if record_name == "root_base":
+#     # ROOT requires vector-classes to be the exact same version as the one used for the build
+#     _replace_pin('vector-classes >=1.4.1,<1.5.0a0', 'vector-classes >=1.4.1,<1.4.2a0', deps, record)
+if:
+  name: root_base
+then:
+  - replace_depends:
+      old: vector-classes >=1.4.1,<1.5.0a0
+      new: vector-classes >=1.4.1,<1.4.2a0
