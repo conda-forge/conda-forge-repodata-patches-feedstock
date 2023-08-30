@@ -75,7 +75,7 @@ class _IfClause(_ForbidExtra):
     """
 
     # Dynamically create fields for each repodata key and operator
-    for (negate, key, type_hint), op in itertools.product((True, False), scalar_repodata_keys, operators):
+    for negate, (key, type_hint), op in itertools.product((True, False), scalar_repodata_keys, operators):
         not_ = ("not_",) if negate else ()
         _op = (op,) if op else ()
         key_name = "_".join((*not_, key, *_op))
