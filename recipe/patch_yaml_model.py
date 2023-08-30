@@ -60,11 +60,11 @@ class _Name_MaxPin_UpperBound(_ForbidExtra):
     name: _NonEmptyStr = ...
     max_pin: Annotated[str, Field(pattern=r"^[x.]+$")] = Field(
         None,
-        description="Maximum version pin expression to apply to the package (e.g. `x.x`).",
+        description="Maximum version pin expression to apply to the package (e.g. `x.x`).",  # noqa: E501
     )
     upper_bound: _NonEmptyStr = Field(
         None,
-        description="Explicit upper bound version to apply to the package (e.g. `2.0`).",
+        description="Explicit upper bound version to apply to the package (e.g. `2.0`).",  # noqa: E501
     )
 
 
@@ -75,8 +75,10 @@ class _IfClause(_ForbidExtra):
     """
 
     # Dynamically create fields for each repodata key and operator
-    for negate, (key, type_hint), op in itertools.product((True, False), scalar_repodata_keys, operators):
-        not_ = ("not_",) if negate else ()
+    for negate, (key, type_hint), op in itertools.product(
+        (True, False), scalar_repodata_keys, operators
+    ):
+        not_ = ("not",) if negate else ()
         _op = (op,) if op else ()
         key_name = "_".join((*not_, key, *_op))
         if (
@@ -88,7 +90,7 @@ class _IfClause(_ForbidExtra):
         if op in ("", "eq", "ne", "in") and type_hint == "_PosInt":  # accept globs too
             type_hint += " | _NonEmptyStr"
         if op == "in":
-            descr = f"List of '{key}' values to match against. A single scalar value is also allowed."
+            descr = f"List of '{key}' values to match against. A single scalar value is also allowed."  # noqa: E501
             type_hint = f"{type_hint} | list[{type_hint}]"
         else:
             descr = f"'{key}' value to compare against with `{op or 'eq'}` operator"
@@ -99,11 +101,11 @@ class _IfClause(_ForbidExtra):
 
     has_depends: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
-        description="Spec or list of specs that should be present in the 'depends' list.",
+        description="Spec or list of specs that should be present in the 'depends' list.",  # noqa: E501
     )
     has_constrains: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
-        description="Spec or list of specs that should be present in the 'constrains' list.",
+        description="Spec or list of specs that should be present in the 'constrains' list.",  # noqa: E501
     )
     subdir_in: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
@@ -111,23 +113,23 @@ class _IfClause(_ForbidExtra):
     )
     artifact_in: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
-        description="List of full artifact filenames to match against; e.g. `ngmix-2.3.0-py38h50d1736_1.conda`",
+        description="List of full artifact filenames to match against; e.g. `ngmix-2.3.0-py38h50d1736_1.conda`",  # noqa: E501
     )
     not_has_depends: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
-        description="Negated condition: Spec or list of specs that should be present in the 'depends' list.",
+        description="Negated condition: Spec or list of specs that should be present in the 'depends' list.",  # noqa: E501
     )
     not_has_constrains: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
-        description="Negated condition: Spec or list of specs that should be present in the 'constrains' list.",
+        description="Negated condition: Spec or list of specs that should be present in the 'constrains' list.",  # noqa: E501
     )
     not_subdir_in: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
-        description="Negated condition: List of platforms to match against; e.g. `linux-64`",
+        description="Negated condition: List of platforms to match against; e.g. `linux-64`",  # noqa: E501
     )
     not_artifact_in: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
-        description="Negated condition: List of full artifact filenames to match against; e.g. `ngmix-2.3.0-py38h50d1736_1.conda`",
+        description="Negated condition: List of full artifact filenames to match against; e.g. `ngmix-2.3.0-py38h50d1736_1.conda`",  # noqa: E501
     )
 
 
@@ -162,15 +164,15 @@ class _ThenClauseItem(_ForbidExtra):
     )
     rename_depends: _Old2New = Field(
         None,
-        description="Rename 'old' dependency as 'new', leaving version and build string fields untouched.",
+        description="Rename 'old' dependency as 'new', leaving version and build string fields untouched.",  # noqa: E501
     )
     rename_constrains: _Old2New = Field(
         None,
-        description="Rename 'old' constraint as 'new', leaving version and build string fields untouched.",
+        description="Rename 'old' constraint as 'new', leaving version and build string fields untouched.",  # noqa: E501
     )
     relax_exact_depends: _Name_MaxPin_UpperBound = Field(
         None,
-        description="Relax an exact pin (e.g., `blah ==1.0.0`) to something like blah `>=1.0.0` and possibly with `,<2.0a0` added if max_pin='x'",
+        description="Relax an exact pin (e.g., `blah ==1.0.0`) to something like blah `>=1.0.0` and possibly with `,<2.0a0` added if max_pin='x'",  # noqa: E501
     )
     tighten_depends: _Name_MaxPin_UpperBound = Field(
         None,
