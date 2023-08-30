@@ -492,6 +492,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
     for fn, record in index.items():
         record_name = record["name"]
+        deps = record.get("depends", ())
+
+        ########################################
+        # Ecosystem-wide patches for changes in
+        # metapackages, etc.
+        # Generally managed by conda-forge/core
+        ########################################
+
+        if "license" in record and "license_family" not in record and record["license"]:
+            family = get_license_family(record["license"])
+            if family:
+                record['license_family'] = family
 
         if record.get('timestamp', 0) < 1604417730000:
             if subdir == 'noarch':
@@ -499,10 +511,54 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             else:
                 add_python_abi(record, subdir)
 
-        if "license" in record and "license_family" not in record and record["license"]:
-            family = get_license_family(record["license"])
-            if family:
-                record['license_family'] = family
+        # add track_features to old python_abi pypy packages
+        if (record_name == 'python_abi' and 'pypy' in record['build'] and
+                "track_features" not in record):
+            record["track_features"] = "pypy"
+
+        # replace =2.7 with ==2.7.* for compatibility with older conda
+        new_deps = []
+        changed = False
+        for dep in record.get("depends", []):
+            dep_split = dep.split(" ")
+            if len(dep_split) == 2 and dep_split[1].startswith("=") and not dep_split[1].startswith("=="):
+                split_or = dep_split[1].split("|")
+                split_or[0] = "=" + split_or[0] + ".*"
+                new_dep = dep_split[0] + " " + "|".join(split_or)
+                changed = True
+            else:
+                new_dep = dep
+            new_deps.append(new_dep)
+        if changed:
+            record["depends"] = new_deps
+        del new_deps
+        del changed
+
+        # make sure pybind11 and pybind11-global have run constraints on
+        # the abi metapackage
+        # see https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/104  # noqa
+        if (
+            record_name in ["pybind11", "pybind11-global"]
+            # this version has a constraint sometimes
+            and (
+                parse_version(record["version"])
+                <= parse_version("2.6.1")
+            )
+            and not any(
+                c.startswith("pybind11-abi ")
+                for c in record.get("constrains", [])
+            )
+        ):
+            _add_pybind11_abi_constraint(fn, record)
+
+        if record_name not in ["blas", "libblas", "libcblas", "liblapack",
+                               "liblapacke", "lapack", "blas-devel"]:
+            _replace_pin('liblapack >=3.8.0,<3.9.0a0', 'liblapack >=3.8.0,<4.0.0a0', deps, record)
+            _replace_pin('liblapacke >=3.8.0,<3.9.0a0', 'liblapacke >=3.8.0,<4.0.0a0', deps, record)
+
+        ############################################
+        # Compilers, Runtimes and Related Patches
+        ############################################
 
         if record_name == "vs2015_runtime" and record.get('timestamp', 0) < 1633470721000:
             pversion = parse_version(record['version'])
@@ -512,328 +568,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_constrains = record.get("constrains", [])
                 new_constrains.append("ucrt <0a0")
                 record['constrains'] = new_constrains
-
-        # TensorFlow Probability was published with loose constraints on TensorFlow-base leading to broken dependencies.
-        # Each release actually specifies the exact version of TensorFlow and JAX that it supports, therefore we need to
-        # pin the dependencies to the exact version that was used to build the package.
-        # See also issue:
-        if (record.get("timestamp", 0) < 1676674332000) and (record_name == "tensorflow-probability"):
-            version_matrix = {
-                "0.17.0": {"tensorflow-base": ">=2.9,<2.10", "jax": ">=0.3.13,<0.4.0"},
-                "0.15.0": {"tensorflow-base": ">=2.7,<2.8", "jax": ">=0.2.21,<0.3.0"},  # actual jax minimum not mention in release notes
-                "0.14.1": {"tensorflow-base": ">=2.6,<2.7", "jax": ">=0.2.21,<0.3.0"},
-                "0.14.0": {"tensorflow-base": ">=2.6,<2.7", "jax": ">=0.2.20,<0.3.0"},
-                "0.13.0": {"tensorflow-base": ">=2.5,<2.6"},  # no JAX as it isn't mentioned anymore, is it needed to re-add?
-                "0.12.2": {"tensorflow-base": ">=2.4,<2.5"},
-                "0.12.1": {"tensorflow-base": ">=2.4,<2.5"},
-                "0.12.0": {"tensorflow-base": ">=2.4,<2.5"},
-                "0.10.1": {"tensorflow-base": ">=2.2,<2.3"},
-                "0.10.0": {"tensorflow-base": ">=2.2,<2.3"},
-                "0.8.0": {"tensorflow-base": ">=1.15,<2.1"},
-                # Older versions are TF V1, too old to bother with but restricting them to <2 s.t. the solver doesn't pick them up
-                "0.7": {"tensorflow-base": ">=1.13.1,<2"},
-                "0.6.0": {"tensorflow-base": ">=1.13.1,<2"},
-                "0.5.0": {"tensorflow-base": ">=1.11.0,<2"},
-
-            }
-            version = record["version"]
-            if version in version_matrix:
-                deps = version_matrix[version]
-                dependencies = record['depends']
-                for newdep, newrequ in deps.items():
-                    found = False
-                    for i, curdep in enumerate(dependencies):
-                        curdep_pkg = curdep.split(" ")[0]
-                        if curdep_pkg == 'tensorflow':  # remove it, will be replaced with tf-base if needed
-                            del dependencies[i]
-                        elif curdep_pkg == newdep:
-                            found = True
-                            dependencies[i] = f'{newdep} {newrequ}'
-                            # NO break, the loop needs also to make sure that all the tensorflow deps are removed.
-                    if not found:  # It wasn't in the dependencies so we add it
-                        dependencies.append(f'{newdep} {newrequ}')
-
-        if record_name == 'dask':
-            deps = record.get("depends", ())
-
-            # older versions of dask are incompatible with bokeh=3
-            # https://github.com/dask/community/issues/283#issuecomment-1295095683
-            if record.get('timestamp', 0) < 1667000131632:  # releases prior to 2022.10.1
-                bokeh_pinning = [x for x in record['depends'] if x.startswith('bokeh')]
-                if bokeh_pinning:
-                    bokeh_pinning = bokeh_pinning[0]
-                    _replace_pin(
-                        bokeh_pinning,
-                        bokeh_pinning + (",<3" if bokeh_pinning[-1].isdigit() else " <3"),
-                        deps,
-                        record
-                    )
-
-            # older versions of dask are incompatible with pandas=2
-            if record.get('timestamp', 0) < 1676063992630:  # releases prior to 2023.2.0
-                pandas_pinning = [x for x in record['depends'] if x.startswith('pandas')]
-                if pandas_pinning:
-                    pandas_pinning = pandas_pinning[0]
-                    _replace_pin(
-                        pandas_pinning,
-                        pandas_pinning + (",<2" if pandas_pinning[-1].isdigit() else " <2"),
-                        deps,
-                        record
-                    )
-
-        if record_name in {"distributed", "dask"}:
-            version = parse_version(record["version"])
-            if (
-                version >= parse_version("2021.12.0") and
-                version < parse_version("2022.8.0") or
-                version == parse_version("2022.8.0") and
-                record["build_number"] < 2
-            ):
-                for dep in record["depends"]:
-                    if dep.startswith("dask-core") or dep.startswith("distributed"):
-                        pkg = dep.split()[0]
-                        major_minor_patch = record["version"].split(".")
-                        major_minor_patch[2] = str(int(major_minor_patch[2]) + 1)
-                        next_patch_version = ".".join(major_minor_patch)
-                        _replace_pin(
-                            dep, f"{pkg} >={version},<{next_patch_version}.0a0", record["depends"], record
-                        )
-
-        deps = record.get("depends", ())
-        if (
-            record_name in {"slepc", "petsc4py", "slepc4py"}
-            and record.get("timestamp", 0) < 1657407373000
-            and record.get("version").startswith("3.17.")
-        ):
-            # rename scalar pins to workaround conda bug #11612
-            for dep in list(deps):
-                dep_name, *version_build = dep.split()
-                if dep_name not in {"petsc", "slepc", "petsc4py"}:
-                    continue
-                if len(version_build) < 2:
-                    # version only, no build pin
-                    continue
-                version_pin, build_pin = version_build[:2]
-                for scalar in ("real", "complex"):
-                    old_build = f"*{scalar}*"
-                    if build_pin == f"*{scalar}*":
-                        new_build = f"{scalar}_*"
-                        new_dep = f"{dep_name} {version_pin} {new_build}"
-                        _replace_pin(dep, new_dep, deps, record)
-
-        i = -1
-        with suppress(ValueError):
-            i = deps.index("cudatoolkit 11.2|11.2.*")
-        if i >= 0:
-            deps[i] = "cudatoolkit >=11.2,<12.0a0"
-
-        if record_name == "cuda-version" and record['build_number'] < 2 and record.get('timestamp', 0) < 1683211961000:
-            cuda_major_minor = ".".join(record["version"].split(".")[:2])
-            constrains = record.get('constrains', [])
-            for i, c in enumerate(constrains):
-                if c.startswith('cudatoolkit'):
-                    constrains[i] = f'cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*'
-                    break
-            else:
-                constrains.append( f'cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*' )
-            record['constrains'] = constrains
-
-        if record_name == "nccl" and 1681282800000 < record.get("timestamp", 0) < 1686034800000:
-            deps = record.get("depends", [])
-            for i in range(len(deps)):
-                dep = deps[i]
-                if dep.startswith("cudatoolkit"):
-                    spec = dep[11:]
-                    dep = f"__cuda{spec}"
-                deps[i] = dep
-
-        if record_name == "ucx" and record.get('timestamp', 0) < 1682924400000:
-            constrains = record.get('constrains', [])
-            for i, c in enumerate(constrains):
-                if c.startswith('cudatoolkit'):
-                    v = c.split()[-1]
-                    if v != '>=11.2,<12':
-                        constrains[i] = c = f'cudatoolkit {v}|{v}.*'
-            record['constrains'] = constrains
-
-        if record.get('timestamp', 0) < 1663795137000:
-            if any(dep.startswith("pango >=5.2") for dep in deps):
-                _pin_looser(fn, record, "xz", max_pin="x")
-
-        _relax_libssh2_1_x_pinning(fn, record)
-
-        # this doesn't seem to match the _pin_looser or _pin_stricter patterns
-        # nor _replace_pin
-        if record_name == "jedi" and record.get("timestamp", 0) < 1592619891258:
-            for i, dep in enumerate(record["depends"]):
-                if dep.startswith("parso") and "<" not in dep:
-                    _dep_parts = dep.split(" ")
-                    _dep_parts[1] = _dep_parts[1] + ",<0.8.0"
-                    record["depends"][i] = " ".join(_dep_parts)
-
-        # FIXME: disable patching-out blas_openblas feature
-        # because hotfixes are not applied to gcc7 label
-        # causing inconsistent behavior
-        # if (record_name == "blas" and
-        #         record["track_features"] == "blas_openblas"):
-        #     instructions["packages"][fn]["track_features"] = None
-        # if "features" in record:
-            # if "blas_openblas" in record["features"]:
-            #     # remove blas_openblas feature
-            #     instructions["packages"][fn]["features"] = _extract_feature(
-            #         record, "blas_openblas")
-            #     if not any(d.startswith("blas ") for d in record["depends"]):
-            #         depends = record['depends']
-            #         depends.append("blas 1.* openblas")
-            #         instructions["packages"][fn]["depends"] = depends
-
-        # We pin MPI packages loosely so as to rely on their ABI compatibility
-        if any(dep.startswith("openmpi >=4.0") for dep in deps):
-            _pin_looser(fn, record, "openmpi", upper_bound="5.0")
-        if any(dep.startswith("mpich >=3.3") for dep in deps):
-            _pin_looser(fn, record, "mpich", upper_bound="5.0")
-        if any(dep.startswith("mpich >=3.4") for dep in deps):
-            _pin_looser(fn, record, "mpich", upper_bound="5.0")
-
-        # TBB 2021 (oneTBB 2021) is incompatible with previous releases.
-        if has_dep(record, "tbb") and record.get('timestamp', 0) < 1614809400000:
-            for i, dep in enumerate(deps):
-                if dep == "tbb" or any(dep.startswith(f"tbb >={i}") for i in range(2017, 2021)) or dep.startswith("tbb >=4.4"):
-                    deps.append("tbb <2021.0.0a0")
-                    break
-
-        # pennylane-lightning-gpu 0.29.0 requires pennylane>=0.28.0, but build 0 left it unspecified,
-        # fixed in https://github.com/conda-forge/pennylane-lightning-gpu-feedstock/pull/2
-        if (
-            record_name == "pennylane-lightning-gpu" and
-            record["version"] == "0.29.0" and
-            record['build_number'] == 0 and
-            record.get("timestamp", 0) < 1680553268000
-        ):
-            _replace_pin("pennylane", "pennylane >=0.28.0", record["depends"], record)
-
-        # cuTENSOR 1.3.x is binary incompatible with 1.2.x. Let's just pin exactly since
-        # it appears semantic versioning is not guaranteed.
-        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", deps, record)
-        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", record.get("constrains", []), record, target='constrains')
-
-        # ROOT 6.22.6 contained an ABI break, we'll always pin on patch releases from now on
-        if has_dep(record, "root_base"):
-            for i, dep in enumerate(deps):
-                if not ("root_base" in dep and "<6.23.0a0" in dep):
-                    continue
-                if ">=6.22.0," in dep or ">=6.22.2," in dep or ">=6.22.4," in dep:
-                    deps.append("root_base <6.22.5a0")
-                elif ">=6.22.6," in dep:
-                    deps.append("root_base <6.22.7a0")
-
-        if record_name == "root_base":
-            # ROOT requires vector-classes to be the exact same version as the one used for the build
-            _replace_pin('vector-classes >=1.4.1,<1.5.0a0', 'vector-classes >=1.4.1,<1.4.2a0', deps, record)
-
-        _replace_pin('libunwind >=1.2.1,<1.3.0a0', 'libunwind >=1.2.1,<1.6.0a0', deps, record)
-        for i, dep in enumerate(deps):
-            libunwind_str = "libunwind >=1."
-            if dep.startswith(libunwind_str) and dep[len(libunwind_str):len(libunwind_str) + 2] in ["2.", "3.", "4.", "5."]:
-                _pin_stricter(fn, record, 'libunwind', 'x', '1.6.0')
-        _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
-        if record.get('timestamp', 0) < 1641975772000:
-            _pin_looser(fn, record, "ncurses", max_pin="x")
-        _replace_pin('abseil-cpp', 'abseil-cpp ==20190808.*', deps, record)
-
-        if record_name not in ["blas", "libblas", "libcblas", "liblapack",
-                               "liblapacke", "lapack", "blas-devel"]:
-            _replace_pin('liblapack >=3.8.0,<3.9.0a0', 'liblapack >=3.8.0,<4.0.0a0', deps, record)
-            _replace_pin('liblapacke >=3.8.0,<3.9.0a0', 'liblapacke >=3.8.0,<4.0.0a0', deps, record)
-        # Filter by timestamp as pythia8 also contains python bindings that shouldn't be pinned
-        if 'pythia8' in deps and record.get('timestamp', 0) < 1584264455759:
-            i = record['depends'].index('pythia8')
-            record['depends'][i] = 'pythia8 >=8.240,<8.300.0a0'
-
-        # gct should have been pinned at x.x.x rather than x.x
-        _replace_pin('gct >=6.2.1550507116,<6.3.0a0', "gct >=6.2.1550507116,<6.2.1550507117", deps, record)
-
-        # remove features for openjdk and rb2
-        if ("track_features" in record and
-                record['track_features'] is not None):
-            for feat in record["track_features"].split():
-                if feat.startswith("openjdk"):
-                    record["track_features"] = _extract_track_feature(
-                        record, feat)
-
-        # add track_features to old python_abi pypy packages
-        if (record_name == 'python_abi' and 'pypy' in record['build'] and
-                "track_features" not in record):
-            record["track_features"] = "pypy"
-
-        llvm_pkgs = ["libclang", "clang", "clang-tools", "llvm", "llvm-tools", "llvmdev"]
-        for llvm in ["libllvm8", "libllvm9"]:
-            if any(dep.startswith(llvm) for dep in deps):
-                if record_name not in llvm_pkgs:
-                    _relax_exact(fn, record, llvm, max_pin="x.x")
-                else:
-                    _relax_exact(fn, record, llvm, max_pin="x.x.x")
-
-        if any(dep.startswith("pari >=2.13.2") for dep in deps) and record.get('timestamp', 0) < 1625642169000:
-            record["depends"].append("pari * *_single")
-
-        # patch out bad numba for ngmix
-        if (
-            record_name == "ngmix"
-            and not any(
-                ("!=0.54.0" in dp and "numba" in dp)
-                for dp in record.get("depends", [])
-            )
-        ):
-            deps = record.get("depends", [])
-            deps.append("numba !=0.54.0")
-            record["depends"] = deps
-
-        if (record_name, record["version"], record["build"]) == ("jax", "0.4.14", "pyhd8ed1ab_0"):
-            deps = record.get("depends", [])
-            _replace_pin("python >=3.8", "python >=3.9", deps, record)
-
-        if record_name == "jaxtyping":
-            deps = record.get("depends", [])
-            if (record["version"], record["build"]) == ("0.2.20", "pyhd8ed1ab_0"):
-                _replace_pin("python >=3.7", "python >=3.9", deps, record)
-            if (record["version"], record["build"]) in (
-                ("0.2.19", "pyhd8ed1ab_0"),
-                ("0.2.18", "pyhd8ed1ab_0"),
-                ("0.2.15", "pyhd8ed1ab_0"),
-                ("0.2.14", "pyhd8ed1ab_0"),
-                ("0.2.13", "pyhd8ed1ab_0"),
-            ):
-                _replace_pin("python >=3.7", "python >=3.8", deps, record)
-
-        # Patch bokeh version restrictions on older panels.
-        if record_name == "panel":
-            deps = record.get("depends", [])
-            bokeh_dep = None
-            if record["version"] in ["0.1.2", "0.1.3"]:
-                bokeh_dep = "bokeh ==0.12.15"
-            elif record["version"] in ["0.3.1", "0.4.0"]:
-                bokeh_dep = "bokeh >=1.0.0,<1.1.0"
-            elif record["version"] in ["0.5.1", "0.6.0"]:
-                bokeh_dep = "bokeh >=1.1.0,<1.2.0"
-            elif record["version"] in ["0.6.2", "0.6.3", "0.6.4"]:
-                bokeh_dep = "bokeh >=1.3.0,<1.4.0"
-            elif record["version"] in ["0.7.0"]:
-                bokeh_dep = "bokeh >=1.4.0,<1.5.0"
-            elif record["version"] in ["0.9.1", "0.9.2", "0.9.3", "0.9.4", "0.9.5"]:
-                bokeh_dep = "bokeh >=2.0,<2.1"
-            elif record["version"] in ["0.9.6", "0.9.7"]:
-                bokeh_dep = "bokeh >=2.1,<2.2"
-            elif record["version"] in ["0.10.0", "0.10.1", "0.10.2", "0.10.3"]:
-                bokeh_dep = "bokeh >=2.2,<2.3"
-            if bokeh_dep:
-                deps = record.get("depends", [])
-                ind = [deps.index(dep) for dep in deps if dep.startswith("bokeh")]
-                if len(ind) == 1:
-                    deps[ind[0]] = bokeh_dep
-                else:
-                    deps.append(bokeh_dep)
-                record["depends"] = deps
 
         # fix only packages built before the run_exports was corrected.
         if any(dep == "libflang" or dep.startswith("libflang >=5.0.0") for dep in deps) and record.get('timestamp', 0) < 1611789153000:
@@ -960,34 +694,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             new_depends.append("libgcc-ng <=9.3.0")
             record["depends"] = new_depends
 
-        # setuptools started raising a warning when using `LooseVersion` from distutils
-        # since packages don't tend to pin setuptools, this raises warnings in old versions
-        # https://github.com/conda-forge/conda-forge.github.io/issues/1575
-        if (
-            record_name in ["pandas", "distributed", "dask-core"]
-            and record.get("timestamp", 0) < 1640101398654  # 2021-12-21
-        ):
-            new_depends = record.get("depends", [])
-            if "setuptools" in new_depends:
-                i = new_depends.index("setuptools")
-                new_depends[i] = "setuptools <60.0.0"
-            else:
-                new_depends.append("setuptools <60.0.0")
-            record["depends"] = new_depends
-
-        # Fix numcodecs min pin to 0.10.0 for zarr 2.13.2
-        if (
-            record_name in "zarr"
-            and (
-                parse_version(record["version"])
-                == parse_version("2.13.2")
-            )
-        ):
-            record["depends"] = [
-                "numcodecs >=0.10.0" if dep == "numcodecs >=0.6.4" else dep
-                for dep in record.get("depends", [])
-            ]
-
         # old CDTs with the conda_cos6 or conda_cos7 name in the sysroot need to
         # conflict with the new CDT and compiler packages
         # all of the new CDTs and compilers depend on the sysroot_{subdir} packages
@@ -1015,22 +721,285 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 new_constrains.append("sysroot_" + sys_subdir + " ==99999999999")
                 record["constrains"] = new_constrains
 
-        # make sure pybind11 and pybind11-global have run constraints on
-        # the abi metapackage
-        # see https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/104  # noqa
+        llvm_pkgs = ["libclang", "clang", "clang-tools", "llvm", "llvm-tools", "llvmdev"]
+        for llvm in ["libllvm8", "libllvm9"]:
+            if any(dep.startswith(llvm) for dep in deps):
+                if record_name not in llvm_pkgs:
+                    _relax_exact(fn, record, llvm, max_pin="x.x")
+                else:
+                    _relax_exact(fn, record, llvm, max_pin="x.x.x")
+
+        # Properly depend on clangdev 5.0.0 flang* for flang 5.0
+        if record_name == "flang":
+            deps = record["depends"]
+            if record['version'] == "5.0.0":
+                deps += ["clangdev * flang*"]
+
+        # add as run_constrained for cling
         if (
-            record_name in ["pybind11", "pybind11-global"]
-            # this version has a constraint sometimes
+            record_name == "cling"
+            and record['version'] >= "0.8"
+        ):
+            record.setdefault('constrains', []).extend((
+                "gxx_linux-64 !=9.5.0",
+            ))
+
+        ############################################
+        # CUDA Ecosystem Patches
+        ############################################
+        deps = record.get("depends", ())
+        i = -1
+        with suppress(ValueError):
+            i = deps.index("cudatoolkit 11.2|11.2.*")
+        if i >= 0:
+            deps[i] = "cudatoolkit >=11.2,<12.0a0"
+
+        if record_name == "cuda-version" and record['build_number'] < 2 and record.get('timestamp', 0) < 1683211961000:
+            cuda_major_minor = ".".join(record["version"].split(".")[:2])
+            constrains = record.get('constrains', [])
+            for i, c in enumerate(constrains):
+                if c.startswith('cudatoolkit'):
+                    constrains[i] = f'cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*'
+                    break
+            else:
+                constrains.append( f'cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*' )
+            record['constrains'] = constrains
+
+        if record_name == "nccl" and 1681282800000 < record.get("timestamp", 0) < 1686034800000:
+            deps = record.get("depends", [])
+            for i in range(len(deps)):
+                dep = deps[i]
+                if dep.startswith("cudatoolkit"):
+                    spec = dep[11:]
+                    dep = f"__cuda{spec}"
+                deps[i] = dep
+
+        if record_name == "ucx" and record.get('timestamp', 0) < 1682924400000:
+            constrains = record.get('constrains', [])
+            for i, c in enumerate(constrains):
+                if c.startswith('cudatoolkit'):
+                    v = c.split()[-1]
+                    if v != '>=11.2,<12':
+                        constrains[i] = c = f'cudatoolkit {v}|{v}.*'
+            record['constrains'] = constrains
+
+        # cuTENSOR 1.3.x is binary incompatible with 1.2.x. Let's just pin exactly since
+        # it appears semantic versioning is not guaranteed.
+        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", deps, record)
+        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", record.get("constrains", []), record, target='constrains')
+
+        ############################################
+        # Custom Patches that cannot be YAML-ized
+        ############################################
+
+        # TensorFlow Probability was published with loose constraints on TensorFlow-base leading to broken dependencies.
+        # Each release actually specifies the exact version of TensorFlow and JAX that it supports, therefore we need to
+        # pin the dependencies to the exact version that was used to build the package.
+        # See also issue:
+        if (record.get("timestamp", 0) < 1676674332000) and (record_name == "tensorflow-probability"):
+            version_matrix = {
+                "0.17.0": {"tensorflow-base": ">=2.9,<2.10", "jax": ">=0.3.13,<0.4.0"},
+                "0.15.0": {"tensorflow-base": ">=2.7,<2.8", "jax": ">=0.2.21,<0.3.0"},  # actual jax minimum not mention in release notes
+                "0.14.1": {"tensorflow-base": ">=2.6,<2.7", "jax": ">=0.2.21,<0.3.0"},
+                "0.14.0": {"tensorflow-base": ">=2.6,<2.7", "jax": ">=0.2.20,<0.3.0"},
+                "0.13.0": {"tensorflow-base": ">=2.5,<2.6"},  # no JAX as it isn't mentioned anymore, is it needed to re-add?
+                "0.12.2": {"tensorflow-base": ">=2.4,<2.5"},
+                "0.12.1": {"tensorflow-base": ">=2.4,<2.5"},
+                "0.12.0": {"tensorflow-base": ">=2.4,<2.5"},
+                "0.10.1": {"tensorflow-base": ">=2.2,<2.3"},
+                "0.10.0": {"tensorflow-base": ">=2.2,<2.3"},
+                "0.8.0": {"tensorflow-base": ">=1.15,<2.1"},
+                # Older versions are TF V1, too old to bother with but restricting them to <2 s.t. the solver doesn't pick them up
+                "0.7": {"tensorflow-base": ">=1.13.1,<2"},
+                "0.6.0": {"tensorflow-base": ">=1.13.1,<2"},
+                "0.5.0": {"tensorflow-base": ">=1.11.0,<2"},
+
+            }
+            version = record["version"]
+            if version in version_matrix:
+                deps = version_matrix[version]
+                dependencies = record['depends']
+                for newdep, newrequ in deps.items():
+                    found = False
+                    for i, curdep in enumerate(dependencies):
+                        curdep_pkg = curdep.split(" ")[0]
+                        if curdep_pkg == 'tensorflow':  # remove it, will be replaced with tf-base if needed
+                            del dependencies[i]
+                        elif curdep_pkg == newdep:
+                            found = True
+                            dependencies[i] = f'{newdep} {newrequ}'
+                            # NO break, the loop needs also to make sure that all the tensorflow deps are removed.
+                    if not found:  # It wasn't in the dependencies so we add it
+                        dependencies.append(f'{newdep} {newrequ}')
+
+        if record_name == 'dask':
+            deps = record.get("depends", ())
+
+            # older versions of dask are incompatible with bokeh=3
+            # https://github.com/dask/community/issues/283#issuecomment-1295095683
+            if record.get('timestamp', 0) < 1667000131632:  # releases prior to 2022.10.1
+                bokeh_pinning = [x for x in record['depends'] if x.startswith('bokeh')]
+                if bokeh_pinning:
+                    bokeh_pinning = bokeh_pinning[0]
+                    _replace_pin(
+                        bokeh_pinning,
+                        bokeh_pinning + (",<3" if bokeh_pinning[-1].isdigit() else " <3"),
+                        deps,
+                        record
+                    )
+
+            # older versions of dask are incompatible with pandas=2
+            if record.get('timestamp', 0) < 1676063992630:  # releases prior to 2023.2.0
+                pandas_pinning = [x for x in record['depends'] if x.startswith('pandas')]
+                if pandas_pinning:
+                    pandas_pinning = pandas_pinning[0]
+                    _replace_pin(
+                        pandas_pinning,
+                        pandas_pinning + (",<2" if pandas_pinning[-1].isdigit() else " <2"),
+                        deps,
+                        record
+                    )
+
+        if record_name in {"distributed", "dask"}:
+            version = parse_version(record["version"])
+            if (
+                version >= parse_version("2021.12.0") and
+                version < parse_version("2022.8.0") or
+                version == parse_version("2022.8.0") and
+                record["build_number"] < 2
+            ):
+                for dep in record["depends"]:
+                    if dep.startswith("dask-core") or dep.startswith("distributed"):
+                        pkg = dep.split()[0]
+                        major_minor_patch = record["version"].split(".")
+                        major_minor_patch[2] = str(int(major_minor_patch[2]) + 1)
+                        next_patch_version = ".".join(major_minor_patch)
+                        _replace_pin(
+                            dep, f"{pkg} >={version},<{next_patch_version}.0a0", record["depends"], record
+                        )
+
+        deps = record.get("depends", ())
+        if (
+            record_name in {"slepc", "petsc4py", "slepc4py"}
+            and record.get("timestamp", 0) < 1657407373000
+            and record.get("version").startswith("3.17.")
+        ):
+            # rename scalar pins to workaround conda bug #11612
+            for dep in list(deps):
+                dep_name, *version_build = dep.split()
+                if dep_name not in {"petsc", "slepc", "petsc4py"}:
+                    continue
+                if len(version_build) < 2:
+                    # version only, no build pin
+                    continue
+                version_pin, build_pin = version_build[:2]
+                for scalar in ("real", "complex"):
+                    old_build = f"*{scalar}*"
+                    if build_pin == f"*{scalar}*":
+                        new_build = f"{scalar}_*"
+                        new_dep = f"{dep_name} {version_pin} {new_build}"
+                        _replace_pin(dep, new_dep, deps, record)
+
+        # FIXME: this one is buggy
+        if record.get('timestamp', 0) < 1663795137000:
+            if any(dep.startswith("pango >=5.2") for dep in deps):
+                _pin_looser(fn, record, "xz", max_pin="x")
+
+        _relax_libssh2_1_x_pinning(fn, record)
+
+        # this doesn't seem to match the _pin_looser or _pin_stricter patterns
+        # nor _replace_pin
+        if record_name == "jedi" and record.get("timestamp", 0) < 1592619891258:
+            for i, dep in enumerate(record["depends"]):
+                if dep.startswith("parso") and "<" not in dep:
+                    _dep_parts = dep.split(" ")
+                    _dep_parts[1] = _dep_parts[1] + ",<0.8.0"
+                    record["depends"][i] = " ".join(_dep_parts)
+
+        # FIXME: disable patching-out blas_openblas feature
+        # because hotfixes are not applied to gcc7 label
+        # causing inconsistent behavior
+        # if (record_name == "blas" and
+        #         record["track_features"] == "blas_openblas"):
+        #     instructions["packages"][fn]["track_features"] = None
+        # if "features" in record:
+            # if "blas_openblas" in record["features"]:
+            #     # remove blas_openblas feature
+            #     instructions["packages"][fn]["features"] = _extract_feature(
+            #         record, "blas_openblas")
+            #     if not any(d.startswith("blas ") for d in record["depends"]):
+            #         depends = record['depends']
+            #         depends.append("blas 1.* openblas")
+            #         instructions["packages"][fn]["depends"] = depends
+
+        # remove features for openjdk and rb2
+        if ("track_features" in record and
+                record['track_features'] is not None):
+            for feat in record["track_features"].split():
+                if feat.startswith("openjdk"):
+                    record["track_features"] = _extract_track_feature(
+                        record, feat)
+
+        # Patch bokeh version restrictions on older panels.
+        if record_name == "panel":
+            deps = record.get("depends", [])
+            bokeh_dep = None
+            if record["version"] in ["0.1.2", "0.1.3"]:
+                bokeh_dep = "bokeh ==0.12.15"
+            elif record["version"] in ["0.3.1", "0.4.0"]:
+                bokeh_dep = "bokeh >=1.0.0,<1.1.0"
+            elif record["version"] in ["0.5.1", "0.6.0"]:
+                bokeh_dep = "bokeh >=1.1.0,<1.2.0"
+            elif record["version"] in ["0.6.2", "0.6.3", "0.6.4"]:
+                bokeh_dep = "bokeh >=1.3.0,<1.4.0"
+            elif record["version"] in ["0.7.0"]:
+                bokeh_dep = "bokeh >=1.4.0,<1.5.0"
+            elif record["version"] in ["0.9.1", "0.9.2", "0.9.3", "0.9.4", "0.9.5"]:
+                bokeh_dep = "bokeh >=2.0,<2.1"
+            elif record["version"] in ["0.9.6", "0.9.7"]:
+                bokeh_dep = "bokeh >=2.1,<2.2"
+            elif record["version"] in ["0.10.0", "0.10.1", "0.10.2", "0.10.3"]:
+                bokeh_dep = "bokeh >=2.2,<2.3"
+            if bokeh_dep:
+                deps = record.get("depends", [])
+                ind = [deps.index(dep) for dep in deps if dep.startswith("bokeh")]
+                if len(ind) == 1:
+                    deps[ind[0]] = bokeh_dep
+                else:
+                    deps.append(bokeh_dep)
+                record["depends"] = deps
+
+        # setuptools started raising a warning when using `LooseVersion` from distutils
+        # since packages don't tend to pin setuptools, this raises warnings in old versions
+        # https://github.com/conda-forge/conda-forge.github.io/issues/1575
+        if (
+            record_name in ["pandas", "distributed", "dask-core"]
+            and record.get("timestamp", 0) < 1640101398654  # 2021-12-21
+        ):
+            new_depends = record.get("depends", [])
+            if "setuptools" in new_depends:
+                i = new_depends.index("setuptools")
+                new_depends[i] = "setuptools <60.0.0"
+            else:
+                new_depends.append("setuptools <60.0.0")
+            record["depends"] = new_depends
+
+        ############################################
+        # Patches that still need to be YAML-ized
+        ############################################
+
+        # Fix numcodecs min pin to 0.10.0 for zarr 2.13.2
+        if (
+            record_name in "zarr"
             and (
                 parse_version(record["version"])
-                <= parse_version("2.6.1")
-            )
-            and not any(
-                c.startswith("pybind11-abi ")
-                for c in record.get("constrains", [])
+                == parse_version("2.13.2")
             )
         ):
-            _add_pybind11_abi_constraint(fn, record)
+            record["depends"] = [
+                "numcodecs >=0.10.0" if dep == "numcodecs >=0.6.4" else dep
+                for dep in record.get("depends", [])
+            ]
 
         if record_name == "pytorch":  #  and record.get("timestamp", 0) < 1653777188:
             pversion = parse_version(record['version'])
@@ -1470,13 +1439,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _replace_pin("python", "python <3.11", deps, record)
                 _replace_pin("python >=3.6", "python >=3.6,<3.11", deps, record)
 
-        # Properly depend on clangdev 5.0.0 flang* for flang 5.0
-        if record_name == "flang":
-            deps = record["depends"]
-            if  record['version'] == "5.0.0":
-                deps += ["clangdev * flang*"]
-
-
         if record_name == "tsnecuda":
             # These have dependencies like
             # - libfaiss * *_cuda
@@ -1508,24 +1470,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _replace_pin("pydantic >=1.7.3", "pydantic >=1.7.3,<1.8.0", record.get("depends", []), record)
                 _replace_pin("pydantic >=1.8.1", "pydantic >=1.8.1,<2.0a0", record.get("depends", []), record)
                 _replace_pin("pydantic >=1.9.0", "pydantic >=1.9.0,<2.0a0", record.get("depends", []), record)
-
-        # replace =2.7 with ==2.7.* for compatibility with older conda
-        new_deps = []
-        changed = False
-        for dep in record.get("depends", []):
-            dep_split = dep.split(" ")
-            if len(dep_split) == 2 and dep_split[1].startswith("=") and not dep_split[1].startswith("=="):
-                split_or = dep_split[1].split("|")
-                split_or[0] = "=" + split_or[0] + ".*"
-                new_dep = dep_split[0] + " " + "|".join(split_or)
-                changed = True
-            else:
-                new_dep = dep
-            new_deps.append(new_dep)
-        if changed:
-            record["depends"] = new_deps
-        del new_deps
-        del changed
 
         if record_name == "conda-forge-ci-setup" and record.get('timestamp', 0) < 1638899810000:
             constrains = record.get("constrains", [])
@@ -2236,15 +2180,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 or parse_version(record["version"]) == parse_version("0.37.1"))
                 ):
             _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
-
-        # add  as run_constrained for cling
-        if (
-            record_name == "cling"
-            and record['version'] >= "0.8"
-        ):
-            record.setdefault('constrains', []).extend((
-                "gxx_linux-64 !=9.5.0",
-            ))
 
         # `python-slugify` clobbers these other, unmaintained `slugify`s in lib and bin
         if record_name == "python-slugify":

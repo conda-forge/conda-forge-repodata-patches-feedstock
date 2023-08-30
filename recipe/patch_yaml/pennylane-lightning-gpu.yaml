@@ -1,0 +1,19 @@
+# from this snippet
+# pennylane-lightning-gpu 0.29.0 requires pennylane>=0.28.0, but build 0 left it unspecified,
+# fixed in https://github.com/conda-forge/pennylane-lightning-gpu-feedstock/pull/2
+# if (
+#     record_name == "pennylane-lightning-gpu" and
+#     record["version"] == "0.29.0" and
+#     record['build_number'] == 0 and
+#     record.get("timestamp", 0) < 1680553268000
+# ):
+#     _replace_pin("pennylane", "pennylane >=0.28.0", record["depends"], record)
+if:
+  name: pennylane-lightning-gpu
+  version: 0.29.0
+  build_number: 0
+  timestamp_lt: 1680553268000
+then:
+  - replace_depends:
+      old: pennylane
+      new: pennylane >=0.28.0
