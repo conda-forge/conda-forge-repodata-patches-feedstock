@@ -377,7 +377,13 @@ def test_schema_up_to_date():
 
 
 def test_schema_validation():
+    passed = True
     data = Path(__file__).parent / "patch_yaml"
     for document in data.glob("*.yaml"):
         for patch in yaml.safe_load_all(document.read_text()):
-            PatchYaml(**patch)
+            try:
+                PatchYaml(**patch)
+            except Exception as e:
+                print(f"\nSchema error in {document.name}: {e}")
+                passed = False
+    assert passed, "schema validation failed!"

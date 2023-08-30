@@ -100,7 +100,6 @@ def _maybe_process_template(value, record, subdir):
 
 
 def _test_patch_yaml(patch_yaml, record, subdir, fn):
-    _IfClause.model_validate(patch_yaml["if"])
     keep = True
     for k, v in patch_yaml["if"].items():
         if k.startswith("not_"):
@@ -306,7 +305,6 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
 
 def _apply_patch_yaml(patch_yaml, record, subdir, fn):
     for inst in patch_yaml["then"]:
-        _ThenClauseItem.model_validate(inst)
         for k, v in inst.items():
             if k.startswith("add_") and k[len("add_") :] in ["depends", "constrains"]:
                 subk = k[len("add_") :]
@@ -427,7 +425,6 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
 def patch_yaml_edit_index(index, subdir):
     for fn, record in index.items():
         for patch_yaml in ALL_YAMLS:
-            PatchYaml.model_validate(patch_yaml)
             if _test_patch_yaml(patch_yaml, record, subdir, fn):
                 _apply_patch_yaml(patch_yaml, record, subdir, fn)
 
