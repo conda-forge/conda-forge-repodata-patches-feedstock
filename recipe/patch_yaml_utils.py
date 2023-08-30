@@ -9,6 +9,8 @@ from functools import lru_cache
 
 ALLOWED_TEMPLATE_KEYS = ["name", "version", "build_number", "subdir"]
 
+from patch_yaml_model import PatchYaml, _IfClause, _ThenClauseItem  # noqa
+
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
 ALL_YAMLS = []
@@ -339,7 +341,7 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 elif not depends and subk in record:
                     del record[subk]
 
-            elif k == "remove_track_feature":
+            elif k == "remove_track_features":
                 if not isinstance(v, list):
                     v = [v]
                 for _v in v:

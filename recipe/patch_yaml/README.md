@@ -72,7 +72,7 @@ then:
   - remove_<depends or constrains>: <list of str or single str>
 
   # remove entries from track_features
-  - remove_track_feature: <list of str or str>
+  - remove_track_features: <list of str or str>
 
   # replace entries via an exact match in either the depends or constrains sections
   - replace_<depends or constrains>:
