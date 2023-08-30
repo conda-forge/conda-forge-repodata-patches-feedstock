@@ -7,11 +7,9 @@ import fnmatch as _fnmatch
 import re
 from functools import lru_cache
 
-# fmt: off
 ALLOWED_TEMPLATE_KEYS = ["name", "version", "build_number", "subdir"]
 
-from patch_yaml_model import PatchYaml, _IfClause, _ThenClauseItem
-# fmt: on
+from patch_yaml_model import PatchYaml, _IfClause, _ThenClauseItem  # noqa
 
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
