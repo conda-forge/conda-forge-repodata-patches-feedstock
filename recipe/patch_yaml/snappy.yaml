@@ -1,0 +1,8 @@
+# from this snippet
+# _replace_pin('snappy >=1.1.7,<1.1.8.0a0', 'snappy >=1.1.7,<2.0.0.0a0', deps, record)
+if:
+  name: "*"
+then:
+  - replace_depends:
+      old: snappy >=1.1.7,<1.1.8.0a0
+      new: snappy >=1.1.7,<2.0.0.0a0
