@@ -95,7 +95,7 @@ class _IfClause(_ForbidExtra):
         if negate:
             descr = f"Negated condition: {descr}"
         exec(f'{key_name}: {type_hint} = Field(None, description="{descr}")')
-    del key_name, key, type_hint, op, descr
+    del negate, key_name, key, type_hint, op, descr
 
     has_depends: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
