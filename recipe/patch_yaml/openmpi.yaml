@@ -1,0 +1,10 @@
+# from this snippet
+# We pin MPI packages loosely so as to rely on their ABI compatibility
+# if any(dep.startswith("openmpi >=4.0") for dep in deps):
+#     _pin_looser(fn, record, "openmpi", upper_bound="5.0")
+if:
+  has_depends: openmpi >=4.0*
+then:
+  - loosen_depends:
+      name: openmpi
+      upper_bound: "5.0"

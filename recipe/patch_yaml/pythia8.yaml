@@ -1,0 +1,12 @@
+# from this snippet
+# Filter by timestamp as pythia8 also contains python bindings that shouldn't be pinned
+# if 'pythia8' in deps and record.get('timestamp', 0) < 1584264455759:
+#     i = record['depends'].index('pythia8')
+#     record['depends'][i] = 'pythia8 >=8.240,<8.300.0a0'
+if:
+  has_depends: pythia8
+  timestamp_lt: 1584264455759
+then:
+  - replace_depends:
+      old: pythia8
+      new: pythia8 >=8.240,<8.300.0a0

@@ -1,0 +1,43 @@
+# from this snippet
+# TBB 2021 (oneTBB 2021) is incompatible with previous releases.
+# if has_dep(record, "tbb") and record.get('timestamp', 0) < 1614809400000:
+#     for i, dep in enumerate(deps):
+#         if dep == "tbb" or any(dep.startswith(f"tbb >={i}") for i in range(2017, 2021))
+#             or dep.startswith("tbb >=4.4"):
+#             deps.append("tbb <2021.0.0a0")
+#             break
+if:
+  has_depends: tbb
+  timestamp_lt: 1614809400000
+then:
+  - add_depends: tbb <2021.0.0a0
+---
+if:
+  has_depends: tbb >=2017*
+  timestamp_lt: 1614809400000
+then:
+  - add_depends: tbb <2021.0.0a0
+---
+if:
+  has_depends: tbb >=2018*
+  timestamp_lt: 1614809400000
+then:
+  - add_depends: tbb <2021.0.0a0
+---
+if:
+  has_depends: tbb >=2019*
+  timestamp_lt: 1614809400000
+then:
+  - add_depends: tbb <2021.0.0a0
+---
+if:
+  has_depends: tbb >=2020*
+  timestamp_lt: 1614809400000
+then:
+  - add_depends: tbb <2021.0.0a0
+---
+if:
+  has_depends: tbb >=4.4*
+  timestamp_lt: 1614809400000
+then:
+  - add_depends: tbb <2021.0.0a0
