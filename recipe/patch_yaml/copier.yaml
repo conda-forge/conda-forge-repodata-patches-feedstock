@@ -1,0 +1,16 @@
+# from this bit of code
+# copier <8.0.? not compatible with pydantic>=2
+# if record_name == "copier" and record.get("timestamp", 0) <= 1688310318000:
+#     for old_pin in ["pydantic >=1.10.2", "pydantic >=1.9.0"]:
+#         if old_pin in record["depends"]:
+#             _replace_pin(old_pin, f"{old_pin},<2", deps, record)
+if:
+  name: copier
+  timestamp_lt: 1688310318000
+then:
+  - replace_depends:
+      old: pydantic >=1.10.2
+      new: pydantic >=1.10.2,<2
+  - replace_depends:
+      old: pydantic >=1.9.0
+      new: pydantic >=1.9.0,<2

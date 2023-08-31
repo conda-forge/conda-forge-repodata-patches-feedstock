@@ -1,0 +1,22 @@
+# from this code snippet
+# Retroactively pin Python <3.11 for older versions of Agate since they
+# import collections.Sequence instead of collections.abc.Sequence.
+# Upstream fix: <https://github.com/wireservice/agate/pull/737>
+# if record_name == "agate" and subdir == "noarch" and record.get("timestamp", 0) < 1683708375000:
+#     pversion = parse_version(record['version'])
+#     fixed_version = parse_version("1.6.3")
+#     if pversion < fixed_version:
+#         _replace_pin("python", "python <3.11", deps, record)
+#         _replace_pin("python >=3.6", "python >=3.6,<3.11", deps, record)
+if:
+  name: agate
+  subdir_in: noarch
+  timestamp_lt: 1683708375000
+  version_lt: 1.6.3
+then:
+  - replace_depends:
+      old: python
+      new: python <3.11
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.6,<3.11

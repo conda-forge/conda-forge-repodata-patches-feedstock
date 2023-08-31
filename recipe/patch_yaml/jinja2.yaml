@@ -1,0 +1,70 @@
+# from this bit of code
+# jinja2 >=2.9,<3 (meaning 2.9.x, 2.10.x and 2.11.x) have known
+# incompatibilities with markupsafe >=2.1 and we are constraining
+# markupsafe <2 to be on the safe side
+# https://github.com/pallets/jinja/issues/1585
+# The constrain was added in 2.11.3 build 1 so we don't want builds
+# after that.
+# version = record["version"]
+# build = record["build_number"]
+# if record_name == "jinja2" and \
+#         (version.startswith(('2.9.', '2.10.')) or
+#           version in ('2.10', '2.11.0', '2.11.1', '2.11.2') or
+#           (version == '2.11.3' and build == 0)):
+#     markupsafe = 'markupsafe >=0.23'
+#     if markupsafe in record['depends']:
+#         i = record['depends'].index(markupsafe)
+#         record['depends'][i] = 'markupsafe >=0.23,<2'
+if:
+  name: jinja2
+  version: 2.9.*
+  has_depends: markupsafe >=0.23
+then:
+  - replace_depends:
+      old: markupsafe >=0.23
+      new: markupsafe >=0.23,<2
+---
+if:
+  name: jinja2
+  version: 2.10.*
+  has_depends: markupsafe >=0.23
+then:
+  - replace_depends:
+      old: markupsafe >=0.23
+      new: markupsafe >=0.23,<2
+---
+if:
+  name: jinja2
+  version_in: ["2.10", "2.11.0", "2.11.1", "2.11.2"]
+  has_depends: markupsafe >=0.23
+then:
+  - replace_depends:
+      old: markupsafe >=0.23
+      new: markupsafe >=0.23,<2
+---
+if:
+  name: jinja2
+  version: 2.11.3
+  build_number: 0
+  has_depends: markupsafe >=0.23
+then:
+  - replace_depends:
+      old: markupsafe >=0.23
+      new: markupsafe >=0.23,<2
+---
+# patch for markupsafe appears here since closely related to jinja2 one
+# To complement the above, markupsafe introduced a run constraint to
+# only accept jinja2>=3 with markupsafe >=2.1. However, this constraint
+# is missing from the build 0 of markupsafe 2.1.0 so one could still
+# install markupsafe 2.1.0 from conda-forge and jinja2 from defaults.
+# We add that run constraint to the build that was missing it.
+# if record_name == "markupsafe" and \
+#     parse_version(record["version"]) == parse_version("2.1.0") and \
+#     not any("jinja2" in constraint for constraint in record.get("constrains", [])):
+#     record["constrains"] = record.get("constrains", []) + ["jinja2 >=3"]
+if:
+  name: markupsafe
+  version: 2.1.0
+  not_has_constrains: jinja2*
+then:
+  - add_constrains: jinja2 >=3

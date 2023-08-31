@@ -1,0 +1,14 @@
+# from this snippet
+# Old versions of Gazebo depend on boost-cpp >= 1.71,
+# but they are actually incompatible with any boost-cpp >= 1.72
+# https://github.com/conda-forge/gazebo-feedstock/issues/52
+# if (record_name == "gazebo" and
+#         record.get('timestamp', 0) < 1583200976700):
+#     _replace_pin('boost-cpp >=1.71', 'boost-cpp >=1.71.0,<1.71.1.0a0', deps, record)
+if:
+  name: gazebo
+  timestamp_lt: 1583200976700
+then:
+  - replace_depends:
+      old: boost-cpp >=1.71
+      new: boost-cpp >=1.71.0,<1.71.1.0a0

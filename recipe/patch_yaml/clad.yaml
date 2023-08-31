@@ -1,0 +1,13 @@
+# from this bit of code
+# Only some build of clad work with cling, if there isn't a constraint mark it as conflicting
+# if record_name == "clad":
+#     new_constrains = record.get('constrains', [])
+#     if all("cling " not in x for x in new_constrains):
+#         new_constrains.append("cling ==99999999999")
+#     record["constrains"] = new_constrains
+if:
+  name: clad
+  not_has_constrains: cling *
+then:
+  - add_constrains:
+      - cling ==99999999999

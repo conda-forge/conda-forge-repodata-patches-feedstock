@@ -1,0 +1,17 @@
+# from this bit of code
+# Fix gmt 6.4.0 builds 3, 4, 5 which didn't properly set GDAL 3.6 pin
+# See issue at https://github.com/GenericMappingTools/pygmt/issues/2215
+# if (
+#     record_name == "gmt"
+#     and record["version"] == "6.4.0"
+#     and record["build_number"] in [3, 4, 5]
+# ):
+#     _replace_pin("gdal", "gdal >=3.6.0,<3.7.0a0", record["depends"], record)
+if:
+  name: gmt
+  version: 6.4.0
+  build_number_in: [3, 4, 5]
+then:
+  - replace_depends:
+      old: gdal
+      new: gdal >=3.6.0,<3.7.0a0

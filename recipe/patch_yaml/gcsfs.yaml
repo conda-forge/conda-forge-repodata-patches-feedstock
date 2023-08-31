@@ -1,0 +1,17 @@
+# from this bit of code
+# Version constraints for fsspec in gcsfs 0.8.0 build 0 were incorrect.
+# These have been corrected in PR
+# https://github.com/conda-forge/gcsfs-feedstock/pull/32
+# if (record_name == "gcsfs" and
+#         record["version"] == "0.8.0" and
+#         "fsspec >=0.8.0" in record["depends"]):
+#     i = record["depends"].index("fsspec >=0.8.0")
+#     record["depends"][i] = "fsspec >=0.9.0,<0.10.0"
+if:
+  name: gcsfs
+  version: 0.8.0
+  has_depends: fsspec >=0.8.0
+then:
+  - replace_depends:
+      old: fsspec >=0.8.0
+      new: fsspec >=0.9.0,<0.10.0

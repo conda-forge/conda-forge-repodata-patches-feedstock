@@ -1,0 +1,12 @@
+# from this bit of code
+# Retroactively pin a max version of matplotlib for mapgenerator 1.0.5
+# if record_name == "mapgenerator" and record["version"] == "1.0.5" and record["build_number"] < 1:
+#     _replace_pin("matplotlib-base", "matplotlib-base <3.6", record["depends"], record)
+if:
+  name: mapgenerator
+  version: "1.0.5"
+  build_number_lt: 1
+then:
+  - replace_depends:
+      old: matplotlib-base
+      new: matplotlib-base <3.6

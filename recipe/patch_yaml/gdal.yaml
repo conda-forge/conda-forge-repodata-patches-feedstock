@@ -1,0 +1,31 @@
+# from this bit of code
+# if (record_name == "libgdal"
+#     and subdir == "linux-64"
+#     and record["version"] == "3.4.1"
+#     and record["build_number"] == 3):
+#     record["depends"].insert(0, "__glibc >=2.17,<3.0.a0")
+if:
+  name: libgdal
+  subdir_in: linux-64
+  version: 3.4.1
+  build_number: 3
+then:
+  - add_depends: __glibc >=2.17,<3.0.a0
+---
+# from this bit of code
+# if (record_name == "libgdal" and record["version"] == "3.5.2"
+#         and record["build_number"] == 4):
+#     new_deps = []
+#     for dep in record["depends"]:
+#         if dep == "tiledb >=2.11,<3.0a0":
+#             dep = "tiledb >=2.11.3,<2.12.0a0"
+#         new_deps.append(dep)
+#     record["depends"] = new_deps
+if:
+  name: libgdal
+  version: 3.5.2
+  build_number: 4
+then:
+  - replace_depends:
+      old: tiledb >=2.11,<3.0a0
+      new: tiledb >=2.11.3,<2.12.0a0
