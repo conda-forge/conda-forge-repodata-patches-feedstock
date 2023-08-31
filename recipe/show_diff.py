@@ -5,9 +5,11 @@ import difflib
 import json
 import os
 import urllib
+import subprocess
 from concurrent.futures import ProcessPoolExecutor
 
 
+from test_patch_yaml_utils import test_schema_validation
 from gen_patch_json import _gen_new_index, _gen_patch_instructions, SUBDIRS
 
 from conda_build.index import _apply_instructions
@@ -111,6 +113,14 @@ if __name__ == "__main__":
         subdirs = SUBDIRS
     else:
         subdirs = args.subdirs
+
+    test_schema_validation()
+    subprocess.run(
+        "yamllint patch_yaml/*.yaml",
+        shell=True,
+        check=True,
+        cwd=os.path.dirname(os.path.abspath(__file__)),
+    )
 
     with ProcessPoolExecutor() as exc:
         futs = [

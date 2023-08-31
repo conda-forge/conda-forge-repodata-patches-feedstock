@@ -61,4 +61,3 @@ then:
   - replace_depends:
       old: py-tools-ds >=0.15.10
       new: py-tools-ds >=0.15.10,<=0.15.11
-

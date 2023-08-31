@@ -25,7 +25,8 @@ then:
 #         if d == "pandas":
 #             _replace_pin("pandas", "pandas <2.0a", deps, record)
 #             break
-#         elif d in ["pandas >=1.3", "pandas >=1.2", "pandas >=1.1", "pandas >=1.0", "pandas >=0.25", "pandas >=0.24", "pandas >=0.18", "pandas >=0.19.2"]:
+#         elif d in ["pandas >=1.3", "pandas >=1.2", "pandas >=1.1", "pandas >=1.0",
+#                    "pandas >=0.25", "pandas >=0.24", "pandas >=0.18", "pandas >=0.19.2"]:
 #             _replace_pin(d, d + ",<2a0", deps, record)
 #             break
 if:
