@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../patch_yaml_model.json
-# if record_name == "conda-build":    
+# if record_name == "conda-build":
 #     # conda-build 3.26.x requires conda 23.7.x
 #     if record["version"] in ("3.26.0", "3.26.1") and record.get("timestamp", 0) <= 16935094895456:  
 #         _replace_pin("conda >=4.13", "conda >=23.7.3", record["depends"], record)
