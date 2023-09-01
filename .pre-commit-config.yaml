@@ -1,0 +1,22 @@
+repos:
+- repo: https://github.com/pycqa/flake8
+  rev: 6.1.0
+  hooks:
+    - id: flake8
+      files: recipe\/patch_yaml_.*\.py|recipe\/test_.*\.py
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.0.286
+  hooks:
+    - id: ruff
+      args: [--fix, --exit-non-zero-on-fix]
+      files: recipe\/patch_yaml_.*\.py|recipe\/test_.*\.py
+- repo: https://github.com/psf/black
+  rev: 23.7.0
+  hooks:
+    - id: black
+      files: recipe\/patch_yaml_.*\.py|recipe\/test_.*\.py
+- repo: https://github.com/adrienverge/yamllint.git
+  rev: v1.29.0
+  hooks:
+    - id: yamllint
+      files: recipe\/patch_yaml\/.*\.yaml
