@@ -1,0 +1,11 @@
+# from this bit of code
+# auto-sklear needs to depend on the full dask.
+# https://github.com/automl/auto-sklearn/issues/1256
+# if record_name == "auto-sklearn":
+#     _rename_dependency(fn, record, "dask-core", "dask")
+if:
+  name: "auto-sklearn"
+then:
+  - rename_depends:
+      old: dask-core
+      new: dask

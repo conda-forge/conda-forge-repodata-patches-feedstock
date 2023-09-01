@@ -1,0 +1,64 @@
+# from this bit of code
+# Version constraints for dependencies in jupyter_events 0.5.0_0
+# were insufficient.
+# These have been corrected in PR
+# https://github.com/conda-forge/jupyter_events-feedstock/pull/6
+# if (record_name == "jupyter_events" and record["version"] == "0.5.0"
+#     and record["build_number"] == 0):
+#     if "jsonschema" in record["depends"]:
+#         i = record["depends"].index("jsonschema")
+#         record["depends"][i] = "jsonschema >=4.3"
+#     if "python-json-logger" in record["depends"]:
+#         i = record["depends"].index("python-json-logger")
+#         record["depends"][i] = "python-json-logger >=2.0.4"
+#     if "traitlets" in record["depends"]:
+#         i = record["depends"].index("traitlets")
+#         record["depends"][i] = "traitlets >=5.3"
+#     if "pyyaml" in record["depends"]:
+#         i = record["depends"].index("pyyaml")
+#         record["depends"][i] = "pyyaml >=6.0"
+if:
+  name: jupyter_events
+  version: 0.5.0
+  build_number: 0
+then:
+  - replace_depends:
+      old: jsonschema
+      new: jsonschema >=4.3
+  - replace_depends:
+      old: python-json-logger
+      new: python-json-logger >=2.0.4
+  - replace_depends:
+      old: traitlets
+      new: traitlets >=5.3
+  - replace_depends:
+      old: pyyaml
+      new: pyyaml >=6.0
+---
+# from this bit of code
+# jupyter_events 0.7.0_*_(0|1) went out with missing deps and pins
+# if record_name == "jupyter_events" and record.get("timestamp", 0) < 1691759541000:
+#     version = parse_version(record["version"])
+#     if version == parse_version("0.7.0"):
+#         if "jsonschema-with-format-nongpl >=3.2" in record["depends"]:
+#             i = record["depends"].index("jsonschema-with-format-nongpl >=3.2")
+#             record["depends"][i] = "jsonschema-with-format-nongpl >=4.18.0"
+#         if "referencing" not in record["depends"]:
+#             record["depends"] += ["referencing"]
+if:
+  name: jupyter_events
+  timestamp_lt: 1691759541000
+  version: 0.7.0
+then:
+  - replace_depends:
+      old: jsonschema-with-format-nongpl >=3.2
+      new: jsonschema-with-format-nongpl >=4.18.0
+---
+# from the same bit of code as the one above
+if:
+  name: jupyter_events
+  timestamp_lt: 1691759541000
+  version: 0.7.0
+  not_has_depends: referencing
+then:
+  - add_depends: referencing

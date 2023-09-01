@@ -1,0 +1,20 @@
+# from this code snuppet
+# Fix depends for pytest-flake8-1.1.1 https://github.com/conda-forge/pytest-flake8-feedstock/pull/21
+# if record_name == "pytest-flake8" and record["version"] == "1.1.1" and record["build_number"] == 0:
+#     _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
+#     _replace_pin("flake8 >=3.5", "flake8 >=4.0", record["depends"], record)
+#     _replace_pin("pytest >=3.5", "pytest >=7.0", record["depends"], record)
+if:
+  name: pytest-flake8
+  version: 1.1.1
+  build_number: 0
+then:
+  - replace_depends:
+      old: python >=3.5
+      new: python >=3.7
+  - replace_depends:
+      old: flake8 >=3.5
+      new: flake8 >=4.0
+  - replace_depends:
+      old: pytest >=3.5
+      new: pytest >=7.0

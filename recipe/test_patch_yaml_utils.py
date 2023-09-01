@@ -14,6 +14,14 @@ def test_test_patch_yaml_record_key():
     record = {"version": "1.0.1"}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
 
+    patch_yaml = {"if": {"version": "1.0.*"}}
+    record = {"version": "1.0.0"}
+    assert _test_patch_yaml(patch_yaml, record, None, None)
+    record = {"version": "1.0.1"}
+    assert _test_patch_yaml(patch_yaml, record, None, None)
+    record = {"version": "1.1.1"}
+    assert not _test_patch_yaml(patch_yaml, record, None, None)
+
     patch_yaml = {"if": {"not_version": "1.0.0"}}
     record = {"version": "1.0.0"}
     assert not _test_patch_yaml(patch_yaml, record, None, None)
@@ -199,6 +207,11 @@ def test_apply_patch_yaml_add(key):
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"version": 10, key: ["foo", "blah"]}
 
+    patch_yaml = {"then": [{"add_" + key: "blah"}]}
+    record = {"version": 10, key: ["foo", "blah"]}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"version": 10, key: ["foo", "blah"]}
+
 
 @pytest.mark.parametrize("rkey", ALLOWED_TEMPLATE_KEYS)
 @pytest.mark.parametrize("key", ["depends", "constrains"])
@@ -313,6 +326,18 @@ def test_apply_patch_yaml_replace_glob(key, pre, post):
     record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {key: pre + ["numpy 2.0", "numpy 2.0"] + post}
+
+
+@pytest.mark.parametrize("pre", [[], ["foo"]])
+@pytest.mark.parametrize("post", [[], ["bar"]])
+@pytest.mark.parametrize("key", ["depends", "constrains"])
+def test_apply_patch_yaml_replace_glob_template(key, pre, post):
+    patch_yaml = {
+        "then": [{"replace_" + key: {"old": "numpy 1.0*", "new": "${old},<2.0"}}]
+    }
+    record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {key: pre + ["numpy 1.0,<2.0", "numpy 1.0.1,<2.0"] + post}
 
 
 @pytest.mark.parametrize("pre", [[], ["foo"]])

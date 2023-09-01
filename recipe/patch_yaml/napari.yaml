@@ -1,0 +1,74 @@
+# from this bit of code
+# if record_name == "napari":
+#     timestamp = record.get("timestamp", 0)
+#     if timestamp < 1642529454000:  # 2022-01-18
+#         # pillow 7.1.0 and 7.1.1 break napari viewer but this wasn't dealt with til latest release
+#         _replace_pin("pillow", "pillow !=7.1.0,!=7.1.1", record.get("depends", []), record)
+if:
+  name: napari
+  timestamp_lt: 1642529454000  # 2022-01-18
+then:
+  - replace_depends:
+      old: pillow
+      new: pillow !=7.1.0,!=7.1.1
+---
+# from this bit of code
+# if record_name == "napari":
+#     timestamp = record.get("timestamp", 0)
+#     if timestamp < 1661793597230:  # 2022-08-29
+#         _replace_pin("vispy >=0.9.4", "vispy >=0.9.4,<0.10", record.get("depends", []), record)
+#         _replace_pin("vispy >=0.6.4", "vispy >=0.6.4,<0.10", record.get("depends", []), record)
+if:
+  name: napari
+  timestamp_lt: 1661793597230  # 2022-08-29
+then:
+  - replace_depends:
+      old: vispy >=0.9.4
+      new: vispy >=0.9.4,<0.10
+  - replace_depends:
+      old: vispy >=0.6.4
+      new: vispy >=0.6.4,<0.10
+---
+# from this bit of code
+# if record_name == "napari":
+#     timestamp = record.get("timestamp", 0)
+#     if timestamp < 1682243307685:  # 2023-04-23
+#         # https://github.com/napari/napari/issues/5705#issuecomment-1502901099
+#         _replace_pin("python >=3.6", "python >=3.6,<3.11.0a0", record.get("depends", []), record)
+#         _replace_pin("python >=3.7", "python >=3.7,<3.11.0a0", record.get("depends", []), record)
+#         _replace_pin("python >=3.8", "python >=3.8,<3.11.0a0", record.get("depends", []), record)
+if:
+  name: napari
+  timestamp_lt: 1682243307685  # 2023-04-23
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.6,<3.11.0a0
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.7,<3.11.0a0
+  - replace_depends:
+      old: python >=3.8
+      new: python >=3.8,<3.11.0a0
+---
+# from this bit of code
+# if record_name == "napari":
+#     timestamp = record.get("timestamp", 0)
+#     if timestamp < 1688456426773:  # 2023-07-04
+#         # https://github.com/conda-forge/napari-feedstock/issues/49
+#         _replace_pin("pydantic >=1.7.3", "pydantic >=1.7.3,<1.8.0", record.get("depends", []), record)
+#         _replace_pin("pydantic >=1.8.1", "pydantic >=1.8.1,<2.0a0", record.get("depends", []), record)
+#         _replace_pin("pydantic >=1.9.0", "pydantic >=1.9.0,<2.0a0", record.get("depends", []), record)
+if:
+  name: napari
+  timestamp_lt: 1688456426773  # 2023-07-04
+then:
+  - replace_depends:
+      old: pydantic >=1.7.3
+      new: pydantic >=1.7.3,<1.8.0
+  - replace_depends:
+      old: pydantic >=1.8.1
+      new: pydantic >=1.8.1,<2.0a0
+  - replace_depends:
+      old: pydantic >=1.9.0
+      new: pydantic >=1.9.0,<2.0a0

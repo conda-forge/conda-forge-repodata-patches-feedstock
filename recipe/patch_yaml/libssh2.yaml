@@ -1,0 +1,32 @@
+# from these bits of code
+# def _match_strict_libssh2_1_x_pin(dep):
+#     if dep.startswith("libssh2 >=1.8.0,<1.9.0a0"):
+#         return True
+#     if dep.startswith("libssh2 >=1.8.1,<1.9.0a0"):
+#         return True
+#     if dep.startswith("libssh2 >=1.8.2,<1.9.0a0"):
+#         return True
+#     if dep.startswith("libssh2 1.8.*"):
+#         return True
+#
+#     return False
+#
+# def _relax_libssh2_1_x_pinning(fn, record):
+#     depends = record.get("depends", ())
+#     dep_idx = next(
+#         (q for q, dep in enumerate(depends)
+#          if _match_strict_libssh2_1_x_pin(dep)),
+#         None
+#     )
+#
+#     if dep_idx is not None:
+#         depends[dep_idx] = "libssh2 >=1.8.0,<2.0.0a0"
+if:
+  has_depends: libssh2*
+then:
+  - replace_depends:
+      old: libssh2 >=1.8.[012],<1.9.0a0*
+      new: libssh2 >=1.8.0,<2.0.0a0
+  - replace_depends:
+      old: libssh2 1.8.[*]*
+      new: libssh2 >=1.8.0,<2.0.0a0
