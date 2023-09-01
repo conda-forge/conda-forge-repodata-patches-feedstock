@@ -1,0 +1,19 @@
+# from this bit of code
+# add *lal>=7.1.1 as run_constrained for liblal-7.1.1
+# if (
+#     record_name == "liblal"
+#     and record['version'] == "7.1.1"
+#     and record['build_number'] in (0, 1, 2, 100, 101, 102)
+# ):
+#     record.setdefault('constrains', []).extend((
+#         "lal >=7.1.1",
+#         "python-lal >=7.1.1",
+#     ))
+if:
+  name: liblal
+  version: 7.1.1
+  build_number_in: [0, 1, 2, 100, 101, 102]
+then:
+  - add_constrains:
+      - lal >=7.1.1
+      - python-lal >=7.1.1

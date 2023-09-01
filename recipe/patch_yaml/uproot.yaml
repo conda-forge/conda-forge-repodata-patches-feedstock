@@ -1,0 +1,22 @@
+# from this bit of code
+# if record_name == "uproot" and record["version"].startswith("4.0."):
+#     _replace_pin('uproot-base', f"uproot-base {record['version']}", deps, record)
+if:
+  name: uproot
+  version: 4.0.*
+then:
+  - replace_depends:
+      old: uproot-base
+      new: uproot-base ${version}
+---
+# from this bit of code
+# if record_name == "uproot" and record["version"] == "4.1.0" and record["build_number"] == 0:
+#     _replace_pin('uproot-base', f"uproot-base {record['version']}", deps, record)
+if:
+  name: uproot
+  version: 4.1.0
+  build_number: 0
+then:
+  - replace_depends:
+      old: uproot-base
+      new: uproot-base ${version}

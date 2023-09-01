@@ -1,0 +1,14 @@
+# from this code snippet
+# jupyter_kernel_test does not work with latest jupyter_client
+# fixed in https://github.com/conda-forge/jupyter_kernel_test-feedstock/pull/3
+# if record_name == "jupyter_kernel_test" and record["version"] == "0.3" and record["build_number"] < 3:
+#     depends = record["depends"]
+#     depends[depends.index("jupyter_client")] = "jupyter_client <7.0"
+if:
+  name: jupyter_kernel_test
+  version: "0.3"
+  build_number_lt: 3
+then:
+  - replace_depends:
+      old: jupyter_client
+      new: jupyter_client <7.0

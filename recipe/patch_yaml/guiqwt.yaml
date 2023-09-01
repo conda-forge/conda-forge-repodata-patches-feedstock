@@ -1,0 +1,14 @@
+# from this bit of code
+# guiqwt 3.0.5 and 3.0.7 not compatible with qtpy >=2.0.0
+# (previous versions didn't depend on it)
+# https://github.com/conda-forge/guiqwt-feedstock/issues/21
+# if record_name == "guiqwt" and record["version"] in ("3.0.5", "3.0.7") and record["build_number"] in (0, 1):
+#     _replace_pin("qtpy >=1.3", "qtpy >=1.3,<2.0", record["depends"], record)
+if:
+  name: guiqwt
+  version_in: [3.0.5, 3.0.7]
+  build_number_in: [0, 1]
+then:
+  - replace_depends:
+      old: qtpy >=1.3
+      new: qtpy >=1.3,<2.0

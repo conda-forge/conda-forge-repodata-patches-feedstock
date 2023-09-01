@@ -1,0 +1,13 @@
+# Version 1.6.0 of python-eccodes links against a function that was added to eccodes
+# only in version 2.31.0. The declaration in the upstream package was not updated,
+# which is why this slipped by. Build numbers 1+ contain the right lower limit,
+# but build number 0 needs to be patched to avoid runtime linking problems.
+# For details, see https://github.com/conda-forge/python-eccodes-feedstock/issues/86.
+if:
+  name: python-eccodes
+  version: 1.6.0
+  build_number: 0
+then:
+  - replace_depends:
+      old: eccodes >=2.21.0
+      new: eccodes >=2.31.0

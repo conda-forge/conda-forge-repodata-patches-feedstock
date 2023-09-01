@@ -21,7 +21,7 @@ for fname in sorted(glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml"))
             for patch_yaml in yaml.safe_load_all(fp)
             if patch_yaml is not None
         ]
-        ALL_YAMLS += fname_yamls
+        ALL_YAMLS += [(fy, os.path.basename(fname)) for fy in fname_yamls]
 
 
 @lru_cache(maxsize=32768)
@@ -74,26 +74,33 @@ def _fnmatch_str_or_list(item, v):
 
 
 @lru_cache(maxsize=32768)
-def _get_vars_for_template(value):
+def _get_vars_for_template(value, allow_old=False):
     if value is None:
         return []
 
     if "$" not in value:
         return []
 
-    vars = []
-    for key in ALLOWED_TEMPLATE_KEYS:
+    if allow_old:
+        _keys = ALLOWED_TEMPLATE_KEYS + ["old"]
+    else:
+        _keys = ALLOWED_TEMPLATE_KEYS
+
+    tvars = []
+    for key in _keys:
         if f"${key}" in value or f"${{{key}}}" in value:
-            vars.append(key)
-    return vars
+            tvars.append(key)
+    return tvars
 
 
-def _maybe_process_template(value, record, subdir):
-    vars = _get_vars_for_template(value)
-    if vars:
-        data = {key: record[key] for key in vars if key in record}
-        if "subdir" in vars:
+def _maybe_process_template(value, record, subdir, old=None):
+    tvars = _get_vars_for_template(value, allow_old=old is not None)
+    if tvars:
+        data = {key: record[key] for key in tvars if key in record}
+        if "subdir" in tvars:
             data["subdir"] = subdir
+        if "old" in tvars:
+            data["old"] = old
         return string.Template(value).substitute(**data)
     else:
         return value
@@ -109,7 +116,9 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             neg = False
 
         if k in record:
-            if k == "version":
+            if k == "version" and not any(
+                symb in v for symb in ["*", "[", "]", "?", "(", ")"]
+            ):
                 _keep = parse_version(record[k]) == parse_version(v)
             else:
                 _keep = fnmatch(str(record[k]), str(v))
@@ -314,7 +323,9 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
 
                 v = [_maybe_process_template(_v, record, subdir) for _v in v]
 
-                depends.extend(v)
+                for _v in v:
+                    if _v not in depends:
+                        depends.append(_v)
 
                 record[subk] = depends
 
@@ -356,9 +367,11 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
             ]:
                 subk = k[len("replace_") :]
                 pat = _maybe_process_template(v["old"], record, subdir)
-                new_dep = _maybe_process_template(v["new"], record, subdir)
                 for dep in record.get(subk, []):
                     if fnmatch(dep, pat):
+                        new_dep = _maybe_process_template(
+                            v["new"], record, subdir, old=dep
+                        )
                         _replace_pin(
                             dep,
                             new_dep,
@@ -424,8 +437,33 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
 
 def patch_yaml_edit_index(index, subdir):
     for fn, record in index.items():
-        for patch_yaml in ALL_YAMLS:
-            if _test_patch_yaml(patch_yaml, record, subdir, fn):
-                _apply_patch_yaml(patch_yaml, record, subdir, fn)
+        for patch_yaml, fname in ALL_YAMLS:
+            try:
+                if _test_patch_yaml(patch_yaml, record, subdir, fn):
+                    _apply_patch_yaml(patch_yaml, record, subdir, fn)
+            except Exception as e:
+                import traceback
+
+                print(
+                    "=" * 80
+                    + "\n"
+                    + "=" * 80
+                    + "\nError in testing/applying patch yaml from '%s': \n\n%s"
+                    % (fname, yaml.safe_dump(patch_yaml, default_flow_style=False)),
+                    flush=True,
+                )
+                try:
+                    PatchYaml(**patch_yaml)
+                except Exception as se:
+                    print(
+                        f"Schema error in '{os.path.basename(fname)}': {se}",
+                        flush=True,
+                    )
+                print(
+                    "=" * 80 + "\n" + "=" * 80,
+                    flush=True,
+                )
+                traceback.print_exc()
+                raise e
 
     return index

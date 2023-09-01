@@ -63,6 +63,7 @@ then:
   # list of instructions to change things
 
   # add to the depends or constrains section of the repodata
+  # this function will not add items already present in the record
   - add_<depends or constrains>: <list of str or single str>
   # you can use data from the record being patched like this
   # only name, version, build_number and subdir are supported
@@ -91,6 +92,11 @@ then:
       old: matplotlib 1.3.*  # matches matplotlib 1.3.0, matplotlib 1.3, etc.
       # thing to replace `old` with
       new: matplotlib-base ==1.4.0
+  - replace_<depends or constrains>:
+      # str of thing to be replaced
+      old: matplotlib ==1.3.0
+      # thing to replace `old` with
+      new: ${old},<1.4.0  # you can refer to the "old" value as well
 
   # rename a dependency - this preserves the version information and simply renames the package
   - rename_depends:

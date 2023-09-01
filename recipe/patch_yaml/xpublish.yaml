@@ -1,0 +1,15 @@
+# from this snippet of code
+# if record_name == "xpublish":
+#     # Pydantic is an indirect dependency, fixed upstream, and v2.0 broken xpublish 0.3.0.
+#     # xref.: https://github.com/xpublish-community/xpublish/pull/215
+#     if (
+#         record.get("timestamp", 0) <= 1689955085000
+#         and parse_version(record["version"]) == parse_version("0.3.0")
+#     ):
+#         record["depends"].append("pydantic<2")
+if:
+  name: xpublish
+  version: 0.3.0
+  timestamp_lt: 1689955085000
+then:
+  - add_depends: pydantic<2

@@ -48,3 +48,15 @@ then:
   - tighten_depends:
       name: setuptools
       upper_bound: "66.0.0a0"
+---
+#     # conda-build 3.26.x requires conda 23.7.x
+#     if record["version"] in ("3.26.0", "3.26.1") and record.get("timestamp", 0) <= 16935094895456:
+#         _replace_pin("conda >=4.13", "conda >=23.7.3", record["depends"], record)
+if:
+  name: conda-build
+  version_in: ["3.26.0", "3.26.1"]
+  timestamp_lt: 16935094895456  # 2023-08-31
+then:
+  - replace_depends:
+      old: "conda >=4.13"
+      new: "conda >=23.7.3"

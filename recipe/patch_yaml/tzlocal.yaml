@@ -1,0 +1,13 @@
+# from this bit of code
+# tzlocal 3.0 needs Python 3.9 (or backports.zoneinfo)
+# fixed in https://github.com/conda-forge/tzlocal-feedstock/pull/10
+# if record_name == "tzlocal" and record["version"] == "3.0" and "python >=3.6" in record["depends"]:
+#     _replace_pin("python >=3.6", "python >=3.9", deps, record)
+if:
+  name: tzlocal
+  version: "3.0"
+  has_depends: python >=3.6
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.9
