@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# if (
+#     record_name == "mamba" and (
+#       parse_version(record["version"]) < parse_version("0.24.0") 
+#       or (
+#          parse_version(record["version"]) < parse_version("0.24.0")) 
+#          and record["build_number"] == 0
+#       )
+# ):
+#     for i, dep in enumerate(record["depends"]):
+#         dep_name, *dep_other = dep.split()
+#         if dep_name == "conda" and ",<" not in dep:
+#             record["depends"][i] = "{} {}<4.13.0".format(
+#                 dep_name, dep_other[0] + "," if dep_other else ""
+#                 )
+if:
+  name: mamba
+  version_lt: "0.24.0"
+then:
+  - tighten_depends:
+      name: conda
+      upper_bound: "4.13.0"
+---
+if:
+  name: mamba
+  version: "0.24.0"  # jaimergp: I think the code above is buggy and really meant == not <
+  build_number: 0
+then:
+  - tighten_depends:
+      name: conda
+      upper_bound: "4.13.0"
+---
+# if record_name == "mamba" and (
+#     parse_version(record["version"]) ==
+#     parse_version("0.24.0")) and (
+#         record["build_number"] == 1):
+#     for i, dep in enumerate(record["depends"]):
+#         dep_name, *dep_other = dep.split()
+#         if dep_name == "conda":
+#             record["depends"][i] = "conda >=4.8"
+if:
+  name: mamba
+  version: "0.24.0"
+  build_number: 1
+then:
+  - replace_depends:
+      old: "conda?( *)"
+      new: "conda >=4.8"  # don't we want to add <5 here too?
+---
+# if record_name == "mamba" and (
+#     parse_version(record["version"]) ==
+#     parse_version("0.25.0")):
+#     for i, dep in enumerate(record["depends"]):
+#         dep_name, *dep_other = dep.split()
+#         if dep_name == "conda":
+#             record["depends"][i] = "conda >=4.8,<5"
+# @jaimergp: Looks like the intent here was to
+# avoid breakage with conda switching to calver
+if:
+  name: mamba
+  version: "0.25.0"
+then:
+  - replace_depends:
+      old: "conda?( *)"
+      new: "conda >=4.8,<5"

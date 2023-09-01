@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# if subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"] and \
+#     record_name in {"libmamba", "libmambapy"} \
+#     and record.get("version", 0) == "0.23.3":
+#     _replace_pin("libstdcxx-ng >=10.3.0", "libstdcxx-ng >=12.1.0", record["depends"], record)
+#     _replace_pin("libgcc-ng >=10.3.0", "libgcc-ng >=12.1.0", record["depends"], record)
+if:
+  name_in: [libmamba, libmambapy]
+  subdir_in: ["linux-64", "linux-aarch64", "linux-ppc64le"]
+  version: "0.23.3"
+then:
+  - replace_depends:
+      old: libstdcxx-ng >=10.3.0
+      new: libstdcxx-ng >=12.1.0  
+  - replace_depends:
+      old: libgcc-ng >=10.3.0
+      new: libgcc-ng >=12.1.0
+    
+    
