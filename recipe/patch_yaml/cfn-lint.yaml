@@ -297,4 +297,5 @@ then:
   - replace_depends:
       old: aws-sam-translator?( *)
       new: aws-sam-translator >=1.71.0
-## Done with the trip. Enjoy!
+
+# Done with the trip. Enjoy!

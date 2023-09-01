@@ -25,6 +25,6 @@ if:
   version_lt: "0.54"
   has_depends: numpy?( *)
 then:
-  # TODO: This is a different way of adding upper constraints 
+  # TODO: This is a different way of adding upper constraints
   # that relies on conda matchspec merging logic
   - add_depends: numpy <1.21.0a0

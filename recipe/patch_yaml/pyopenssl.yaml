@@ -17,4 +17,3 @@ then:
   - replace_depends:
       old: cryptography >=35.0
       new: cryptography >=35.0,<39
-
