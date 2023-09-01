@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # sdt-python 17.5 needs Python >= 3.9 because of typing.Literal, but feedstock
+# # specified >= 3.7
+# # Fixed in https://github.com/conda-forge/sdt-python-feedstock/pull/20
+# if (
+#     record_name == "sdt-python" and
+#     record["version"] == "17.5" and
+#     record["build_number"] == 0 and
+#     record.get("timestamp", 0) < 1676036991000
+# ):
+#     _replace_pin("python >=3.7", "python >=3.9", record["depends"], record)
+if:
+  name: sdt-python
+  version: "17.5"
+  build_number: 0
+  timestamp_lt: 1676036991000
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.9

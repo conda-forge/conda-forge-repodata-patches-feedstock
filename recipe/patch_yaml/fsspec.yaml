@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # fsspec ==2023.3.1 requires Python 3.8
+# # Fixed in https://github.com/conda-forge/babel-feedstock/pull/26
+# if (
+#     record_name == "fsspec" and
+#     record["version"] == "2023.3.0" and
+#     record["build_number"] == 0 and
+#     record.get("timestamp", 0) < 1678285727000
+# ):
+#     _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+if:
+  name: fsspec
+  version: "2023.3.0"
+  build_number: 0
+  timestamp_lt: 1678285727000
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.8

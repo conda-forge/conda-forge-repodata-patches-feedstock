@@ -1,0 +1,33 @@
+# from this bit of code
+# if record_name == "cylc-rose" and (
+#     parse_version(record["version"]) <
+#     parse_version("0.3")
+# ):
+#     for i, dep in enumerate(record["depends"]):
+#         dep_name = dep.split(" ", 1)[0]
+#         if dep_name in {"cylc-flow", "metomi-rose"}:
+#             record["depends"][i] = dep.replace(">", "=", 1)
+# We can't express this in a single patch, so we'll use two
+# Patch 1/2
+if:
+  name: "cylc-rose"
+  version: "0.2"
+then:
+  - replace_depends:
+      old: cylc-flow >=8.0b2
+      new: cylc-flow ==8.0b2
+  - replace_depends:
+      old: metomi-rose >=2.0b2
+      new: metomi-rose ==2.0b2
+---
+# Patch 2/2
+if:
+  name: "cylc-rose"
+  version: "0.1.1"
+then:
+  - replace_depends:
+      old: cylc-flow >=8.0b0
+      new: cylc-flow ==8.0b0
+  - replace_depends:
+      old: metomi-rose >=2.0b1
+      new: metomi-rose ==2.0b1

@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # NetworkX 2.7.1 build 0 had wrong dependency information
+# # This was fixed in https://github.com/conda-forge/networkx-feedstock/pull/32
+# # This patches build 0 with the right information too.
+# if (
+#     record_name == "networkx"
+#     and record["version"] == "2.7.1"
+#     and record["build_number"] == 0
+# ):
+#     _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+#     _replace_pin(
+#         "scipy >=1.5,!=1.6.1", "scipy >=1.8", record["depends"], record
+#     )
+#     _replace_pin(
+#         "matplotlib-base >=3.3",
+#         "matplotlib-base >=3.4",
+#         record["depends"],
+#         record,
+#     )
+#     _replace_pin("pandas >=1.1", "pandas >=1.3", record["depends"], record)
+if:
+  name: networkx
+  version: "2.7.1"
+  build_number: 0
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.8
+  - replace_depends:
+      old: scipy >=1.5,!=1.6.1
+      new: scipy >=1.8
+  - replace_depends:
+      old: "matplotlib-base >=3.3"
+      new: "matplotlib-base >=3.4"
+  - replace_depends:
+      old: pandas >=1.1
+      new: pandas >=1.3

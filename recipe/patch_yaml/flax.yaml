@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # jax 0.4.14 removes jax.ShapedArray, which is imported by flax<0.6.9
+# if (
+#     record_name == "flax"
+#     and parse_version(record["version"]) < parse_version("0.6.9")
+#     and record.get("timestamp", 0) < 1692133728000
+# ):
+#     _replace_pin("jax >=0.3.2", "jax >=0.3.2,<0.4.14", record["depends"], record)
+#     _replace_pin("jax >=0.2.6", "jax >=0.2.6,<0.4.14", record["depends"], record)
+if:
+  name: flax
+  version_lt: "0.6.9"
+  timestamp_lt: 1692133728000
+then:
+  - replace_depends:
+      old: jax >=0.3.2
+      new: jax >=0.3.2,<0.4.14
+  - replace_depends:
+      old: jax >=0.2.6
+      new: jax >=0.2.6,<0.4.14

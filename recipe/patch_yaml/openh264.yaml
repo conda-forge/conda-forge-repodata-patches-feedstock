@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# if (any(depend.startswith("openh264 >=2.3.0,<2.4")
+#         for depend in record['depends']) or
+#     any(depend.startswith("openh264 >=2.3.1,<2.4")
+#         for depend in record['depends'])):
+#     _pin_stricter(fn, record, "openh264", "x.x.x")
+# Two parts
+# Part 1/2
+if:
+  has_depends: "openh264 >=2.3.0,<2.4*"
+then:
+  - tighten_depends:
+      name: openh264
+      max_pin: x.x.x
+---
+# Part 2/2
+if:
+  has_depends: "openh264 >=2.3.1,<2.4*"
+then:
+  - tighten_depends:
+      name: openh264
+      max_pin: x.x.x

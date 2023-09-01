@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # noarch depfinder packages are broken for python >=3.10
+# if (
+#     record_name == "depfinder"
+#     and record.get("timestamp", 0) < 1659704295850
+#     and subdir == "noarch"
+#     and any(
+#         "<" not in dep
+#         for dep in record.get("depends", [])
+#         if dep.startswith("python ")
+#     )
+# ):
+#     pind = None
+#     for i, dep in enumerate(record.get("depends", [])):
+#         if dep.startswith("python "):
+#             pind = i
+#             break
+
+#     if pind is not None:
+#         record["depends"][pind] = record["depends"][pind] + ",<3.10"
+if:
+  name: depfinder
+  timestamp_lt: 1659704295850
+  subdir: noarch
+  has_depends: "python *[!<]*"
+then:
+  - add_depends: python <3.10  # FIXME? this uses matchspec merge logic

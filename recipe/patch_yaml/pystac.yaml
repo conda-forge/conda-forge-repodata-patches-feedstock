@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # pystac >=1.6.0 dropped Python < 3.8. This only affects 1.6.0, >=1.6.0 were fixed already.
+# # https://github.com/conda-forge/pystac-feedstock/issues/22
+# if record_name == "pystac" and record["version"] == "1.6.0" and record.get("timestamp", 0) < 1681128912000:
+#     _replace_pin("python >=3.6", "python >=3.8", deps, record)
+if:
+  name: pystac
+  version: "1.6.0"
+  timestamp_lt: 1681128912000
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.8

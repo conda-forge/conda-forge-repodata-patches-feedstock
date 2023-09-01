@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # jinja2 3 breaks nbconvert 5
+# # see https://github.com/conda-forge/nbconvert-feedstock/issues/81
+# # the issue there says to pin mistune <1. However some current mistune
+# # pins for v5 are <2, so going with that.
+# if (
+#     record_name == "nbconvert"
+#     and parse_version(record["version"]).major == 5
+# ):
+#     for i in range(len(record["depends"])):
+#         parts = record["depends"][i].split(" ")
+#         if parts[0] == "jinja2":
+#             if len(parts) == 1:
+#                 parts.append("<3a0")
+#             elif len(parts) == 2 and "<" not in parts[1]:
+#                 parts[1] = parts[1] + ",<3a0"
+#             record["depends"][i] = " ".join(parts)
+#         elif parts[0] == "mistune":
+#             if len(parts) == 2 and "<" not in parts[1]:
+#                 parts[1] = parts[1] + ",<2a0"
+#             record["depends"][i] = " ".join(parts)
+if:
+  name: nbconvert
+  version: "5.*"
+then:
+  - replace_depends:
+      old: jinja2
+      new: jinja2 <3a0
+  - replace_depends:
+      old: mistune >0.6
+      new: mistune >0.6,<2a0
+  - replace_depends:
+      old: mistune >=0.7.4
+      new: mistune >=0.7.4,<2a0
+  - replace_depends:
+      old: mistune >=0.8.1
+      new: mistune >=0.8.1,<2a0
+---
+# # nbconvert(-core) did not provide top pins of pandoc until 7.2.1=*_1
+# # see https://github.com/conda-forge/nbconvert-feedstock/issues/94
+# # fixed in https://github.com/conda-forge/nbconvert-feedstock/pull/96
+# if (
+#     record.get("timestamp", 0) <= 1680046165000
+#     and record_name in ["nbconvert", "nbconvert-core"]
+#     and (
+#         parse_version(record["version"]) <
+#         parse_version("7.2.2")
+#     )
+# ):
+#     nbconvert_version = parse_version(record["version"])
+#     for field in ["depends", "constrains"]:
+#         for i in range(len(record.get(field, []))):
+#             parts = record[field][i].split(" ")
+#             if parts[0] == "pandoc":
+#                 if nbconvert_version < parse_version("5.5.0"):
+#                     parts = [parts[0], ">=1.12.1,<2.0.0"]
+#                 elif (
+#                     nbconvert_version < parse_version("7.2.1")
+#                 ) or (
+#                     nbconvert_version == parse_version("7.2.1")
+#                     and record["build_number"] < 1
+#                 ):
+#                     parts = [parts[0], ">=1.12.1,<3.0.0"]
+#                 record[field][i] = " ".join(parts)
+if:
+  name_in: [nbconvert, nbconvert-core]
+  version_lt: "5.5.0"
+  timestamp_le: 1680046165000
+then:
+  - replace_depends:
+      old: pandoc?( *)
+      new: pandoc >=1.12.1,<2.0.0
+  - replace_constrains:
+      old: pandoc?( *)
+      new: pandoc >=1.12.1,<2.0.0
+---
+if:
+  name_in: [nbconvert, nbconvert-core]
+  version_lt: "7.2.1"
+  timestamp_le: 1680046165000
+then:
+  - replace_depends:
+      old: pandoc?( *)
+      new: pandoc >=1.12.1,<3.0.0
+  - replace_constrains:
+      old: pandoc?( *)
+      new: pandoc >=1.12.1,<3.0.0
+---
+if:
+  name_in: [nbconvert, nbconvert-core]
+  version: "7.2.1"
+  build_number: 0
+  timestamp_le: 1680046165000
+then:
+  - replace_depends:
+      old: pandoc?( *)
+      new: pandoc >=1.12.1,<3.0.0
+  - replace_constrains:
+      old: pandoc?( *)
+      new: pandoc >=1.12.1,<3.0.0

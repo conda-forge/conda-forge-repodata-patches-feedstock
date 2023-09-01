@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # selenium 4.10 removes code used by robotframework-seleniumlibrary <6.1.1
+# if (
+#     record.get("timestamp", 0) <= 1686323537000
+#     and record_name == "robotframework-seleniumlibrary"
+#     and (
+#         parse_version(record["version"]) <=
+#         parse_version("6.1.0")
+#     )
+# ):
+#     for i in range(len(record["depends"])):
+#         parts = record["depends"][i].split(" ")
+#         if parts[0] == "selenium":
+#             if len(parts) == 2 and "<" not in parts[1]:
+#                 parts[1] = parts[1] + ",<4.10"
+#             record["depends"][i] = " ".join(parts)
+if:
+  name: robotframework-seleniumlibrary
+  timestamp_le: 1686323537000
+  version_le: "6.1.0"
+then:
+  - tighten_depends:
+      name: selenium
+      upper_bound: "4.10"

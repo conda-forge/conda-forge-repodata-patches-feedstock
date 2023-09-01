@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# if (
+#     record_name == "gst-plugins-good" and
+#     record["version"] == "1.22.0" and
+#     record["build_number"] == 1 and
+#     any(d.startswith("libjpeg-turbo")
+#         for d in record.get("depends", [])) and
+#     record.get("timestamp", 0) < 1678151067000
+# ):
+#     new_constrains = record.get("constrains", [])
+#     new_constrains.append("jpeg <0.0.0a")
+#     record["constrains"] = new_constrains
+if:
+  name: gst-plugins-good
+  version: "1.22.0"
+  build_number: 1
+  has_depends: "libjpeg-turbo*"
+  timestamp_lt: 1678151067000
+then:
+  - add_constrains: "jpeg <0.0.0a"

@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # babel >=2.12 requires Python 3.7, but feedstock specified >= 3.6
+# # Fixed in https://github.com/conda-forge/babel-feedstock/pull/26
+# if (
+#     record_name == "babel" and
+#     record["version"] in {"2.12.0", "2.12.1"} and
+#     record["build_number"] == 0 and
+#     record.get("timestamp", 0) < 1677771669000
+# ):
+#     _replace_pin("python >=3.6", "python >=3.7", record["depends"], record)
+if:
+  name: babel
+  version_in: ["2.12.0", "2.12.1"]
+  build_number: 0
+  timestamp_lt: 1677771669000
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.7

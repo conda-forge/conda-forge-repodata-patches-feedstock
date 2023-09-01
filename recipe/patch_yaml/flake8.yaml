@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # Flake8 6 removed some deprecated option parsing APIs and broke these plugins
+# if ((record_name == 'flake8-copyright'
+#       and parse_version(record['version']) <= parse_version('0.2.3'))
+#     or (record_name == 'flake8-quotes'
+#       and parse_version(record['version']) <= parse_version('3.3.1'))):
+#     _replace_pin("flake8", "flake8 <6", record["depends"], record)
+if:
+  name: flake8-copyright
+  version_le: "0.2.3"
+then:
+  - replace_depends:
+      old: flake8
+      new: flake8 <6
+---
+if:
+  name: flake8-quotes
+  version_le: "3.3.1"
+then:
+  - replace_depends:
+      old: flake8
+      new: flake8 <6

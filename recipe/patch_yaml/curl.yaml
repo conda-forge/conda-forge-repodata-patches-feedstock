@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/commit/cc4469e15944ed0f8453bec24a1a764b5a22e71b
+# if record.get('timestamp', 0) < 1681344601000:
+#     deps = record.get("depends", [])
+#     if any(dep.startswith(("libcurl", "curl")) and dep.endswith("<8.0a0") for dep in deps):
+#         _pin_looser(fn, record, "curl", upper_bound="9.0")
+#         _pin_looser(fn, record, "libcurl", upper_bound="9.0")
+if:
+  timestamp_lt: 1681344601000
+  has_depends: libcurl *<8.0a0
+then:
+  - loosen_depends:
+      name: libcurl
+      upper_bound: "9.0"
+---
+if:
+  timestamp_lt: 1681344601000
+  has_depends: curl *<8.0a0
+then:
+  - loosen_depends:
+      name: libcurl
+      upper_bound: "9.0"

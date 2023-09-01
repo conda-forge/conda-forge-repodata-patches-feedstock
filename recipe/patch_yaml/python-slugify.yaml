@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # `python-slugify` clobbers these other, unmaintained `slugify`s in lib and bin
+# if record_name == "python-slugify":
+#     record.setdefault('constrains', []).extend([
+#         "slugify <0",
+#         "awesome-slugify <0",
+#     ])
+if:
+  name: python-slugify
+then:
+  - add_constrains:
+      - "slugify <0"
+      - "awesome-slugify <0"

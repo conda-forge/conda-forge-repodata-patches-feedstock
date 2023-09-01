@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # fix numba / numpy compatibility; numba added a run_constrained entry
+# # for numpy as of version=0.54.0; numpy<1.21a0 is a conservative upper
+# # bound that may not be strict enough for old versions of numba
+# if (
+#     record_name == "numba"
+#     and record.get("timestamp", 0) <= 1671537177000
+#     and parse_version(record["version"]) < parse_version("0.54")
+# ):
+#     deps = record["depends"]
+#     for i, dep in enumerate(deps):
+#         if dep == "numpy":
+#             deps[i] = "numpy <1.21.0a0"
+#             break
+#         if dep.startswith("numpy ") and "<" in dep:
+#             _pin_stricter(fn, record, "numpy", "x.x", "1.21")
+#             break
+#         if dep.startswith("numpy ") and ">" in dep:
+#             deps[i] += ",<1.21.0a0"
+#             break
+if:
+  name: numba
+  timestamp_le: 1671537177000
+  version_lt: "0.54"
+  has_depends: numpy?( *)
+then:
+  # TODO: This is a different way of adding upper constraints 
+  # that relies on conda matchspec merging logic
+  - add_depends: numpy <1.21.0a0

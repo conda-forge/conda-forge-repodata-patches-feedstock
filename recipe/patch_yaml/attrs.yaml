@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # attrs >=22.2.0 requires Python 3.6, and >=23.1.0 requires 3.7, but feedstock specified >= 3.5
+# # Fixed in https://github.com/conda-forge/attrs-feedstock/pull/32
+# if (
+#     record_name == "attrs"
+#     and record["version"] in {"22.2.0"}
+#     and record.get("timestamp", 0) < 1683636279000
+# ):
+#     _replace_pin("python >=3.5", "python >=3.6", record["depends"], record)
+if:
+  name: attes
+  version: "22.2.0"
+  timestamp_lt: 1683636279000
+then:
+  - replace_depends:
+      old: python >=3.5
+      new: python >=3.6
+---
+# if (
+#     record_name == "attrs"
+#     and record["version"] in {"23.1.0"}
+#     and record["build_number"] == 0
+#     and record.get("timestamp", 0) < 1683636279000
+# ):
+#     _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
+if:
+  name: attrs
+  version: "23.1.0"
+  build_number: 0
+  timestamp_lt: 1683636279000
+then:
+  - replace_depends:
+      old: python >=3.5
+      new: python >=3.7

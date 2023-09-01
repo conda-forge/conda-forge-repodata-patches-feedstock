@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # The run_exports of antic on macOS were too loose. We add a stricter
+# # pin on all packages built against antic before this was fixed.
+# if record_name in ["libeantic", "e-antic"] and subdir.startswith("osx") and record.get("timestamp", 0) <= 1653062891029:
+#     _pin_stricter(fn, record, "antic", "x.x.x")
+if:
+  name_in: ["libeantic", "e-antic"]
+  subdir: osx-*
+  timestamp_le: 1653062891029
+then:
+  - tighten_depends:
+      name: antic
+      max_pin: "x.x.x"

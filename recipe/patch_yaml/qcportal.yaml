@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# if record_name == "qcportal" and record.get("timestamp", 0) < 1691162578000:
+#     # QCPortal does not work with Pydantic 2, and no released version has.
+#     for dep in record.get("depends", []):
+#         if dep.split()[0] == "pydantic":
+#             _replace_pin(dep, f"{dep},<2.0a0", record.get("depends", []), record)
+if:
+  name: qcportal
+  timestamp_lt: 1691162578000
+then:
+  - add_depends: pydantic <2.0a0  # FIXME? This uses conda matchspec merging logic

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # tensorly 0.8.0+ need python 3.8+
+# # https://github.com/conda-forge/tensorly-feedstock/issues/12
+# # Fixed in https://github.com/conda-forge/tensorly-feedstock/pull/14
+# if (
+#     record_name == "tensorly" and
+#     (record["version"] == "0.8.0" or record["version"] == "0.8.1") and
+#     record["build_number"] == 0 and
+#     record.get("timestamp", 0) < 1678253357320
+# ):
+#     _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+if:
+  name: tensorly
+  version_in: ["0.8.0", "0.8.1"]
+  build_number: 0
+  timestamp_lt: 1678253357320
+then:
+  - replace_depends:
+      old: "python >=3.6"
+      new: "python >=3.8"

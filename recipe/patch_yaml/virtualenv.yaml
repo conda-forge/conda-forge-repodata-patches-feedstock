@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# if (record_name == "virtualenv" and
+#         record["version"] == "20.16.3" and
+#         record["build_number"] == 0):
+#     new_deps = []
+#     for dep in record["depends"]:
+#         if dep == "distlib >=0.3.1,<1":
+#             dep = "distlib >=0.3.5,<1"
+#         elif dep == "filelock >=3.2,<4":
+#             dep = "filelock >=3.4.1,<4"
+#         elif dep == "platformdirs >=2,<3":
+#             dep = "platformdirs >=2.4,<3"
+#         elif dep == "six >=1.9.0,<2":
+#             dep = None
+#         elif dep == "importlib-metadata >=0.12":
+#             dep = "importlib-metadata >=4.8.3"
+
+#         if dep is not None:
+#             new_deps.append(dep)
+#     record["depends"] = new_deps
+if:
+  name: virtualenv
+  version: "20.16.3"
+  build_number: 0
+then:
+  - replace_depends:
+      old: distlib >=0.3.1,<1
+      new: distlib >=0.3.5,<1
+  - replace_depends:
+      old: filelock >=3.2,<4
+      new: filelock >=3.4.1,<4
+  - replace_depends:
+      old: platformdirs >=2,<3
+      new: platformdirs >=2.4,<3
+  - remove_depends: six >=1.9.0,<2
+  - replace_depends:
+      old: importlib-metadata >=0.12
+      new: importlib-metadata >=4.8.3

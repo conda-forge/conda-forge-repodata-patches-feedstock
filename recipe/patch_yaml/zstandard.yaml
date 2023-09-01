@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# if (
+#     record_name == "zstandard"
+#     and record.get("timestamp", 0) < 1689939052321
+#     and record["version"] == "0.19.0"
+#     and record["build_number"] == 1
+# ):
+#     _replace_pin("zstd >=1.5.2,<1.6.0a0", "zstd ==1.5.2", record["depends"], record)
+if:
+  name: zstandard
+  timestamp_lt: 1689939052321
+  version: "0.19.0"
+  build_number: 1
+then:
+  - replace_depends:
+      old: zstd >=1.5.2,<1.6.0a0
+      new: zstd ==1.5.2

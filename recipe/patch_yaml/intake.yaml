@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # intake-esm v2023.4.20 dropped support for Python 3.8 but build 0 didn't update
+# # the Python version pin.
+# if (
+#     record_name == "intake-esm"
+#     and record["version"] == "2023.4.20"
+#     and record["build_number"] == 0
+#     and record.get("timestamp", 0) < 1682227052000
+# ):
+#     _replace_pin("python >=3.8", "python >=3.9", record["depends"], record)
+if:
+  name: intake-esm
+  version: "2023.4.20"
+  build_number: 0
+  timestamp_lt: 1682227052000
+then:
+  - replace_depends:
+      old: python >=3.8
+      new: python >=3.9

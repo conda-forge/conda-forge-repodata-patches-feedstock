@@ -12,5 +12,5 @@ if:
   build_number: 0
 then:
   - replace_depends:
-      old: "importlib_metadata?( *)[!>=]*"
+      old: "importlib_metadata"  # the checks above are unneeded (all are name-only specs)
       new: "importlib_metadata >=3.6"
