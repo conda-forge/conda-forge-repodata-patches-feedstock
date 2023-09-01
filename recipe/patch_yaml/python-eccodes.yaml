@@ -4,6 +4,7 @@
 # but build number 0 needs to be patched to avoid runtime linking problems.
 # For details, see https://github.com/conda-forge/python-eccodes-feedstock/issues/86.
 if:
+  name: python-eccodes
   version: 1.6.0
   build_number: 0
 then:
