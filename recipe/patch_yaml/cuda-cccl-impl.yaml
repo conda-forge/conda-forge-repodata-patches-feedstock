@@ -1,0 +1,8 @@
+# The cccl package replaces cuda-cccl-impl. This patch prevents simultaneous installation.
+if:
+  name: cuda-cccl-impl
+  version: 2.0.1
+  build_number: 0
+then:
+  # Prevent clobbering with cccl
+  - add_constrains: cccl <0.0.0a0
