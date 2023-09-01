@@ -1,0 +1,15 @@
+# from this bit of code
+# if (record_name == "grpcio-status" and
+#         record["version"] == "1.48.0" and
+#         record["build_number"] == 0):
+#     for i, dep in enumerate(record["depends"]):
+#         if dep == 'grpcio >=1.46.3':
+#             record["depends"][i] = "grpcio >=1.48.0"
+if:
+  name: "grpcio-status"
+  version: "1.48.0"
+  build_number: 0
+then:
+  - replace_depends:
+      old: "grpcio >=1.46.3"
+      new: "grpcio >=1.48.0"

@@ -1245,14 +1245,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # Patches that still need to be YAML-ized
         ############################################
 
-        if (record_name == "keyring" and
-                record["version"] == "23.6.0" and
-                record["build_number"] == 0):
-            for i, dep in enumerate(record["depends"]):
-                dep_name = dep.split()[0]
-                if dep_name == "importlib_metadata" and ">=" not in dep:
-                    record["depends"][i] = "importlib_metadata >=3.6"
-
         if record_name == "constructor":
             # constructor 2.x incompatible with conda 4.6+
             # see https://github.com/jaimergp/anaconda-repodata-hotfixes/blob/229c10f6/main.py#L834
@@ -1266,14 +1258,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # https://github.com/conda/constructor/pull/627
             if record.get("timestamp", 0) <= 1674637311000:
                 _replace_pin("conda >=4.6", "conda >=4.6,<23.1.0a0", record["depends"], record)
-
-
-        if (record_name == "grpcio-status" and
-                record["version"] == "1.48.0" and
-                record["build_number"] == 0):
-            for i, dep in enumerate(record["depends"]):
-                if dep == 'grpcio >=1.46.3':
-                    record["depends"][i] = "grpcio >=1.48.0"
 
         if record_name == "cylc-rose" and (
             parse_version(record["version"]) <
