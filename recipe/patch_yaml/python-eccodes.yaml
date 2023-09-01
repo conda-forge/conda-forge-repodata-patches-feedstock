@@ -1,0 +1,7 @@
+if:
+  version: 1.6.0
+  build_number: 0
+then:
+  - replace_depends:
+      old: eccodes >=2.21.0
+      new: eccodes >=2.31.0
