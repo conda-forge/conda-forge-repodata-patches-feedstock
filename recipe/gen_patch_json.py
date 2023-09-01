@@ -1245,31 +1245,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # Patches that still need to be YAML-ized
         ############################################
 
-        # Different patch versions of ipopt can be ABI incompatible
-        # See https://github.com/conda-forge/ipopt-feedstock/issues/85
-        if has_dep(record, "ipopt") and record.get('timestamp', 0) < 1656352053694:
-            _pin_stricter(fn, record, "ipopt", "x.x.x")
-
-        if record_name == "pandas" and (
-            parse_version(record["version"]) >=
-            parse_version("1.14.0") and
-            parse_version(record["version"]) <=
-            parse_version("1.14.2")):
-            _replace_pin("python-dateutil >=2.7.3", "python-dateutil >=2.8.1", record["depends"], record)
-            _replace_pin("pytz >=2017.2", "pytz >=2020.1", record["depends"], record)
-
-        # stomp.py 8.0.1 build 0 has an erroneous dependency on pyopenssl.
-        if record_name == "stomp.py" and (
-                record["version"] == "8.0.1" and
-                record["build_number"] == 0):
-            depends = record["depends"]
-            new_depends = []
-            for dep in depends:
-                dep_name = dep.split()[0]
-                if dep_name != "pyopenssl":
-                    new_depends.append(dep)
-            record["depends"] = new_depends
-
         if (record_name == "keyring" and
                 record["version"] == "23.6.0" and
                 record["build_number"] == 0):

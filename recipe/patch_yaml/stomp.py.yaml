@@ -1,0 +1,18 @@
+# this bit of code
+# stomp.py 8.0.1 build 0 has an erroneous dependency on pyopenssl.
+# if record_name == "stomp.py" and (
+#         record["version"] == "8.0.1" and
+#         record["build_number"] == 0):
+#     depends = record["depends"]
+#     new_depends = []
+#     for dep in depends:
+#         dep_name = dep.split()[0]
+#         if dep_name != "pyopenssl":
+#             new_depends.append(dep)
+#     record["depends"] = new_depends
+if:
+  name: stomp.py
+  version: 8.0.1
+  build_number: 0
+then:
+  - remove_depends: pyopenssl*
