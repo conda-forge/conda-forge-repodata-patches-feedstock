@@ -1,0 +1,12 @@
+# from this bit of code
+# if record_name == "qt" and (parse_version(record["version"])
+#         <= parse_version("5.12.9")) and subdir == "linux-64":
+#     _replace_pin("openssl", "openssl <3", record["depends"], record)
+if:
+  name: qt
+  version_le: 5.12.9
+  subdir_in: linux-64
+then:
+  - replace_depends:
+      old: openssl
+      new: openssl <3

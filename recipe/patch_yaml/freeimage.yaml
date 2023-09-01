@@ -1,0 +1,24 @@
+# from this bit of code:
+# if record_name == "freeimage":
+#     version = parse_version(record["version"])
+#     if version < parse_version("3.18.0"):
+#         _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
+#     if version == parse_version("3.18.0") and  record["build_number"] < 9:
+#         _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
+if:
+  name: freeimage
+  version_lt: 3.18.0
+then:
+  - tighten_depends:
+      name: libtiff
+      upper_bound: 4.4.0
+---
+# from the same code as above
+if:
+  name: freeimage
+  version: 3.18.0
+  build_number_lt: 9
+then:
+  - tighten_depends:
+      name: libtiff
+      upper_bound: 4.4.0

@@ -1,0 +1,17 @@
+# from this bit of code
+# add missing pins for singularity-hpc
+# if record_name == "singularity-hpc" and record.get("timestamp", 0) < 1652410323526:
+#     record["depends"].append("jinja2")
+#     record["depends"].append("jsonschema")
+#     record["depends"].append("requests")
+#     record["depends"].append("ruamel.yaml")
+#     record["depends"].append("spython >=0.2.0")
+if:
+  name: singularity-hpc
+  timestamp_lt: 1652410323526
+then:
+  - add_depends: jinja2
+  - add_depends: jsonschema
+  - add_depends: requests
+  - add_depends: ruamel.yaml
+  - add_depends: spython >=0.2.0

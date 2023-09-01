@@ -1,0 +1,14 @@
+# from this bit of code
+# if record_name == "qt-webengine" and record["version"] == "5.15.4" and record["build_number"] == 1:
+#     # Allow users to depend on qt 5.15.2 or 5.15.3 metapackage
+#     record["constrains"] = [c for c in record["constrains"]
+#                             if not c.startswith("qt ")]
+#     record["constrains"].append("qt 5.15.2|5.15.3|5.15.4")
+if:
+  name: qt-webengine
+  version: 5.15.4
+  build_number: 1
+then:
+  - replace_constrains:
+      old: qt *
+      new: qt 5.15.2|5.15.3|5.15.4

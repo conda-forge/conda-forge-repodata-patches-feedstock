@@ -1,0 +1,78 @@
+# from this bit of code
+# if record_name == "aesara" and (
+#     parse_version(record["version"]) >
+#     parse_version("2.4.0") and
+#     parse_version(record["version"]) <=
+#     parse_version("2.7.1")):
+#     if record.get("timestamp", 0) <= 1654360235233:
+#         _replace_pin("scipy >=0.14,<1.8.0", "scipy >=0.14", record["depends"], record)
+#     if (
+#         parse_version(record["version"]) >=
+#         parse_version("2.5.0") and
+#         parse_version(record["version"]) <=
+#         parse_version("2.7.3")
+#     ):
+#         _replace_pin('setuptools', 'setuptools !=65.0.*', deps, record)
+if:
+  name: aesara
+  version_gt: 2.4.0
+  version_le: 2.7.1
+  timestamp_le: 1654360235233
+then:
+  - replace_depends:
+      old: scipy >=0.14,<1.8.0
+      new: scipy >=0.14
+---
+# from the same code as above
+if:
+  name: aesara
+  version_ge: 2.5.0
+  version_le: 2.7.1  # it says 2.7.3 above but that if statement is nested in the 2.7.1 constraint
+  timestamp_le: 1654360235233
+then:
+  - replace_depends:
+      old: setuptools
+      new: setuptools !=65.0.*
+---
+# from this bit of code
+# if record_name == "aesara-base":
+#     if (
+#         parse_version(record["version"]) ==
+#         parse_version("2.7.4")
+#     ) and (
+#         record["build_number"] == 1 and subdir.startswith("win-")
+#     ):
+#         record["depends"].append("libpython >=2.2")
+#     if record["version"] in ["2.7.8", "2.7.9"]:
+#         _replace_pin('setuptools >=45.0.0', 'setuptools >=48.0.0,!=65.0.*', deps, record)
+#     if (
+#         parse_version(record["version"]) >=
+#         parse_version("2.7.4") and
+#         parse_version(record["version"]) <=
+#         parse_version("2.7.7")
+#     ):
+#         record["depends"].append("setuptools !=65.0.*")
+if:
+  name: aesara-base
+  version: 2.7.4
+  build_number: 1
+  subdir_in: [win-32, win-64]
+then:
+  - add_depends: libpython >=2.2
+---
+# from the previous code snippet
+if:
+  name: aesara-base
+  version_in: [2.7.8, 2.7.9]
+then:
+  - replace_depends:
+      old: setuptools >=45.0.0
+      new: setuptools >=48.0.0,!=65.0.*
+---
+# from the previous code snippet
+if:
+  name: aesara-base
+  version_ge: 2.7.4
+  version_le: 2.7.7
+then:
+  - add_depends: setuptools !=65.0.*
