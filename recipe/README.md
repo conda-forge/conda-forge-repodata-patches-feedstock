@@ -1,11 +1,14 @@
-# repodata patch YAML specification
+# `conda-forge` Repodata Patching
+
+The best way to make a new patch is to use the patch YAML specification below. Custom patches
+in python can be put into the `gen_patch_json.py` file.
+
+## Repodata patch YAML specification
 
 The files in this directory are used to construct repodata patches for conda-forge.
 Typically, a single feedstock will have a single YAML file specifying the patches
 for the packages produced by that feedstock. Use comments liberally to describe
 why the patch exists.
-
-## YAML Format
 
 Patches are specified by two main blocks.
 
@@ -147,3 +150,53 @@ if:
 then:
   ...
 ```
+
+## Testing New Patches using `show_diff.py`
+
+The `show_diff.py` script in this directory can be used to test out
+modifications to `gen_patch_json.py`.  This scripts shows the difference
+between the package records currently available on anaconda.org/conda-forge and those
+produced from the patch instructions produced by `gen_patch_json.py`.
+
+Usage is:
+
+```bash
+usage: show_diff.py [-h] [--subdirs [SUBDIRS [SUBDIRS ...]]] [--use-cache]
+
+show repodata changes from the current gen_patch_json
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --subdirs [SUBDIRS [SUBDIRS ...]]
+                        subdir(s) show, default is all
+  --use-cache           use cached repodata files, rather than downloading
+                        them
+
+```
+
+Repodata is cached in a `cache` directory in the current directory or in the
+path specified by the `CACHE_DIR` environment variable.
+
+Typically, `show_diff.py` is run without any argument to download the
+necessary repodata followed by repeated calls to `show_diff.py --use-cache`
+to test out changes to the `gen_patch_json.py` script.
+
+## Patch JSON Format for `anaconda.org`
+
+This scheme generates one file per subdir, ``patch_instructions.json``.  This file has entries
+
+```json
+instructions = {
+        "patch_instructions_version": 1,
+        "packages": defaultdict(dict),
+        "revoke": [],
+        "remove": [],
+    }
+```
+
+`remove` are lists of filenames that will not show up in the index but may still be downloadable with a direct URL to the file.
+
+`packages` is a dictionary, where keys are package filenames.  Values are dictionaries similar to the contents of each package in `repodata.json`.  Any values provided in ``packages`` here overwrite the values in `repodata.json`.  Any value set to None is removed.
+
+A tool downloads this package when it sees updates to it, and applies the `patch_instructions.json`
+to the repodata of the `conda-forge` channel on anaconda.org

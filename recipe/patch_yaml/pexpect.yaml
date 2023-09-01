@@ -1,0 +1,26 @@
+# from this bit of code
+# if record_name == "pexpect" and parse_version(
+#     "4.0"
+# ) <= parse_version(
+#     record["version"]
+# ) <= parse_version(
+#     "4.8.0"
+# ) and not any(pyXY in record["build"] for pyXY in ["py27", "py34", "py35", "py36"]):
+#     if "ptyprocess >=0.5" not in record["depends"]:
+#         if "ptyprocess" in record["depends"]:
+#             _replace_pin("ptyprocess", "ptyprocess >=0.5", record["depends"], record)
+#         else:
+#             record["depends"].append("ptyprocess >=0.5")
+if:
+  name: pexpect
+  version_ge: "4.0"
+  version_le: 4.8.0
+  not_build_in:
+    - "*py27*"
+    - "*py3[456]*"
+  not_has_depends: ptyprocess >=0.5
+then:
+  - replace_depends:
+      old: ptyprocess
+      new: ptyprocess >=0.5
+  - add_depends: ptyprocess >=0.5

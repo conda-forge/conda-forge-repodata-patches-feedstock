@@ -1,0 +1,12 @@
+# from this code
+# Different patch versions of ipopt can be ABI incompatible
+# See https://github.com/conda-forge/ipopt-feedstock/issues/85
+# if has_dep(record, "ipopt") and record.get('timestamp', 0) < 1656352053694:
+#     _pin_stricter(fn, record, "ipopt", "x.x.x")
+if:
+  timestamp_lt: 1656352053694
+  has_depends: ipopt?( *)
+then:
+  - tighten_depends:
+      name: ipopt
+      max_pin: x.x.x

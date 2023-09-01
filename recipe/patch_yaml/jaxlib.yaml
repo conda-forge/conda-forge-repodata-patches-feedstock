@@ -1,0 +1,19 @@
+# from this code
+# jaxlib was built with grpc-cpp 1.46.4 that
+# was only available at abseil-cpp 20220623.0
+# and thus it needs to be explicitly constrained
+# no grpc-cpp fix can fix this retro
+# fixed in https://github.com/conda-forge/jaxlib-feedstock/pull/133
+# if record_name == "jaxlib" and (
+#     parse_version(record["version"]) ==
+#     parse_version("0.3.15") and
+#     record["build_number"] == 0
+# ):
+#     record["depends"].append("abseil-cpp ==20220623.0")
+if:
+  name: jaxlib
+  version: 0.3.15
+  build_number: 0
+then:
+  - add_depends:
+      - abseil-cpp ==20220623.0

@@ -1,83 +1,82 @@
 from gen_patch_json import _gen_patch_instructions, REMOVALS, add_python_abi
 import copy
 
+
 def test_gen_patch_instructions():
     index = {
-        'packages': {
-            'a': {'depends': ['c', 'd'],
-                  'features': 'd'},
-            'b': {'nane': 'blah'},
-            'c': {}
+        "packages": {
+            "a": {"depends": ["c", "d"], "features": "d"},
+            "b": {"nane": "blah"},
+            "c": {},
         },
-        'packages.conda': {
-            'a': {'depends': ['c', 'd'],
-                  'features': 'd'},
-            'b': {'nane': 'blah'},
-            'c': {}
-        }
+        "packages.conda": {
+            "a": {"depends": ["c", "d"], "features": "d"},
+            "b": {"nane": "blah"},
+            "c": {},
+        },
     }
 
     new_index = {
-        'packages': {
-            'a': {'depends': ['c', 'd', 'e'],
-              'features': None},
-            'b': {'nane': 'blah'},
-            'c': {'addthis': 'yes'}
+        "packages": {
+            "a": {"depends": ["c", "d", "e"], "features": None},
+            "b": {"nane": "blah"},
+            "c": {"addthis": "yes"},
         },
-        'packages.conda': {
-            'a': {'depends': ['c', 'd', 'e'],
-                  'features': None},
-            'b': {'nane': 'blah'},
-            'c': {'addthis': 'yes'}
-        }
+        "packages.conda": {
+            "a": {"depends": ["c", "d", "e"], "features": None},
+            "b": {"nane": "blah"},
+            "c": {"addthis": "yes"},
+        },
     }
 
-    inst = _gen_patch_instructions(index, new_index, 'osx-64')
-    assert inst['patch_instructions_version'] == 1
-    assert 'revoke' in inst
-    assert 'remove' in inst
-    assert 'packages' in inst
-    assert 'packages.conda' in inst
+    inst = _gen_patch_instructions(index, new_index, "osx-64")
+    assert inst["patch_instructions_version"] == 1
+    assert "revoke" in inst
+    assert "remove" in inst
+    assert "packages" in inst
+    assert "packages.conda" in inst
 
-    assert inst['packages'] == {
-        'a': {'depends': ['c', 'd', 'e'], 'features': None},
-        'c': {'addthis': 'yes'}}
+    assert inst["packages"] == {
+        "a": {"depends": ["c", "d", "e"], "features": None},
+        "c": {"addthis": "yes"},
+    }
 
-    assert inst['packages.conda'] == {
-        'a': {'depends': ['c', 'd', 'e'], 'features': None},
-        'c': {'addthis': 'yes'}}
+    assert inst["packages.conda"] == {
+        "a": {"depends": ["c", "d", "e"], "features": None},
+        "c": {"addthis": "yes"},
+    }
 
-    assert set(REMOVALS['osx-64']) <= set(inst['remove'])
+    assert set(REMOVALS["osx-64"]) <= set(inst["remove"])
 
 
 def test_add_python_abi():
     conditions = {
-        'python >=2.7,<2.8.0a0': 'python_abi * *_cp27mu',
-        'python 3.5.*': 'python_abi * *_cp35m',
-        'python >=3.8.0a,<3.9.0a0': 'python_abi * *_cp38',
-        'python 3.5*': 'python_abi * *_cp35m',
-        'python 2.7*': 'python_abi * *_cp27mu',
-        'python >=3.6': 'pypy <0a0',
-        'python >=3.7,<3.8.0a0': 'python_abi * *_cp37m',
-        'python >=2.7,<3': 'pypy <0a0',
-        'python >=3.5,<3.6.0a0': 'python_abi * *_cp35m',
-        'python 3.7.*': 'python_abi * *_cp37m',
-        'python 2.6*': 'python_abi * *_cp26mu',
-        'python': None,
-        'python 2.7.*': 'python_abi * *_cp27mu',
-        'python 3.6*': 'python_abi * *_cp36m',
-        'python >=3.8,<3.9.0a0': 'python_abi * *_cp38',
-        'python 3.8.*': 'python_abi * *_cp38',
-        'python 3.6.*': 'python_abi * *_cp36m',
-        'python >=3.6.1': 'pypy <0a0',
-        'python >=3.5': 'pypy <0a0',
-        'python >=3.4': 'pypy <0a0',
-        'python <3': 'python_abi * *_cp27mu',
-        'python 3.4*': 'python_abi * *_cp34m',
-        'python >=2.7,<3.5': 'pypy <0a0',
-        'python >=3.6,<3.7.0a0': 'python_abi * *_cp36m',
-        'python >=2.7': 'pypy <0a0',
-        'python >=3.3': 'pypy <0a0',
+        "python >=2.7,<2.8.0a0": "python_abi * *_cp27mu",
+        "python 3.5.*": "python_abi * *_cp35m",
+        "python >=3.8.0a,<3.9.0a0": "python_abi * *_cp38",
+        "python 3.5*": "python_abi * *_cp35m",
+        "python 2.7*": "python_abi * *_cp27mu",
+        "python >=3.6": "pypy <0a0",
+        "python >=3.7,<3.8.0a0": "python_abi * *_cp37m",
+        "python >=2.7,<3": "pypy <0a0",
+        "python >=3.5,<3.6.0a0": "python_abi * *_cp35m",
+        "python 3.7.*": "python_abi * *_cp37m",
+        "python 2.6*": "python_abi * *_cp26mu",
+        "python": None,
+        "python 2.7.*": "python_abi * *_cp27mu",
+        "python 3.6*": "python_abi * *_cp36m",
+        "python >=3.8,<3.9.0a0": "python_abi * *_cp38",
+        "python 3.8.*": "python_abi * *_cp38",
+        "python 3.6.*": "python_abi * *_cp36m",
+        "python >=3.6.1": "pypy <0a0",
+        "python >=3.5": "pypy <0a0",
+        "python >=3.4": "pypy <0a0",
+        "python <3": "python_abi * *_cp27mu",
+        "python 3.4*": "python_abi * *_cp34m",
+        "python >=2.7,<3.5": "pypy <0a0",
+        "python >=3.6,<3.7.0a0": "python_abi * *_cp36m",
+        "python >=2.7": "pypy <0a0",
+        "python >=3.3": "pypy <0a0",
     }
     for condition, tag in conditions.items():
         record_orig = {
@@ -88,17 +87,17 @@ def test_add_python_abi():
         record = copy.deepcopy(record_orig)
         add_python_abi(record, "linux-64")
         print(record, condition, tag)
-        if tag == None:
+        if tag is None:
             assert record["constrains"] == []
         else:
             assert record["constrains"] == [tag]
 
         record = copy.deepcopy(record_orig)
         add_python_abi(record, "osx-64")
-        if tag == None:
+        if tag is None:
             assert record["constrains"] == []
         elif tag.endswith(("cp27mu", "cp26mu")):
-                assert record["constrains"] == [tag[:-1]]
+            assert record["constrains"] == [tag[:-1]]
         else:
             assert record["constrains"] == [tag]
 

@@ -1,0 +1,24 @@
+# from this bit of code
+# if record_name == "pillow":
+#     if parse_version(record["version"]) < parse_version("9.1.1"):
+#         _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
+#     if parse_version(record["version"]) == parse_version("9.1.1"):
+#         if record["build_number"] < 1:
+#             _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
+if:
+  name: pillow
+  version_lt: 9.1.1
+then:
+  - tighten_depends:
+      name: libtiff
+      upper_bound: 4.4.0
+---
+# from the same code as above
+if:
+  name: pillow
+  version: 9.1.1
+  build_number_lt: 1
+then:
+  - tighten_depends:
+      name: libtiff
+      upper_bound: 4.4.0

@@ -1,0 +1,29 @@
+# from this bit of code
+# importlib_resources requires Python >=3.7 since 5.5.0, but it was missed
+# Was fixed in 5.10.1 build 1
+# See https://github.com/conda-forge/importlib_resources-feedstock/issues/56
+# if record_name in ("importlib_resources", "importlib-resources") and (
+#     parse_version("5.5.0")
+#     <= parse_version(record["version"])
+#     <= parse_version("5.10.0")
+#     or (record["version"] == "5.10.1" and record["build_number"] == 0)
+# ):
+#     _replace_pin("python >=3.6", "python >=3.7", record["depends"], record)
+if:
+  name_in: [importlib_resources, importlib-resources]
+  version_ge: 5.5.0
+  version_le: 5.10.0
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.7
+---
+# from the same code as above
+if:
+  name_in: [importlib_resources, importlib-resources]
+  version: 5.10.1
+  build_number: 0
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.7

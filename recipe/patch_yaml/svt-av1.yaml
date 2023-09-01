@@ -1,0 +1,14 @@
+# from this bit of code
+# if any(dep.startswith("svt-av1") for dep in deps):
+#     # hmaarrfk -- 2022/05/18
+#     # These packages were built with svt-av1 0.8.7 or 0.9
+#     # These two versions of svt seem to be compatible with each
+#     # other, but they are not compatible with the recently
+#     # released 1.1.0
+#     _replace_pin("svt-av1", "svt-av1 <1.0.0a0", record["depends"], record)
+if:
+  has_depends: svt-av1*
+then:
+  - replace_depends:
+      old: svt-av1
+      new: svt-av1 <1.0.0a0

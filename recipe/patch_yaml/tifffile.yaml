@@ -1,0 +1,18 @@
+# from this bit of code
+# tifffile 2022.2.2 and more recent versions requires python >=3.8.
+# See https://github.com/conda-forge/tifffile-feedstock/issues/93
+# Fixed in https://github.com/conda-forge/tifffile-feedstock/pull/94
+# if (
+#     record_name == "tifffile"
+#     and parse_version(record["version"]) >= parse_version("2022.2.2")
+#     and parse_version(record["version"]) < parse_version("2022.4.26")
+# ):
+#     _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
+if:
+  name: tifffile
+  version_ge: 2022.2.2
+  version_lt: 2022.4.26
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8

@@ -496,7 +496,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         ########################################
         # Ecosystem-wide patches for changes in
-        # metapackages, etc.
+        # metapackages, CI stuff, conda, etc.
         # Generally managed by conda-forge/core
         ########################################
 
@@ -575,6 +575,141 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "conda-lock" and record.get("timestamp", 0) < 1685186303000:
             assert "constrains" not in record
             record["constrains"] = ["urllib3 <2"]
+
+        # conda-libmamba-solver uses calver YY.MM.micro
+        if record_name == "conda-libmamba-solver":
+            if record.get("timestamp", 0) <= 1669391735453:  # 2022-11-25
+                # libmamba 0.23 introduces API breaking changes, pin to v0.22
+                _replace_pin("libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record)
+                # conda 22.11 introduces the plugin system, which needs a new release
+                _replace_pin("conda >=4.12", "conda >=4.12,<22.11.0a", record["depends"], record)
+                _replace_pin("conda >=4.13", "conda >=4.13,<22.11.0a", record["depends"], record)
+            elif record.get("timestamp", 0) <= 1674230331000:  # 2023-01-20
+                # conda 23.1 changed an internal SubdirData API needed with S3/FTP channels
+                _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.1.0a", record["depends"], record)
+            elif record.get("timestamp", 0) <= 1678721528000: # 2023-03-13:
+                # conda 23.3 changed an internal SubdirData API needed with S3/FTP channels
+                # conda deprecated Boltons leading to a breakage in the solver api interface
+                _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.2.0a", record["depends"], record)
+
+        if subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"] and \
+            record_name in {"libmamba", "libmambapy"} \
+            and record.get("version", 0) == "0.23.3":
+            _replace_pin("libstdcxx-ng >=10.3.0", "libstdcxx-ng >=12.1.0", record["depends"], record)
+            _replace_pin("libgcc-ng >=10.3.0", "libgcc-ng >=12.1.0", record["depends"], record)
+
+        if record_name == "conda-build":
+            # Code removed in conda 4.13.0 broke older conda-build releases;
+            # x-ref issue: conda/conda-build#4481
+            if (
+                parse_version(record["version"]) <=
+                parse_version("3.21.7") or
+                # backported fix in 3.21.8, build 1
+                # (PR: conda-forge/conda-build-feedstock#176)
+                record["version"] == "3.21.8" and record["build_number"] == 0
+            ):
+                for i, dep in enumerate(record["depends"]):
+                    dep_name, *dep_other = dep.split()
+                    if dep_name == "conda" and ",<" not in dep:
+                        record["depends"][i] = "{} {}<4.13.0".format(
+                            dep_name, dep_other[0] + "," if dep_other else ""
+                        )
+            # pin setuptools to <66 to avoid `parse_version` issues
+            # see https://github.com/conda-forge/conda-forge-pinning-feedstock/issues/3973
+            if record.get("timestamp", 0) <= 1674131439051:  # 2023-01-19
+                for i, dep in enumerate(record["depends"]):
+                    dep_name, *dep_other = dep.split()
+                    if dep_name == "setuptools" and ",<" not in dep:
+                        record["depends"][i] = "{} {}<66.0.0a0".format(
+                            dep_name, dep_other[0] + "," if dep_other else ""
+                        )
+
+        if (record_name == "conda" and
+            record["version"] == "22.11.1" and
+            record["build_number"] == 0):
+            for i, dep in enumerate(record["constrains"]):
+                dep_name, *dep_other = dep.split()
+                if dep_name.startswith("conda-libmamba-solver"):
+                    record["constrains"][i] = "conda-libmamba-solver >=22.12.0"
+        if record_name == "mamba" and (
+            parse_version(record["version"]) <
+            parse_version("0.24.0") or (
+                (parse_version(record["version"]) <
+                 parse_version("0.24.0")) and (
+                     record["build_number"] == 0)
+                 )):
+            for i, dep in enumerate(record["depends"]):
+                dep_name, *dep_other = dep.split()
+                if dep_name == "conda" and ",<" not in dep:
+                    record["depends"][i] = "{} {}<4.13.0".format(
+                        dep_name, dep_other[0] + "," if dep_other else ""
+                        )
+        if record_name == "mamba" and (
+            parse_version(record["version"]) ==
+            parse_version("0.24.0")) and (
+                record["build_number"] == 1):
+
+            for i, dep in enumerate(record["depends"]):
+                dep_name, *dep_other = dep.split()
+                if dep_name == "conda":
+                    record["depends"][i] = "conda >=4.8"
+
+        if record_name == "mamba" and (
+            parse_version(record["version"]) ==
+            parse_version("0.25.0")):
+
+            for i, dep in enumerate(record["depends"]):
+                dep_name, *dep_other = dep.split()
+                if dep_name == "conda":
+                    record["depends"][i] = "conda >=4.8,<5"
+
+        if record_name == "anaconda-client":
+            # Bump minimum `requests` requirement of `anaconda-client` 1.11.0
+            # https://github.com/conda-forge/anaconda-client-feedstock/pull/35
+            if (
+            parse_version(record["version"]) ==
+            parse_version("1.11.0")):
+                i = -1
+                deps = record["depends"]
+                with suppress(ValueError):
+                    i = deps.index("requests >=2.9.1")
+                if i >= 0:
+                    deps[i] = "requests >=2.20.0"
+            if record.get("timestamp", 0) <= 1684878992896:  # 2023-05-23
+                # https://github.com/conda-forge/conda-forge-ci-setup-feedstock/issues/242
+                # https://github.com/conda-forge/anaconda-client-feedstock/issues/40
+                if any("urllib3" in dep for dep in record["depends"]):
+                    _replace_pin(
+                        "urllib3 >=1.26.4",
+                        "urllib3 >=1.26.4,<2.0.0a0",
+                        record["depends"],
+                        record,
+                    )
+                else:
+                    # old versions depended on urllib3 via requests;
+                    # requests 2.30+ allows urllib3 2.x
+                    for lower_bound in (">=2.9.1", ">=2.0", ">=2.20.0"):
+                        _replace_pin(
+                            f"requests {lower_bound}",
+                            f"requests {lower_bound},<2.30.0a0",
+                            record["depends"],
+                            record,
+                        )
+            # https://github.com/conda-forge/anaconda-client-feedstock/pull/44
+            # https://github.com/Anaconda-Platform/anaconda-client/issues/678
+            if (
+                parse_version(record["version"])
+                == parse_version("1.12.0")
+            ) and record["build_number"] == 0:
+                # Guard python-dateutil dependency with trailing space in "python "
+                python_pinning = [x for x in record["depends"] if x.startswith("python ")]
+                for pinning in python_pinning:
+                    _replace_pin(pinning, "python >=3.8", record["depends"], record)
+
+        if record_name == "conda-build":
+            # conda-build 3.26.x requires conda 23.7.x
+            if record["version"] in ("3.26.0", "3.26.1") and record.get("timestamp", 0) <= 16935094895456:
+                _replace_pin("conda >=4.13", "conda >=23.7.3", record["depends"], record)
 
         ############################################
         # Compilers, Runtimes and Related Patches
@@ -1011,50 +1146,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 _replace_pin("dask >=2022.3.0,<=2022.9.2", "dask >=2022.3.0,<=2022.10.0", deps, record)
                 _replace_pin("uvicorn >=0.11.3", "uvicorn >=0.13.4", deps, record)
 
-        if record_name == "tsnecuda":
-            # These have dependencies like
-            # - libfaiss * *_cuda
-            # - libfaiss * *cuda
-            # which conda doesn't like
-            deps = record.get("depends", [])
-            for i in range(len(deps)):
-                dep = deps[i]
-                if dep.startswith("libfaiss") and dep.endswith("*cuda"):
-                    dep = dep.replace("*cuda", "*_cuda")
-                deps[i] = dep
-            record["depends"] = deps
-
-        if record_name == "proplot" and record.get("timestamp", 0) < 1634670686970:
-            depends = record.get("depends", [])
-            for i, dep in enumerate(depends):
-                if dep.startswith("matplotlib"):
-                    _dep_parts = dep.split(" ")
-                    if len(_dep_parts) > 1:
-                        _dep_parts[1] = _dep_parts[1] + ",<3.5.0a0"
-                    else:
-                        _dep_parts = list(_dep_parts) + ["<3.5.0a0"]
-                    depends[i] = " ".join(_dep_parts)
-                record["depends"] = depends
-
-        ############################################
-        # Patches that still need to be YAML-ized
-        ############################################
-
-        if record_name == "qt" and (parse_version(record["version"])
-                <= parse_version("5.12.9")) and subdir == "linux-64":
-            _replace_pin("openssl", "openssl <3", record["depends"], record)
-
-        # importlib_resources requires Python >=3.7 since 5.5.0, but it was missed
-        # Was fixed in 5.10.1 build 1
-        # See https://github.com/conda-forge/importlib_resources-feedstock/issues/56
-        if record_name in ("importlib_resources", "importlib-resources") and (
-            parse_version("5.5.0")
-            <= parse_version(record["version"])
-            <= parse_version("5.10.0")
-            or (record["version"] == "5.10.1" and record["build_number"] == 0)
-        ):
-            _replace_pin("python >=3.6", "python >=3.7", record["depends"], record)
-
         if record_name == "dask-cuda":
             timestamp = record.get("timestamp", 0)
             # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
@@ -1089,50 +1180,30 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             elif record["version"] == "22.4.0":
                 _replace_pin("python >=3.8,<3.10", "python >=3.8", record["depends"], record)
 
+        if record_name == "tsnecuda":
+            # These have dependencies like
+            # - libfaiss * *_cuda
+            # - libfaiss * *cuda
+            # which conda doesn't like
+            deps = record.get("depends", [])
+            for i in range(len(deps)):
+                dep = deps[i]
+                if dep.startswith("libfaiss") and dep.endswith("*cuda"):
+                    dep = dep.replace("*cuda", "*_cuda")
+                deps[i] = dep
+            record["depends"] = deps
 
-        # conda-libmamba-solver uses calver YY.MM.micro
-        if record_name == "conda-libmamba-solver":
-            if record.get("timestamp", 0) <= 1669391735453:  # 2022-11-25
-                # libmamba 0.23 introduces API breaking changes, pin to v0.22
-                _replace_pin("libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record)
-                # conda 22.11 introduces the plugin system, which needs a new release
-                _replace_pin("conda >=4.12", "conda >=4.12,<22.11.0a", record["depends"], record)
-                _replace_pin("conda >=4.13", "conda >=4.13,<22.11.0a", record["depends"], record)
-            elif record.get("timestamp", 0) <= 1674230331000:  # 2023-01-20
-                # conda 23.1 changed an internal SubdirData API needed with S3/FTP channels
-                _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.1.0a", record["depends"], record)
-            elif record.get("timestamp", 0) <= 1678721528000: # 2023-03-13:
-                # conda 23.3 changed an internal SubdirData API needed with S3/FTP channels
-                # conda deprecated Boltons leading to a breakage in the solver api interface
-                _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.2.0a", record["depends"], record)
-
-        if subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"] and \
-            record_name in {"libmamba", "libmambapy"} \
-            and record.get("version", 0) == "0.23.3":
-            _replace_pin("libstdcxx-ng >=10.3.0", "libstdcxx-ng >=12.1.0", record["depends"], record)
-            _replace_pin("libgcc-ng >=10.3.0", "libgcc-ng >=12.1.0", record["depends"], record)
-
-        if record_name == "qt-webengine" and record["version"] == "5.15.4" and record["build_number"] == 1:
-            # Allow users to depend on qt 5.15.2 or 5.15.3 metapackage
-            record["constrains"] = [c for c in record["constrains"]
-                                    if not c.startswith("qt ")]
-            record["constrains"].append("qt 5.15.2|5.15.3|5.15.4")
-
-        # tifffile 2022.2.2 and more recent versions requires python >=3.8.
-        # See https://github.com/conda-forge/tifffile-feedstock/issues/93
-        # Fixed in https://github.com/conda-forge/tifffile-feedstock/pull/94
-        if (
-            record_name == "tifffile"
-            and parse_version(record["version"]) >= parse_version("2022.2.2")
-            and parse_version(record["version"]) < parse_version("2022.4.26")
-        ):
-            _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
-
-        # typing-extensions 4.2.0 requires python >=3.7. Build 0 incorrectly specified >=3.6. Fixed in
-        # https://github.com/conda-forge/typing_extensions-feedstock/pull/30
-        if record_name == "typing_extensions":
-            if record["version"] == "4.2.0" and record["build"].endswith("_0"):
-                _replace_pin("python >=3.6", "python >=3.7", deps, record)
+        if record_name == "proplot" and record.get("timestamp", 0) < 1634670686970:
+            depends = record.get("depends", [])
+            for i, dep in enumerate(depends):
+                if dep.startswith("matplotlib"):
+                    _dep_parts = dep.split(" ")
+                    if len(_dep_parts) > 1:
+                        _dep_parts[1] = _dep_parts[1] + ",<3.5.0a0"
+                    else:
+                        _dep_parts = list(_dep_parts) + ["<3.5.0a0"]
+                    depends[i] = " ".join(_dep_parts)
+                record["depends"] = depends
 
         if (
             record_name == "des-pizza-cutter-metadetect"
@@ -1151,18 +1222,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         _pin_stricter(fn, record, "metadetect", "x.x", "0.7.0")
                     else:
                         record["depends"][i] = record["depends"][i] + ",<0.7.0.a0"
-        if record_name == "pexpect" and parse_version(
-            "4.0"
-        ) <= parse_version(
-            record["version"]
-        ) <= parse_version(
-            "4.8.0"
-        ) and not any(pyXY in record["build"] for pyXY in ["py27", "py34", "py35", "py36"]):
-            if "ptyprocess >=0.5" not in record["depends"]:
-                if "ptyprocess" in record["depends"]:
-                    _replace_pin("ptyprocess", "ptyprocess >=0.5", record["depends"], record)
-                else:
-                    record["depends"].append("ptyprocess >=0.5")
+
         if (
             record_name == "metadetect"
             and record.get("timestamp", 0) <= 1651593228024  # 2022/05
@@ -1181,265 +1241,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     else:
                         record["depends"][i] = record["depends"][i] + ",<2.1.0a0"
 
-        if record.get("timestamp", 0) < 1671301008000:
-            # libtiff broke abit from 4.4 and 4.5
-            # https://github.com/conda-forge/libtiff-feedstock/pull/85
-            if any(re.match(r"libtiff >=4\.[01234].*<5.0", dep)
-                   for dep in deps):
-                _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.5.0")
-
-        if record_name == "pillow":
-            if parse_version(record["version"]) < parse_version("9.1.1"):
-                _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
-            if parse_version(record["version"]) == parse_version("9.1.1"):
-                if record["build_number"] < 1:
-                    _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
-
-        if record_name == "freeimage":
-            version = parse_version(record["version"])
-            if version < parse_version("3.18.0"):
-                _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
-            if version == parse_version("3.18.0") and  record["build_number"] < 9:
-                _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.4.0")
-
-        # add missing pins for singularity-hpc
-        if record_name == "singularity-hpc" and record.get("timestamp", 0) < 1652410323526:
-            record["depends"].append("jinja2")
-            record["depends"].append("jsonschema")
-            record["depends"].append("requests")
-            record["depends"].append("ruamel.yaml")
-            record["depends"].append("spython >=0.2.0")
-        if any(dep.startswith("svt-av1") for dep in deps):
-            # hmaarrfk -- 2022/05/18
-            # These packages were built with svt-av1 0.8.7 or 0.9
-            # These two versions of svt seem to be compatible with each
-            # other, but they are not compatible with the recently
-            # released 1.1.0
-            _replace_pin("svt-av1", "svt-av1 <1.0.0a0", record["depends"], record)
-
-        if record_name == "conda-build":
-            # Code removed in conda 4.13.0 broke older conda-build releases;
-            # x-ref issue: conda/conda-build#4481
-            if (
-                parse_version(record["version"]) <=
-                parse_version("3.21.7") or
-                # backported fix in 3.21.8, build 1
-                # (PR: conda-forge/conda-build-feedstock#176)
-                record["version"] == "3.21.8" and record["build_number"] == 0
-            ):
-                for i, dep in enumerate(record["depends"]):
-                    dep_name, *dep_other = dep.split()
-                    if dep_name == "conda" and ",<" not in dep:
-                        record["depends"][i] = "{} {}<4.13.0".format(
-                            dep_name, dep_other[0] + "," if dep_other else ""
-                        )
-            # pin setuptools to <66 to avoid `parse_version` issues
-            # see https://github.com/conda-forge/conda-forge-pinning-feedstock/issues/3973
-            if record.get("timestamp", 0) <= 1674131439051:  # 2023-01-19
-                for i, dep in enumerate(record["depends"]):
-                    dep_name, *dep_other = dep.split()
-                    if dep_name == "setuptools" and ",<" not in dep:
-                        record["depends"][i] = "{} {}<66.0.0a0".format(
-                            dep_name, dep_other[0] + "," if dep_other else ""
-                        )
-
-        if (record_name == "conda" and
-            record["version"] == "22.11.1" and
-            record["build_number"] == 0):
-            for i, dep in enumerate(record["constrains"]):
-                dep_name, *dep_other = dep.split()
-                if dep_name.startswith("conda-libmamba-solver"):
-                    record["constrains"][i] = "conda-libmamba-solver >=22.12.0"
-        if record_name == "mamba" and (
-            parse_version(record["version"]) <
-            parse_version("0.24.0") or (
-                (parse_version(record["version"]) <
-                 parse_version("0.24.0")) and (
-                     record["build_number"] == 0)
-                 )):
-            for i, dep in enumerate(record["depends"]):
-                dep_name, *dep_other = dep.split()
-                if dep_name == "conda" and ",<" not in dep:
-                    record["depends"][i] = "{} {}<4.13.0".format(
-                        dep_name, dep_other[0] + "," if dep_other else ""
-                        )
-        if record_name == "mamba" and (
-            parse_version(record["version"]) ==
-            parse_version("0.24.0")) and (
-                record["build_number"] == 1):
-
-            for i, dep in enumerate(record["depends"]):
-                dep_name, *dep_other = dep.split()
-                if dep_name == "conda":
-                    record["depends"][i] = "conda >=4.8"
-
-        if record_name == "mamba" and (
-            parse_version(record["version"]) ==
-            parse_version("0.25.0")):
-
-            for i, dep in enumerate(record["depends"]):
-                dep_name, *dep_other = dep.split()
-                if dep_name == "conda":
-                    record["depends"][i] = "conda >=4.8,<5"
-
-        if record_name == "anaconda-client":
-            # Bump minimum `requests` requirement of `anaconda-client` 1.11.0
-            # https://github.com/conda-forge/anaconda-client-feedstock/pull/35
-            if (
-            parse_version(record["version"]) ==
-            parse_version("1.11.0")):
-                i = -1
-                deps = record["depends"]
-                with suppress(ValueError):
-                    i = deps.index("requests >=2.9.1")
-                if i >= 0:
-                    deps[i] = "requests >=2.20.0"
-            if record.get("timestamp", 0) <= 1684878992896:  # 2023-05-23
-                # https://github.com/conda-forge/conda-forge-ci-setup-feedstock/issues/242
-                # https://github.com/conda-forge/anaconda-client-feedstock/issues/40
-                if any("urllib3" in dep for dep in record["depends"]):
-                    _replace_pin(
-                        "urllib3 >=1.26.4",
-                        "urllib3 >=1.26.4,<2.0.0a0",
-                        record["depends"],
-                        record,
-                    )
-                else:
-                    # old versions depended on urllib3 via requests;
-                    # requests 2.30+ allows urllib3 2.x
-                    for lower_bound in (">=2.9.1", ">=2.0", ">=2.20.0"):
-                        _replace_pin(
-                            f"requests {lower_bound}",
-                            f"requests {lower_bound},<2.30.0a0",
-                            record["depends"],
-                            record,
-                        )
-            # https://github.com/conda-forge/anaconda-client-feedstock/pull/44
-            # https://github.com/Anaconda-Platform/anaconda-client/issues/678
-            if (
-                parse_version(record["version"])
-                == parse_version("1.12.0")
-            ) and record["build_number"] == 0:
-                # Guard python-dateutil dependency with trailing space in "python "
-                python_pinning = [x for x in record["depends"] if x.startswith("python ")]
-                for pinning in python_pinning:
-                    _replace_pin(pinning, "python >=3.8", record["depends"], record)
-
-        if record_name == "aesara" and (
-            parse_version(record["version"]) >
-            parse_version("2.4.0") and
-            parse_version(record["version"]) <=
-            parse_version("2.7.1")):
-            if record.get("timestamp", 0) <= 1654360235233:
-                _replace_pin("scipy >=0.14,<1.8.0", "scipy >=0.14", record["depends"], record)
-            if (
-                parse_version(record["version"]) >=
-                parse_version("2.5.0") and
-                parse_version(record["version"]) <=
-                parse_version("2.7.3")
-            ):
-                _replace_pin('setuptools', 'setuptools !=65.0.*', deps, record)
-
-        if record_name == "aesara-base":
-            if (
-                parse_version(record["version"]) ==
-                parse_version("2.7.4")
-            ) and (
-                record["build_number"] == 1 and subdir.startswith("win-")
-            ):
-                record["depends"].append("libpython >=2.2")
-            if record["version"] in ["2.7.8", "2.7.9"]:
-                _replace_pin('setuptools >=45.0.0', 'setuptools >=48.0.0,!=65.0.*', deps, record)
-            if (
-                parse_version(record["version"]) >=
-                parse_version("2.7.4") and
-                parse_version(record["version"]) <=
-                parse_version("2.7.7")
-            ):
-                record["depends"].append("setuptools !=65.0.*")
-
-        if record_name == "requests" and (
-            parse_version(record["version"]) >=
-            parse_version("2.26.0") and
-            parse_version(record["version"]) <
-            parse_version("2.28.0")):
-            record.setdefault('constrains', []).extend((
-                "chardet >=3.0.2,<5",
-            ))
-
-        if record_name == "requests" and (
-            parse_version(record["version"]) ==
-            parse_version("2.28.0") and
-            record["build_number"] == 0):
-            record.setdefault('constrains', []).extend((
-                "chardet >=3.0.2,<5",
-            ))
-
-        # the first libabseil[-static] builds did not correctly ensure
-        # that they cannot be co-installed (two conditions)
-        if record_name == "libabseil" and record.get("timestamp", 0) <= 1661962873884:
-            new_constrains = record.get('constrains', [])
-            new_constrains.append("libabseil-static ==99999999999")
-            record["constrains"] = new_constrains
-        if record_name == "libabseil-static" and record.get("timestamp", 0) <= 1661962873884:
-            new_constrains = record.get('constrains', [])
-            new_constrains.append("libabseil ==99999999999")
-            record["constrains"] = new_constrains
-
-        # jaxlib was built with grpc-cpp 1.46.4 that
-        # was only available at abseil-cpp 20220623.0
-        # and thus it needs to be explicitly constrained
-        # no grpc-cpp fix can fix this retro
-        # fixed in https://github.com/conda-forge/jaxlib-feedstock/pull/133
-        if record_name == "jaxlib" and (
-            parse_version(record["version"]) ==
-            parse_version("0.3.15") and
-            record["build_number"] == 0
-        ):
-            record["depends"].append("abseil-cpp ==20220623.0")
-
-        if (record.get("timestamp", 0) < 1684087258848
-                and any(
-                    depend.startswith("libabseil 20230125.0 cxx17*")
-                    for depend in record["depends"]
-                )
-        ):
-            # loosen abseil's run-export to major version, see
-            # https://github.com/conda-forge/abseil-cpp-feedstock/pull/63
-            i = record["depends"].index("libabseil 20230125.0 cxx17*")
-            record["depends"][i] = "libabseil 20230125 cxx17*"
-
-        # fix libabseil-tests being built without encoding a gtest run-export
-        if (record_name == "libabseil-tests"
-                and record["version"] in ("20230125.2", "20230125.3")
-                and record.get("timestamp", 0) < 1691710285000
-        ):
-            _replace_pin("gtest", "gtest >=1.13,<1.14", record["depends"], record)
-
-        # Different patch versions of ipopt can be ABI incompatible
-        # See https://github.com/conda-forge/ipopt-feedstock/issues/85
-        if has_dep(record, "ipopt") and record.get('timestamp', 0) < 1656352053694:
-            _pin_stricter(fn, record, "ipopt", "x.x.x")
-
-        if record_name == "pandas" and (
-            parse_version(record["version"]) >=
-            parse_version("1.14.0") and
-            parse_version(record["version"]) <=
-            parse_version("1.14.2")):
-            _replace_pin("python-dateutil >=2.7.3", "python-dateutil >=2.8.1", record["depends"], record)
-            _replace_pin("pytz >=2017.2", "pytz >=2020.1", record["depends"], record)
-
-        # stomp.py 8.0.1 build 0 has an erroneous dependency on pyopenssl.
-        if record_name == "stomp.py" and (
-                record["version"] == "8.0.1" and
-                record["build_number"] == 0):
-            depends = record["depends"]
-            new_depends = []
-            for dep in depends:
-                dep_name = dep.split()[0]
-                if dep_name != "pyopenssl":
-                    new_depends.append(dep)
-            record["depends"] = new_depends
+        ############################################
+        # Patches that still need to be YAML-ized
+        ############################################
 
         if (record_name == "keyring" and
                 record["version"] == "23.6.0" and
