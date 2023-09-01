@@ -1,0 +1,12 @@
+# from this bit of code
+# if record.get('timestamp', 0) < 1663795137000:
+#     if any(dep.startswith("arpack >=3.7") for dep in deps):
+#         _pin_looser(fn, record, "arpack", max_pin="x.x")
+if:
+  timestamp_lt: 1663795137000
+  has_depends:
+    - arpack >=3.7*
+then:
+  - loosen_depends:
+      name: arpack
+      max_pin: x.x

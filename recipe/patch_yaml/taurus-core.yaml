@@ -1,0 +1,23 @@
+# from this code snippet
+# pint 0.21 breaks taurus <= 5.1.5
+# https://gitlab.com/taurus-org/taurus/-/issues/1290
+# It's not compatible with Python 3.11 either
+# https://gitlab.com/taurus-org/taurus/-/merge_requests/1254
+# if (
+#     record_name == "taurus-core"
+#     and packaging.version.Version(record["version"]) <= packaging.version.Version("5.1.5")
+#     and record.get("timestamp", 0) < 1683637693000
+# ):
+#     _replace_pin("pint >=0.8", "pint >=0.8,<0.21", record["depends"], record)
+#     _replace_pin("python >=3.6", "python >=3.6,<3.11", record["depends"], record)
+if:
+  name: taurus-core
+  version_le: 5.1.5
+  timestamp_le: 1683637693000
+then:
+  - replace_depends:
+      old: pint >=0.8
+      new: pint >=0.8,<0.21
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.6,<3.11

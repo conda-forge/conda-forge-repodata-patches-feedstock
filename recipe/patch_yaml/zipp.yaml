@@ -1,0 +1,35 @@
+# from this snippet
+# if record_name == 'zipp':
+#     # zipp >=3.7 requires python >=3.7 but it was missed
+#     # https://github.com/conda-forge/zipp-feedstock/pull/29
+#     if record['version'] == "3.7.0" and record['build'] == "pyhd8ed1ab_0":
+#         i = record['depends'].index('python >=3.6')
+#         record['depends'][i] = 'python >=3.7'
+if:
+  name: zipp
+  version: 3.7.0
+  build: pyhd8ed1ab_0
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.7
+---
+# from this snippet
+# if record_name == 'zipp':
+#     # zipp >=3.16 requires python >=3.8 but it was missed
+#     # https://github.com/conda-forge/zipp-feedstock/pull/43
+#     if (
+#         record['version'] == "3.16.0" and record['build'] == "pyhd8ed1ab_0"
+#         and record.get("timestamp", 0) < 1689035633000
+#     ):
+#         i = record['depends'].index('python >=3.7')
+#         record['depends'][i] = 'python >=3.8'
+if:
+  name: zipp
+  version: 3.16.0
+  build: pyhd8ed1ab_0
+  timestamp_le: 1689035633000
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8

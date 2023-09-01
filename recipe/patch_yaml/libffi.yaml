@@ -1,0 +1,21 @@
+# from this snippet
+# if 'libffi' in deps and record.get('timestamp', 0) < 1605980936031:
+#     _rename_dependency(fn, record, "libffi", "libffi <3.3.0.a0")
+if:
+  has_depends: libffi
+  timestamp_lt: 1605980936031
+then:
+  - rename_depends:
+      old: libffi
+      new: libffi <3.3.0.a0
+---
+# from this snippet
+# if 'libffi >=3.2.1,<4.0a0' in deps and record.get('timestamp', 0) < 1605980936031:
+#     _pin_stricter(fn, record, "libffi", "x.x")
+if:
+  has_depends: libffi >=3.2.1,<4.0a0
+  timestamp_lt: 1605980936031
+then:
+  - tighten_depends:
+      name: libffi
+      max_pin: x.x

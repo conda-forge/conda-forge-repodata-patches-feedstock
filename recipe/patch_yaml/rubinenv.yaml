@@ -1,0 +1,18 @@
+# from this bit of code
+# rubin-env-nosysroot always needs mkl
+# if (
+#     subdir == "linux-64"
+#     and record_name == "rubin-env-nosysroot"
+#     and record["version"] in ["7.0.0", "7.0.1"]
+#     and int(record["build_number"]) <= 3
+# ):
+#     record["depends"].append("mkl")
+if:
+  subdir_in: "linux-64"
+  name: "rubin-env-nosysroot"
+  version_in:
+    - "7.0.0"
+    - "7.0.1"
+  build_number_le: 3
+then:
+  - add_depends: mkl

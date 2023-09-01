@@ -1,0 +1,2039 @@
+{
+  "$defs": {
+    "_IfClause": {
+      "additionalProperties": false,
+      "description": "Condition(s) that a PackageRecord must satisfy to be patched.\nIf more than one condition is specified, they are combined with a logical AND.",
+      "properties": {
+        "not_arch": {
+          "default": null,
+          "description": "Negated condition: 'arch' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Arch",
+          "type": "string"
+        },
+        "not_arch_eq": {
+          "default": null,
+          "description": "Negated condition: 'arch' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Arch Eq",
+          "type": "string"
+        },
+        "not_arch_ne": {
+          "default": null,
+          "description": "Negated condition: 'arch' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Arch Ne",
+          "type": "string"
+        },
+        "not_arch_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'arch' values to match against. A single scalar value is also allowed.",
+          "title": "Not Arch In"
+        },
+        "not_build": {
+          "default": null,
+          "description": "Negated condition: 'build' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Build",
+          "type": "string"
+        },
+        "not_build_eq": {
+          "default": null,
+          "description": "Negated condition: 'build' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Build Eq",
+          "type": "string"
+        },
+        "not_build_ne": {
+          "default": null,
+          "description": "Negated condition: 'build' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Build Ne",
+          "type": "string"
+        },
+        "not_build_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'build' values to match against. A single scalar value is also allowed.",
+          "title": "Not Build In"
+        },
+        "not_build_number": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: 'build_number' value to compare against with `eq` operator",
+          "title": "Not Build Number"
+        },
+        "not_build_number_lt": {
+          "default": null,
+          "description": "Negated condition: 'build_number' value to compare against with `lt` operator",
+          "minimum": 0,
+          "title": "Not Build Number Lt",
+          "type": "integer"
+        },
+        "not_build_number_le": {
+          "default": null,
+          "description": "Negated condition: 'build_number' value to compare against with `le` operator",
+          "minimum": 0,
+          "title": "Not Build Number Le",
+          "type": "integer"
+        },
+        "not_build_number_gt": {
+          "default": null,
+          "description": "Negated condition: 'build_number' value to compare against with `gt` operator",
+          "minimum": 0,
+          "title": "Not Build Number Gt",
+          "type": "integer"
+        },
+        "not_build_number_ge": {
+          "default": null,
+          "description": "Negated condition: 'build_number' value to compare against with `ge` operator",
+          "minimum": 0,
+          "title": "Not Build Number Ge",
+          "type": "integer"
+        },
+        "not_build_number_eq": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: 'build_number' value to compare against with `eq` operator",
+          "title": "Not Build Number Eq"
+        },
+        "not_build_number_ne": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: 'build_number' value to compare against with `ne` operator",
+          "title": "Not Build Number Ne"
+        },
+        "not_build_number_in": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'build_number' values to match against. A single scalar value is also allowed.",
+          "title": "Not Build Number In"
+        },
+        "not_legacy_bz2_md5": {
+          "default": null,
+          "description": "Negated condition: 'legacy_bz2_md5' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Legacy Bz2 Md5",
+          "type": "string"
+        },
+        "not_legacy_bz2_md5_eq": {
+          "default": null,
+          "description": "Negated condition: 'legacy_bz2_md5' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Legacy Bz2 Md5 Eq",
+          "type": "string"
+        },
+        "not_legacy_bz2_md5_ne": {
+          "default": null,
+          "description": "Negated condition: 'legacy_bz2_md5' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Legacy Bz2 Md5 Ne",
+          "type": "string"
+        },
+        "not_legacy_bz2_md5_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'legacy_bz2_md5' values to match against. A single scalar value is also allowed.",
+          "title": "Not Legacy Bz2 Md5 In"
+        },
+        "not_legacy_bz2_size": {
+          "default": null,
+          "description": "Negated condition: 'legacy_bz2_size' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Legacy Bz2 Size",
+          "type": "string"
+        },
+        "not_legacy_bz2_size_eq": {
+          "default": null,
+          "description": "Negated condition: 'legacy_bz2_size' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Legacy Bz2 Size Eq",
+          "type": "string"
+        },
+        "not_legacy_bz2_size_ne": {
+          "default": null,
+          "description": "Negated condition: 'legacy_bz2_size' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Legacy Bz2 Size Ne",
+          "type": "string"
+        },
+        "not_legacy_bz2_size_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'legacy_bz2_size' values to match against. A single scalar value is also allowed.",
+          "title": "Not Legacy Bz2 Size In"
+        },
+        "not_license": {
+          "default": null,
+          "description": "Negated condition: 'license' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not License",
+          "type": "string"
+        },
+        "not_license_eq": {
+          "default": null,
+          "description": "Negated condition: 'license' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not License Eq",
+          "type": "string"
+        },
+        "not_license_ne": {
+          "default": null,
+          "description": "Negated condition: 'license' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not License Ne",
+          "type": "string"
+        },
+        "not_license_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'license' values to match against. A single scalar value is also allowed.",
+          "title": "Not License In"
+        },
+        "not_license_family": {
+          "default": null,
+          "description": "Negated condition: 'license_family' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not License Family",
+          "type": "string"
+        },
+        "not_license_family_eq": {
+          "default": null,
+          "description": "Negated condition: 'license_family' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not License Family Eq",
+          "type": "string"
+        },
+        "not_license_family_ne": {
+          "default": null,
+          "description": "Negated condition: 'license_family' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not License Family Ne",
+          "type": "string"
+        },
+        "not_license_family_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'license_family' values to match against. A single scalar value is also allowed.",
+          "title": "Not License Family In"
+        },
+        "not_md5": {
+          "default": null,
+          "description": "Negated condition: 'md5' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Md5",
+          "type": "string"
+        },
+        "not_md5_eq": {
+          "default": null,
+          "description": "Negated condition: 'md5' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Md5 Eq",
+          "type": "string"
+        },
+        "not_md5_ne": {
+          "default": null,
+          "description": "Negated condition: 'md5' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Md5 Ne",
+          "type": "string"
+        },
+        "not_md5_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'md5' values to match against. A single scalar value is also allowed.",
+          "title": "Not Md5 In"
+        },
+        "not_name": {
+          "default": null,
+          "description": "Negated condition: 'name' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Name",
+          "type": "string"
+        },
+        "not_name_eq": {
+          "default": null,
+          "description": "Negated condition: 'name' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Name Eq",
+          "type": "string"
+        },
+        "not_name_ne": {
+          "default": null,
+          "description": "Negated condition: 'name' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Name Ne",
+          "type": "string"
+        },
+        "not_name_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'name' values to match against. A single scalar value is also allowed.",
+          "title": "Not Name In"
+        },
+        "not_noarch": {
+          "default": null,
+          "description": "Negated condition: 'noarch' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Noarch",
+          "type": "string"
+        },
+        "not_noarch_eq": {
+          "default": null,
+          "description": "Negated condition: 'noarch' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Noarch Eq",
+          "type": "string"
+        },
+        "not_noarch_ne": {
+          "default": null,
+          "description": "Negated condition: 'noarch' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Noarch Ne",
+          "type": "string"
+        },
+        "not_noarch_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'noarch' values to match against. A single scalar value is also allowed.",
+          "title": "Not Noarch In"
+        },
+        "not_platform": {
+          "default": null,
+          "description": "Negated condition: 'platform' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Platform",
+          "type": "string"
+        },
+        "not_platform_eq": {
+          "default": null,
+          "description": "Negated condition: 'platform' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Platform Eq",
+          "type": "string"
+        },
+        "not_platform_ne": {
+          "default": null,
+          "description": "Negated condition: 'platform' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Platform Ne",
+          "type": "string"
+        },
+        "not_platform_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'platform' values to match against. A single scalar value is also allowed.",
+          "title": "Not Platform In"
+        },
+        "not_sha256": {
+          "default": null,
+          "description": "Negated condition: 'sha256' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Sha256",
+          "type": "string"
+        },
+        "not_sha256_eq": {
+          "default": null,
+          "description": "Negated condition: 'sha256' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Sha256 Eq",
+          "type": "string"
+        },
+        "not_sha256_ne": {
+          "default": null,
+          "description": "Negated condition: 'sha256' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Sha256 Ne",
+          "type": "string"
+        },
+        "not_sha256_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'sha256' values to match against. A single scalar value is also allowed.",
+          "title": "Not Sha256 In"
+        },
+        "not_size": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: 'size' value to compare against with `eq` operator",
+          "title": "Not Size"
+        },
+        "not_size_lt": {
+          "default": null,
+          "description": "Negated condition: 'size' value to compare against with `lt` operator",
+          "minimum": 0,
+          "title": "Not Size Lt",
+          "type": "integer"
+        },
+        "not_size_le": {
+          "default": null,
+          "description": "Negated condition: 'size' value to compare against with `le` operator",
+          "minimum": 0,
+          "title": "Not Size Le",
+          "type": "integer"
+        },
+        "not_size_gt": {
+          "default": null,
+          "description": "Negated condition: 'size' value to compare against with `gt` operator",
+          "minimum": 0,
+          "title": "Not Size Gt",
+          "type": "integer"
+        },
+        "not_size_ge": {
+          "default": null,
+          "description": "Negated condition: 'size' value to compare against with `ge` operator",
+          "minimum": 0,
+          "title": "Not Size Ge",
+          "type": "integer"
+        },
+        "not_size_eq": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: 'size' value to compare against with `eq` operator",
+          "title": "Not Size Eq"
+        },
+        "not_size_ne": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: 'size' value to compare against with `ne` operator",
+          "title": "Not Size Ne"
+        },
+        "not_size_in": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'size' values to match against. A single scalar value is also allowed.",
+          "title": "Not Size In"
+        },
+        "not_subdir": {
+          "default": null,
+          "description": "Negated condition: 'subdir' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Subdir",
+          "type": "string"
+        },
+        "not_subdir_eq": {
+          "default": null,
+          "description": "Negated condition: 'subdir' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Subdir Eq",
+          "type": "string"
+        },
+        "not_subdir_ne": {
+          "default": null,
+          "description": "Negated condition: 'subdir' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Subdir Ne",
+          "type": "string"
+        },
+        "not_subdir_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of platforms to match against; e.g. `linux-64`",
+          "title": "Not Subdir In"
+        },
+        "not_timestamp": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: 'timestamp' value to compare against with `eq` operator",
+          "title": "Not Timestamp"
+        },
+        "not_timestamp_lt": {
+          "default": null,
+          "description": "Negated condition: 'timestamp' value to compare against with `lt` operator",
+          "minimum": 0,
+          "title": "Not Timestamp Lt",
+          "type": "integer"
+        },
+        "not_timestamp_le": {
+          "default": null,
+          "description": "Negated condition: 'timestamp' value to compare against with `le` operator",
+          "minimum": 0,
+          "title": "Not Timestamp Le",
+          "type": "integer"
+        },
+        "not_timestamp_gt": {
+          "default": null,
+          "description": "Negated condition: 'timestamp' value to compare against with `gt` operator",
+          "minimum": 0,
+          "title": "Not Timestamp Gt",
+          "type": "integer"
+        },
+        "not_timestamp_ge": {
+          "default": null,
+          "description": "Negated condition: 'timestamp' value to compare against with `ge` operator",
+          "minimum": 0,
+          "title": "Not Timestamp Ge",
+          "type": "integer"
+        },
+        "not_timestamp_eq": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: 'timestamp' value to compare against with `eq` operator",
+          "title": "Not Timestamp Eq"
+        },
+        "not_timestamp_ne": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: 'timestamp' value to compare against with `ne` operator",
+          "title": "Not Timestamp Ne"
+        },
+        "not_timestamp_in": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'timestamp' values to match against. A single scalar value is also allowed.",
+          "title": "Not Timestamp In"
+        },
+        "not_version": {
+          "default": null,
+          "description": "Negated condition: 'version' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Version",
+          "type": "string"
+        },
+        "not_version_lt": {
+          "default": null,
+          "description": "Negated condition: 'version' value to compare against with `lt` operator",
+          "minLength": 1,
+          "title": "Not Version Lt",
+          "type": "string"
+        },
+        "not_version_le": {
+          "default": null,
+          "description": "Negated condition: 'version' value to compare against with `le` operator",
+          "minLength": 1,
+          "title": "Not Version Le",
+          "type": "string"
+        },
+        "not_version_gt": {
+          "default": null,
+          "description": "Negated condition: 'version' value to compare against with `gt` operator",
+          "minLength": 1,
+          "title": "Not Version Gt",
+          "type": "string"
+        },
+        "not_version_ge": {
+          "default": null,
+          "description": "Negated condition: 'version' value to compare against with `ge` operator",
+          "minLength": 1,
+          "title": "Not Version Ge",
+          "type": "string"
+        },
+        "not_version_eq": {
+          "default": null,
+          "description": "Negated condition: 'version' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Not Version Eq",
+          "type": "string"
+        },
+        "not_version_ne": {
+          "default": null,
+          "description": "Negated condition: 'version' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Not Version Ne",
+          "type": "string"
+        },
+        "not_version_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of 'version' values to match against. A single scalar value is also allowed.",
+          "title": "Not Version In"
+        },
+        "arch": {
+          "default": null,
+          "description": "'arch' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Arch",
+          "type": "string"
+        },
+        "arch_eq": {
+          "default": null,
+          "description": "'arch' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Arch Eq",
+          "type": "string"
+        },
+        "arch_ne": {
+          "default": null,
+          "description": "'arch' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Arch Ne",
+          "type": "string"
+        },
+        "arch_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'arch' values to match against. A single scalar value is also allowed.",
+          "title": "Arch In"
+        },
+        "build": {
+          "default": null,
+          "description": "'build' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Build",
+          "type": "string"
+        },
+        "build_eq": {
+          "default": null,
+          "description": "'build' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Build Eq",
+          "type": "string"
+        },
+        "build_ne": {
+          "default": null,
+          "description": "'build' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Build Ne",
+          "type": "string"
+        },
+        "build_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'build' values to match against. A single scalar value is also allowed.",
+          "title": "Build In"
+        },
+        "build_number": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "'build_number' value to compare against with `eq` operator",
+          "title": "Build Number"
+        },
+        "build_number_lt": {
+          "default": null,
+          "description": "'build_number' value to compare against with `lt` operator",
+          "minimum": 0,
+          "title": "Build Number Lt",
+          "type": "integer"
+        },
+        "build_number_le": {
+          "default": null,
+          "description": "'build_number' value to compare against with `le` operator",
+          "minimum": 0,
+          "title": "Build Number Le",
+          "type": "integer"
+        },
+        "build_number_gt": {
+          "default": null,
+          "description": "'build_number' value to compare against with `gt` operator",
+          "minimum": 0,
+          "title": "Build Number Gt",
+          "type": "integer"
+        },
+        "build_number_ge": {
+          "default": null,
+          "description": "'build_number' value to compare against with `ge` operator",
+          "minimum": 0,
+          "title": "Build Number Ge",
+          "type": "integer"
+        },
+        "build_number_eq": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "'build_number' value to compare against with `eq` operator",
+          "title": "Build Number Eq"
+        },
+        "build_number_ne": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "'build_number' value to compare against with `ne` operator",
+          "title": "Build Number Ne"
+        },
+        "build_number_in": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'build_number' values to match against. A single scalar value is also allowed.",
+          "title": "Build Number In"
+        },
+        "legacy_bz2_md5": {
+          "default": null,
+          "description": "'legacy_bz2_md5' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Legacy Bz2 Md5",
+          "type": "string"
+        },
+        "legacy_bz2_md5_eq": {
+          "default": null,
+          "description": "'legacy_bz2_md5' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Legacy Bz2 Md5 Eq",
+          "type": "string"
+        },
+        "legacy_bz2_md5_ne": {
+          "default": null,
+          "description": "'legacy_bz2_md5' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Legacy Bz2 Md5 Ne",
+          "type": "string"
+        },
+        "legacy_bz2_md5_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'legacy_bz2_md5' values to match against. A single scalar value is also allowed.",
+          "title": "Legacy Bz2 Md5 In"
+        },
+        "legacy_bz2_size": {
+          "default": null,
+          "description": "'legacy_bz2_size' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Legacy Bz2 Size",
+          "type": "string"
+        },
+        "legacy_bz2_size_eq": {
+          "default": null,
+          "description": "'legacy_bz2_size' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Legacy Bz2 Size Eq",
+          "type": "string"
+        },
+        "legacy_bz2_size_ne": {
+          "default": null,
+          "description": "'legacy_bz2_size' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Legacy Bz2 Size Ne",
+          "type": "string"
+        },
+        "legacy_bz2_size_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'legacy_bz2_size' values to match against. A single scalar value is also allowed.",
+          "title": "Legacy Bz2 Size In"
+        },
+        "license": {
+          "default": null,
+          "description": "'license' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "License",
+          "type": "string"
+        },
+        "license_eq": {
+          "default": null,
+          "description": "'license' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "License Eq",
+          "type": "string"
+        },
+        "license_ne": {
+          "default": null,
+          "description": "'license' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "License Ne",
+          "type": "string"
+        },
+        "license_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'license' values to match against. A single scalar value is also allowed.",
+          "title": "License In"
+        },
+        "license_family": {
+          "default": null,
+          "description": "'license_family' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "License Family",
+          "type": "string"
+        },
+        "license_family_eq": {
+          "default": null,
+          "description": "'license_family' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "License Family Eq",
+          "type": "string"
+        },
+        "license_family_ne": {
+          "default": null,
+          "description": "'license_family' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "License Family Ne",
+          "type": "string"
+        },
+        "license_family_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'license_family' values to match against. A single scalar value is also allowed.",
+          "title": "License Family In"
+        },
+        "md5": {
+          "default": null,
+          "description": "'md5' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Md5",
+          "type": "string"
+        },
+        "md5_eq": {
+          "default": null,
+          "description": "'md5' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Md5 Eq",
+          "type": "string"
+        },
+        "md5_ne": {
+          "default": null,
+          "description": "'md5' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Md5 Ne",
+          "type": "string"
+        },
+        "md5_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'md5' values to match against. A single scalar value is also allowed.",
+          "title": "Md5 In"
+        },
+        "name": {
+          "default": null,
+          "description": "'name' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "name_eq": {
+          "default": null,
+          "description": "'name' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Name Eq",
+          "type": "string"
+        },
+        "name_ne": {
+          "default": null,
+          "description": "'name' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Name Ne",
+          "type": "string"
+        },
+        "name_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'name' values to match against. A single scalar value is also allowed.",
+          "title": "Name In"
+        },
+        "noarch": {
+          "default": null,
+          "description": "'noarch' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Noarch",
+          "type": "string"
+        },
+        "noarch_eq": {
+          "default": null,
+          "description": "'noarch' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Noarch Eq",
+          "type": "string"
+        },
+        "noarch_ne": {
+          "default": null,
+          "description": "'noarch' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Noarch Ne",
+          "type": "string"
+        },
+        "noarch_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'noarch' values to match against. A single scalar value is also allowed.",
+          "title": "Noarch In"
+        },
+        "platform": {
+          "default": null,
+          "description": "'platform' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Platform",
+          "type": "string"
+        },
+        "platform_eq": {
+          "default": null,
+          "description": "'platform' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Platform Eq",
+          "type": "string"
+        },
+        "platform_ne": {
+          "default": null,
+          "description": "'platform' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Platform Ne",
+          "type": "string"
+        },
+        "platform_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'platform' values to match against. A single scalar value is also allowed.",
+          "title": "Platform In"
+        },
+        "sha256": {
+          "default": null,
+          "description": "'sha256' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Sha256",
+          "type": "string"
+        },
+        "sha256_eq": {
+          "default": null,
+          "description": "'sha256' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Sha256 Eq",
+          "type": "string"
+        },
+        "sha256_ne": {
+          "default": null,
+          "description": "'sha256' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Sha256 Ne",
+          "type": "string"
+        },
+        "sha256_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'sha256' values to match against. A single scalar value is also allowed.",
+          "title": "Sha256 In"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "'size' value to compare against with `eq` operator",
+          "title": "Size"
+        },
+        "size_lt": {
+          "default": null,
+          "description": "'size' value to compare against with `lt` operator",
+          "minimum": 0,
+          "title": "Size Lt",
+          "type": "integer"
+        },
+        "size_le": {
+          "default": null,
+          "description": "'size' value to compare against with `le` operator",
+          "minimum": 0,
+          "title": "Size Le",
+          "type": "integer"
+        },
+        "size_gt": {
+          "default": null,
+          "description": "'size' value to compare against with `gt` operator",
+          "minimum": 0,
+          "title": "Size Gt",
+          "type": "integer"
+        },
+        "size_ge": {
+          "default": null,
+          "description": "'size' value to compare against with `ge` operator",
+          "minimum": 0,
+          "title": "Size Ge",
+          "type": "integer"
+        },
+        "size_eq": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "'size' value to compare against with `eq` operator",
+          "title": "Size Eq"
+        },
+        "size_ne": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "'size' value to compare against with `ne` operator",
+          "title": "Size Ne"
+        },
+        "size_in": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'size' values to match against. A single scalar value is also allowed.",
+          "title": "Size In"
+        },
+        "subdir": {
+          "default": null,
+          "description": "'subdir' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Subdir",
+          "type": "string"
+        },
+        "subdir_eq": {
+          "default": null,
+          "description": "'subdir' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Subdir Eq",
+          "type": "string"
+        },
+        "subdir_ne": {
+          "default": null,
+          "description": "'subdir' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Subdir Ne",
+          "type": "string"
+        },
+        "subdir_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of platforms to match against; e.g. `linux-64`",
+          "title": "Subdir In"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "'timestamp' value to compare against with `eq` operator",
+          "title": "Timestamp"
+        },
+        "timestamp_lt": {
+          "default": null,
+          "description": "'timestamp' value to compare against with `lt` operator",
+          "minimum": 0,
+          "title": "Timestamp Lt",
+          "type": "integer"
+        },
+        "timestamp_le": {
+          "default": null,
+          "description": "'timestamp' value to compare against with `le` operator",
+          "minimum": 0,
+          "title": "Timestamp Le",
+          "type": "integer"
+        },
+        "timestamp_gt": {
+          "default": null,
+          "description": "'timestamp' value to compare against with `gt` operator",
+          "minimum": 0,
+          "title": "Timestamp Gt",
+          "type": "integer"
+        },
+        "timestamp_ge": {
+          "default": null,
+          "description": "'timestamp' value to compare against with `ge` operator",
+          "minimum": 0,
+          "title": "Timestamp Ge",
+          "type": "integer"
+        },
+        "timestamp_eq": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "'timestamp' value to compare against with `eq` operator",
+          "title": "Timestamp Eq"
+        },
+        "timestamp_ne": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "description": "'timestamp' value to compare against with `ne` operator",
+          "title": "Timestamp Ne"
+        },
+        "timestamp_in": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'timestamp' values to match against. A single scalar value is also allowed.",
+          "title": "Timestamp In"
+        },
+        "version": {
+          "default": null,
+          "description": "'version' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "version_lt": {
+          "default": null,
+          "description": "'version' value to compare against with `lt` operator",
+          "minLength": 1,
+          "title": "Version Lt",
+          "type": "string"
+        },
+        "version_le": {
+          "default": null,
+          "description": "'version' value to compare against with `le` operator",
+          "minLength": 1,
+          "title": "Version Le",
+          "type": "string"
+        },
+        "version_gt": {
+          "default": null,
+          "description": "'version' value to compare against with `gt` operator",
+          "minLength": 1,
+          "title": "Version Gt",
+          "type": "string"
+        },
+        "version_ge": {
+          "default": null,
+          "description": "'version' value to compare against with `ge` operator",
+          "minLength": 1,
+          "title": "Version Ge",
+          "type": "string"
+        },
+        "version_eq": {
+          "default": null,
+          "description": "'version' value to compare against with `eq` operator",
+          "minLength": 1,
+          "title": "Version Eq",
+          "type": "string"
+        },
+        "version_ne": {
+          "default": null,
+          "description": "'version' value to compare against with `ne` operator",
+          "minLength": 1,
+          "title": "Version Ne",
+          "type": "string"
+        },
+        "version_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of 'version' values to match against. A single scalar value is also allowed.",
+          "title": "Version In"
+        },
+        "has_depends": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Spec or list of specs that should be present in the 'depends' list.",
+          "title": "Has Depends"
+        },
+        "has_constrains": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Spec or list of specs that should be present in the 'constrains' list.",
+          "title": "Has Constrains"
+        },
+        "artifact_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "List of full artifact filenames to match against; e.g. `ngmix-2.3.0-py38h50d1736_1.conda`",
+          "title": "Artifact In"
+        },
+        "not_has_depends": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: Spec or list of specs that should be present in the 'depends' list.",
+          "title": "Not Has Depends"
+        },
+        "not_has_constrains": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: Spec or list of specs that should be present in the 'constrains' list.",
+          "title": "Not Has Constrains"
+        },
+        "not_artifact_in": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: List of full artifact filenames to match against; e.g. `ngmix-2.3.0-py38h50d1736_1.conda`",
+          "title": "Not Artifact In"
+        }
+      },
+      "title": "_IfClause",
+      "type": "object"
+    },
+    "_Name_MaxPin_UpperBound": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "max_pin": {
+          "default": null,
+          "description": "Maximum version pin expression to apply to the package (e.g. `x.x`).",
+          "pattern": "^[x.]+$",
+          "title": "Max Pin",
+          "type": "string"
+        },
+        "upper_bound": {
+          "default": null,
+          "description": "Explicit upper bound version to apply to the package (e.g. `2.0`).",
+          "minLength": 1,
+          "title": "Upper Bound",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "_Name_MaxPin_UpperBound",
+      "type": "object"
+    },
+    "_Old2New": {
+      "additionalProperties": false,
+      "properties": {
+        "old": {
+          "minLength": 1,
+          "title": "Old",
+          "type": "string"
+        },
+        "new": {
+          "minLength": 1,
+          "title": "New",
+          "type": "string"
+        }
+      },
+      "required": [
+        "old",
+        "new"
+      ],
+      "title": "_Old2New",
+      "type": "object"
+    },
+    "_ThenClauseItem": {
+      "additionalProperties": false,
+      "properties": {
+        "add_depends": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Add dependencies to matched packages",
+          "title": "Add Depends"
+        },
+        "add_constrains": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Add constraints to matched packages",
+          "title": "Add Constrains"
+        },
+        "remove_depends": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Remove dependencies to matched packages",
+          "title": "Remove Depends"
+        },
+        "remove_constrains": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Remove constraints to matched packages",
+          "title": "Remove Constrains"
+        },
+        "remove_track_features": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Remove item(s) from track_features to matched packages",
+          "title": "Remove Track Features"
+        },
+        "replace_depends": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Old2New"
+            }
+          ],
+          "default": null,
+          "description": "Replace 'old' dependency with 'new'."
+        },
+        "replace_constrains": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Old2New"
+            }
+          ],
+          "default": null,
+          "description": "Replace 'old' constraint with 'new'."
+        },
+        "rename_depends": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Old2New"
+            }
+          ],
+          "default": null,
+          "description": "Rename 'old' dependency as 'new', leaving version and build string fields untouched."
+        },
+        "rename_constrains": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Old2New"
+            }
+          ],
+          "default": null,
+          "description": "Rename 'old' constraint as 'new', leaving version and build string fields untouched."
+        },
+        "relax_exact_depends": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Name_MaxPin_UpperBound"
+            }
+          ],
+          "default": null,
+          "description": "Relax an exact pin (e.g., `blah ==1.0.0`) to something like blah `>=1.0.0` and possibly with `,<2.0a0` added if max_pin='x'"
+        },
+        "tighten_depends": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Name_MaxPin_UpperBound"
+            }
+          ],
+          "default": null,
+          "description": "Make a dependency version constraint stricter"
+        },
+        "loosen_depends": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Name_MaxPin_UpperBound"
+            }
+          ],
+          "default": null,
+          "description": "Make a dependency version constraint looser"
+        }
+      },
+      "title": "_ThenClauseItem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "if": {
+      "$ref": "#/$defs/_IfClause"
+    },
+    "then": {
+      "description": "List of operations to apply to matched records",
+      "items": {
+        "$ref": "#/$defs/_ThenClauseItem"
+      },
+      "minItems": 1,
+      "title": "Then",
+      "type": "array"
+    }
+  },
+  "required": [
+    "if",
+    "then"
+  ],
+  "title": "PatchYaml",
+  "type": "object"
+}

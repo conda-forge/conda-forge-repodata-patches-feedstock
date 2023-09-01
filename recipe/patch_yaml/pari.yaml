@@ -1,0 +1,8 @@
+# from this snippet
+# if any(dep.startswith("pari >=2.13.2") for dep in deps) and record.get('timestamp', 0) < 1625642169000:
+#     record["depends"].append("pari * *_single")
+if:
+  has_depends: pari >=2.13.2*
+  timestamp_lt: 1625642169000
+then:
+  - add_depends: pari * *_single

@@ -1,0 +1,12 @@
+# from this bit of code
+# erddapy <=1.3 doesn't support pandas 2.0.
+# https://github.com/ioos/erddapy/issues/299
+# if record_name == "erddapy" and packaging.version.Version(record["version"]) < packaging.version.Version("1.3"):
+#     _replace_pin("pandas >=0.20.3", "pandas >=0.20.3,<2a0", deps, record)
+if:
+  name: erddapy
+  version_lt: "1.3"
+then:
+  - replace_depends:
+      old: pandas >=0.20.3
+      new: pandas >=0.20.3,<2a0

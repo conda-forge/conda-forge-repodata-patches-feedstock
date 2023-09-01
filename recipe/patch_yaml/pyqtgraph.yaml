@@ -1,0 +1,22 @@
+# from this code snippet
+# Fix pyqtgraph 0.13.x requirements
+# https://github.com/conda-forge/pyqtgraph-feedstock/issues/24
+# https://github.com/conda-forge/pyqtgraph-feedstock/pull/25
+# if record_name == "pyqtgraph" and record["version"] in ("0.13.0", "0.13.1") and record["build_number"] == 0:
+#     _replace_pin("pyside2 >=5.12", "pyside2 >=5.15", record["constrains"], record, target="constrains")
+#     _replace_pin("pyqt >=5.12", "pyqt >=5.15", record["constrains"], record, target="constrains")
+#     _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
+if:
+  name: pyqtgraph
+  version_in: [0.13.0, 0.13.1]
+  build_number: 0
+then:
+  - replace_constrains:
+      old: pyside2 >=5.12
+      new: pyside2 >=5.15
+  - replace_constrains:
+      old: pyqt >=5.12
+      new: pyqt >=5.15
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8

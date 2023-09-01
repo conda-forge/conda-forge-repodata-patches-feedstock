@@ -1,0 +1,13 @@
+# from this code snippet
+# pyzmq 23.0.0 broke zerorpc-python
+# https://github.com/0rpc/zerorpc-python/issues/251
+# if record_name == "zerorpc-python" and record["version"] == "0.6.3" and record["build_number"] == 0:
+#     _replace_pin("pyzmq >=13.1.0", "pyzmq >=13.1.0,!=23.0.0", record["depends"], record)
+if:
+  name: zerorpc-python
+  version: 0.6.3
+  build_number: 0
+then:
+  - replace_depends:
+      old: pyzmq >=13.1.0
+      new: pyzmq >=13.1.0,!=23.0.0

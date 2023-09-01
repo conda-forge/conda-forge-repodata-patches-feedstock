@@ -1,0 +1,25 @@
+# from this bit of code
+# if (
+#     record_name == "plotly"
+#     and ((parse_version(record["version"])
+#         < parse_version("5.11.0")
+#         ) or (record["version"] == "5.11.0" and record["build_number"] <= 0))
+# ):
+#     # The new ipywidgets 8 breaks Plotly, so add a run_constrained requirement.
+#     # <https://github.com/conda-forge/plotly-feedstock/issues/115>
+#     record.setdefault('constrains', []).extend((
+#         "ipywidgets <8.0.0",
+#     ))
+if:
+  name: plotly
+  version_lt: 5.11.0
+then:
+  - add_constrains: ipywidgets <8.0.0
+---
+# from the same bit of code as above
+if:
+  name: plotly
+  version: 5.11.0
+  build_number: 0
+then:
+  - add_constrains: ipywidgets <8.0.0

@@ -1,0 +1,19 @@
+# from this bit of code
+# # Retroactively pin Python < 3.10 for some older noarch Pony packages, since Pony depends on the parser
+# # module removed in 3.10: https://github.com/conda-forge/pony-feedstock/pull/20
+# if record_name == "pony":
+#     deps = record["depends"]
+#     if  record['version'] == "0.7.13":
+#         _replace_pin("python", "python >=2.7,<3.10", deps, record)
+#     elif record["version"] == "0.7.14":
+#         _replace_pin("python >=2.7", "python >=2.7,<3.10", deps, record)
+if:
+  name: pony
+  version: "0.7.1[34]"
+then:
+  - replace_depends:
+      old: python
+      new: python >=2.7,<3.10
+  - replace_depends:
+      old: python >=2.7
+      new: python >=2.7,<3.10

@@ -1,0 +1,19 @@
+# from this bit of code
+# if record_name == "packaging" and record["version"] in ["21.1", "21.2"]:
+#     # https://github.com/conda-forge/packaging-feedstock/pull/21
+#     deps = record["depends"]
+#     i = -1
+#     with suppress(ValueError):
+#         i = deps.index("pyparsing >=2.0.2")
+#     if i >= 0:
+#         deps[i] = "pyparsing >=2.0.2,<3"
+if:
+  name: packaging
+  version_in:
+    - "21.1"
+    - "21.2"
+  has_depends: "pyparsing >=2.0.2"
+then:
+  - replace_depends:
+      old: "pyparsing >=2.0.2"
+      new: "pyparsing >=2.0.2,<3"

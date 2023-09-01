@@ -1,0 +1,12 @@
+# from this snippet
+# if record.get('timestamp', 0) < 1666320182000:
+#     if any(dep.startswith("libxml2 >=2.9") for dep in deps):
+#         _pin_looser(fn, record, "libxml2", upper_bound="2.11.0")
+if:
+  timestamp_lt: 1666320182000
+  has_depends:
+    - libxml2 >=2.9*
+then:
+  - loosen_depends:
+      name: libxml2
+      upper_bound: 2.11.0

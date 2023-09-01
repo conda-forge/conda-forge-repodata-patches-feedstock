@@ -1,0 +1,10 @@
+if:
+  has_depends: rhash
+  timestamp_lt: 1693428857000
+then:
+  - replace_depends:
+      old: rhash
+      new: rhash <=1.4.3
+  - replace_depends:
+      old: rhash >=1.4.3,<2.0a0
+      new: rhash >=1.4.3,<1.4.4a0

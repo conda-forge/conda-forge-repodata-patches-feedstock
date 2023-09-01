@@ -1,0 +1,20 @@
+# from this code snippet
+# Fix numcodecs min pin to 0.10.0 for zarr 2.13.2
+# if (
+#     record_name in "zarr"
+#     and (
+#         parse_version(record["version"])
+#         == parse_version("2.13.2")
+#     )
+# ):
+#     record["depends"] = [
+#         "numcodecs >=0.10.0" if dep == "numcodecs >=0.6.4" else dep
+#         for dep in record.get("depends", [])
+#     ]
+if:
+  name: zarr
+  version: 2.13.2
+then:
+  - replace_depends:
+      old: numcodecs >=0.6.4
+      new: numcodecs >=0.10.0

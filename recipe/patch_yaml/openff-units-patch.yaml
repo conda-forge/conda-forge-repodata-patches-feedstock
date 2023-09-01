@@ -1,0 +1,7 @@
+if:
+  subdir_in: noarch
+  artifact_in: openff-units-0.2.0-pyh1a96a4e_1.conda
+then:
+  - replace_depends:
+      old: "pint >=0.20.1|=0.21"
+      new: "pint >=0.20.1,=0.21"

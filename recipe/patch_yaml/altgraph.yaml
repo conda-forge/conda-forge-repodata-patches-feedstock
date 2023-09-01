@@ -1,0 +1,22 @@
+# from this bit of code
+# altgraph 0.11.0 and newer make use of `pkg_resources`, but
+# some of the packages previously did not include `setuptools` as
+# a requirement. This has since been fixed for new `altgraph` packages.
+# Though older packages need this added as well via a hot-fix.
+# So handle this here.
+# if (record_name == "altgraph"
+#         and record.get("timestamp", 0) <= 1650870000000
+#         and (
+#             parse_version(record["version"]) >=
+#             parse_version("0.11.0")
+#         )):
+#     new_depends = record.get("depends", [])
+#     new_depends.append("setuptools")
+#     record["depends"] = new_depends
+if:
+  name: altgraph
+  timestamp_le: 1650870000000
+  version_ge: "0.11.0"
+then:
+  - add_depends:
+      - setuptools

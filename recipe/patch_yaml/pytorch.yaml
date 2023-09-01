@@ -1,0 +1,150 @@
+# from this bit of code
+# if record_name == "pytorch" and record.get('timestamp', 0) < 1610297816658:
+#     # https://github.com/conda-forge/pytorch-cpu-feedstock/issues/29
+#     if not any(dep.split(' ')[0] == 'typing_extensions'
+#                for dep in record.get('depends', ())):
+#         if 'depends' in record:
+#             record['depends'].append("typing_extensions")
+#         else:
+#             record['depends'] = ["typing_extensions"]
+if:
+  name: pytorch
+  timestamp_lt: 1610297816658
+  not_has_depends: "typing_extensions?( *)"
+then:
+  - add_depends: "typing_extensions"
+---
+# from this bit of code
+# if record_name == "pytorch" and record["version"] == "1.13.1"
+#    and record['build_number'] == 0 and record.get('timestamp', 0) < 1675431752816:
+#     # https://github.com/conda-forge/pytorch-cpu-feedstock/issues/161
+#     i = record['depends'].index('ninja')
+#     record['depends'].pop(i)
+if:
+  name: pytorch
+  version: "1.13.1"
+  build_number: 0
+  timestamp_lt: 1675431752816
+then:
+  - remove_depends: ninja
+---
+# from this bit of code
+# if record_name == "pytorch":  #  and record.get("timestamp", 0) < 1653777188:
+#     pversion = parse_version(record['version'])
+#     limit_version = parse_version("1.10.0")
+#     if record["build"].startswith("cpu_") and pversion < limit_version:
+#         if "constrains" not in record:
+#             record["constrains"] = []
+#         if not any(c.startswith("pytorch-cpu")
+#                     for c in record["constrains"]):
+#             record["constrains"].append(
+#                 f"pytorch-cpu = {record['version']}=*_{record['build_number']}"
+#             )
+#         if not any(c.startswith("pytorch-gpu")
+#                     for c in record["constrains"]):
+#             record["constrains"].append(
+#                 "pytorch-gpu = 99999999"
+#             )
+if:
+  name: pytorch
+  version_lt: 1.10.0
+  build: cpu_*
+  not_has_constrains: pytorch-cpu*
+then:
+  - add_constrains: "pytorch-cpu ==${version}.*=*_${build_number}"
+---
+# from this bit of code
+# if record_name == "pytorch":  #  and record.get("timestamp", 0) < 1653777188:
+#     pversion = parse_version(record['version'])
+#     limit_version = parse_version("1.10.0")
+#     if record["build"].startswith("cpu_") and pversion < limit_version:
+#         if "constrains" not in record:
+#             record["constrains"] = []
+#         if not any(c.startswith("pytorch-gpu")
+#                     for c in record["constrains"]):
+#             record["constrains"].append(
+#                 "pytorch-gpu = 99999999"
+#             )
+if:
+  name: pytorch
+  version_lt: 1.10.0
+  build: cpu_*
+  not_has_constrains: pytorch-gpu*
+then:
+  - add_constrains: "pytorch-gpu ==99999999"
+---
+# from this bit of code
+# if record_name == "pytorch":  #  and record.get("timestamp", 0) < 1653777188:
+#     pversion = parse_version(record['version'])
+#     limit_version = parse_version("1.10.0")
+#     if record["build"].startswith("cuda") and pversion < limit_version:
+#         if "constrains" not in record:
+#             record["constrains"] = []
+#         if not any(c.startswith("pytorch-gpu")
+#                     for c in record["constrains"]):
+#             record["constrains"].append(
+#                 f"pytorch-gpu = {record['version']}=*_{record['build_number']}"
+#             )
+if:
+  name: pytorch
+  version_lt: 1.10.0
+  build: cuda*
+  not_has_constrains: pytorch-gpu*
+then:
+  - add_constrains: "pytorch-gpu ==${version}.*=*_${build_number}"
+---
+# from this bit of code
+# if record_name == "pytorch":  #  and record.get("timestamp", 0) < 1653777188:
+#     pversion = parse_version(record['version'])
+#     limit_version = parse_version("1.10.0")
+#     if record["build"].startswith("cuda") and pversion < limit_version:
+#         if "constrains" not in record:
+#             record["constrains"] = []
+#         if not any(c.startswith("pytorch-cpu")
+#                     for c in record["constrains"]):
+#             record["constrains"].append(
+#                 "pytorch-cpu = 99999999"
+#             )
+if:
+  name: pytorch
+  version_lt: 1.10.0
+  build: cuda*
+  not_has_constrains: pytorch-cpu*
+then:
+  - add_constrains: pytorch-cpu ==99999999
+---
+# from this bit of code
+# do some fixes for pytorch, pytorch-cpu & gpu
+# if (
+#     record_name == "pytorch-cpu"
+#     and (
+#         parse_version(record["version"])
+#         < parse_version("1.6")
+#     )):
+#     record.setdefault('constrains', []).extend([
+#         "pytorch-gpu 9999999999"
+#     ])
+if:
+  name: pytorch-cpu
+  version_lt: "1.6"
+then:
+  - add_constrains: "pytorch-gpu 9999999999"
+---
+# from this bit of code
+# if (
+#     record_name in ("pytorch-cpu", "pytorch-gpu")
+#     and
+#         parse_version(record["version"])
+#         == parse_version("1.6")
+# ):
+#     deps = record.get('depends')
+#     if not(any(d.split()[0] == 'pytorch' for d in deps)):
+#         record['depends'] = deps + ['pytorch 1.6']
+if:
+  name_in:
+    - pytorch-cpu
+    - pytorch-gpu
+  version: "1.6"
+  not_has_depends: pytorch?( *)
+then:
+  - add_depends: pytorch 1.6

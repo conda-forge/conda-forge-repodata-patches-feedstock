@@ -1,0 +1,20 @@
+# from this snippet
+# if any(dep.startswith("libignition-") or dep == 'libsdformat' for dep in deps):
+#     for dep_idx, _ in enumerate(deps):
+#         dep = record['depends'][dep_idx]
+#         if dep.startswith('libignition-'):
+#             _pin_looser(fn, record, dep.split(" ")[0], max_pin="x")
+if:
+  has_depends: libignition-*
+then:
+  - loosen_depends:
+      name: libignition-*
+      max_pin: x
+---
+# from the snippet above
+if:
+  has_depends: libsdformat
+then:
+  - loosen_depends:
+      name: libignition-*
+      max_pin: x

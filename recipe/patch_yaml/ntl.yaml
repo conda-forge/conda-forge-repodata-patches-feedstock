@@ -1,0 +1,11 @@
+# from this bit of code
+# deps = record.get("depends", ())
+# if "ntl" in deps and record_name != "sage":
+#     _rename_dependency(fn, record, "ntl", "ntl 10.3.0")
+if:
+  not_name: sage
+  has_depends: ntl
+then:
+  - rename_depends:
+      old: ntl
+      new: ntl 10.3.0

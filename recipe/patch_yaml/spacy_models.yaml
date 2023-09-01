@@ -1,0 +1,21 @@
+# from this bit of code
+# spacy-models-* needs to match spacy's maj.minor version, but old builds don't
+# have that constraint correctly, leading to them being pulled in when a new
+# spacy version releases, but before spacy-models-* is built in c-f, see
+# https://github.com/conda-forge/spacy-models-feedstock/issues/5
+# if (
+#     record_name.startswith("spacy-model")
+#     and record["version"].split(".")[0] < "3"
+#     and subdir == "noarch"
+#     and record.get('timestamp', 0) < 1675431752816
+# ):
+#     # to limit breakage of old environments that worked regardless of the wrong
+#     # constraints, just ensure we don't get new spacy for old spacy-model-* builds
+#     record['depends'].append("spacy <3")
+if:
+  name: spacy-model*
+  version_lt: "3"
+  subdir_in: noarch
+  timestamp_lt: 1675431752816
+then:
+  - add_depends: "spacy <3"
