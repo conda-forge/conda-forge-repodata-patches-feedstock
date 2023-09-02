@@ -19,7 +19,9 @@ if:
   name: robotframework-seleniumlibrary
   timestamp_le: 1686323537000
   version_le: "6.1.0"
+  # logic is not the same as code but patch is the same
+  not_has_depends: selenium >*,<*
 then:
-  - tighten_depends:
-      name: selenium
-      upper_bound: "4.10"
+  - replace_depends:
+      old: selenium >*
+      new: ${old},<4.10

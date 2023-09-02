@@ -19,5 +19,5 @@ if:
   has_depends: curl *<8.0a0
 then:
   - loosen_depends:
-      name: libcurl
+      name: curl
       upper_bound: "9.0"

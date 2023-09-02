@@ -17,7 +17,18 @@ if:
   version: "0.20.0"
   build_number: 0
   timestamp_lt: 1681732616000
-  has_depends: python >=3.[89],<3.[91]0?.0a0
+  has_depends: python >=3.8,<3.9.0a0
+then:
+  - replace_depends:
+      old: scipy >=1.8
+      new: scipy >=1.8,<1.9.2
+---
+if:
+  name: scikit-image
+  version: "0.20.0"
+  build_number: 0
+  timestamp_lt: 1681732616000
+  has_depends: python >=3.9,<3.10.0a0
 then:
   - replace_depends:
       old: scipy >=1.8

@@ -19,6 +19,7 @@
 #         _replace_pin("jsonschema", "jsonschema >=3.0,<4.17", record["depends"], record)
 if:
   name: altair
+  version_ge: "4.0.0"
   version_lt: "4.2.0"
   timestamp_lt: 1673569551000
 then:

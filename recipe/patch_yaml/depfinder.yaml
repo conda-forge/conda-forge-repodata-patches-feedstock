@@ -23,6 +23,10 @@ if:
   name: depfinder
   timestamp_lt: 1659704295850
   subdir: noarch
-  has_depends: "python *[!<]*"
+  # this logic does not match above code but patch is the same
+  has_depends: python >=*
+  not_has_depends: python >=*,<*
 then:
-  - add_depends: python <3.10  # FIXME? this uses matchspec merge logic
+  - replace_depends:
+      old: python >=*
+      new: ${old},<3.10

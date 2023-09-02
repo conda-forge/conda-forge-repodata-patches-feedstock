@@ -28,6 +28,10 @@ then:
       old: jinja2
       new: jinja2 <3a0
   - replace_depends:
+      # logic here does not match code above but patch is the same
+      old: jinja2 >=*
+      new: ${old},<3a0
+  - replace_depends:
       old: mistune >0.6
       new: mistune >0.6,<2a0
   - replace_depends:
@@ -77,6 +81,7 @@ then:
 ---
 if:
   name_in: [nbconvert, nbconvert-core]
+  version_ge: "5.5.0"
   version_lt: "7.2.1"
   timestamp_le: 1680046165000
 then:

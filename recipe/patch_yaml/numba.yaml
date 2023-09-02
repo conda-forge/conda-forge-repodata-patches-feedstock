@@ -23,8 +23,29 @@ if:
   name: numba
   timestamp_le: 1671537177000
   version_lt: "0.54"
-  has_depends: numpy?( *)
+  has_depends: numpy
 then:
-  # TODO: This is a different way of adding upper constraints
-  # that relies on conda matchspec merging logic
-  - add_depends: numpy <1.21.0a0
+  - replace_depends:
+      old: numpy
+      new: numpy <1.21.0a0
+---
+if:
+  name: numba
+  timestamp_le: 1671537177000
+  version_lt: "0.54"
+  has_depends: numpy >=*,<*
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "1.21"
+---
+if:
+  name: numba
+  timestamp_le: 1671537177000
+  version_lt: "0.54"
+  has_depends: numpy >=*
+  not_has_depends: numpy >=*,<*
+then:
+  - replace_depends:
+      old: numpy >=*
+      new: ${old},<1.21.0a0

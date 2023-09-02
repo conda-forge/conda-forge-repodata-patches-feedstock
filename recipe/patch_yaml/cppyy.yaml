@@ -24,8 +24,10 @@ if:
   name: cppyy
   version_lt: "3.0.0"
   timestamp_lt: 1678353800000
+  # logic is not the same as above put patch is the same
+  not_has_depends: libcxx >*,<*
 then:
-  - tighten_depends:
-      name: libcxx
-      max_pin: x
-      upper_bound: "15"
+  - replace_depends:
+      # logic is not the same as above put patch is the same
+      old: libcxx?( *)
+      new: ${old},<15

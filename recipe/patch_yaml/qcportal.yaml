@@ -9,4 +9,6 @@ if:
   name: qcportal
   timestamp_lt: 1691162578000
 then:
-  - add_depends: pydantic <2.0a0  # FIXME? This uses conda matchspec merging logic
+  - replace_depends:
+      old: pydantic?( *)
+      new: ${old},<2.0a0

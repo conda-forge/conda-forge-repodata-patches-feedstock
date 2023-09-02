@@ -9,7 +9,7 @@
 # ):
 #     _replace_pin("python >=3.5", "python >=3.6", record["depends"], record)
 if:
-  name: attes
+  name: attrs
   version: "22.2.0"
   timestamp_lt: 1683636279000
 then:
