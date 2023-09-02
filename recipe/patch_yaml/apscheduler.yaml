@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # apscheduler 3.8.1 through 3.10.1 has incorrect version restiction for tzlocal
+# if (
+#     record_name == "apscheduler"
+#     and record.get("timestamp", 0) < 1689345788000
+#     and parse_version(record["version"]) >= parse_version("3.8.1")
+#     and parse_version(record["version"]) <= parse_version("3.10.1")
+# ):
+#     _replace_pin("tzlocal >=2.0,<3.0", "tzlocal >=2.0,!=3.*", record["depends"], record)
+if:
+  name: apscheduler
+  timestamp_lt: 1689345788000
+  version_ge: "3.8.1"
+  version_le: "3.10.1"
+then:
+  - replace_depends:
+      old: tzlocal >=2.0,<3.0
+      new: tzlocal >=2.0,!=3.*

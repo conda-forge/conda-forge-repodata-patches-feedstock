@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # skl2onnx requires onnx<1.15 for versions older than 1.14.1
+# # see https://github.com/onnx/onnx/issues/5202
+# if (
+#     record_name == "skl2onnx"
+#     and parse_version(record["version"]) < parse_version("1.14.1")
+#     and record.get("timestamp", 0) < 1686557425000
+# ):
+#     _replace_pin("onnx >=1.2.1", "onnx >=1.2.1,<1.15", record["depends"], record)
+if:
+  name: skl2onnx
+  version_lt: "1.14.1"
+  timestamp_lt: 1686557425000
+then:
+  - replace_depends:
+      old: onnx >=1.2.1
+      new: onnx >=1.2.1,<1.15

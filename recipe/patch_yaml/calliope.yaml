@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# if record_name == "calliope":
+#     # Fix missing dependency in Calliope that is required by some methods in
+#     # xarray=2022.3, but is not a dependency in their recipe.
+#     # This was fixed in https://github.com/conda-forge/calliope-feedstock/pull/30
+#     # This patches build 0 with the right information too.
+#     if (
+#         record.get("timestamp", 0) <= 1673531497000
+#         and record["build_number"] == 0
+#         and parse_version(record["version"])
+#         == parse_version("0.6.9")
+#     ):
+#         record["depends"].append("bottleneck")
+if:
+  name: calliope
+  timestamp_le: 1673531497000
+  build_number: 0
+  version: "0.6.9"
+then:
+  - add_depends: bottleneck
+---
+# if record_name == "calliope":
+#     # Pin libnetcdf upper bound due to breaking change in version >=4.9
+#     # This was fixed in https://github.com/conda-forge/calliope-feedstock/pull/32
+#     # This patches build 0 of latest release and all previous versions.
+#     if record.get("timestamp", 0) <= 1677053718000 and (
+#         parse_version(record["version"])
+#         < parse_version("0.6.10")
+#         or (
+#             parse_version(record["version"])
+#             == parse_version("0.6.10")
+#             and record["build_number"] == 0
+#         )
+#     ):
+#         if "libnetcdf" in record["depends"]:
+#             _replace_pin(
+#                 "libnetcdf", "libnetcdf <4.9", record["depends"], record
+#             )
+if:
+  name: calliope
+  timestamp_le: 1677053718000
+  version_lt: "0.6.10"
+then:
+  - replace_depends:
+      old: libnetcdf
+      new: libnetcdf <4.9
+---
+if:
+  name: calliope
+  timestamp_le: 1677053718000
+  version: "0.6.10"
+  build_number: 0
+then:
+  - replace_depends:
+      old: libnetcdf
+      new: libnetcdf <4.9

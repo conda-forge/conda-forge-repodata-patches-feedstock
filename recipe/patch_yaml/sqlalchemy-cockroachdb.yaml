@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# if (
+#     record_name == "sqlalchemy-cockroachdb" and
+#     record["version"] == "2.0.0" and
+#     record["build_number"] == 0 and
+#     record.get("timestamp", 0) <= 1680784303548
+# ):
+#     _replace_pin("sqlalchemy <2.0.0", "sqlalchemy >=2.0.0", record["depends"], record)
+if:
+  name: sqlalchemy-cockroachdb
+  version: "2.0.0"
+  build_number: 0
+  timestamp_le: 1680784303548
+then:
+  - replace_depends:
+      old: sqlalchemy <2.0.0
+      new: sqlalchemy >=2.0.0

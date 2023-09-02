@@ -1,0 +1,301 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # cfn-lint has not been reliably updating the aws-sam-translator
+# # dependency. This leads to lots of invalid environments involving older
+# # packages when fsspec is involved, due to the behavior described in
+# # <https://github.com/conda-forge/filesystem-spec-feedstock/issues/79>
+# # Fixed going forward in:
+# # <https://github.com/conda-forge/cfn-lint-feedstock/pull/177>
+# if (
+#     record_name == "cfn-lint" and
+#     record.get("timestamp", 0) < 1692540625000
+# ):
+#     correct_aws_sam_translator_dependencies = {
+#         "0.20.1": ">=1.10.0", "0.20.2": ">=1.10.0", "0.21.2": ">=1.10.0",
+#         "0.22.0": ">=1.12.0", "0.23.1": ">=1.13.0", "0.23.2": ">=1.13.0",
+#         "0.56.0": ">=1.40.0", "0.56.1": ">=1.40.0", "0.56.2": ">=1.40.0",
+#         "0.56.3": ">=1.42.0", "0.56.4": ">=1.42.0", "0.57.0": ">=1.42.0",
+#         "0.58.0": ">=1.42.0", "0.58.1": ">=1.42.0", "0.58.2": ">=1.42.0",
+#         "0.58.3": ">=1.42.0", "0.58.4": ">=1.42.0", "0.59.0": ">=1.45.0",
+#         "0.59.1": ">=1.45.0", "0.60.0": ">=1.45.0", "0.60.1": ">=1.45.0",
+#         "0.61.0": ">=1.45.0", "0.61.1": ">=1.46.0", "0.61.2": ">=1.46.0",
+#         "0.61.3": ">=1.47.0", "0.61.4": ">=1.48.0", "0.61.5": ">=1.49.0",
+#         "0.62.0": ">=1.50.0", "0.63.0": ">=1.50.0", "0.63.1": ">=1.50.0",
+#         "0.63.2": ">=1.50.0", "0.64.0": ">=1.50.0", "0.64.1": ">=1.50.0",
+#         "0.65.0": ">=1.50.0", "0.65.1": ">=1.51.0", "0.66.0": ">=1.51.0",
+#         "0.66.1": ">=1.51.0", "0.67.0": ">=1.52.0", "0.68.0": ">=1.53.0",
+#         "0.68.1": ">=1.53.0", "0.69.0": ">=1.53.0", "0.69.1": ">=1.53.0",
+#         "0.70.1": ">=1.53.0", "0.71.0": ">=1.53.0", "0.71.1": ">=1.54.0",
+#         "0.72.0": ">=1.54.0", "0.72.1": ">=1.54.0", "0.72.2": ">=1.55.0",
+#         "0.72.3": ">=1.55.0", "0.72.4": ">=1.55.0", "0.72.5": ">=1.55.0",
+#         "0.72.6": ">=1.55.0", "0.72.7": ">=1.56.0", "0.72.8": ">=1.56.0",
+#         "0.72.10": ">=1.57.0", "0.73.0": ">=1.59.0", "0.73.1": ">=1.59.0",
+#         "0.73.2": ">=1.59.0", "0.74.1": ">=1.60.1", "0.74.3": ">=1.60.1",
+#         "0.75.0": ">=1.60.1", "0.75.1": ">=1.60.1", "0.76.1": ">=1.62.0",
+#         "0.76.2": ">=1.62.0", "0.77.0": ">=1.64.0", "0.77.1": ">=1.64.0",
+#         "0.77.2": ">=1.64.0", "0.77.3": ">=1.64.0", "0.77.4": ">=1.65.0",
+#         "0.77.5": ">=1.65.0", "0.77.6": ">=1.68.0", "0.77.7": ">=1.68.0",
+#         "0.77.8": ">=1.68.0", "0.77.9": ">=1.68.0", "0.77.10": ">=1.68.0",
+#         "0.78.1": ">=1.70.0", "0.78.2": ">=1.71.0", "0.79.1": ">=1.71.0",
+#         "0.79.4": ">=1.71.0", "0.79.5": ">=1.71.0", "0.79.6": ">=1.71.0",
+#         "0.79.7": ">=1.71.0"
+#     }
+#     if record["version"] in correct_aws_sam_translator_dependencies:
+#         pin = correct_aws_sam_translator_dependencies[record["version"]]
+#         for n, dep in enumerate(record["depends"]):
+#             if dep.startswith("aws-sam-translator "):
+#                 record["depends"][n] = f"aws-sam-translator {pin}"
+# jaimergp: This is going to be a lot... fasten your seatbelt!
+# I generated the snippets below using this code:
+# template = """
+# ---
+# if:
+#   name: cfn-lint
+#   timestamp_lt: 1692540625000
+#   version_in: __VERSIONS__
+# then:
+#   - replace_depends:
+#       old: aws-sam-translator?( *)
+#       new: aws-sam-translator __PIN__
+# """
+# from collections import defaultdict
+# pins_to_versions = defaultdict(list)
+# for version, pin in correct_aws_sam_translator_dependencies.items():
+#     pins_to_versions[pin].append(version)
+# for pin, versions in pins_to_versions.items():
+#     print(template.replace("__PIN__", pin).replace("__VERSIONS__", str(versions)).replace("'", '"').strip())
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.20.1", "0.20.2", "0.21.2"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.10.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.22.0"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.12.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.23.1", "0.23.2"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.13.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.56.0", "0.56.1", "0.56.2"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.40.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.56.3", "0.56.4", "0.57.0", "0.58.0", "0.58.1", "0.58.2", "0.58.3", "0.58.4"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.42.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.59.0", "0.59.1", "0.60.0", "0.60.1", "0.61.0"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.45.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.61.1", "0.61.2"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.46.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.61.3"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.47.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.61.4"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.48.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.61.5"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.49.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.62.0", "0.63.0", "0.63.1", "0.63.2", "0.64.0", "0.64.1", "0.65.0"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.50.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.65.1", "0.66.0", "0.66.1"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.51.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.67.0"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.52.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.68.0", "0.68.1", "0.69.0", "0.69.1", "0.70.1", "0.71.0"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.53.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.71.1", "0.72.0", "0.72.1"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.54.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.72.2", "0.72.3", "0.72.4", "0.72.5", "0.72.6"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.55.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.72.7", "0.72.8"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.56.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.72.10"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.57.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.73.0", "0.73.1", "0.73.2"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.59.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.74.1", "0.74.3", "0.75.0", "0.75.1"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.60.1
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.76.1", "0.76.2"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.62.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.77.0", "0.77.1", "0.77.2", "0.77.3"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.64.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.77.4", "0.77.5"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.65.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.77.6", "0.77.7", "0.77.8", "0.77.9", "0.77.10"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.68.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.78.1"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.70.0
+---
+if:
+  name: cfn-lint
+  timestamp_lt: 1692540625000
+  version_in: ["0.78.2", "0.79.1", "0.79.4", "0.79.5", "0.79.6", "0.79.7"]
+then:
+  - replace_depends:
+      old: aws-sam-translator?( *)
+      new: aws-sam-translator >=1.71.0
+
+# Done with the trip. Enjoy!

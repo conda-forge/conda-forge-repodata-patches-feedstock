@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# if (
+#     record_name == "etils" and
+#     record["version"].startswith("1.") and
+#     record.get("timestamp", 0) < 1683949458062
+# ):
+#     _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
+if:
+  name: etils
+  version: "1.*"
+  timestamp_lt: 1683949458062
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8

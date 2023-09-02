@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # cmor <= 3.7.1 needs numpy <1.24
+# # https://github.com/conda-forge/cmor-feedstock/issues/59
+# # Fixed in https://github.com/conda-forge/cmor-feedstock/pull/60
+# if (
+#     record_name == "cmor" and
+#     record.get("timestamp", 0) < 1679388583000
+# ):
+#     pversion = parse_version(record["version"])
+#     v371 = parse_version("3.7.1")
+#     if (
+#         pversion < v371 or
+#         (pversion == v371 and record["build_number"] < 4)
+#     ):
+#         _pin_stricter(fn, record, "numpy", "x", upper_bound="1.24")
+if:
+  name: cmor
+  timestamp_lt: 1679388583000
+  version_lt: "3.7.1"
+then:
+  - tighten_depends:
+      name: numpy
+      max_pin: x
+      upper_bound: "1.24"
+---
+if:
+  name: cmor
+  timestamp_lt: 1679388583000
+  version: "3.7.1"
+  build_number_lt: 4
+then:
+  - tighten_depends:
+      name: numpy
+      max_pin: x
+      upper_bound: "1.24"

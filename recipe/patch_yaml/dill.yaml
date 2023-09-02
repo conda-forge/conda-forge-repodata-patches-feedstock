@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # Dill dropped support for python <3.7 starting in version 0.3.5
+# # Fixed in https://github.com/conda-forge/dill-feedstock/pull/35
+# if record_name == "dill":
+#     pversion = parse_version(record["version"])
+#     zero_three_five = parse_version("0.3.5")
+#     zero_three_six = parse_version("0.3.6")
+
+#     if (pversion >= zero_three_five and pversion < zero_three_six) or (
+#         pversion == zero_three_six and record["build"].endswith("_0")
+#     ):
+#         _replace_pin("python >=3.5", "python >=3.7", record["depends"], record)
+if:
+  name: dill
+  version_ge: "0.3.5"
+  version_lt: "0.3.6"
+then:
+  - replace_depends:
+      old: "python >=3.5"
+      new: "python >=3.7"
+---
+if:
+  name: dill
+  version: "0.3.6"
+  build: "*_0"
+then:
+  - replace_depends:
+      old: "python >=3.5"
+      new: "python >=3.7"

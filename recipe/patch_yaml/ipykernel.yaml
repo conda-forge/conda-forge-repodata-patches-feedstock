@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # ipykernel >=4.0.1,<6.5.0 needs ipython_genutils. Old versions of
+# # ipython and traitlets depend on ipython_genutils so the dependency
+# # was originally satisfied indirectly. Newer versions of ipython and
+# # traitlets don't pull in ipython_genutils anymore so we need to make
+# # that dependency explicit.
+# if (record_name == "ipykernel" and record.get("timestamp", 0) <= 1664184744000 and
+#         parse_version("4.0.1") <=
+#         parse_version(record["version"]) < parse_version("6.5.0")):
+#     for dep in record["depends"]:
+#         if dep.startswith("ipython_genutils"):
+#             break
+#     else:
+#         # Any version of ipython_genutils will do. The package is not
+#         # developed anymore since it has been dropped by all its consumers.
+#         record["depends"].append("ipython_genutils >=0.2.0")
+if:
+  name: ipykernel
+  timestamp_le: 1664184744000
+  version_ge: "4.0.1"
+  version_lt: "6.5.0"
+  not_has_depends: ipython_genutils?( *)
+then:
+  - add_depends: ipython_genutils >=0.2.0

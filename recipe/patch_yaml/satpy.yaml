@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# if (
+#         record_name == "satpy"
+#         and record.get("timestamp", 0) <= 1665672000000
+#         and record["build_number"] == 0
+#         and (parse_version(record["version"]) == parse_version("0.37.0")
+#         or parse_version(record["version"]) == parse_version("0.37.1"))
+#         ):
+#     _replace_pin("python >=3.7", "python >=3.8", record["depends"], record)
+if:
+  name: satpy
+  timestamp_le: 1665672000000
+  build_number: 0
+  version_in: ["0.37.0", "0.37.1"]
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8

@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # pyopenssl 22 used in combination with Cryptography 39 breaks with error
+# # "AttributeError: module 'lib' has no attribute 'OpenSSL_add_all_algorithms'".
+# # We must pin down cryptography to <39
+# if (
+#     record_name == "pyopenssl" and
+#     record["version"] == "22.0.0" and
+#     record.get("timestamp", 0) < 1678096271000
+# ):
+#     _replace_pin("cryptography >=35.0", "cryptography >=35.0,<39", record["depends"], record)
+if:
+  name: pyopenssl
+  version: "22.0.0"
+  timestamp_lt: 1678096271000
+then:
+  - replace_depends:
+      old: cryptography >=35.0
+      new: cryptography >=35.0,<39

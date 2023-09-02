@@ -1,0 +1,16 @@
+# from this bit of code
+# if (record_name == "keyring" and
+#         record["version"] == "23.6.0" and
+#         record["build_number"] == 0):
+#     for i, dep in enumerate(record["depends"]):
+#         dep_name = dep.split()[0]
+#         if dep_name == "importlib_metadata" and ">=" not in dep:
+#             record["depends"][i] = "importlib_metadata >=3.6"
+if:
+  name: keyring
+  version: "23.6.0"
+  build_number: 0
+then:
+  - replace_depends:
+      old: "importlib_metadata"  # the checks above are unneeded (all are name-only specs)
+      new: "importlib_metadata >=3.6"

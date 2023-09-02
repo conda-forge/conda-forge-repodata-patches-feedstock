@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # emmet-core <=0.58.0 needs pydantic <2
+# if (
+#     record_name == "emmet-core" and
+#     record["version"] < "0.58.0" or
+#     (
+#         record["version"] == "0.58.0" and
+#         record["build_number"] == 0
+#     )
+# ):
+#     _replace_pin("pydantic >=1.10.2", "pydantic >=1.10.2,<2",
+#                   record["depends"], record)
+if:
+  name: emmet-core
+  version_lt: "0.58.0"
+then:
+  - replace_depends:
+      old: pydantic >=1.10.2
+      new: pydantic >=1.10.2,<2
+---
+if:
+  name: emmet-core
+  version: "0.58.0"
+  build_number: 0
+then:
+  - replace_depends:
+      old: pydantic >=1.10.2
+      new: pydantic >=1.10.2,<2
+---
+# if (
+#     record_name == "emmet-core" and
+#     record["version"] == "0.58.0" and
+#     record["build_number"] == 2
+# ):
+#     _replace_pin("pydantic >=2", "pydantic >=1.10.2,<2",
+#                   record["depends"], record)
+if:
+  name: emmet-core
+  version: "0.58.0"
+  build_number: 2
+then:
+  - replace_depends:
+      old: pydantic >=2
+      new: pydantic >=1.10.2,<2

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# if (
+#     record_name == "libtensorlight" and
+#     record["version"] == "3.0.1" and
+#     record["build_number"] == 0 and
+#     record.get("timestamp", 0) <= 1682609291000
+# ):
+#     record["depends"].append("libblas * *mkl")
+if:
+  name: libtensorlight
+  version: "3.0.1"
+  build_number: 0
+  timestamp_le: 1682609291000
+then:
+  - add_depends: "libblas * *mkl"

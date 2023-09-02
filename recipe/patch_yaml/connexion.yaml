@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# from this bit of code
+# # Connexion 2.X is not compatible with Flask 2.3+
+# # https://github.com/spec-first/connexion/issues/1699#issuecomment-1524042812
+# if (
+#     record_name == "connexion" and
+#     record["version"][0] == "2" and
+#     record.get("timestamp", 0) <= 1680300000000
+# ):
+#     _replace_pin("flask >=1.0.4,<3", "flask >=1.0.4,<2.3", record["depends"], record)
+if:
+  name: connexion
+  version: "2*"
+  timestamp_le: 1680300000000
+then:
+  - replace_depends:
+      old: flask >=1.0.4,<3
+      new: flask >=1.0.4,<2.3
+---
+# # connexion 2.14.2=0 has incorrect dependencies
+# # fixed for 2.14.2=1 in https://github.com/conda-forge/connexion-feedstock/pull/35/files
+# if (
+#     record_name == "connexion"
+#     and record["version"] in {"2.14.2"}
+#     and record["build_number"] == 0
+#     and record.get("timestamp", 0) < 1684322706000
+# ):
+#     _replace_pin("python >=3.6", "python >=3.8", record["depends"], record)
+#     _replace_pin("werkzeug >=1.0,<3.0", "werkzeug >=1.0,<2.3", record["depends"], record)
+#     record["depends"].remove("importlib-metadata >=1")
+if:
+  name: connexion
+  version: "2.14.2"
+  build_number: 0
+  timestamp_lt: 1684322706000
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.8
+  - replace_depends:
+      old: werkzeug >=1.0,<3.0
+      new: werkzeug >=1.0,<2.3
+  - remove_depends: importlib-metadata >=1
