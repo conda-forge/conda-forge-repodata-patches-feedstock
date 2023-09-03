@@ -265,7 +265,8 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
             upper_bound = ".".join(upper_bound)
 
             depends[dep_idx] = "{} <{}a0".format(
-                dep_parts[0], upper_bound,
+                dep_parts[0],
+                upper_bound,
             )
             record["depends"] = depends
             continue
@@ -399,10 +400,10 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 elif not depends and subk in record:
                     del record[subk]
 
-            elif (
-                k.startswith("reset_")
-                and k[len("reset_") :] in ["depends", "constrains"]
-            ):
+            elif k.startswith("reset_") and k[len("reset_") :] in [
+                "depends",
+                "constrains",
+            ]:
                 subk = k[len("reset_") :]
                 if not isinstance(v, list):
                     v = [v]
