@@ -11,7 +11,7 @@ build:
   noarch: generic
   number: 0
   script:
-    - pre-commit run -a --show-diff-on-failure black
+    - pre-commit run -a --show-diff-on-failure
     - pytest -vv test_patch_yaml_utils.py
     - pytest -vv test_gen_patch_json.py
     - python gen_patch_json.py
