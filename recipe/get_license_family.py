@@ -30,6 +30,7 @@ precedence = {
     ("GPL", "MIT"): "GPL",
 }
 
+
 def get_license_family(license):
     licensing = license_expression.Licensing()
     family = None
@@ -37,11 +38,11 @@ def get_license_family(license):
         parsed_licenses_with_exception = licensing.license_symbols(
             license.strip(), decompose=False
         )
-        for l in parsed_licenses_with_exception:
-            if isinstance(l, license_expression.LicenseWithExceptionSymbol):
-                license = l.license_symbol.key
+        for lsc in parsed_licenses_with_exception:
+            if isinstance(lsc, license_expression.LicenseWithExceptionSymbol):
+                license = lsc.license_symbol.key
             else:
-                license = l.key
+                license = lsc.key
             family_new = mapping.get(license, None)
             if not family_new:
                 return None

@@ -15,8 +15,7 @@ from gen_patch_json import _gen_new_index, _gen_patch_instructions, SUBDIRS
 from conda_build.index import _apply_instructions
 
 CACHE_DIR = os.environ.get(
-    "CACHE_DIR",
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
+    "CACHE_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
 )
 BASE_URL = "https://conda.anaconda.org/conda-forge"
 
@@ -34,7 +33,7 @@ def sort_lists(obj):
 
 def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast):
     final_lines = []
-    for index_key in ['packages', 'packages.conda']:
+    for index_key in ["packages", "packages.conda"]:
         for name, ref_pkg in ref_repodata[index_key].items():
             if name in new_repodata[index_key]:
                 new_pkg = new_repodata[index_key][name]
@@ -54,13 +53,17 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast):
 
             final_lines.append(f"{subdir}::{name}")
             ref_lines = json.dumps(
-                ref_pkg, indent=2, sort_keys=True,
+                ref_pkg,
+                indent=2,
+                sort_keys=True,
             ).splitlines()
             new_lines = json.dumps(
-                new_pkg, indent=2, sort_keys=True,
+                new_pkg,
+                indent=2,
+                sort_keys=True,
             ).splitlines()
-            for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=''):
-                if ln.startswith('+++') or ln.startswith('---') or ln.startswith('@@'):
+            for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=""):
+                if ln.startswith("+++") or ln.startswith("---") or ln.startswith("@@"):
                     continue
                 final_lines.append(ln)
 
@@ -102,17 +105,21 @@ def _process_subdir(subdir, use_cache, fail_fast):
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(
-        description="show repodata changes from the current gen_patch_json")
+        description="show repodata changes from the current gen_patch_json"
+    )
     parser.add_argument(
-        '--subdirs', nargs='*', default=None,
-        help='subdir(s) show, default is all')
+        "--subdirs", nargs="*", default=None, help="subdir(s) show, default is all"
+    )
     parser.add_argument(
-        '--use-cache', action='store_true',
-        help='use cached repodata files, rather than downloading them')
+        "--use-cache",
+        action="store_true",
+        help="use cached repodata files, rather than downloading them",
+    )
     parser.add_argument(
-        '--fail-fast', action='store_true',
-        help='error out on the first non-zero diff')
+        "--fail-fast", action="store_true", help="error out on the first non-zero diff"
+    )
     args = parser.parse_args()
 
     if args.subdirs is None:

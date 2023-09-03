@@ -12,12 +12,9 @@ build:
   number: 0
   script:
     - "yamllint -d '{extends: default, rules: {document-start: disable, line-length: {max: 120}}}' patch_yaml/."
-    - black --check patch_yaml_utils.py
-    - ruff patch_yaml_utils.py
-    - black --check patch_yaml_model.py
-    - ruff patch_yaml_model.py
-    - black --check test_patch_yaml_utils.py
-    - ruff test_patch_yaml_utils.py
+    - black --check *.py
+    - ruff *.py
+    - flake8 *.py
     - pytest -vv test_patch_yaml_utils.py
     - pytest -vv test_gen_patch_json.py
     - python gen_patch_json.py
@@ -35,6 +32,7 @@ requirements:
     - ruff
     - pytest
     - yamllint
+    - flake8
   host:
   run:
 
