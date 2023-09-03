@@ -150,6 +150,14 @@ class _ThenClauseItem(_ForbidExtra):
         None,
         description="Remove constraints to matched packages",
     )
+    reset_depends: _NonEmptyStr | list[_NonEmptyStr] = Field(
+        None,
+        description="Reset the dependencies to the specified value(s)",
+    )
+    reset_constrains: _NonEmptyStr | list[_NonEmptyStr] = Field(
+        None,
+        description="Reset the constraints to the specified value(s)",
+    )
     remove_track_features: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
         description="Remove item(s) from track_features to matched packages",
