@@ -11,7 +11,10 @@ build:
   noarch: generic
   number: 0
   script:
-    - pre-commit run -a --show-diff-on-failure black
+    - "yamllint -d '{extends: default, rules: {document-start: disable, line-length: {max: 120}}}' patch_yaml/."
+    - black --check *.py
+    - ruff *.py
+    - flake8 *.py
     - pytest -vv test_patch_yaml_utils.py
     - pytest -vv test_gen_patch_json.py
     - python gen_patch_json.py
@@ -30,7 +33,6 @@ requirements:
     - pytest
     - yamllint
     - flake8
-    - pre-commit
   host:
   run:
 
