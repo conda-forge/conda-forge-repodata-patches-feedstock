@@ -195,7 +195,7 @@ REMOVALS = {
         "liknorm-1.3.7-py36_1.tar.bz2",
         "nlopt-2.4.2-0.tar.bz2",
         "pygpu-0.6.5-0.tar.bz2",
-        "pytest-regressions-1.0.1-0.tar.bz2",
+        "pytest-regressions-1.0.1-0.tar.bz2"
     ),
 }
 
