@@ -11,7 +11,6 @@ import sys
 import tqdm
 import re
 import requests
-import packaging.version
 from packaging.version import parse as parse_version
 from concurrent.futures import ProcessPoolExecutor
 
@@ -20,7 +19,6 @@ from patch_yaml_utils import (
     patch_yaml_edit_index,
     _extract_track_feature,
     _replace_pin,
-    _rename_dependency,
     _relax_exact,
     _pin_stricter,
     _pin_looser,
@@ -43,9 +41,7 @@ SUBDIRS = (
 )
 
 REMOVALS = {
-    "noarch": (
-        "sendgrid-5.3.0-py_0.tar.bz2",
-    ),
+    "noarch": ("sendgrid-5.3.0-py_0.tar.bz2",),
     "linux-64": (
         "airflow-with-gcp_api-1.9.0-1.tar.bz2",
         "airflow-with-gcp_api-1.9.0-2.tar.bz2",
@@ -140,8 +136,7 @@ REMOVALS = {
         "vlfeat-0.9.20-h470a237_2.tar.bz2",
         "xtensor-python-0.19.1-h3e44d54_0.tar.bz2",
     ),
-    "osx-arm64": (
-    ),
+    "osx-arm64": (),
     "win-32": (
         "compliance-checker-2.2.0-0.tar.bz2",
         "compliance-checker-3.0.3-py27_0.tar.bz2",
@@ -170,7 +165,6 @@ REMOVALS = {
         "liknorm-1.3.7-py36_1.tar.bz2",
         "nlopt-2.4.2-0.tar.bz2",
         "pygpu-0.6.5-0.tar.bz2",
-
     ),
     "win-64": (
         "compliance-checker-2.2.0-0.tar.bz2",
@@ -206,94 +200,94 @@ REMOVALS = {
 }
 
 OSX_SDK_FIXES = {
-    'nodejs-12.8.0-hec2bf70_1': '10.10',
-    'nodejs-12.1.0-h6de7cb9_1': '10.10',
-    'nodejs-12.3.1-h6de7cb9_0': '10.10',
-    'nodejs-12.9.0-hec2bf70_0': '10.10',
-    'nodejs-12.9.1-hec2bf70_0': '10.10',
-    'nodejs-12.7.0-hec2bf70_1': '10.10',
-    'nodejs-12.10.0-hec2bf70_0': '10.10',
-    'nodejs-12.4.0-h6de7cb9_0': '10.10',
-    'nodejs-12.11.1-hec2bf70_0': '10.10',
-    'nodejs-12.7.0-h6de7cb9_0': '10.10',
-    'nodejs-12.3.0-h6de7cb9_0': '10.10',
-    'nodejs-10.16.3-hec2bf70_0': '10.10',
-    'nodejs-12.12.0-hfddbe92_0': '10.10',
-    'nodejs-12.8.1-hec2bf70_0': '10.10',
-    'javafx-sdk-11.0.4-h6dcaf97_1': '10.11',
-    'javafx-sdk-12.0.2-h6dcaf97_1': '10.11',
-    'javafx-sdk-12.0.2-h6dcaf97_0': '10.11',
-    'javafx-sdk-11.0.4-h6dcaf97_0': '10.11',
-    'qt-5.12.1-h1b46049_0': '10.12',
-    'qt-5.9.7-h8cf7e54_3': '10.12',
-    'qt-5.9.7-h93ee506_0': '10.12',
-    'qt-5.9.7-h93ee506_1': '10.12',
-    'qt-5.12.5-h1b46049_0': '10.12',
-    'qt-5.9.7-h93ee506_2': '10.12',
-    'openmpi-mpicxx-4.0.1-h6052eea_2': '10.12',
-    'openmpi-mpicxx-4.0.1-h6052eea_1': '10.12',
-    'openmpi-mpicxx-4.0.1-h6052eea_0': '10.12',
-    'openmpi-mpicxx-4.0.1-hc9558a2_2': '10.12',
-    'openmpi-mpicxx-4.0.1-hc9558a2_0': '10.12',
-    'openmpi-mpicxx-4.0.1-hc9558a2_1': '10.12',
-    'freecad-0.18.3-py37h4764a83_2': '10.12',
-    'freecad-0.18.3-py37hc453731_1': '10.12',
-    'freecad-0.18.4-py37hab2b3aa_1': '10.12',
-    'freecad-0.18.4-py37hab2b3aa_0': '10.12',
-    'openmpi-mpicc-4.0.1-h24e1f75_1': '10.12',
-    'openmpi-mpicc-4.0.1-h24e1f75_2': '10.12',
-    'openmpi-mpicc-4.0.1-h24e1f75_0': '10.12',
-    'openmpi-mpicc-4.0.1-h516909a_0': '10.12',
-    'openmpi-mpicc-4.0.1-h516909a_1': '10.12',
-    'openmpi-mpicc-4.0.1-h516909a_2': '10.12',
-    'openmpi-mpifort-4.0.1-h939af09_0': '10.12',
-    'openmpi-mpifort-4.0.1-h6ad152f_2': '10.12',
-    'openmpi-mpifort-4.0.1-h939af09_2': '10.12',
-    'openmpi-mpifort-4.0.1-h939af09_1': '10.12',
-    'openmpi-mpifort-4.0.1-he991be0_0': '10.12',
-    'openmpi-mpifort-4.0.1-he991be0_1': '10.12',
-    'openmpi-mpifort-4.0.1-he991be0_2': '10.12',
-    'reaktoro-1.0.7-py37h99eb986_0': '10.12',
-    'reaktoro-1.0.7-py37h99eb986_1': '10.12',
-    'reaktoro-1.0.7-py36h99eb986_0': '10.12',
-    'reaktoro-1.0.7-py36h99eb986_1': '10.12',
-    'pyqt-5.12.3-py38he22c54c_1': '10.12',
-    'pyqt-5.9.2-py37h2a560b1_0': '10.12',
-    'pyqt-5.12.3-py36he22c54c_1': '10.12',
-    'pyqt-5.9.2-py27h2a560b1_4': '10.12',
-    'pyqt-5.9.2-py27h2a560b1_1': '10.12',
-    'pyqt-5.9.2-py37h2a560b1_4': '10.12',
-    'pyqt-5.9.2-py36h2a560b1_3': '10.12',
-    'pyqt-5.9.2-py27h2a560b1_2': '10.12',
-    'pyqt-5.9.2-py36h2a560b1_1': '10.12',
-    'pyqt-5.12.3-py27h2a560b1_0': '10.12',
-    'pyqt-5.12.3-py37h2a560b1_0': '10.12',
-    'pyqt-5.12.3-py27he22c54c_0': '10.12',
-    'pyqt-5.12.3-py27he22c54c_1': '10.12',
-    'pyqt-5.9.2-py37h2a560b1_2': '10.12',
-    'pyqt-5.9.2-py37h2a560b1_1': '10.12',
-    'pyqt-5.9.2-py36h2a560b1_0': '10.12',
-    'pyqt-5.9.2-py36h2a560b1_4': '10.12',
-    'pyqt-5.9.2-py27h2a560b1_0': '10.12',
-    'pyqt-5.9.2-py37h2a560b1_3': '10.12',
-    'pyqt-5.12.3-py38he22c54c_0': '10.12',
-    'pyqt-5.9.2-py27h2a560b1_3': '10.12',
-    'pyqt-5.9.2-py36h2a560b1_2': '10.12',
-    'pyqt-5.12.3-py37he22c54c_0': '10.12',
-    'pyqt-5.12.3-py36he22c54c_0': '10.12',
-    'pyqt-5.12.3-py37he22c54c_1': '10.12',
-    'pyqt-5.12.3-py36h2a560b1_0': '10.12',
-    'ldas-tools-al-2.6.3-hf543496_0': '10.12',
-    'ldas-tools-al-2.6.3-hf543496_1': '10.12',
-    'ldas-tools-al-2.6.4-h4f290e7_1': '10.12',
-    'ldas-tools-al-2.6.4-h4f290e7_0': '10.12',
-    'openmpi-4.0.1-ha90c164_2': '10.12',
-    'openmpi-4.0.1-ha90c164_0': '10.12',
-    'openmpi-4.0.1-hfcebdee_2': '10.12',
-    'openmpi-4.0.1-ha90c164_1': '10.12',
-    'openmpi-4.0.1-hc99cbb1_1': '10.12',
-    'openmpi-4.0.1-hc99cbb1_0': '10.12',
-    'openmpi-4.0.1-hc99cbb1_2': '10.12',
+    "nodejs-12.8.0-hec2bf70_1": "10.10",
+    "nodejs-12.1.0-h6de7cb9_1": "10.10",
+    "nodejs-12.3.1-h6de7cb9_0": "10.10",
+    "nodejs-12.9.0-hec2bf70_0": "10.10",
+    "nodejs-12.9.1-hec2bf70_0": "10.10",
+    "nodejs-12.7.0-hec2bf70_1": "10.10",
+    "nodejs-12.10.0-hec2bf70_0": "10.10",
+    "nodejs-12.4.0-h6de7cb9_0": "10.10",
+    "nodejs-12.11.1-hec2bf70_0": "10.10",
+    "nodejs-12.7.0-h6de7cb9_0": "10.10",
+    "nodejs-12.3.0-h6de7cb9_0": "10.10",
+    "nodejs-10.16.3-hec2bf70_0": "10.10",
+    "nodejs-12.12.0-hfddbe92_0": "10.10",
+    "nodejs-12.8.1-hec2bf70_0": "10.10",
+    "javafx-sdk-11.0.4-h6dcaf97_1": "10.11",
+    "javafx-sdk-12.0.2-h6dcaf97_1": "10.11",
+    "javafx-sdk-12.0.2-h6dcaf97_0": "10.11",
+    "javafx-sdk-11.0.4-h6dcaf97_0": "10.11",
+    "qt-5.12.1-h1b46049_0": "10.12",
+    "qt-5.9.7-h8cf7e54_3": "10.12",
+    "qt-5.9.7-h93ee506_0": "10.12",
+    "qt-5.9.7-h93ee506_1": "10.12",
+    "qt-5.12.5-h1b46049_0": "10.12",
+    "qt-5.9.7-h93ee506_2": "10.12",
+    "openmpi-mpicxx-4.0.1-h6052eea_2": "10.12",
+    "openmpi-mpicxx-4.0.1-h6052eea_1": "10.12",
+    "openmpi-mpicxx-4.0.1-h6052eea_0": "10.12",
+    "openmpi-mpicxx-4.0.1-hc9558a2_2": "10.12",
+    "openmpi-mpicxx-4.0.1-hc9558a2_0": "10.12",
+    "openmpi-mpicxx-4.0.1-hc9558a2_1": "10.12",
+    "freecad-0.18.3-py37h4764a83_2": "10.12",
+    "freecad-0.18.3-py37hc453731_1": "10.12",
+    "freecad-0.18.4-py37hab2b3aa_1": "10.12",
+    "freecad-0.18.4-py37hab2b3aa_0": "10.12",
+    "openmpi-mpicc-4.0.1-h24e1f75_1": "10.12",
+    "openmpi-mpicc-4.0.1-h24e1f75_2": "10.12",
+    "openmpi-mpicc-4.0.1-h24e1f75_0": "10.12",
+    "openmpi-mpicc-4.0.1-h516909a_0": "10.12",
+    "openmpi-mpicc-4.0.1-h516909a_1": "10.12",
+    "openmpi-mpicc-4.0.1-h516909a_2": "10.12",
+    "openmpi-mpifort-4.0.1-h939af09_0": "10.12",
+    "openmpi-mpifort-4.0.1-h6ad152f_2": "10.12",
+    "openmpi-mpifort-4.0.1-h939af09_2": "10.12",
+    "openmpi-mpifort-4.0.1-h939af09_1": "10.12",
+    "openmpi-mpifort-4.0.1-he991be0_0": "10.12",
+    "openmpi-mpifort-4.0.1-he991be0_1": "10.12",
+    "openmpi-mpifort-4.0.1-he991be0_2": "10.12",
+    "reaktoro-1.0.7-py37h99eb986_0": "10.12",
+    "reaktoro-1.0.7-py37h99eb986_1": "10.12",
+    "reaktoro-1.0.7-py36h99eb986_0": "10.12",
+    "reaktoro-1.0.7-py36h99eb986_1": "10.12",
+    "pyqt-5.12.3-py38he22c54c_1": "10.12",
+    "pyqt-5.9.2-py37h2a560b1_0": "10.12",
+    "pyqt-5.12.3-py36he22c54c_1": "10.12",
+    "pyqt-5.9.2-py27h2a560b1_4": "10.12",
+    "pyqt-5.9.2-py27h2a560b1_1": "10.12",
+    "pyqt-5.9.2-py37h2a560b1_4": "10.12",
+    "pyqt-5.9.2-py36h2a560b1_3": "10.12",
+    "pyqt-5.9.2-py27h2a560b1_2": "10.12",
+    "pyqt-5.9.2-py36h2a560b1_1": "10.12",
+    "pyqt-5.12.3-py27h2a560b1_0": "10.12",
+    "pyqt-5.12.3-py37h2a560b1_0": "10.12",
+    "pyqt-5.12.3-py27he22c54c_0": "10.12",
+    "pyqt-5.12.3-py27he22c54c_1": "10.12",
+    "pyqt-5.9.2-py37h2a560b1_2": "10.12",
+    "pyqt-5.9.2-py37h2a560b1_1": "10.12",
+    "pyqt-5.9.2-py36h2a560b1_0": "10.12",
+    "pyqt-5.9.2-py36h2a560b1_4": "10.12",
+    "pyqt-5.9.2-py27h2a560b1_0": "10.12",
+    "pyqt-5.9.2-py37h2a560b1_3": "10.12",
+    "pyqt-5.12.3-py38he22c54c_0": "10.12",
+    "pyqt-5.9.2-py27h2a560b1_3": "10.12",
+    "pyqt-5.9.2-py36h2a560b1_2": "10.12",
+    "pyqt-5.12.3-py37he22c54c_0": "10.12",
+    "pyqt-5.12.3-py36he22c54c_0": "10.12",
+    "pyqt-5.12.3-py37he22c54c_1": "10.12",
+    "pyqt-5.12.3-py36h2a560b1_0": "10.12",
+    "ldas-tools-al-2.6.3-hf543496_0": "10.12",
+    "ldas-tools-al-2.6.3-hf543496_1": "10.12",
+    "ldas-tools-al-2.6.4-h4f290e7_1": "10.12",
+    "ldas-tools-al-2.6.4-h4f290e7_0": "10.12",
+    "openmpi-4.0.1-ha90c164_2": "10.12",
+    "openmpi-4.0.1-ha90c164_0": "10.12",
+    "openmpi-4.0.1-hfcebdee_2": "10.12",
+    "openmpi-4.0.1-ha90c164_1": "10.12",
+    "openmpi-4.0.1-hc99cbb1_1": "10.12",
+    "openmpi-4.0.1-hc99cbb1_0": "10.12",
+    "openmpi-4.0.1-hc99cbb1_2": "10.12",
 }
 
 
@@ -333,20 +327,31 @@ def _gen_patch_instructions(index, new_index, subdir):
 
             # replace any old keys
             for key in index[pkgs_section_key][fn]:
-                assert key in new_index[pkgs_section_key][fn], (key, index[pkgs_section_key][fn], new_index[pkgs_section_key][fn])
-                if index[pkgs_section_key][fn][key] != new_index[pkgs_section_key][fn][key]:
-                    instructions[pkgs_section_key][fn][key] = new_index[pkgs_section_key][fn][key]
+                assert key in new_index[pkgs_section_key][fn], (
+                    key,
+                    index[pkgs_section_key][fn],
+                    new_index[pkgs_section_key][fn],
+                )
+                if (
+                    index[pkgs_section_key][fn][key]
+                    != new_index[pkgs_section_key][fn][key]
+                ):
+                    instructions[pkgs_section_key][fn][key] = new_index[
+                        pkgs_section_key
+                    ][fn][key]
 
             # add any new keys
             for key in new_index[pkgs_section_key][fn]:
                 if key not in index[pkgs_section_key][fn]:
-                    instructions[pkgs_section_key][fn][key] = new_index[pkgs_section_key][fn][key]
+                    instructions[pkgs_section_key][fn][key] = new_index[
+                        pkgs_section_key
+                    ][fn][key]
 
     return instructions
 
 
 def has_dep(record, name):
-    return any(dep.split(' ')[0] == name for dep in record.get('depends', ()))
+    return any(dep.split(" ")[0] == name for dep in record.get("depends", ()))
 
 
 def get_python_abi(version, subdir, build=None):
@@ -379,37 +384,42 @@ def get_python_abi(version, subdir, build=None):
 
 # Workaround for https://github.com/conda/conda-build/pull/3868
 def remove_python_abi(record):
-    if record['name'] in ['python', 'python_abi', 'pypy']:
+    if record["name"] in ["python", "python_abi", "pypy"]:
         return
-    if not has_dep(record, 'python_abi'):
+    if not has_dep(record, "python_abi"):
         return
-    depends = record.get('depends', [])
-    record['depends'] = [dep for dep in depends if dep.split(" ")[0] != "python_abi"]
+    depends = record.get("depends", [])
+    record["depends"] = [dep for dep in depends if dep.split(" ")[0] != "python_abi"]
 
 
 changes = set([])
 
+
 def add_python_abi(record, subdir):
-    record_name = record['name']
+    record_name = record["name"]
     # Make existing python and python-dependent packages conflict with pypy
-    if record_name == "python" and not record['build'].endswith("pypy"):
-        version = record['version']
-        new_constrains = record.get('constrains', [])
+    if record_name == "python" and not record["build"].endswith("pypy"):
+        version = record["version"]
+        new_constrains = record.get("constrains", [])
         python_abi = get_python_abi(version, subdir)
         new_constrains.append(f"python_abi * *_{python_abi}")
-        record['constrains'] = new_constrains
+        record["constrains"] = new_constrains
         return
 
-    if has_dep(record, 'python') and not has_dep(record, 'pypy') and not has_dep(record, 'python_abi'):
+    if (
+        has_dep(record, "python")
+        and not has_dep(record, "pypy")
+        and not has_dep(record, "python_abi")
+    ):
         python_abi = None
-        new_constrains = record.get('constrains', [])
+        new_constrains = record.get("constrains", [])
         build = record["build"]
         ver_strict_found = False
         ver_relax_found = False
 
-        for dep in record.get('depends', []):
-            dep_split = dep.split(' ')
-            if dep_split[0] == 'python':
+        for dep in record.get("depends", []):
+            dep_split = dep.split(" ")
+            if dep_split[0] == "python":
                 if len(dep_split) == 3:
                     continue
                 if len(dep_split) == 1:
@@ -418,7 +428,7 @@ def add_python_abi(record, subdir):
                     python_abi = get_python_abi("2.7", subdir, build)
                 elif dep_split[1].startswith(">="):
                     m = CB_PIN_REGEX.match(dep_split[1])
-                    if m == None:
+                    if m is None:
                         python_abi = get_python_abi("", subdir, build)
                     else:
                         lower = pad_list(m.group("lower").split("."), 2)[:2]
@@ -437,12 +447,12 @@ def add_python_abi(record, subdir):
                     ver_relax_found = True
         if not ver_strict_found and ver_relax_found:
             new_constrains.append("pypy <0a0")
-        record['constrains'] = new_constrains
+        record["constrains"] = new_constrains
 
 
 def _gen_new_index(repodata, subdir):
     indexes = {}
-    for index_key in ['packages', 'packages.conda']:
+    for index_key in ["packages", "packages.conda"]:
         indexes[index_key] = _gen_new_index_per_key(repodata, subdir, index_key)
         patch_yaml_edit_index(indexes[index_key], subdir)
 
@@ -461,34 +471,34 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
     # deal with windows vc features
     if subdir.startswith("win-"):
         python_vc_deps = {
-            '2.6': 'vc 9.*',
-            '2.7': 'vc 9.*',
-            '3.3': 'vc 10.*',
-            '3.4': 'vc 10.*',
-            '3.5': 'vc 14.*',
-            '3.6': 'vc 14.*',
-            '3.7': 'vc 14.*',
+            "2.6": "vc 9.*",
+            "2.7": "vc 9.*",
+            "3.3": "vc 10.*",
+            "3.4": "vc 10.*",
+            "3.5": "vc 14.*",
+            "3.6": "vc 14.*",
+            "3.7": "vc 14.*",
         }
         for fn, record in index.items():
-            record_name = record['name']
-            if record_name == 'python' and 'pypy' not in record['build']:
+            record_name = record["name"]
+            if record_name == "python" and "pypy" not in record["build"]:
                 # remove the track_features key
-                if 'track_features' in record:
-                    record['track_features'] = None
+                if "track_features" in record:
+                    record["track_features"] = None
                 # add a vc dependency
-                if not any(d.startswith('vc') for d in record['depends']):
-                    depends = record['depends']
-                    depends.append(python_vc_deps[record['version'][:3]])
-                    record['depends'] = depends
-            elif 'vc' in record.get('features', ''):
+                if not any(d.startswith("vc") for d in record["depends"]):
+                    depends = record["depends"]
+                    depends.append(python_vc_deps[record["version"][:3]])
+                    record["depends"] = depends
+            elif "vc" in record.get("features", ""):
                 # remove vc from the features key
                 vc_version = _extract_and_remove_vc_feature(record)
                 if vc_version:
                     # add a vc dependency
-                    if not any(d.startswith('vc') for d in record['depends']):
-                        depends = record['depends']
-                        depends.append('vc %d.*' % vc_version)
-                        record['depends'] = depends
+                    if not any(d.startswith("vc") for d in record["depends"]):
+                        depends = record["depends"]
+                        depends.append("vc %d.*" % vc_version)
+                        record["depends"] = depends
 
     for fn, record in index.items():
         record_name = record["name"]
@@ -503,17 +513,20 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if "license" in record and "license_family" not in record and record["license"]:
             family = get_license_family(record["license"])
             if family:
-                record['license_family'] = family
+                record["license_family"] = family
 
-        if record.get('timestamp', 0) < 1604417730000:
-            if subdir == 'noarch':
+        if record.get("timestamp", 0) < 1604417730000:
+            if subdir == "noarch":
                 remove_python_abi(record)
             else:
                 add_python_abi(record, subdir)
 
         # add track_features to old python_abi pypy packages
-        if (record_name == 'python_abi' and 'pypy' in record['build'] and
-                "track_features" not in record):
+        if (
+            record_name == "python_abi"
+            and "pypy" in record["build"]
+            and "track_features" not in record
+        ):
             record["track_features"] = "pypy"
 
         # replace =2.7 with ==2.7.* for compatibility with older conda
@@ -521,7 +534,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         changed = False
         for dep in record.get("depends", []):
             dep_split = dep.split(" ")
-            if len(dep_split) == 2 and dep_split[1].startswith("=") and not dep_split[1].startswith("=="):
+            if (
+                len(dep_split) == 2
+                and dep_split[1].startswith("=")
+                and not dep_split[1].startswith("==")
+            ):
                 split_or = dep_split[1].split("|")
                 split_or[0] = "=" + split_or[0] + ".*"
                 new_dep = dep_split[0] + " " + "|".join(split_or)
@@ -540,23 +557,36 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if (
             record_name in ["pybind11", "pybind11-global"]
             # this version has a constraint sometimes
-            and (
-                parse_version(record["version"])
-                <= parse_version("2.6.1")
-            )
+            and (parse_version(record["version"]) <= parse_version("2.6.1"))
             and not any(
-                c.startswith("pybind11-abi ")
-                for c in record.get("constrains", [])
+                c.startswith("pybind11-abi ") for c in record.get("constrains", [])
             )
         ):
             _add_pybind11_abi_constraint(fn, record)
 
-        if record_name not in ["blas", "libblas", "libcblas", "liblapack",
-                               "liblapacke", "lapack", "blas-devel"]:
-            _replace_pin('liblapack >=3.8.0,<3.9.0a0', 'liblapack >=3.8.0,<4.0.0a0', deps, record)
-            _replace_pin('liblapacke >=3.8.0,<3.9.0a0', 'liblapacke >=3.8.0,<4.0.0a0', deps, record)
+        if record_name not in [
+            "blas",
+            "libblas",
+            "libcblas",
+            "liblapack",
+            "liblapacke",
+            "lapack",
+            "blas-devel",
+        ]:
+            _replace_pin(
+                "liblapack >=3.8.0,<3.9.0a0", "liblapack >=3.8.0,<4.0.0a0", deps, record
+            )
+            _replace_pin(
+                "liblapacke >=3.8.0,<3.9.0a0",
+                "liblapacke >=3.8.0,<4.0.0a0",
+                deps,
+                record,
+            )
 
-        if record_name == "conda-forge-ci-setup" and record.get('timestamp', 0) < 1638899810000:
+        if (
+            record_name == "conda-forge-ci-setup"
+            and record.get("timestamp", 0) < 1638899810000
+        ):
             constrains = record.get("constrains", [])
             found = any(c.startswith("boa") for c in constrains)
             if not found:
@@ -580,33 +610,62 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "conda-libmamba-solver":
             if record.get("timestamp", 0) <= 1669391735453:  # 2022-11-25
                 # libmamba 0.23 introduces API breaking changes, pin to v0.22
-                _replace_pin("libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record)
+                _replace_pin(
+                    "libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record
+                )
                 # conda 22.11 introduces the plugin system, which needs a new release
-                _replace_pin("conda >=4.12", "conda >=4.12,<22.11.0a", record["depends"], record)
-                _replace_pin("conda >=4.13", "conda >=4.13,<22.11.0a", record["depends"], record)
+                _replace_pin(
+                    "conda >=4.12", "conda >=4.12,<22.11.0a", record["depends"], record
+                )
+                _replace_pin(
+                    "conda >=4.13", "conda >=4.13,<22.11.0a", record["depends"], record
+                )
             elif record.get("timestamp", 0) <= 1674230331000:  # 2023-01-20
-                # conda 23.1 changed an internal SubdirData API needed with S3/FTP channels
-                _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.1.0a", record["depends"], record)
-            elif record.get("timestamp", 0) <= 1678721528000: # 2023-03-13:
-                # conda 23.3 changed an internal SubdirData API needed with S3/FTP channels
-                # conda deprecated Boltons leading to a breakage in the solver api interface
-                _replace_pin("conda >=22.11.0", "conda >=22.11.0,<23.2.0a", record["depends"], record)
+                # conda 23.1 changed an internal SubdirData API needed with S3/FTP
+                #   channels
+                _replace_pin(
+                    "conda >=22.11.0",
+                    "conda >=22.11.0,<23.1.0a",
+                    record["depends"],
+                    record,
+                )
+            elif record.get("timestamp", 0) <= 1678721528000:  # 2023-03-13:
+                # conda 23.3 changed an internal SubdirData API needed
+                #   with S3/FTP channels
+                # conda deprecated Boltons leading to a breakage in the solver api
+                #   interface
+                _replace_pin(
+                    "conda >=22.11.0",
+                    "conda >=22.11.0,<23.2.0a",
+                    record["depends"],
+                    record,
+                )
 
-        if subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"] and \
-            record_name in {"libmamba", "libmambapy"} \
-            and record.get("version", 0) == "0.23.3":
-            _replace_pin("libstdcxx-ng >=10.3.0", "libstdcxx-ng >=12.1.0", record["depends"], record)
-            _replace_pin("libgcc-ng >=10.3.0", "libgcc-ng >=12.1.0", record["depends"], record)
+        if (
+            subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
+            and record_name in {"libmamba", "libmambapy"}
+            and record.get("version", 0) == "0.23.3"
+        ):
+            _replace_pin(
+                "libstdcxx-ng >=10.3.0",
+                "libstdcxx-ng >=12.1.0",
+                record["depends"],
+                record,
+            )
+            _replace_pin(
+                "libgcc-ng >=10.3.0", "libgcc-ng >=12.1.0", record["depends"], record
+            )
 
         if record_name == "conda-build":
             # Code removed in conda 4.13.0 broke older conda-build releases;
             # x-ref issue: conda/conda-build#4481
             if (
-                parse_version(record["version"]) <=
-                parse_version("3.21.7") or
+                parse_version(record["version"]) <= parse_version("3.21.7")
+                or
                 # backported fix in 3.21.8, build 1
                 # (PR: conda-forge/conda-build-feedstock#176)
-                record["version"] == "3.21.8" and record["build_number"] == 0
+                record["version"] == "3.21.8"
+                and record["build_number"] == 0
             ):
                 for i, dep in enumerate(record["depends"]):
                     dep_name, *dep_other = dep.split()
@@ -615,7 +674,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                             dep_name, dep_other[0] + "," if dep_other else ""
                         )
             # pin setuptools to <66 to avoid `parse_version` issues
-            # see https://github.com/conda-forge/conda-forge-pinning-feedstock/issues/3973
+            # see https://github.com/conda-forge/
+            #   conda-forge-pinning-feedstock/issues/3973
             if record.get("timestamp", 0) <= 1674131439051:  # 2023-01-19
                 for i, dep in enumerate(record["depends"]):
                     dep_name, *dep_other = dep.split()
@@ -624,40 +684,41 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                             dep_name, dep_other[0] + "," if dep_other else ""
                         )
 
-        if (record_name == "conda" and
-            record["version"] == "22.11.1" and
-            record["build_number"] == 0):
+        if (
+            record_name == "conda"
+            and record["version"] == "22.11.1"
+            and record["build_number"] == 0
+        ):
             for i, dep in enumerate(record["constrains"]):
                 dep_name, *dep_other = dep.split()
                 if dep_name.startswith("conda-libmamba-solver"):
                     record["constrains"][i] = "conda-libmamba-solver >=22.12.0"
         if record_name == "mamba" and (
-            parse_version(record["version"]) <
-            parse_version("0.24.0") or (
-                (parse_version(record["version"]) <
-                 parse_version("0.24.0")) and (
-                     record["build_number"] == 0)
-                 )):
+            parse_version(record["version"]) < parse_version("0.24.0")
+            or (
+                (parse_version(record["version"]) < parse_version("0.24.0"))
+                and (record["build_number"] == 0)
+            )
+        ):
             for i, dep in enumerate(record["depends"]):
                 dep_name, *dep_other = dep.split()
                 if dep_name == "conda" and ",<" not in dep:
                     record["depends"][i] = "{} {}<4.13.0".format(
                         dep_name, dep_other[0] + "," if dep_other else ""
-                        )
-        if record_name == "mamba" and (
-            parse_version(record["version"]) ==
-            parse_version("0.24.0")) and (
-                record["build_number"] == 1):
-
+                    )
+        if (
+            record_name == "mamba"
+            and (parse_version(record["version"]) == parse_version("0.24.0"))
+            and (record["build_number"] == 1)
+        ):
             for i, dep in enumerate(record["depends"]):
                 dep_name, *dep_other = dep.split()
                 if dep_name == "conda":
                     record["depends"][i] = "conda >=4.8"
 
         if record_name == "mamba" and (
-            parse_version(record["version"]) ==
-            parse_version("0.25.0")):
-
+            parse_version(record["version"]) == parse_version("0.25.0")
+        ):
             for i, dep in enumerate(record["depends"]):
                 dep_name, *dep_other = dep.split()
                 if dep_name == "conda":
@@ -666,9 +727,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name == "anaconda-client":
             # Bump minimum `requests` requirement of `anaconda-client` 1.11.0
             # https://github.com/conda-forge/anaconda-client-feedstock/pull/35
-            if (
-            parse_version(record["version"]) ==
-            parse_version("1.11.0")):
+            if parse_version(record["version"]) == parse_version("1.11.0"):
                 i = -1
                 deps = record["depends"]
                 with suppress(ValueError):
@@ -697,60 +756,123 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         )
             # https://github.com/conda-forge/anaconda-client-feedstock/pull/44
             # https://github.com/Anaconda-Platform/anaconda-client/issues/678
-            if (
-                parse_version(record["version"])
-                == parse_version("1.12.0")
-            ) and record["build_number"] == 0:
+            if (parse_version(record["version"]) == parse_version("1.12.0")) and record[
+                "build_number"
+            ] == 0:
                 # Guard python-dateutil dependency with trailing space in "python "
-                python_pinning = [x for x in record["depends"] if x.startswith("python ")]
+                python_pinning = [
+                    x for x in record["depends"] if x.startswith("python ")
+                ]
                 for pinning in python_pinning:
                     _replace_pin(pinning, "python >=3.8", record["depends"], record)
 
         if record_name == "conda-build":
             # conda-build 3.26.x requires conda 23.7.x
-            if record["version"] in ("3.26.0", "3.26.1") and record.get("timestamp", 0) <= 16935094895456:
-                _replace_pin("conda >=4.13", "conda >=23.7.3", record["depends"], record)
+            if (
+                record["version"] in ("3.26.0", "3.26.1")
+                and record.get("timestamp", 0) <= 16935094895456
+            ):
+                _replace_pin(
+                    "conda >=4.13", "conda >=23.7.3", record["depends"], record
+                )
+
+        if record_name == "constructor":
+            # constructor 2.x incompatible with conda 4.6+
+            # see https://github.com/jaimergp/anaconda-repodata-hotfixes
+            #    /blob/229c10f6/main.py#L834
+            if int(record["version"].split(".")[0]) < 3:
+                _replace_pin("conda", "conda <4.6.0a0", record["depends"], record)
+            # Pin NSIS on constructor
+            # https://github.com/conda/constructor/issues/526
+            if record.get("timestamp", 0) <= 1658913358571:
+                _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
+            # conda 23.1 broke constructor
+            # https://github.com/conda/constructor/pull/627
+            if record.get("timestamp", 0) <= 1674637311000:
+                _replace_pin(
+                    "conda >=4.6", "conda >=4.6,<23.1.0a0", record["depends"], record
+                )
+
+        # conda moved to calvar from semver and this broke old versions of
+        # conda smithy that do on-the-fly version checks
+        if record_name == "conda-smithy" and (
+            parse_version(record["version"]) <= parse_version("3.21.1")
+        ):
+            for i in range(len(record["depends"])):
+                parts = record["depends"][i].split(" ")
+                if parts[0] == "conda":
+                    if len(parts) == 1:
+                        parts.append("<5a0")
+                    elif len(parts) == 2 and "<" not in parts[1]:
+                        parts[1] = parts[1] + ",<5a0"
+                    record["depends"][i] = " ".join(parts)
+
+        # mamba >= 1.2.0 requires conda>=4.14.0, but feedstock specified >= 4.8
+        # Fixed in https://github.com/conda-forge/mamba-feedstock/pull/175
+        if (
+            record_name == "mamba"
+            and record["version"] in {"1.2.0", "1.3.0", "1.3.1"}
+            and record.get("timestamp", 0) < 1678096271000
+        ):
+            _replace_pin(
+                "conda >=4.8,<23.4", "conda >=4.14,<23.4", record["depends"], record
+            )
+
+        # related to https://github.com/conda-forge/nvidia-apex-feedstock/issues/29
+        if (
+            record_name == "nvidia-apex"
+            and any(
+                "=*=cuda|=*=gpu" in constr for constr in record.get("constrains", [""])
+            )
+            and record.get("timestamp", 0) < 1678454014000
+        ):
+            record["constrains"] = ["pytorch =*=cuda*", "nvidia-apex-proc =*=cuda"]
 
         ############################################
         # Compilers, Runtimes and Related Patches
         ############################################
 
-        if record_name == "vs2015_runtime" and record.get('timestamp', 0) < 1633470721000:
-            pversion = parse_version(record['version'])
-            vs2019_version = parse_version('14.29.30037')
+        if (
+            record_name == "vs2015_runtime"
+            and record.get("timestamp", 0) < 1633470721000
+        ):
+            pversion = parse_version(record["version"])
+            vs2019_version = parse_version("14.29.30037")
             if pversion < vs2019_version:
                 # make these conflict with ucrt
                 new_constrains = record.get("constrains", [])
                 new_constrains.append("ucrt <0a0")
-                record['constrains'] = new_constrains
+                record["constrains"] = new_constrains
 
         # fix only packages built before the run_exports was corrected.
-        if any(dep == "libflang" or dep.startswith("libflang >=5.0.0") for dep in deps) and record.get('timestamp', 0) < 1611789153000:
+        if (
+            any(dep == "libflang" or dep.startswith("libflang >=5.0.0") for dep in deps)
+            and record.get("timestamp", 0) < 1611789153000
+        ):
             record["depends"].append("libflang <6.0.0.a0")
 
         llvm_pkgs = ["clang", "clang-tools", "llvm", "llvm-tools", "llvmdev"]
         if record_name in llvm_pkgs:
-            new_constrains = record.get('constrains', [])
+            new_constrains = record.get("constrains", [])
             version = record["version"]
             for pkg in llvm_pkgs:
                 if record_name == pkg:
                     continue
                 if pkg in new_constrains:
                     del new_constrains[pkg]
-                if any(constraint.startswith(f"{pkg} ") for constraint in new_constrains):
+                if any(
+                    constraint.startswith(f"{pkg} ") for constraint in new_constrains
+                ):
                     continue
-                new_constrains.append(f'{pkg} {version}.*')
-            record['constrains'] = new_constrains
+                new_constrains.append(f"{pkg} {version}.*")
+            record["constrains"] = new_constrains
 
         if record_name == "gcc_impl_{}".format(subdir):
             _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
 
         # some symlinks changed in gfortran, so we need to adjust things
         # plus we missed a key version constraint
-        if (
-            subdir in ["osx-64", "osx-arm64"]
-            and record_name == "gfortran"
-        ):
+        if subdir in ["osx-64", "osx-arm64"] and record_name == "gfortran":
             for i, dep in enumerate(record["depends"]):
                 if dep == f"gfortran_{subdir}":
                     record["depends"][i] = dep + " ==" + record["version"]
@@ -760,7 +882,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             _fix_libgfortran(fn, record)
             _fix_libcxx(fn, record)
 
-            full_pkg_name = fn.replace('.tar.bz2', '')
+            full_pkg_name = fn.replace(".tar.bz2", "")
             if full_pkg_name in OSX_SDK_FIXES:
                 _set_osx_virt_min(fn, record, OSX_SDK_FIXES[full_pkg_name])
 
@@ -769,16 +891,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # for aarch64, ppc64le and s390x
         for __subdir in ["linux-s390x", "linux-aarch64", "linux-ppc64le"]:
             if (
-                record_name in [
-                    "kernel-headers_" + __subdir, "sysroot_" + __subdir
-                ]
-                and record.get('timestamp', 0) < 1682273081000  # 2023-04-23
+                record_name in ["kernel-headers_" + __subdir, "sysroot_" + __subdir]
+                and record.get("timestamp", 0) < 1682273081000  # 2023-04-23
                 and record["version"] == "2.17"
             ):
                 new_depends = record.get("depends", [])
-                new_depends.append(
-                    "_sysroot_" + __subdir + "_curr_repodata_hack 4.*"
-                )
+                new_depends.append("_sysroot_" + __subdir + "_curr_repodata_hack 4.*")
                 record["depends"] = new_depends
 
         # make old binutils packages conflict with the new sysroot packages
@@ -786,11 +904,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # conda
         if (
             subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
-            and record_name in [
-                "binutils", "binutils_impl_" + subdir, "ld_impl_" + subdir]
-            and record.get('timestamp', 0) < 1589953178153  # 2020-05-20
+            and record_name
+            in ["binutils", "binutils_impl_" + subdir, "ld_impl_" + subdir]
+            and record.get("timestamp", 0) < 1589953178153  # 2020-05-20
         ):
-            new_constrains = record.get('constrains', [])
+            new_constrains = record.get("constrains", [])
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
             record["constrains"] = new_constrains
 
@@ -798,13 +916,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # and they only use libraries from the old compilers
         if (
             subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
-            and record_name in [
-                "gcc_impl_" + subdir, "gxx_impl_" + subdir, "gfortran_impl_" + subdir]
-            and record['version'] in ['5.4.0', '7.2.0', '7.3.0', '8.2.0']
+            and record_name
+            in ["gcc_impl_" + subdir, "gxx_impl_" + subdir, "gfortran_impl_" + subdir]
+            and record["version"] in ["5.4.0", "7.2.0", "7.3.0", "8.2.0"]
         ):
-            new_constrains = record.get('constrains', [])
+            new_constrains = record.get("constrains", [])
             for pkg in ["libgcc-ng", "libstdcxx-ng", "libgfortran", "libgomp"]:
-                new_constrains.append("{} 5.4.*|7.2.*|7.3.*|8.2.*|9.1.*|9.2.*".format(pkg))
+                new_constrains.append(
+                    "{} 5.4.*|7.2.*|7.3.*|8.2.*|9.1.*|9.2.*".format(pkg)
+                )
             new_constrains.append("binutils_impl_" + subdir + " <2.34")
             new_constrains.append("ld_impl_" + subdir + " <2.34")
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
@@ -816,13 +936,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # not be using those anyways and they are marked as broken.
         if (
             subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
-            and record_name in [
-                "gcc_impl_" + subdir, "gxx_impl_" + subdir, "gfortran_impl_" + subdir]
-            and record['version'] not in ['5.4.0', '7.2.0', '7.3.0', '8.2.0']
+            and record_name
+            in ["gcc_impl_" + subdir, "gxx_impl_" + subdir, "gfortran_impl_" + subdir]
+            and record["version"] not in ["5.4.0", "7.2.0", "7.3.0", "8.2.0"]
             and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
-            and record.get('timestamp', 0) < 1626220800000  # 2020-07-14
+            and record.get("timestamp", 0) < 1626220800000  # 2020-07-14
         ):
-            new_constrains = record.get('constrains', [])
+            new_constrains = record.get("constrains", [])
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
             record["constrains"] = new_constrains
 
@@ -831,19 +951,28 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # root and cling must also be included as they have a builtin C++ interpreter
         if (
             subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
-            and record_name in [
-                "gcc_" + subdir, "gxx_" + subdir, "gfortran_" + subdir,
-                "binutils_" + subdir, "gcc_bootstrap_" + subdir, "root_base", "cling"]
+            and record_name
+            in [
+                "gcc_" + subdir,
+                "gxx_" + subdir,
+                "gfortran_" + subdir,
+                "binutils_" + subdir,
+                "gcc_bootstrap_" + subdir,
+                "root_base",
+                "cling",
+            ]
             and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
-            and record.get('timestamp', 0) < 1626220800000  # 2020-07-14
+            and record.get("timestamp", 0) < 1626220800000  # 2020-07-14
         ):
-            new_constrains = record.get('constrains', [])
+            new_constrains = record.get("constrains", [])
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
             record["constrains"] = new_constrains
 
-        if (record_name == "gcc_impl_{}".format(subdir)
-            and record['version'] in ['5.4.0', '7.2.0', '7.3.0', '8.2.0', '8.4.0', '9.3.0']
-            and record.get('timestamp', 0) < 1627530043000  # 2021-07-29
+        if (
+            record_name == "gcc_impl_{}".format(subdir)
+            and record["version"]
+            in ["5.4.0", "7.2.0", "7.3.0", "8.2.0", "8.4.0", "9.3.0"]
+            and record.get("timestamp", 0) < 1627530043000  # 2021-07-29
         ):
             new_depends = record.get("depends", [])
             new_depends.append("libgcc-ng <=9.3.0")
@@ -856,10 +985,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if (
             subdir == "noarch"
             and (
-                record_name.endswith("-cos6-x86_64") or
-                record_name.endswith("-cos7-x86_64") or
-                record_name.endswith("-cos7-aarch64") or
-                record_name.endswith("-cos7-ppc64le")
+                record_name.endswith("-cos6-x86_64")
+                or record_name.endswith("-cos7-x86_64")
+                or record_name.endswith("-cos7-aarch64")
+                or record_name.endswith("-cos7-ppc64le")
             )
             and not record_name.startswith("sysroot-")
             and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
@@ -871,12 +1000,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             elif record_name.endswith("ppc64le"):
                 sys_subdir = "linux-ppc64le"
 
-            new_constrains = record.get('constrains', [])
+            new_constrains = record.get("constrains", [])
             if not any(__r.startswith("sysroot_") for __r in new_constrains):
                 new_constrains.append("sysroot_" + sys_subdir + " ==99999999999")
                 record["constrains"] = new_constrains
 
-        llvm_pkgs = ["libclang", "clang", "clang-tools", "llvm", "llvm-tools", "llvmdev"]
+        llvm_pkgs = [
+            "libclang",
+            "clang",
+            "clang-tools",
+            "llvm",
+            "llvm-tools",
+            "llvmdev",
+        ]
         for llvm in ["libllvm8", "libllvm9"]:
             if any(dep.startswith(llvm) for dep in deps):
                 if record_name not in llvm_pkgs:
@@ -887,17 +1023,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # Properly depend on clangdev 5.0.0 flang* for flang 5.0
         if record_name == "flang":
             deps = record["depends"]
-            if record['version'] == "5.0.0":
+            if record["version"] == "5.0.0":
                 deps += ["clangdev * flang*"]
 
         # add as run_constrained for cling
-        if (
-            record_name == "cling"
-            and record['version'] >= "0.8"
-        ):
-            record.setdefault('constrains', []).extend((
-                "gxx_linux-64 !=9.5.0",
-            ))
+        if record_name == "cling" and record["version"] >= "0.8":
+            record.setdefault("constrains", []).extend(("gxx_linux-64 !=9.5.0",))
 
         ############################################
         # CUDA Ecosystem Patches
@@ -909,18 +1040,29 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if i >= 0:
             deps[i] = "cudatoolkit >=11.2,<12.0a0"
 
-        if record_name == "cuda-version" and record['build_number'] < 2 and record.get('timestamp', 0) < 1683211961000:
+        if (
+            record_name == "cuda-version"
+            and record["build_number"] < 2
+            and record.get("timestamp", 0) < 1683211961000
+        ):
             cuda_major_minor = ".".join(record["version"].split(".")[:2])
-            constrains = record.get('constrains', [])
+            constrains = record.get("constrains", [])
             for i, c in enumerate(constrains):
-                if c.startswith('cudatoolkit'):
-                    constrains[i] = f'cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*'
+                if c.startswith("cudatoolkit"):
+                    constrains[
+                        i
+                    ] = f"cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*"
                     break
             else:
-                constrains.append( f'cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*' )
-            record['constrains'] = constrains
+                constrains.append(
+                    f"cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*"
+                )
+            record["constrains"] = constrains
 
-        if record_name == "nccl" and 1681282800000 < record.get("timestamp", 0) < 1686034800000:
+        if (
+            record_name == "nccl"
+            and 1681282800000 < record.get("timestamp", 0) < 1686034800000
+        ):
             deps = record.get("depends", [])
             for i in range(len(deps)):
                 dep = deps[i]
@@ -929,103 +1071,133 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     dep = f"__cuda{spec}"
                 deps[i] = dep
 
-        if record_name == "ucx" and record.get('timestamp', 0) < 1682924400000:
-            constrains = record.get('constrains', [])
+        if record_name == "ucx" and record.get("timestamp", 0) < 1682924400000:
+            constrains = record.get("constrains", [])
             for i, c in enumerate(constrains):
-                if c.startswith('cudatoolkit'):
+                if c.startswith("cudatoolkit"):
                     v = c.split()[-1]
-                    if v != '>=11.2,<12':
-                        constrains[i] = c = f'cudatoolkit {v}|{v}.*'
-            record['constrains'] = constrains
+                    if v != ">=11.2,<12":
+                        constrains[i] = c = f"cudatoolkit {v}|{v}.*"
+            record["constrains"] = constrains
 
         # cuTENSOR 1.3.x is binary incompatible with 1.2.x. Let's just pin exactly since
         # it appears semantic versioning is not guaranteed.
         _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", deps, record)
-        _replace_pin("cutensor >=1.2.2.5,<2.0a0", "cutensor ==1.2.2.5", record.get("constrains", []), record, target='constrains')
+        _replace_pin(
+            "cutensor >=1.2.2.5,<2.0a0",
+            "cutensor ==1.2.2.5",
+            record.get("constrains", []),
+            record,
+            target="constrains",
+        )
 
         # libcugraph 0.19.0 is compatible with the new calver based version 21.x
         if record_name == "cupy":
-            _replace_pin("libcugraph >=0.19.0,<1.0a0", "libcugraph >=0.19.0", record.get("constrains", []), record, target='constrains')
+            _replace_pin(
+                "libcugraph >=0.19.0,<1.0a0",
+                "libcugraph >=0.19.0",
+                record.get("constrains", []),
+                record,
+                target="constrains",
+            )
 
         ############################################
         # Custom Patches that cannot be YAML-ized
         ############################################
 
-        # TensorFlow Probability was published with loose constraints on TensorFlow-base leading to broken dependencies.
-        # Each release actually specifies the exact version of TensorFlow and JAX that it supports, therefore we need to
+        # TensorFlow Probability was published with loose constraints on
+        #   TensorFlow-base leading to broken dependencies.
+        # Each release actually specifies the exact version of TensorFlow and JAX that
+        #   it supports, therefore we need to
         # pin the dependencies to the exact version that was used to build the package.
         # See also issue:
-        if (record.get("timestamp", 0) < 1676674332000) and (record_name == "tensorflow-probability"):
+        if (record.get("timestamp", 0) < 1676674332000) and (
+            record_name == "tensorflow-probability"
+        ):
             version_matrix = {
                 "0.17.0": {"tensorflow-base": ">=2.9,<2.10", "jax": ">=0.3.13,<0.4.0"},
-                "0.15.0": {"tensorflow-base": ">=2.7,<2.8", "jax": ">=0.2.21,<0.3.0"},  # actual jax minimum not mention in release notes
+                "0.15.0": {
+                    "tensorflow-base": ">=2.7,<2.8",
+                    "jax": ">=0.2.21,<0.3.0",
+                },  # actual jax minimum not mention in release notes
                 "0.14.1": {"tensorflow-base": ">=2.6,<2.7", "jax": ">=0.2.21,<0.3.0"},
                 "0.14.0": {"tensorflow-base": ">=2.6,<2.7", "jax": ">=0.2.20,<0.3.0"},
-                "0.13.0": {"tensorflow-base": ">=2.5,<2.6"},  # no JAX as it isn't mentioned anymore, is it needed to re-add?
+                "0.13.0": {
+                    "tensorflow-base": ">=2.5,<2.6"
+                },  # no JAX as it isn't mentioned anymore, is it needed to re-add?
                 "0.12.2": {"tensorflow-base": ">=2.4,<2.5"},
                 "0.12.1": {"tensorflow-base": ">=2.4,<2.5"},
                 "0.12.0": {"tensorflow-base": ">=2.4,<2.5"},
                 "0.10.1": {"tensorflow-base": ">=2.2,<2.3"},
                 "0.10.0": {"tensorflow-base": ">=2.2,<2.3"},
                 "0.8.0": {"tensorflow-base": ">=1.15,<2.1"},
-                # Older versions are TF V1, too old to bother with but restricting them to <2 s.t. the solver doesn't pick them up
+                # Older versions are TF V1, too old to bother with but restricting
+                #   them to <2 s.t. the solver doesn't pick them up
                 "0.7": {"tensorflow-base": ">=1.13.1,<2"},
                 "0.6.0": {"tensorflow-base": ">=1.13.1,<2"},
                 "0.5.0": {"tensorflow-base": ">=1.11.0,<2"},
-
             }
             version = record["version"]
             if version in version_matrix:
                 deps = version_matrix[version]
-                dependencies = record['depends']
+                dependencies = record["depends"]
                 for newdep, newrequ in deps.items():
                     found = False
                     for i, curdep in enumerate(dependencies):
                         curdep_pkg = curdep.split(" ")[0]
-                        if curdep_pkg == 'tensorflow':  # remove it, will be replaced with tf-base if needed
+                        if (
+                            curdep_pkg == "tensorflow"
+                        ):  # remove it, will be replaced with tf-base if needed
                             del dependencies[i]
                         elif curdep_pkg == newdep:
                             found = True
-                            dependencies[i] = f'{newdep} {newrequ}'
-                            # NO break, the loop needs also to make sure that all the tensorflow deps are removed.
+                            dependencies[i] = f"{newdep} {newrequ}"
+                            # NO break, the loop needs also to make sure that all the
+                            #   tensorflow deps are removed.
                     if not found:  # It wasn't in the dependencies so we add it
-                        dependencies.append(f'{newdep} {newrequ}')
+                        dependencies.append(f"{newdep} {newrequ}")
 
-        if record_name == 'dask':
+        if record_name == "dask":
             deps = record.get("depends", ())
 
             # older versions of dask are incompatible with bokeh=3
             # https://github.com/dask/community/issues/283#issuecomment-1295095683
-            if record.get('timestamp', 0) < 1667000131632:  # releases prior to 2022.10.1
-                bokeh_pinning = [x for x in record['depends'] if x.startswith('bokeh')]
+            if (
+                record.get("timestamp", 0) < 1667000131632
+            ):  # releases prior to 2022.10.1
+                bokeh_pinning = [x for x in record["depends"] if x.startswith("bokeh")]
                 if bokeh_pinning:
                     bokeh_pinning = bokeh_pinning[0]
                     _replace_pin(
                         bokeh_pinning,
-                        bokeh_pinning + (",<3" if bokeh_pinning[-1].isdigit() else " <3"),
+                        bokeh_pinning
+                        + (",<3" if bokeh_pinning[-1].isdigit() else " <3"),
                         deps,
-                        record
+                        record,
                     )
 
             # older versions of dask are incompatible with pandas=2
-            if record.get('timestamp', 0) < 1676063992630:  # releases prior to 2023.2.0
-                pandas_pinning = [x for x in record['depends'] if x.startswith('pandas')]
+            if record.get("timestamp", 0) < 1676063992630:  # releases prior to 2023.2.0
+                pandas_pinning = [
+                    x for x in record["depends"] if x.startswith("pandas")
+                ]
                 if pandas_pinning:
                     pandas_pinning = pandas_pinning[0]
                     _replace_pin(
                         pandas_pinning,
-                        pandas_pinning + (",<2" if pandas_pinning[-1].isdigit() else " <2"),
+                        pandas_pinning
+                        + (",<2" if pandas_pinning[-1].isdigit() else " <2"),
                         deps,
-                        record
+                        record,
                     )
 
         if record_name in {"distributed", "dask"}:
             version = parse_version(record["version"])
             if (
-                version >= parse_version("2021.12.0") and
-                version < parse_version("2022.8.0") or
-                version == parse_version("2022.8.0") and
-                record["build_number"] < 2
+                version >= parse_version("2021.12.0")
+                and version < parse_version("2022.8.0")
+                or version == parse_version("2022.8.0")
+                and record["build_number"] < 2
             ):
                 for dep in record["depends"]:
                     if dep.startswith("dask-core") or dep.startswith("distributed"):
@@ -1034,7 +1206,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         major_minor_patch[2] = str(int(major_minor_patch[2]) + 1)
                         next_patch_version = ".".join(major_minor_patch)
                         _replace_pin(
-                            dep, f"{pkg} >={version},<{next_patch_version}.0a0", record["depends"], record
+                            dep,
+                            f"{pkg} >={version},<{next_patch_version}.0a0",
+                            record["depends"],
+                            record,
                         )
 
         deps = record.get("depends", ())
@@ -1053,14 +1228,13 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     continue
                 version_pin, build_pin = version_build[:2]
                 for scalar in ("real", "complex"):
-                    old_build = f"*{scalar}*"
                     if build_pin == f"*{scalar}*":
                         new_build = f"{scalar}_*"
                         new_dep = f"{dep_name} {version_pin} {new_build}"
                         _replace_pin(dep, new_dep, deps, record)
 
         # FIXME: this one is buggy
-        if record.get('timestamp', 0) < 1663795137000:
+        if record.get("timestamp", 0) < 1663795137000:
             if any(dep.startswith("pango >=5.2") for dep in deps):
                 _pin_looser(fn, record, "xz", max_pin="x")
 
@@ -1080,22 +1254,20 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         #         record["track_features"] == "blas_openblas"):
         #     instructions["packages"][fn]["track_features"] = None
         # if "features" in record:
-            # if "blas_openblas" in record["features"]:
-            #     # remove blas_openblas feature
-            #     instructions["packages"][fn]["features"] = _extract_feature(
-            #         record, "blas_openblas")
-            #     if not any(d.startswith("blas ") for d in record["depends"]):
-            #         depends = record['depends']
-            #         depends.append("blas 1.* openblas")
-            #         instructions["packages"][fn]["depends"] = depends
+        # if "blas_openblas" in record["features"]:
+        #     # remove blas_openblas feature
+        #     instructions["packages"][fn]["features"] = _extract_feature(
+        #         record, "blas_openblas")
+        #     if not any(d.startswith("blas ") for d in record["depends"]):
+        #         depends = record['depends']
+        #         depends.append("blas 1.* openblas")
+        #         instructions["packages"][fn]["depends"] = depends
 
         # remove features for openjdk and rb2
-        if ("track_features" in record and
-                record['track_features'] is not None):
+        if "track_features" in record and record["track_features"] is not None:
             for feat in record["track_features"].split():
                 if feat.startswith("openjdk"):
-                    record["track_features"] = _extract_track_feature(
-                        record, feat)
+                    record["track_features"] = _extract_track_feature(record, feat)
 
         # Patch bokeh version restrictions on older panels.
         if record_name == "panel":
@@ -1128,27 +1300,67 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # FIXME: this one could be yaml but would be quite verbose
         if record_name == "dask-sql":
-            # retroactively pin dask dependency for older version of dask-sql as it is now being pinned
+            # retroactively pin dask dependency for older version of
+            #   dask-sql as it is now being pinned
             # https://github.com/dask-contrib/dask-sql/issues/302
-            dask_sql_map = {"0.1.0rc2": "2.26.0", "0.1.2": "2.30.0", "0.2.0": "2.30.0", "0.2.2": "2.30.0",
-                            "0.3.0": "2021.1.0", "0.3.1": "2021.2.0", "0.3.2": "2021.4.0", "0.3.3": "2021.4.1",
-                            "0.3.4": "2021.4.1", "0.3.6": "2021.5.0", "0.3.9": "2021.8.0", "0.4.0": "2021.10.0"}
-            if record["version"] in ["0.1.0rc2", "0.1.2", "0.2.0", "0.2.2", "0.3.0", "0.3.1"]:
-                _replace_pin("dask >=2.19.0", f"dask =={dask_sql_map[record['version']]}", deps, record)
+            dask_sql_map = {
+                "0.1.0rc2": "2.26.0",
+                "0.1.2": "2.30.0",
+                "0.2.0": "2.30.0",
+                "0.2.2": "2.30.0",
+                "0.3.0": "2021.1.0",
+                "0.3.1": "2021.2.0",
+                "0.3.2": "2021.4.0",
+                "0.3.3": "2021.4.1",
+                "0.3.4": "2021.4.1",
+                "0.3.6": "2021.5.0",
+                "0.3.9": "2021.8.0",
+                "0.4.0": "2021.10.0",
+            }
+            if record["version"] in [
+                "0.1.0rc2",
+                "0.1.2",
+                "0.2.0",
+                "0.2.2",
+                "0.3.0",
+                "0.3.1",
+            ]:
+                _replace_pin(
+                    "dask >=2.19.0",
+                    f"dask =={dask_sql_map[record['version']]}",
+                    deps,
+                    record,
+                )
             if record["version"] in ["0.3.2", "0.3.3"]:
-                _replace_pin("dask >=2.19.0,<=2021.2.0", f"dask =={dask_sql_map[record['version']]}", deps, record)
+                _replace_pin(
+                    "dask >=2.19.0,<=2021.2.0",
+                    f"dask =={dask_sql_map[record['version']]}",
+                    deps,
+                    record,
+                )
             if record["version"] in ["0.3.4", "0.3.6", "0.3.9", "0.4.0"]:
-                _replace_pin("dask >=2.19.0,!=2021.3.0", f"dask =={dask_sql_map[record['version']]}", deps, record)
+                _replace_pin(
+                    "dask >=2.19.0,!=2021.3.0",
+                    f"dask =={dask_sql_map[record['version']]}",
+                    deps,
+                    record,
+                )
 
             # make dask/uvicorn pinnings consistent for older builds of 2022.10.1
             # https://github.com/conda-forge/dask-sql-feedstock/pull/46#issuecomment-1291416642
             if record["version"] == "2022.10.1" and record["build_number"] == 0:
-                _replace_pin("dask >=2022.3.0,<=2022.9.2", "dask >=2022.3.0,<=2022.10.0", deps, record)
+                _replace_pin(
+                    "dask >=2022.3.0,<=2022.9.2",
+                    "dask >=2022.3.0,<=2022.10.0",
+                    deps,
+                    record,
+                )
                 _replace_pin("uvicorn >=0.11.3", "uvicorn >=0.13.4", deps, record)
 
         if record_name == "dask-cuda":
             timestamp = record.get("timestamp", 0)
-            # older versions of dask-cuda do not work on non-UNIX operating systems and must be constrained to UNIX
+            # older versions of dask-cuda do not work on non-UNIX operating systems
+            #   and must be constrained to UNIX
             # issues in click 8.1.0 cause failures for older versions of dask-cuda
             if timestamp <= 1645130882435:  # 22.2.0 and prior
                 new_depends = record.get("depends", [])
@@ -1158,27 +1370,56 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # older versions of dask-cuda do not work with pynvml 11.5+
             if timestamp <= 1676966400000:  # 23.2.0 and prior
                 depends = record.get("depends", [])
-                new_depends = [d + ",<11.5" if d.startswith("pynvml") else d
-                               for d in depends]
+                new_depends = [
+                    d + ",<11.5" if d.startswith("pynvml") else d for d in depends
+                ]
                 record["depends"] = new_depends
 
-            # older versions of dask-cuda pulling in pandas are incompatible with pandas 2.0 and must be constrained to pandas 1
-            if timestamp <= 1677122851413 and timestamp >= 1670873028930: # 22.12 to 23.2.1
-                _replace_pin("pandas >=1.0", "pandas >=1.0,<1.6.0dev0", record["depends"], record)
+            # older versions of dask-cuda pulling in pandas are incompatible with
+            #   pandas 2.0 and must be constrained to pandas 1
+            if (
+                timestamp <= 1677122851413 and timestamp >= 1670873028930
+            ):  # 22.12 to 23.2.1
+                _replace_pin(
+                    "pandas >=1.0", "pandas >=1.0,<1.6.0dev0", record["depends"], record
+                )
 
-            # there are various inconsistencies between the pinnings of dask-cuda on `rapidsai` and `conda-forge`,
-            # this makes the packages roughly consistent while also removing the python upper bound where present
+            # there are various inconsistencies between the pinnings of dask-cuda on
+            #  `rapidsai` and `conda-forge`,
+            # this makes the packages roughly consistent while also removing the python
+            #   upper bound where present
             if record["version"] == "0.18.0":
-                _replace_pin("dask >=2.9.0", "dask >=2.4.0,<=2.22.0", record["depends"], record)
+                _replace_pin(
+                    "dask >=2.9.0", "dask >=2.4.0,<=2.22.0", record["depends"], record
+                )
             elif record["version"] == "0.19.0":
-                _replace_pin("dask >=2.9.0", "dask >=2.22.0,<=2021.4.0", record["depends"], record)
-                _replace_pin("distributed >=2.18.0", "distributed >=2.22.0,<=2021.4.0", record["depends"], record)
+                _replace_pin(
+                    "dask >=2.9.0",
+                    "dask >=2.22.0,<=2021.4.0",
+                    record["depends"],
+                    record,
+                )
+                _replace_pin(
+                    "distributed >=2.18.0",
+                    "distributed >=2.22.0,<=2021.4.0",
+                    record["depends"],
+                    record,
+                )
             elif record["version"] == "21.6.0":
-                _replace_pin("distributed >=2.22.0,<=2021.5.1", "distributed >=2.22.0,<2021.5.1", record["depends"], record)
+                _replace_pin(
+                    "distributed >=2.22.0,<=2021.5.1",
+                    "distributed >=2.22.0,<2021.5.1",
+                    record["depends"],
+                    record,
+                )
             elif record["version"] in ("21.10.0", "22.2.0"):
-                _replace_pin("pynvml >=11.0.0", "pynvml >=8.0.3", record["depends"], record)
+                _replace_pin(
+                    "pynvml >=11.0.0", "pynvml >=8.0.3", record["depends"], record
+                )
             elif record["version"] == "22.4.0":
-                _replace_pin("python >=3.8,<3.10", "python >=3.8", record["depends"], record)
+                _replace_pin(
+                    "python >=3.8,<3.10", "python >=3.8", record["depends"], record
+                )
 
         if record_name == "tsnecuda":
             # These have dependencies like
@@ -1240,59 +1481,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         _pin_stricter(fn, record, "ngmix", "x.x.x", "2.1.0")
                     else:
                         record["depends"][i] = record["depends"][i] + ",<2.1.0a0"
-
-        ############################################
-        # Patches that still need to be YAML-ized
-        ############################################
-
-        if record_name == "constructor":
-            # constructor 2.x incompatible with conda 4.6+
-            # see https://github.com/jaimergp/anaconda-repodata-hotfixes/blob/229c10f6/main.py#L834
-            if int(record["version"].split(".")[0]) < 3:
-                _replace_pin("conda", "conda <4.6.0a0", record["depends"], record)
-            # Pin NSIS on constructor
-            # https://github.com/conda/constructor/issues/526
-            if record.get("timestamp", 0) <= 1658913358571:
-                _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
-            # conda 23.1 broke constructor
-            # https://github.com/conda/constructor/pull/627
-            if record.get("timestamp", 0) <= 1674637311000:
-                _replace_pin("conda >=4.6", "conda >=4.6,<23.1.0a0", record["depends"], record)
-
-        # conda moved to calvar from semver and this broke old versions of
-        # conda smithy that do on-the-fly version checks
-        if (
-            record_name == "conda-smithy"
-            and (
-                parse_version(record["version"]) <=
-                parse_version("3.21.1")
-            )
-        ):
-            for i in range(len(record["depends"])):
-                parts = record["depends"][i].split(" ")
-                if parts[0] == "conda":
-                    if len(parts) == 1:
-                        parts.append("<5a0")
-                    elif len(parts) == 2 and "<" not in parts[1]:
-                        parts[1] = parts[1] + ",<5a0"
-                    record["depends"][i] = " ".join(parts)
-
-        # mamba >= 1.2.0 requires conda>=4.14.0, but feedstock specified >= 4.8
-        # Fixed in https://github.com/conda-forge/mamba-feedstock/pull/175
-        if (
-            record_name == "mamba" and
-            record["version"] in {"1.2.0", "1.3.0", "1.3.1"} and
-            record.get("timestamp", 0) < 1678096271000
-        ):
-            _replace_pin("conda >=4.8,<23.4", "conda >=4.14,<23.4", record["depends"], record)
-
-        # related to https://github.com/conda-forge/nvidia-apex-feedstock/issues/29
-        if (
-            record_name == "nvidia-apex" and
-            any("=*=cuda|=*=gpu" in constr for constr in record.get("constrains", [""])) and
-            record.get("timestamp", 0) < 1678454014000
-        ):
-            record["constrains"] = ["pytorch =*=cuda*", "nvidia-apex-proc =*=cuda"]
 
     return index
 
@@ -1357,9 +1545,7 @@ def _add_pybind11_abi_constraint(fn, record):
 def _fix_libgfortran(fn, record):
     depends = record.get("depends", ())
     dep_idx = next(
-        (q for q, dep in enumerate(depends)
-         if dep.split(' ')[0] == "libgfortran"),
-        None
+        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == "libgfortran"), None
     )
     if dep_idx is not None:
         # make sure respect minimum versions still there
@@ -1371,68 +1557,65 @@ def _fix_libgfortran(fn, record):
             pass
         elif depends[dep_idx] == "libgfortran":
             depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
-            record['depends'] = depends
+            record["depends"] = depends
         elif ">=3.0.1" in depends[dep_idx]:
             depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
-            record['depends'] = depends
+            record["depends"] = depends
         elif ">=3.0" in depends[dep_idx]:
             depends[dep_idx] = "libgfortran >=3.0,<4.0.0.a0"
-            record['depends'] = depends
+            record["depends"] = depends
         elif ">=4" in depends[dep_idx]:
             # catches all of 4.*
             depends[dep_idx] = "libgfortran >=4.0.0,<5.0.0.a0"
-            record['depends'] = depends
+            record["depends"] = depends
 
 
 def _set_osx_virt_min(fn, record, min_vers):
     rconst = record.get("constrains", ())
     dep_idx = next(
-        (q for q, dep in enumerate(rconst)
-         if dep.split(' ')[0] == "__osx"),
-        None
+        (q for q, dep in enumerate(rconst) if dep.split(" ")[0] == "__osx"), None
     )
     run_constrained = list(rconst)
     if dep_idx is None:
         run_constrained.append("__osx >=%s" % min_vers)
     if run_constrained:
-        record['constrains'] = run_constrained
+        record["constrains"] = run_constrained
 
 
 def _fix_libcxx(fn, record):
     record_name = record["name"]
-    if not record_name in ["cctools", "ld64", "llvm-lto-tapi"]:
+    if record_name not in ["cctools", "ld64", "llvm-lto-tapi"]:
         return
     depends = record.get("depends", ())
     dep_idx = next(
-        (q for q, dep in enumerate(depends)
-         if dep.split(' ')[0] == "libcxx"),
-        None
+        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == "libcxx"), None
     )
     if dep_idx is not None:
         dep_parts = depends[dep_idx].split(" ")
         if len(dep_parts) >= 2 and dep_parts[1] == "4.0.1":
             # catches all of 4.*
             depends[dep_idx] = "libcxx >=4.0.1"
-            record['depends'] = depends
+            record["depends"] = depends
 
 
 def _extract_and_remove_vc_feature(record):
-    features = record.get('features', '').split()
-    vc_features = tuple(f for f in features if f.startswith('vc'))
+    features = record.get("features", "").split()
+    vc_features = tuple(f for f in features if f.startswith("vc"))
     if not vc_features:
         return None
     non_vc_features = tuple(f for f in features if f not in vc_features)
     vc_version = int(vc_features[0][2:])  # throw away all but the first
     if non_vc_features:
-        record['features'] = ' '.join(non_vc_features)
+        record["features"] = " ".join(non_vc_features)
     else:
-        record['features'] = None
+        record["features"] = None
     return vc_version
 
 
 def _do_subdir(subdir):
     repodata_url = "/".join(
-        (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata_from_packages.json"))
+        (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata_from_packages.json")
+    )
     response = requests.get(repodata_url)
     response.raise_for_status()
     repodata = response.json()
@@ -1449,12 +1632,9 @@ def _do_subdir(subdir):
     instructions = _gen_patch_instructions(repodata, new_index, subdir)
 
     # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
-    patch_instructions_path = join(
-        prefix_subdir, "patch_instructions.json")
-    with open(patch_instructions_path, 'w') as fh:
-        json.dump(
-            instructions, fh, indent=2,
-            sort_keys=True, separators=(',', ': '))
+    patch_instructions_path = join(prefix_subdir, "patch_instructions.json")
+    with open(patch_instructions_path, "w") as fh:
+        json.dump(instructions, fh, indent=2, sort_keys=True, separators=(",", ": "))
 
 
 def main():
@@ -1465,10 +1645,7 @@ def main():
         subdirs = SUBDIRS
 
     with ProcessPoolExecutor(max_workers=None) as exc:
-        futs = [
-            exc.submit(_do_subdir, subdir)
-            for subdir in subdirs
-        ]
+        futs = [exc.submit(_do_subdir, subdir) for subdir in subdirs]
         for fut in tqdm.tqdm(futs, desc="patching repodata"):
             fut.result()
 
