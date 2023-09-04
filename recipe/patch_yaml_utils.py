@@ -299,7 +299,7 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
                         dep_parts[0], dep_parts[1], new_upper, dep_parts[2]
                     )
                 else:
-                    raise RuntimeError("Weird dep length!")
+                    raise RuntimeError(f"Weird dep length in item '{depends[dep_idx]}'")
 
                 record["depends"] = depends
 
