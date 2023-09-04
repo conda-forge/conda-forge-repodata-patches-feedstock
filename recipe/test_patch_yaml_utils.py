@@ -351,6 +351,15 @@ def test_apply_patch_yaml_rename(pre, post):
 
 @pytest.mark.parametrize("pre", [[], ["foo"]])
 @pytest.mark.parametrize("post", [[], ["bar"]])
+def test_apply_patch_yaml_reset(pre, post):
+    patch_yaml = {"then": [{"reset_depends": "numppy 1.0"}]}
+    record = {"depends": pre + ["numpy 1.0 blah"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"depends": ["numppy 1.0"]}
+
+
+@pytest.mark.parametrize("pre", [[], ["foo"]])
+@pytest.mark.parametrize("post", [[], ["bar"]])
 def test_apply_patch_yaml_relax_exact(pre, post):
     patch_yaml = {"then": [{"relax_exact_depends": {"name": "numpy"}}]}
     record = {"depends": pre + ["numpy 1.0.0 blah"] + post}
@@ -370,6 +379,32 @@ def test_apply_patch_yaml_tighten(pre, post):
     record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"depends": pre + ["numpy >=1.0.0,<1.1.0a0"] + post}
+
+    patch_yaml = {
+        "then": [{"tighten_depends": {"name": "numpy", "upper_bound": "1.1.2"}}]
+    }
+    record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"depends": pre + ["numpy >=1.0.0,<1.1.2.0a0"] + post}
+
+
+@pytest.mark.parametrize("pre", [[], ["foo"]])
+@pytest.mark.parametrize("post", [[], ["bar"]])
+def test_apply_patch_yaml_tighten_upper_bound(pre, post):
+    patch_yaml = {
+        "then": [{"tighten_depends": {"name": "numpy", "upper_bound": "5.0"}}]
+    }
+    record = {"depends": pre + ["numpy >=1.0.0,<7.0.0a0"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"depends": pre + ["numpy >=1.0.0,<5.0.0a0"] + post}
+
+    record = {"depends": pre + ["numpy >=1.0.0"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"depends": pre + ["numpy >=1.0.0,<5.0.0a0"] + post}
+
+    record = {"depends": pre + ["numpy"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"depends": pre + ["numpy <5.0a0"] + post}
 
     patch_yaml = {
         "then": [{"tighten_depends": {"name": "numpy", "upper_bound": "1.1.2"}}]

@@ -78,6 +78,13 @@ then:
   # remove entries from track_features
   - remove_track_features: <list of str or str>
 
+  # reset the depends or constrains section of the repodata
+  # this function resets the depends or constrains to the specified value(s)
+  - reset_<depends or constrains>: <list of str or single str>
+  # you can use data from the record being patched like this
+  # only name, version, build_number and subdir are supported
+  - reset_depends: mypackage <=${version}
+
   # replace entries via an exact match in either the depends or constrains sections
   - replace_<depends or constrains>:
       # str of thing to be replaced

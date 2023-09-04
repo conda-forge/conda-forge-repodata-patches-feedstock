@@ -1929,6 +1929,42 @@
           "description": "Remove constraints to matched packages",
           "title": "Remove Constrains"
         },
+        "reset_depends": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Reset the dependencies to the specified value(s)",
+          "title": "Reset Depends"
+        },
+        "reset_constrains": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Reset the constraints to the specified value(s)",
+          "title": "Reset Constrains"
+        },
         "remove_track_features": {
           "anyOf": [
             {

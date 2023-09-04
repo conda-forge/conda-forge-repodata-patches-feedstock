@@ -1,0 +1,18 @@
+# from this bit of code
+# related to https://github.com/conda-forge/nvidia-apex-feedstock/issues/29
+# if (
+#     record_name == "nvidia-apex"
+#     and any(
+#         "=*=cuda|=*=gpu" in constr for constr in record.get("constrains", [""])
+#     )
+#     and record.get("timestamp", 0) < 1678454014000
+# ):
+#     record["constrains"] = ["pytorch =*=cuda*", "nvidia-apex-proc =*=cuda"]
+if:
+  name: nvidia-apex
+  timestamp_lt: 1678454014000
+  has_constrains: "*=[*]=cuda|=[*]=gpu*"
+then:
+  - reset_constrains:
+      - pytorch =*=cuda*
+      - nvidia-apex-proc =*=cuda
