@@ -51,10 +51,20 @@ then:
 if:
   name: anaconda-client
   timestamp_le: 1684878992896
+  has_depends: urllib3*
 then:
   - replace_depends:
       old: urllib3 >=1.26.4
       new: urllib3 >=1.26.4,<2.0.0a0
+---
+if:
+  name: anaconda-client
+  timestamp_le: 1684878992896
+  not_has_depends: urllib3*
+then:
+  - replace_depends:
+      old: requests >=2.*
+      new: ${old},<2.30.0a0
 ---
 if:
   name: anaconda-client
