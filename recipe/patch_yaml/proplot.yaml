@@ -15,5 +15,5 @@ if:
   timestamp_lt: 1634670686970
 then:
   - tighten_depends:
-      name: matplotlib
+      name: matplotlib*
       upper_bound: "3.5.0"
