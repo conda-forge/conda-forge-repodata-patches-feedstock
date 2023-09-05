@@ -1,0 +1,6 @@
+if:
+  name: jupyter_server
+then:
+  - replace_depends:
+      old: anyio >=3.1.0
+      new: anyio >=3.1.0,<4
