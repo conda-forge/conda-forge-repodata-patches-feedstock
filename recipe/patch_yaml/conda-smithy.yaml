@@ -1,0 +1,21 @@
+# from this code
+# conda moved to calvar from semver and this broke old versions of
+# conda smithy that do on-the-fly version checks
+# if record_name == "conda-smithy" and (
+#     parse_version(record["version"]) <= parse_version("3.21.1")
+# ):
+#     for i in range(len(record["depends"])):
+#         parts = record["depends"][i].split(" ")
+#         if parts[0] == "conda":
+#             if len(parts) == 1:
+#                 parts.append("<5a0")
+#             elif len(parts) == 2 and "<" not in parts[1]:
+#                 parts[1] = parts[1] + ",<5a0"
+#             record["depends"][i] = " ".join(parts)
+if:
+  name: conda-smithy
+  version_le: 3.21.1
+then:
+  - tighten_depends:
+      name: conda
+      upper_bound: "5"

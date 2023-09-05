@@ -31,8 +31,11 @@ def sort_lists(obj):
     return obj
 
 
-def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast):
-    final_lines = []
+def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs=True):
+    if group_diffs:
+        final_lines = {}
+    else:
+        final_lines = []
     for index_key in ["packages", "packages.conda"]:
         for name, ref_pkg in ref_repodata[index_key].items():
             if name in new_repodata[index_key]:
@@ -51,7 +54,6 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast):
             if ref_pkg == new_pkg:
                 continue
 
-            final_lines.append(f"{subdir}::{name}")
             ref_lines = json.dumps(
                 ref_pkg,
                 indent=2,
@@ -62,10 +64,31 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast):
                 indent=2,
                 sort_keys=True,
             ).splitlines()
-            for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=""):
-                if ln.startswith("+++") or ln.startswith("---") or ln.startswith("@@"):
-                    continue
-                final_lines.append(ln)
+
+            if group_diffs:
+                _key = []
+                for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=""):
+                    if (
+                        ln.startswith("+++")
+                        or ln.startswith("---")
+                        or ln.startswith("@@")
+                    ):
+                        continue
+                    _key.append(ln)
+                _key = tuple(_key)
+                if _key not in final_lines:
+                    final_lines[_key] = set()
+                final_lines[_key].add(f"{subdir}::{name}")
+            else:
+                final_lines.append()
+                for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=""):
+                    if (
+                        ln.startswith("+++")
+                        or ln.startswith("---")
+                        or ln.startswith("@@")
+                    ):
+                        continue
+                    final_lines.append(ln)
 
             if final_lines and fail_fast:
                 return final_lines
@@ -73,7 +96,9 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast):
     return final_lines
 
 
-def do_subdir(subdir, raw_repodata_path, ref_repodata_path, fail_fast):
+def do_subdir(
+    subdir, raw_repodata_path, ref_repodata_path, fail_fast, group_diffs=True
+):
     with bz2.open(raw_repodata_path) as fh:
         raw_repodata = json.load(fh)
     with bz2.open(ref_repodata_path) as fh:
@@ -81,7 +106,9 @@ def do_subdir(subdir, raw_repodata_path, ref_repodata_path, fail_fast):
     new_index = _gen_new_index(raw_repodata, subdir)
     instructions = _gen_patch_instructions(raw_repodata, new_index, subdir)
     new_repodata = _apply_instructions(subdir, raw_repodata, instructions)
-    return show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast)
+    return show_record_diffs(
+        subdir, ref_repodata, new_repodata, fail_fast, group_diffs=group_diffs
+    )
 
 
 def download_subdir(subdir, raw_repodata_path, ref_repodata_path):
@@ -91,7 +118,7 @@ def download_subdir(subdir, raw_repodata_path, ref_repodata_path):
     urllib.request.urlretrieve(ref_url, ref_repodata_path)
 
 
-def _process_subdir(subdir, use_cache, fail_fast):
+def _process_subdir(subdir, use_cache, fail_fast, group_diffs=True):
     subdir_dir = os.path.join(CACHE_DIR, subdir)
     if not os.path.exists(subdir_dir):
         os.makedirs(subdir_dir)
@@ -99,7 +126,9 @@ def _process_subdir(subdir, use_cache, fail_fast):
     ref_repodata_path = os.path.join(subdir_dir, "repodata.json.bz2")
     if not use_cache:
         download_subdir(subdir, raw_repodata_path, ref_repodata_path)
-    vals = do_subdir(subdir, raw_repodata_path, ref_repodata_path, fail_fast)
+    vals = do_subdir(
+        subdir, raw_repodata_path, ref_repodata_path, fail_fast, group_diffs=group_diffs
+    )
     return subdir, vals
 
 
@@ -120,6 +149,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--fail-fast", action="store_true", help="error out on the first non-zero diff"
     )
+    parser.add_argument(
+        "--no-group-diffs", action="store_true", help="do not group diffs by content"
+    )
     args = parser.parse_args()
 
     if args.subdirs is None:
@@ -137,7 +169,13 @@ if __name__ == "__main__":
 
     with ProcessPoolExecutor() as exc:
         futs = [
-            exc.submit(_process_subdir, subdir, args.use_cache, args.fail_fast)
+            exc.submit(
+                _process_subdir,
+                subdir,
+                args.use_cache,
+                args.fail_fast,
+                group_diffs=not args.no_group_diffs,
+            )
             for subdir in subdirs
         ]
         if args.fail_fast:
@@ -150,5 +188,12 @@ if __name__ == "__main__":
                 print(subdir + " has non-zero patch diff", flush=True)
             else:
                 print(subdir, flush=True)
-            for val in vals:
-                print(val, flush=True)
+            if args.no_group_diffs:
+                for val in vals:
+                    print(val, flush=True)
+            else:
+                for key, val in vals.items():
+                    for v in val:
+                        print(v, flush=True)
+                    for k in key:
+                        print(k, flush=True)

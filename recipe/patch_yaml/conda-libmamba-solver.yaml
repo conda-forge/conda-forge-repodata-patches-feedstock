@@ -1,0 +1,66 @@
+# from this code
+# conda-libmamba-solver uses calver YY.MM.micro
+# if record_name == "conda-libmamba-solver":
+#     if record.get("timestamp", 0) <= 1669391735453:  # 2022-11-25
+#         # libmamba 0.23 introduces API breaking changes, pin to v0.22
+#         _replace_pin(
+#             "libmambapy >=0.22", "libmambapy 0.22.*", record["depends"], record
+#         )
+#         # conda 22.11 introduces the plugin system, which needs a new release
+#         _replace_pin(
+#             "conda >=4.12", "conda >=4.12,<22.11.0a", record["depends"], record
+#         )
+#         _replace_pin(
+#             "conda >=4.13", "conda >=4.13,<22.11.0a", record["depends"], record
+#         )
+#     elif record.get("timestamp", 0) <= 1674230331000:  # 2023-01-20
+#         # conda 23.1 changed an internal SubdirData API needed with S3/FTP
+#         #   channels
+#         _replace_pin(
+#             "conda >=22.11.0",
+#             "conda >=22.11.0,<23.1.0a",
+#             record["depends"],
+#             record,
+#         )
+#     elif record.get("timestamp", 0) <= 1678721528000:  # 2023-03-13:
+#         # conda 23.3 changed an internal SubdirData API needed
+#         #   with S3/FTP channels
+#         # conda deprecated Boltons leading to a breakage in the solver api
+#         #   interface
+#         _replace_pin(
+#             "conda >=22.11.0",
+#             "conda >=22.11.0,<23.2.0a",
+#             record["depends"],
+#             record,
+#         )
+if:
+  name: conda-libmamba-solver
+  timestamp_le: 1669391735453  # 2022-11-25
+then:
+  - replace_depends:
+      old: libmambapy >=0.22
+      new: libmambapy 0.22.*
+  - replace_depends:
+      old: conda >=4.12
+      new: conda >=4.12,<22.11.0a
+  - replace_depends:
+      old: conda >=4.13
+      new: conda >=4.13,<22.11.0a
+---
+if:
+  name: conda-libmamba-solver
+  timestamp_le: 1674230331000  # 2023-01-20
+  timestamp_gt: 1669391735453  # 2022-11-25
+then:
+  - replace_depends:
+      old: conda >=22.11.0
+      new: conda >=22.11.0,<23.1.0a
+---
+if:
+  name: conda-libmamba-solver
+  timestamp_le: 1678721528000  # 2023-03-13
+  timestamp_gt: 1674230331000  # 2023-01-20
+then:
+  - replace_depends:
+      old: conda >=22.11.0
+      new: conda >=22.11.0,<23.2.0a
