@@ -14,6 +14,8 @@ import requests
 from packaging.version import parse as parse_version
 from concurrent.futures import ProcessPoolExecutor
 
+from conda_build.index import _apply_instructions
+from show_diff import show_record_diffs
 from get_license_family import get_license_family
 from patch_yaml_utils import (
     patch_yaml_edit_index,
@@ -892,40 +894,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     if not found:  # It wasn't in the dependencies so we add it
                         dependencies.append(f"{newdep} {newrequ}")
 
-        if record_name == "dask":
-            deps = record.get("depends", ())
-
-            # older versions of dask are incompatible with bokeh=3
-            # https://github.com/dask/community/issues/283#issuecomment-1295095683
-            if (
-                record.get("timestamp", 0) < 1667000131632
-            ):  # releases prior to 2022.10.1
-                bokeh_pinning = [x for x in record["depends"] if x.startswith("bokeh")]
-                if bokeh_pinning:
-                    bokeh_pinning = bokeh_pinning[0]
-                    _replace_pin(
-                        bokeh_pinning,
-                        bokeh_pinning
-                        + (",<3" if bokeh_pinning[-1].isdigit() else " <3"),
-                        deps,
-                        record,
-                    )
-
-            # older versions of dask are incompatible with pandas=2
-            if record.get("timestamp", 0) < 1676063992630:  # releases prior to 2023.2.0
-                pandas_pinning = [
-                    x for x in record["depends"] if x.startswith("pandas")
-                ]
-                if pandas_pinning:
-                    pandas_pinning = pandas_pinning[0]
-                    _replace_pin(
-                        pandas_pinning,
-                        pandas_pinning
-                        + (",<2" if pandas_pinning[-1].isdigit() else " <2"),
-                        deps,
-                        record,
-                    )
-
         if record_name in {"distributed", "dask"}:
             version = parse_version(record["version"])
             if (
@@ -972,15 +940,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record.get("timestamp", 0) < 1663795137000:
             if any(dep.startswith("pango >=5.2") for dep in deps):
                 _pin_looser(fn, record, "xz", max_pin="x")
-
-        # this doesn't seem to match the _pin_looser or _pin_stricter patterns
-        # nor _replace_pin
-        if record_name == "jedi" and record.get("timestamp", 0) < 1592619891258:
-            for i, dep in enumerate(record["depends"]):
-                if dep.startswith("parso") and "<" not in dep:
-                    _dep_parts = dep.split(" ")
-                    _dep_parts[1] = _dep_parts[1] + ",<0.8.0"
-                    record["depends"][i] = " ".join(_dep_parts)
 
         # FIXME: disable patching-out blas_openblas feature
         # because hotfixes are not applied to gcc7 label
@@ -1322,6 +1281,27 @@ def _do_subdir(subdir):
     patch_instructions_path = join(prefix_subdir, "patch_instructions.json")
     with open(patch_instructions_path, "w") as fh:
         json.dump(instructions, fh, indent=2, sort_keys=True, separators=(",", ": "))
+
+    # step 3 Show the diff
+    ref_repodata_url = "/".join((CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata.json"))
+    response = requests.get(ref_repodata_url)
+    response.raise_for_status()
+    ref_repodata = response.json()
+
+    new_repodata = _apply_instructions(subdir, repodata, instructions)
+    _, vals = show_record_diffs(
+        subdir, ref_repodata, new_repodata, False, group_diffs=True
+    )
+    print("\n", flush=True, end="")
+    print("=" * 80, flush=True)
+    print("=" * 80, flush=True)
+    print(subdir, flush=True)
+    for key, val in vals.items():
+        for v in val:
+            print(v, flush=True)
+        for k in key:
+            print(k, flush=True)
+    print("\n", flush=True, end="")
 
 
 def main():
