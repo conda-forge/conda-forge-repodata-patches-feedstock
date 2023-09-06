@@ -95,6 +95,7 @@ def do_subdir(
     subdir, raw_repodata_path, ref_repodata_path, fail_fast, group_diffs=True
 ):
     from gen_patch_json import _gen_new_index, _gen_patch_instructions
+
     with bz2.open(raw_repodata_path) as fh:
         raw_repodata = json.load(fh)
     with bz2.open(ref_repodata_path) as fh:
@@ -151,6 +152,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     from gen_patch_json import SUBDIRS
+
     if args.subdirs is None:
         subdirs = SUBDIRS
     else:
