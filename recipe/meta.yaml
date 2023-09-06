@@ -33,6 +33,7 @@ requirements:
     - pytest
     - yamllint
     - flake8
+    - conda-build
   host:
   run:
 
