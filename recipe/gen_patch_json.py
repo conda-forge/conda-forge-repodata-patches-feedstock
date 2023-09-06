@@ -1289,19 +1289,9 @@ def _do_subdir(subdir):
     ref_repodata = response.json()
 
     new_repodata = _apply_instructions(subdir, repodata, instructions)
-    _, vals = show_record_diffs(
+    return show_record_diffs(
         subdir, ref_repodata, new_repodata, False, group_diffs=True
     )
-    print("\n", flush=True, end="")
-    print("=" * 80, flush=True)
-    print("=" * 80, flush=True)
-    print(subdir, flush=True)
-    for key, val in vals.items():
-        for v in val:
-            print(v, flush=True)
-        for k in key:
-            print(k, flush=True)
-    print("\n", flush=True, end="")
 
 
 def main():
@@ -1314,7 +1304,17 @@ def main():
     with ProcessPoolExecutor(max_workers=None) as exc:
         futs = [exc.submit(_do_subdir, subdir) for subdir in subdirs]
         for fut in tqdm.tqdm(futs, desc="patching repodata"):
-            fut.result()
+            subdir, vals = fut.result()
+            print("\n", flush=True, end="")
+            print("=" * 80, flush=True)
+            print("=" * 80, flush=True)
+            print(subdir, flush=True)
+            for key, val in vals.items():
+                for v in val:
+                    print(v, flush=True)
+                for k in key:
+                    print(k, flush=True)
+            print("\n", flush=True, end="")
 
 
 if __name__ == "__main__":
