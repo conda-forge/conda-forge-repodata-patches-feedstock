@@ -3,9 +3,12 @@ from __future__ import absolute_import, division, print_function
 
 from collections import defaultdict
 from contextlib import suppress
+import tempfile
 import copy
 import json
 import os
+import urllib
+import bz2
 from os.path import join, isdir
 import sys
 import tqdm
@@ -29,6 +32,7 @@ from patch_yaml_utils import (
 
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda.anaconda.org"
+BASE_URL = os.path.join(CHANNEL_ALIAS, CHANNEL_NAME)
 SUBDIRS = (
     "noarch",
     "linux-64",
@@ -1259,39 +1263,42 @@ def _extract_and_remove_vc_feature(record):
 
 
 def _do_subdir(subdir):
-    repodata_url = "/".join(
-        (CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata_from_packages.json")
-    )
-    response = requests.get(repodata_url)
-    response.raise_for_status()
-    repodata = response.json()
+    with tempfile.TemporaryDirectory() as tmpdir:
+        raw_repodata_path = os.path.join(tmpdir, "repodata_from_packages.json.bz2")
+        ref_repodata_path = os.path.join(tmpdir, "repodata.json.bz2")
+        raw_url = f"{BASE_URL}/{subdir}/repodata_from_packages.json.bz2"
+        urllib.request.urlretrieve(raw_url, raw_repodata_path)
+        ref_url = f"{BASE_URL}/{subdir}/repodata.json.bz2"
+        urllib.request.urlretrieve(ref_url, ref_repodata_path)
 
-    prefix_dir = os.getenv("PREFIX", "tmp")
-    prefix_subdir = join(prefix_dir, subdir)
-    if not isdir(prefix_subdir):
-        os.makedirs(prefix_subdir)
+        with bz2.open(raw_repodata_path) as fh:
+            repodata = json.load(fh)
+        with bz2.open(ref_repodata_path) as fh:
+            ref_repodata = json.load(fh)
 
-    # Step 2a. Generate a new index.
-    new_index = _gen_new_index(repodata, subdir)
+        prefix_dir = os.getenv("PREFIX", "tmp")
+        prefix_subdir = join(prefix_dir, subdir)
+        if not isdir(prefix_subdir):
+            os.makedirs(prefix_subdir)
 
-    # Step 2b. Generate the instructions by diff'ing the indices.
-    instructions = _gen_patch_instructions(repodata, new_index, subdir)
+        # Step 2a. Generate a new index.
+        new_index = _gen_new_index(repodata, subdir)
 
-    # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
-    patch_instructions_path = join(prefix_subdir, "patch_instructions.json")
-    with open(patch_instructions_path, "w") as fh:
-        json.dump(instructions, fh, indent=2, sort_keys=True, separators=(",", ": "))
+        # Step 2b. Generate the instructions by diff'ing the indices.
+        instructions = _gen_patch_instructions(repodata, new_index, subdir)
 
-    # step 3 Show the diff
-    ref_repodata_url = "/".join((CHANNEL_ALIAS, CHANNEL_NAME, subdir, "repodata.json"))
-    response = requests.get(ref_repodata_url)
-    response.raise_for_status()
-    ref_repodata = response.json()
+        # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
+        patch_instructions_path = join(prefix_subdir, "patch_instructions.json")
+        with open(patch_instructions_path, "w") as fh:
+            json.dump(
+                instructions, fh, indent=2, sort_keys=True, separators=(",", ": ")
+            )
 
-    new_repodata = _apply_instructions(subdir, repodata, instructions)
-    return show_record_diffs(
-        subdir, ref_repodata, new_repodata, False, group_diffs=True
-    )
+        # Step 3. Show the diff
+        new_repodata = _apply_instructions(subdir, repodata, instructions)
+        return subdir, show_record_diffs(
+            subdir, ref_repodata, new_repodata, False, group_diffs=True
+        )
 
 
 def main():
