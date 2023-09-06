@@ -1308,7 +1308,7 @@ def main():
     else:
         subdirs = SUBDIRS
 
-    with ProcessPoolExecutor(max_workers=4) as exc:
+    with ProcessPoolExecutor(max_workers=12) as exc:
         futs = [exc.submit(_do_subdir, subdir) for subdir in subdirs]
         for fut in tqdm.tqdm(futs, desc="patching repodata"):
             subdir, vals = fut.result()
