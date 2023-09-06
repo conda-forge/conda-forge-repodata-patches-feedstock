@@ -26,6 +26,7 @@ if:
     - liblapacke
     - lapack
     - blas-devel
+  timestamp_lt: 1693997096000
 then:
   - replace_depends:
       old: liblapack >=3.8.0,<3.9.0a0
