@@ -1,0 +1,25 @@
+# from this code
+# if (
+#     record_name == "metadetect"
+#     and record.get("timestamp", 0) <= 1651593228024  # 2022/05
+# ):
+#     if any(d == "ngmix" for d in record["depends"]):
+#         i = record["depends"].index("ngmix")
+#         record["depends"][i] = "ngmix <2.1.0a0"
+#     else:
+#         for i in range(len(record["depends"])):
+#             d = record["depends"][i]
+#             if not d.startswith("ngmix "):
+#                 continue
+#             d = d.split(" ")
+#             if "<" in d[1]:
+#                 _pin_stricter(fn, record, "ngmix", "x.x.x", "2.1.0")
+#             else:
+#                 record["depends"][i] = record["depends"][i] + ",<2.1.0a0"
+if:
+  name: metadetect
+  timestamp_le: 1651593228024
+then:
+  - tighten_depends:
+      name: ngmix
+      upper_bound: "2.1.0"

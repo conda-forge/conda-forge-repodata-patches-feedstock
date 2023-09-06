@@ -1,0 +1,10 @@
+# from this bit of code
+# if record_name == "conda-lock" and record.get("timestamp", 0) < 1685186303000:
+#     assert "constrains" not in record
+#     record["constrains"] = ["urllib3 <2"]
+if:
+  name: conda-lock
+  timestamp_lt: 1685186303000
+  not_has_constrains: "*"
+then:
+  - add_constrains: urllib3 <2

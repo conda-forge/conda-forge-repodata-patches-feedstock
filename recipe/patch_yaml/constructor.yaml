@@ -1,0 +1,40 @@
+# from this code
+# if record_name == "constructor":
+#     # constructor 2.x incompatible with conda 4.6+
+#     # see https://github.com/jaimergp/anaconda-repodata-hotfixes
+#     #    /blob/229c10f6/main.py#L834
+#     if int(record["version"].split(".")[0]) < 3:
+#         _replace_pin("conda", "conda <4.6.0a0", record["depends"], record)
+#     # Pin NSIS on constructor
+#     # https://github.com/conda/constructor/issues/526
+#     if record.get("timestamp", 0) <= 1658913358571:
+#         _replace_pin("nsis >=3.01", "nsis 3.01", record["depends"], record)
+#     # conda 23.1 broke constructor
+#     # https://github.com/conda/constructor/pull/627
+#     if record.get("timestamp", 0) <= 1674637311000:
+#         _replace_pin(
+#             "conda >=4.6", "conda >=4.6,<23.1.0a0", record["depends"], record
+#         )
+if:
+  name: constructor
+  version_lt: "3"
+then:
+  - replace_depends:
+      old: conda
+      new: conda <4.6.0a0
+---
+if:
+  name: constructor
+  timestamp_le: 1658913358571
+then:
+  - replace_depends:
+      old: nsis >=3.01
+      new: nsis 3.01
+---
+if:
+  name: constructor
+  timestamp_le: 1674637311000
+then:
+  - replace_depends:
+      old: conda >=4.6
+      new: conda >=4.6,<23.1.0a0

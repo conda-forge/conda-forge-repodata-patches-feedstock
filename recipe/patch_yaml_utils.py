@@ -285,7 +285,7 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
             _lower = pad_list(_lower, len(new_upper))
             new_upper = pad_list(new_upper, len(_lower))
 
-            if tuple(_lower) < tuple(new_upper):
+            if parse_version(".".join(_lower)) < parse_version(".".join(new_upper)):
                 if str(new_upper[-1]) != "0":
                     new_upper += ["0"]
                 new_upper = ".".join(new_upper)
