@@ -15,7 +15,7 @@ import tqdm
 import re
 import requests
 from packaging.version import parse as parse_version
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from conda_build.index import _apply_instructions
 from show_diff import show_record_diffs
@@ -1308,9 +1308,11 @@ def main():
     else:
         subdirs = SUBDIRS
 
-    with ProcessPoolExecutor(max_workers=12) as exc:
+    with ProcessPoolExecutor(max_workers=os.environ.get("CPU_COUNT", None)) as exc:
         futs = [exc.submit(_do_subdir, subdir) for subdir in subdirs]
-        for fut in tqdm.tqdm(futs, desc="patching repodata"):
+        for fut in tqdm.tqdm(
+            as_completed(futs), desc="patching repodata", total=len(subdirs)
+        ):
             subdir, vals = fut.result()
             print("\n", flush=True, end="")
             print("=" * 80, flush=True)
