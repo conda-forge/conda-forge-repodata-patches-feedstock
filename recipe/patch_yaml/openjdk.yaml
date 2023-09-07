@@ -1,0 +1,10 @@
+# from this code
+# # remove features for openjdk and rb2
+# if "track_features" in record and record["track_features"] is not None:
+#     for feat in record["track_features"].split():
+#         if feat.startswith("openjdk"):
+#             record["track_features"] = _extract_track_feature(record, feat)
+if:
+  name: "*"
+then:
+  - remove_track_features: openjdk*

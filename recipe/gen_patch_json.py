@@ -22,7 +22,6 @@ from show_diff import show_record_diffs
 from get_license_family import get_license_family
 from patch_yaml_utils import (
     patch_yaml_edit_index,
-    _extract_track_feature,
     _replace_pin,
     _relax_exact,
     _pin_looser,
@@ -296,63 +295,131 @@ OSX_SDK_FIXES = {
 }
 
 
-def _add_removals(instructions, subdir):
-    r = requests.get(
-        "https://conda.anaconda.org/conda-forge/"
-        "label/broken/%s/repodata.json" % subdir
+def _add_pybind11_abi_constraint(fn, record):
+    """the pybind11-abi package uses the internals version
+
+    here are the ranges
+
+    v2.2.0 1
+    v2.2.1 1
+    v2.2.2 1
+    v2.2.3 1
+    v2.2.4 2
+    v2.3.0 3
+    v2.4.0 3
+    v2.4.1 3
+    v2.4.2 3
+    v2.4.3 3
+    v2.5.0 4
+    v2.6.0 4
+    v2.6.0b1 4
+    v2.6.0rc1 4
+    v2.6.0rc2 4
+    v2.6.0rc3 4
+    v2.6.1 4
+
+    prior to 2.2.0 we set it to 0
+    """
+    ver = parse_version(record["version"])
+
+    if ver < parse_version("2.2.0"):
+        abi_ver = "0"
+    elif ver < parse_version("2.2.4"):
+        abi_ver = "1"
+    elif ver < parse_version("2.3.0"):
+        abi_ver = "2"
+    elif ver < parse_version("2.5.0"):
+        abi_ver = "3"
+    elif ver <= parse_version("2.6.1"):
+        abi_ver = "4"
+    else:
+        # past this we should have a constrains there already
+        raise RuntimeError(
+            "pybind11 version %s out of range for abi" % record["version"]
+        )
+
+    constrains = record.get("constrains", [])
+    found_idx = None
+    for idx in range(len(constrains)):
+        if constrains[idx].startswith("pybind11-abi "):
+            found_idx = idx
+
+    if found_idx is None:
+        constrains.append("pybind11-abi ==" + abi_ver)
+    else:
+        constrains[found_idx] = "pybind11-abi ==" + abi_ver
+
+    record["constrains"] = constrains
+
+
+def _fix_libgfortran(fn, record):
+    depends = record.get("depends", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == "libgfortran"), None
     )
+    if dep_idx is not None:
+        # make sure respect minimum versions still there
+        # 'libgfortran'         -> >=3.0.1,<4.0.0.a0
+        # 'libgfortran ==3.0.1' -> ==3.0.1
+        # 'libgfortran >=3.0'   -> >=3.0,<4.0.0.a0
+        # 'libgfortran >=3.0.1' -> >=3.0.1,<4.0.0.a0
+        if ("==" in depends[dep_idx]) or ("<" in depends[dep_idx]):
+            pass
+        elif depends[dep_idx] == "libgfortran":
+            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
+            record["depends"] = depends
+        elif ">=3.0.1" in depends[dep_idx]:
+            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
+            record["depends"] = depends
+        elif ">=3.0" in depends[dep_idx]:
+            depends[dep_idx] = "libgfortran >=3.0,<4.0.0.a0"
+            record["depends"] = depends
+        elif ">=4" in depends[dep_idx]:
+            # catches all of 4.*
+            depends[dep_idx] = "libgfortran >=4.0.0,<5.0.0.a0"
+            record["depends"] = depends
 
-    if r.status_code != 200:
-        r.raise_for_status()
 
-    data = r.json()
-    currvals = list(REMOVALS.get(subdir, []))
-    for pkgs_section_key in ["packages", "packages.conda"]:
-        for pkg_name in data.get(pkgs_section_key, []):
-            currvals.append(pkg_name)
+def _set_osx_virt_min(fn, record, min_vers):
+    rconst = record.get("constrains", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(rconst) if dep.split(" ")[0] == "__osx"), None
+    )
+    run_constrained = list(rconst)
+    if dep_idx is None:
+        run_constrained.append("__osx >=%s" % min_vers)
+    if run_constrained:
+        record["constrains"] = run_constrained
 
-    instructions["remove"].extend(tuple(set(currvals)))
+
+def _fix_libcxx(fn, record):
+    record_name = record["name"]
+    if record_name not in ["cctools", "ld64", "llvm-lto-tapi"]:
+        return
+    depends = record.get("depends", ())
+    dep_idx = next(
+        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == "libcxx"), None
+    )
+    if dep_idx is not None:
+        dep_parts = depends[dep_idx].split(" ")
+        if len(dep_parts) >= 2 and dep_parts[1] == "4.0.1":
+            # catches all of 4.*
+            depends[dep_idx] = "libcxx >=4.0.1"
+            record["depends"] = depends
 
 
-def _gen_patch_instructions(index, new_index, subdir):
-    instructions = {
-        "patch_instructions_version": 1,
-        "packages": defaultdict(dict),
-        "packages.conda": defaultdict(dict),
-        "revoke": [],
-        "remove": [],
-    }
-
-    _add_removals(instructions, subdir)
-
-    # diff all items in the index and put any differences in the instructions
-    for pkgs_section_key in ["packages", "packages.conda"]:
-        for fn in index.get(pkgs_section_key, {}):
-            assert fn in new_index[pkgs_section_key]
-
-            # replace any old keys
-            for key in index[pkgs_section_key][fn]:
-                assert key in new_index[pkgs_section_key][fn], (
-                    key,
-                    index[pkgs_section_key][fn],
-                    new_index[pkgs_section_key][fn],
-                )
-                if (
-                    index[pkgs_section_key][fn][key]
-                    != new_index[pkgs_section_key][fn][key]
-                ):
-                    instructions[pkgs_section_key][fn][key] = new_index[
-                        pkgs_section_key
-                    ][fn][key]
-
-            # add any new keys
-            for key in new_index[pkgs_section_key][fn]:
-                if key not in index[pkgs_section_key][fn]:
-                    instructions[pkgs_section_key][fn][key] = new_index[
-                        pkgs_section_key
-                    ][fn][key]
-
-    return instructions
+def _extract_and_remove_vc_feature(record):
+    features = record.get("features", "").split()
+    vc_features = tuple(f for f in features if f.startswith("vc"))
+    if not vc_features:
+        return None
+    non_vc_features = tuple(f for f in features if f not in vc_features)
+    vc_version = int(vc_features[0][2:])  # throw away all but the first
+    if non_vc_features:
+        record["features"] = " ".join(non_vc_features)
+    else:
+        record["features"] = None
+    return vc_version
 
 
 def has_dep(record, name):
@@ -453,15 +520,6 @@ def add_python_abi(record, subdir):
         if not ver_strict_found and ver_relax_found:
             new_constrains.append("pypy <0a0")
         record["constrains"] = new_constrains
-
-
-def _gen_new_index(repodata, subdir):
-    indexes = {}
-    for index_key in ["packages", "packages.conda"]:
-        indexes[index_key] = _gen_new_index_per_key(repodata, subdir, index_key)
-        patch_yaml_edit_index(indexes[index_key], subdir)
-
-    return indexes
 
 
 def _gen_new_index_per_key(repodata, subdir, index_key):
@@ -940,12 +998,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         #         depends.append("blas 1.* openblas")
         #         instructions["packages"][fn]["depends"] = depends
 
-        # remove features for openjdk and rb2
-        if "track_features" in record and record["track_features"] is not None:
-            for feat in record["track_features"].split():
-                if feat.startswith("openjdk"):
-                    record["track_features"] = _extract_track_feature(record, feat)
-
         if record_name == "tsnecuda":
             # These have dependencies like
             # - libfaiss * *_cuda
@@ -962,131 +1014,72 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
     return index
 
 
-def _add_pybind11_abi_constraint(fn, record):
-    """the pybind11-abi package uses the internals version
+def _gen_new_index(repodata, subdir):
+    indexes = {}
+    for index_key in ["packages", "packages.conda"]:
+        indexes[index_key] = _gen_new_index_per_key(repodata, subdir, index_key)
+        patch_yaml_edit_index(indexes[index_key], subdir)
 
-    here are the ranges
-
-    v2.2.0 1
-    v2.2.1 1
-    v2.2.2 1
-    v2.2.3 1
-    v2.2.4 2
-    v2.3.0 3
-    v2.4.0 3
-    v2.4.1 3
-    v2.4.2 3
-    v2.4.3 3
-    v2.5.0 4
-    v2.6.0 4
-    v2.6.0b1 4
-    v2.6.0rc1 4
-    v2.6.0rc2 4
-    v2.6.0rc3 4
-    v2.6.1 4
-
-    prior to 2.2.0 we set it to 0
-    """
-    ver = parse_version(record["version"])
-
-    if ver < parse_version("2.2.0"):
-        abi_ver = "0"
-    elif ver < parse_version("2.2.4"):
-        abi_ver = "1"
-    elif ver < parse_version("2.3.0"):
-        abi_ver = "2"
-    elif ver < parse_version("2.5.0"):
-        abi_ver = "3"
-    elif ver <= parse_version("2.6.1"):
-        abi_ver = "4"
-    else:
-        # past this we should have a constrains there already
-        raise RuntimeError(
-            "pybind11 version %s out of range for abi" % record["version"]
-        )
-
-    constrains = record.get("constrains", [])
-    found_idx = None
-    for idx in range(len(constrains)):
-        if constrains[idx].startswith("pybind11-abi "):
-            found_idx = idx
-
-    if found_idx is None:
-        constrains.append("pybind11-abi ==" + abi_ver)
-    else:
-        constrains[found_idx] = "pybind11-abi ==" + abi_ver
-
-    record["constrains"] = constrains
+    return indexes
 
 
-def _fix_libgfortran(fn, record):
-    depends = record.get("depends", ())
-    dep_idx = next(
-        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == "libgfortran"), None
+def _add_removals(instructions, subdir):
+    r = requests.get(
+        "https://conda.anaconda.org/conda-forge/"
+        "label/broken/%s/repodata.json" % subdir
     )
-    if dep_idx is not None:
-        # make sure respect minimum versions still there
-        # 'libgfortran'         -> >=3.0.1,<4.0.0.a0
-        # 'libgfortran ==3.0.1' -> ==3.0.1
-        # 'libgfortran >=3.0'   -> >=3.0,<4.0.0.a0
-        # 'libgfortran >=3.0.1' -> >=3.0.1,<4.0.0.a0
-        if ("==" in depends[dep_idx]) or ("<" in depends[dep_idx]):
-            pass
-        elif depends[dep_idx] == "libgfortran":
-            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
-            record["depends"] = depends
-        elif ">=3.0.1" in depends[dep_idx]:
-            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
-            record["depends"] = depends
-        elif ">=3.0" in depends[dep_idx]:
-            depends[dep_idx] = "libgfortran >=3.0,<4.0.0.a0"
-            record["depends"] = depends
-        elif ">=4" in depends[dep_idx]:
-            # catches all of 4.*
-            depends[dep_idx] = "libgfortran >=4.0.0,<5.0.0.a0"
-            record["depends"] = depends
+
+    if r.status_code != 200:
+        r.raise_for_status()
+
+    data = r.json()
+    currvals = list(REMOVALS.get(subdir, []))
+    for pkgs_section_key in ["packages", "packages.conda"]:
+        for pkg_name in data.get(pkgs_section_key, []):
+            currvals.append(pkg_name)
+
+    instructions["remove"].extend(tuple(set(currvals)))
 
 
-def _set_osx_virt_min(fn, record, min_vers):
-    rconst = record.get("constrains", ())
-    dep_idx = next(
-        (q for q, dep in enumerate(rconst) if dep.split(" ")[0] == "__osx"), None
-    )
-    run_constrained = list(rconst)
-    if dep_idx is None:
-        run_constrained.append("__osx >=%s" % min_vers)
-    if run_constrained:
-        record["constrains"] = run_constrained
+def _gen_patch_instructions(index, new_index, subdir):
+    instructions = {
+        "patch_instructions_version": 1,
+        "packages": defaultdict(dict),
+        "packages.conda": defaultdict(dict),
+        "revoke": [],
+        "remove": [],
+    }
 
+    _add_removals(instructions, subdir)
 
-def _fix_libcxx(fn, record):
-    record_name = record["name"]
-    if record_name not in ["cctools", "ld64", "llvm-lto-tapi"]:
-        return
-    depends = record.get("depends", ())
-    dep_idx = next(
-        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == "libcxx"), None
-    )
-    if dep_idx is not None:
-        dep_parts = depends[dep_idx].split(" ")
-        if len(dep_parts) >= 2 and dep_parts[1] == "4.0.1":
-            # catches all of 4.*
-            depends[dep_idx] = "libcxx >=4.0.1"
-            record["depends"] = depends
+    # diff all items in the index and put any differences in the instructions
+    for pkgs_section_key in ["packages", "packages.conda"]:
+        for fn in index.get(pkgs_section_key, {}):
+            assert fn in new_index[pkgs_section_key]
 
+            # replace any old keys
+            for key in index[pkgs_section_key][fn]:
+                assert key in new_index[pkgs_section_key][fn], (
+                    key,
+                    index[pkgs_section_key][fn],
+                    new_index[pkgs_section_key][fn],
+                )
+                if (
+                    index[pkgs_section_key][fn][key]
+                    != new_index[pkgs_section_key][fn][key]
+                ):
+                    instructions[pkgs_section_key][fn][key] = new_index[
+                        pkgs_section_key
+                    ][fn][key]
 
-def _extract_and_remove_vc_feature(record):
-    features = record.get("features", "").split()
-    vc_features = tuple(f for f in features if f.startswith("vc"))
-    if not vc_features:
-        return None
-    non_vc_features = tuple(f for f in features if f not in vc_features)
-    vc_version = int(vc_features[0][2:])  # throw away all but the first
-    if non_vc_features:
-        record["features"] = " ".join(non_vc_features)
-    else:
-        record["features"] = None
-    return vc_version
+            # add any new keys
+            for key in new_index[pkgs_section_key][fn]:
+                if key not in index[pkgs_section_key][fn]:
+                    instructions[pkgs_section_key][fn][key] = new_index[
+                        pkgs_section_key
+                    ][fn][key]
+
+    return instructions
 
 
 def _do_subdir(subdir):

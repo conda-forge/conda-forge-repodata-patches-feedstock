@@ -191,7 +191,7 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
 
 def _extract_track_feature(record, feature_name):
     features = record.get("track_features", "").split()
-    features.remove(feature_name)
+    features = [f for f in features if not fnmatch(f, feature_name)]
     return " ".join(features) or None
 
 
@@ -411,13 +411,13 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 record[subk] = [_maybe_process_template(_v, record, subdir) for _v in v]
 
             elif k == "remove_track_features":
-                if not isinstance(v, list):
-                    v = [v]
-                for _v in v:
-                    record["track_features"] = _extract_track_feature(record, _v)
-                    if record["track_features"] is None:
-                        del record["track_features"]
-                        break
+                if "track_features" in record and record["track_features"] is not None:
+                    if not isinstance(v, list):
+                        v = [v]
+                    for _v in v:
+                        record["track_features"] = _extract_track_feature(record, _v)
+                        if record["track_features"] is None:
+                            break
 
             elif k.startswith("replace_") and k[len("replace_") :] in [
                 "depends",
