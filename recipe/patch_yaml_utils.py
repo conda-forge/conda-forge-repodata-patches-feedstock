@@ -494,8 +494,10 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
 
 
 def patch_yaml_edit_index(index, subdir):
+    fns = sorted(index)
     for patch_yaml, fname in ALL_YAMLS:
-        for fn, record in index.items():
+        for fn in fns:
+            record = index[fn]
             try:
                 if _test_patch_yaml(patch_yaml, record, subdir, fn):
                     _apply_patch_yaml(patch_yaml, record, subdir, fn)
