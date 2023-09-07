@@ -1164,7 +1164,9 @@ def main():
     else:
         subdirs = SUBDIRS
 
-    with ProcessPoolExecutor(max_workers=os.environ.get("CPU_COUNT", None)) as exc:
+    with ProcessPoolExecutor(
+        max_workers=int(os.environ["CPU_COUNT"]) if "CPU_COUNT" in os.environ else None
+    ) as exc:
         futs = [exc.submit(_do_subdir, subdir) for subdir in subdirs]
         for fut in tqdm.tqdm(
             as_completed(futs), desc="patching repodata", total=len(subdirs)
