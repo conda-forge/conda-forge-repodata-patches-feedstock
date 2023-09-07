@@ -6,5 +6,6 @@
 #             record["track_features"] = _extract_track_feature(record, feat)
 if:
   name: "*"
+  timestamp_lt: 1694086057000
 then:
   - remove_track_features: openjdk*
