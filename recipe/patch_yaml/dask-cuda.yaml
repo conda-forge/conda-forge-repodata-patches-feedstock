@@ -1,0 +1,144 @@
+# from this code
+# if record_name == "dask-cuda":
+#     timestamp = record.get("timestamp", 0)
+#     # older versions of dask-cuda do not work on non-UNIX operating systems
+#     #   and must be constrained to UNIX
+#     # issues in click 8.1.0 cause failures for older versions of dask-cuda
+#     if timestamp <= 1645130882435:  # 22.2.0 and prior
+#         new_depends = record.get("depends", [])
+#         new_depends += ["click ==8.0.4", "__linux"]
+#         record["depends"] = new_depends
+if:
+  name: dask-cuda
+  timestamp_le: 1645130882435
+then:
+  - add_depends:
+      - click ==8.0.4
+      - __linux
+---
+# from this code
+# if record_name == "dask-cuda":
+#     # older versions of dask-cuda do not work with pynvml 11.5+
+#     if timestamp <= 1676966400000:  # 23.2.0 and prior
+#         depends = record.get("depends", [])
+#         new_depends = [
+#             d + ",<11.5" if d.startswith("pynvml") else d for d in depends
+#         ]
+#         record["depends"] = new_depends
+if:
+  name: dask-cuda
+  timestamp_le: 1676966400000
+then:
+  - tighten_depends:
+      name: pynvml*
+      upper_bound: "11.5"
+---
+# from this code
+# if record_name == "dask-cuda":
+#     # older versions of dask-cuda pulling in pandas are incompatible with
+#     #   pandas 2.0 and must be constrained to pandas 1
+#     if (
+#         timestamp <= 1677122851413 and timestamp >= 1670873028930
+#     ):  # 22.12 to 23.2.1
+#         _replace_pin(
+#             "pandas >=1.0", "pandas >=1.0,<1.6.0dev0", record["depends"], record
+#         )
+if:
+  name: dask-cuda
+  timestamp_le: 1677122851413
+  timestamp_ge: 1670873028930
+then:
+  - replace_depends:
+      old: pandas >=1.0
+      new: pandas >=1.0,<1.6.0dev0
+---
+# from this code
+# if record_name == "dask-cuda":
+#     # there are various inconsistencies between the pinnings of dask-cuda on
+#     #  `rapidsai` and `conda-forge`,
+#     # this makes the packages roughly consistent while also removing the python
+#     #   upper bound where present
+#     if record["version"] == "0.18.0":
+#         _replace_pin(
+#             "dask >=2.9.0", "dask >=2.4.0,<=2.22.0", record["depends"], record
+#         )
+if:
+  name: dask-cuda
+  version: 0.18.0
+then:
+  - replace_depends:
+      old: dask >=2.9.0
+      new: dask >=2.4.0,<=2.22.0
+---
+# from this code
+# if record_name == "dask-cuda":
+#     elif record["version"] == "0.19.0":
+#         _replace_pin(
+#             "dask >=2.9.0",
+#             "dask >=2.22.0,<=2021.4.0",
+#             record["depends"],
+#             record,
+#         )
+#         _replace_pin(
+#             "distributed >=2.18.0",
+#             "distributed >=2.22.0,<=2021.4.0",
+#             record["depends"],
+#             record,
+#         )
+if:
+  name: dask-cuda
+  version: 0.19.0
+then:
+  - replace_depends:
+      old: dask >=2.9.0
+      new: dask >=2.22.0,<=2021.4.0
+  - replace_depends:
+      old: distributed >=2.18.0
+      new: distributed >=2.22.0,<=2021.4.0
+---
+# from this code
+# if record_name == "dask-cuda":
+#     elif record["version"] == "21.6.0":
+#         _replace_pin(
+#             "distributed >=2.22.0,<=2021.5.1",
+#             "distributed >=2.22.0,<2021.5.1",
+#             record["depends"],
+#             record,
+#         )
+if:
+  name: dask-cuda
+  version: 21.6.0
+then:
+  - replace_depends:
+      old: distributed >=2.22.0,<=2021.5.1
+      new: distributed >=2.22.0,<2021.5.1
+---
+# from this code
+# if record_name == "dask-cuda":
+#     elif record["version"] in ("21.10.0", "22.2.0"):
+#         _replace_pin(
+#             "pynvml >=11.0.0", "pynvml >=8.0.3", record["depends"], record
+#         )
+if:
+  name: dask-cuda
+  version_in:
+    - 21.10.0
+    - 22.2.0
+then:
+  - replace_depends:
+      old: pynvml >=11.0.0
+      new: pynvml >=8.0.3
+---
+# from this code
+# if record_name == "dask-cuda":
+#     elif record["version"] == "22.4.0":
+#         _replace_pin(
+#             "python >=3.8,<3.10", "python >=3.8", record["depends"], record
+#         )
+if:
+  name: dask-cuda
+  version: 22.4.0
+then:
+  - replace_depends:
+      old: python >=3.8,<3.10
+      new: python >=3.8

@@ -1,0 +1,16 @@
+# from this code
+# # libcugraph 0.19.0 is compatible with the new calver based version 21.x
+# if record_name == "cupy":
+#     _replace_pin(
+#         "libcugraph >=0.19.0,<1.0a0",
+#         "libcugraph >=0.19.0",
+#         record.get("constrains", []),
+#         record,
+#         target="constrains",
+#     )
+if:
+  name: cupy
+then:
+  - replace_constrains:
+      old: libcugraph >=0.19.0,<1.0a0
+      new: libcugraph >=0.19.0
