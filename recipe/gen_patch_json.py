@@ -883,58 +883,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # Custom Patches that cannot be YAML-ized
         ############################################
 
-        # TensorFlow Probability was published with loose constraints on
-        #   TensorFlow-base leading to broken dependencies.
-        # Each release actually specifies the exact version of TensorFlow and JAX that
-        #   it supports, therefore we need to
-        # pin the dependencies to the exact version that was used to build the package.
-        # See also issue:
-        if (record.get("timestamp", 0) < 1676674332000) and (
-            record_name == "tensorflow-probability"
-        ):
-            version_matrix = {
-                "0.17.0": {"tensorflow-base": ">=2.9,<2.10", "jax": ">=0.3.13,<0.4.0"},
-                "0.15.0": {
-                    "tensorflow-base": ">=2.7,<2.8",
-                    "jax": ">=0.2.21,<0.3.0",
-                },  # actual jax minimum not mention in release notes
-                "0.14.1": {"tensorflow-base": ">=2.6,<2.7", "jax": ">=0.2.21,<0.3.0"},
-                "0.14.0": {"tensorflow-base": ">=2.6,<2.7", "jax": ">=0.2.20,<0.3.0"},
-                "0.13.0": {
-                    "tensorflow-base": ">=2.5,<2.6"
-                },  # no JAX as it isn't mentioned anymore, is it needed to re-add?
-                "0.12.2": {"tensorflow-base": ">=2.4,<2.5"},
-                "0.12.1": {"tensorflow-base": ">=2.4,<2.5"},
-                "0.12.0": {"tensorflow-base": ">=2.4,<2.5"},
-                "0.10.1": {"tensorflow-base": ">=2.2,<2.3"},
-                "0.10.0": {"tensorflow-base": ">=2.2,<2.3"},
-                "0.8.0": {"tensorflow-base": ">=1.15,<2.1"},
-                # Older versions are TF V1, too old to bother with but restricting
-                #   them to <2 s.t. the solver doesn't pick them up
-                "0.7": {"tensorflow-base": ">=1.13.1,<2"},
-                "0.6.0": {"tensorflow-base": ">=1.13.1,<2"},
-                "0.5.0": {"tensorflow-base": ">=1.11.0,<2"},
-            }
-            version = record["version"]
-            if version in version_matrix:
-                deps = version_matrix[version]
-                dependencies = record["depends"]
-                for newdep, newrequ in deps.items():
-                    found = False
-                    for i, curdep in enumerate(dependencies):
-                        curdep_pkg = curdep.split(" ")[0]
-                        if (
-                            curdep_pkg == "tensorflow"
-                        ):  # remove it, will be replaced with tf-base if needed
-                            del dependencies[i]
-                        elif curdep_pkg == newdep:
-                            found = True
-                            dependencies[i] = f"{newdep} {newrequ}"
-                            # NO break, the loop needs also to make sure that all the
-                            #   tensorflow deps are removed.
-                    if not found:  # It wasn't in the dependencies so we add it
-                        dependencies.append(f"{newdep} {newrequ}")
-
         if record_name in {"distributed", "dask"}:
             version = parse_version(record["version"])
             if (
