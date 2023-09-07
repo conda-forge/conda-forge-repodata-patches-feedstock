@@ -285,7 +285,7 @@ def test_apply_patch_yaml_remove_track_features():
     patch_yaml = {"then": [{"remove_track_features": "blah"}]}
     record = {"track_features": "blah"}
     _apply_patch_yaml(patch_yaml, record, None, None)
-    assert record == {}
+    assert record == {"track_features": None}
 
     record = {"track_features": "blah foo"}
     _apply_patch_yaml(patch_yaml, record, None, None)
@@ -302,6 +302,11 @@ def test_apply_patch_yaml_remove_track_features():
     record = {"track_features": "baz blah foo bar"}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"track_features": "baz foo bar"}
+
+    patch_yaml = {"then": [{"remove_track_features": "blah*"}]}
+    record = {"track_features": "baz blah foo blahblah bla bar"}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"track_features": "baz foo bla bar"}
 
 
 @pytest.mark.parametrize("pre", [[], ["foo"]])
