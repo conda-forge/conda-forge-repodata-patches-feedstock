@@ -169,9 +169,7 @@ if __name__ == "__main__":
             )
             for subdir in subdirs
         ]
-        if args.fail_fast:
-            futs = as_completed(futs)
-        for fut in futs:
+        for fut in as_completed(futs):
             subdir, vals = fut.result()
             print("=" * 80, flush=True)
             print("=" * 80, flush=True)

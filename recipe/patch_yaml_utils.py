@@ -7,7 +7,13 @@ import fnmatch as _fnmatch
 import re
 from functools import lru_cache
 
-ALLOWED_TEMPLATE_KEYS = ["name", "version", "build_number", "subdir"]
+ALLOWED_TEMPLATE_KEYS = [
+    "name",
+    "version",
+    "build_number",
+    "subdir",
+    "next_version",
+]
 
 from patch_yaml_model import PatchYaml  # noqa
 
@@ -93,6 +99,12 @@ def _get_vars_for_template(value, allow_old=False):
     return tvars
 
 
+def _get_next_version(version):
+    parts = version.split(".")
+    parts[-1] = str(int(parts[-1]) + 1)
+    return ".".join(parts)
+
+
 def _maybe_process_template(value, record, subdir, old=None):
     tvars = _get_vars_for_template(value, allow_old=old is not None)
     if tvars:
@@ -101,6 +113,8 @@ def _maybe_process_template(value, record, subdir, old=None):
             data["subdir"] = subdir
         if "old" in tvars:
             data["old"] = old
+        if "next_version" in tvars:
+            data["next_version"] = _get_next_version(record["version"])
         return string.Template(value).substitute(**data)
     else:
         return value
@@ -199,9 +213,12 @@ def _replace_pin(old_pin, new_pin, deps, record, target="depends"):
     """Replace an exact pin with a new one. deps and target must match."""
     if target not in ("depends", "constrains"):
         raise ValueError
-    if old_pin in deps:
+    if old_pin in deps and new_pin not in deps:
         i = record[target].index(old_pin)
         record[target][i] = new_pin
+    elif old_pin in deps and new_pin in deps:
+        i = record[target].index(old_pin)
+        record[target].pop(i)
 
 
 def _rename_dependency(fn, record, old_name, new_name):
