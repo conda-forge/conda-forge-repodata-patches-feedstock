@@ -22,7 +22,6 @@ from get_license_family import get_license_family
 from patch_yaml_utils import (
     patch_yaml_edit_index,
     _relax_exact,
-    _pin_looser,
     CB_PIN_REGEX,
     pad_list,
 )
@@ -830,11 +829,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ############################################
         # Custom Patches that cannot be YAML-ized
         ############################################
-
-        # FIXME: this one is buggy
-        if record.get("timestamp", 0) < 1663795137000:
-            if any(dep.startswith("pango >=5.2") for dep in deps):
-                _pin_looser(fn, record, "xz", max_pin="x")
 
         # FIXME: disable patching-out blas_openblas feature
         # because hotfixes are not applied to gcc7 label
