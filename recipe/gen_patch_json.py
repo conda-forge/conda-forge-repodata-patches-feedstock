@@ -2,7 +2,6 @@
 from __future__ import absolute_import, division, print_function
 
 from collections import defaultdict
-from contextlib import suppress
 import tempfile
 import copy
 import json
@@ -827,56 +826,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # add as run_constrained for cling
         if record_name == "cling" and record["version"] >= "0.8":
             record.setdefault("constrains", []).extend(("gxx_linux-64 !=9.5.0",))
-
-        ############################################
-        # CUDA Ecosystem Patches
-        ############################################
-        deps = record.get("depends", ())
-        i = -1
-        with suppress(ValueError):
-            i = deps.index("cudatoolkit 11.2|11.2.*")
-        if i >= 0:
-            deps[i] = "cudatoolkit >=11.2,<12.0a0"
-
-        if (
-            record_name == "cuda-version"
-            and record["build_number"] < 2
-            and record.get("timestamp", 0) < 1683211961000
-        ):
-            cuda_major_minor = ".".join(record["version"].split(".")[:2])
-            constrains = record.get("constrains", [])
-            for i, c in enumerate(constrains):
-                if c.startswith("cudatoolkit"):
-                    constrains[
-                        i
-                    ] = f"cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*"
-                    break
-            else:
-                constrains.append(
-                    f"cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*"
-                )
-            record["constrains"] = constrains
-
-        if (
-            record_name == "nccl"
-            and 1681282800000 < record.get("timestamp", 0) < 1686034800000
-        ):
-            deps = record.get("depends", [])
-            for i in range(len(deps)):
-                dep = deps[i]
-                if dep.startswith("cudatoolkit"):
-                    spec = dep[11:]
-                    dep = f"__cuda{spec}"
-                deps[i] = dep
-
-        if record_name == "ucx" and record.get("timestamp", 0) < 1682924400000:
-            constrains = record.get("constrains", [])
-            for i, c in enumerate(constrains):
-                if c.startswith("cudatoolkit"):
-                    v = c.split()[-1]
-                    if v != ">=11.2,<12":
-                        constrains[i] = c = f"cudatoolkit {v}|{v}.*"
-            record["constrains"] = constrains
 
         ############################################
         # Custom Patches that cannot be YAML-ized

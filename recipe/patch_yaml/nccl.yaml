@@ -1,0 +1,20 @@
+# from this code
+# if (
+#     record_name == "nccl"
+#     and 1681282800000 < record.get("timestamp", 0) < 1686034800000
+# ):
+#     deps = record.get("depends", [])
+#     for i in range(len(deps)):
+#         dep = deps[i]
+#         if dep.startswith("cudatoolkit"):
+#             spec = dep[11:]
+#             dep = f"__cuda{spec}"
+#         deps[i] = dep
+if:
+  name: nccl
+  timestamp_gt: 1681282800000
+  timestamp_lt: 1686034800000
+then:
+  - rename_depends:
+      old: cudatoolkit
+      new: __cuda

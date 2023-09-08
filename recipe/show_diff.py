@@ -27,6 +27,10 @@ def sort_lists(obj):
 
 
 def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs=True):
+    keep_pkgs = os.environ.get("CF_PKGS", None)
+    if keep_pkgs is not None:
+        keep_pkgs = set(keep_pkgs.split(";"))
+
     if group_diffs:
         final_lines = {}
     else:
@@ -37,6 +41,9 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
                 new_pkg = new_repodata[index_key][name]
             else:
                 new_pkg = {}
+
+            if keep_pkgs is not None and ref_pkg["name"] not in keep_pkgs:
+                continue
 
             # license_family gets added for new packages, ignore it in the diff
             ref_pkg.pop("license_family", None)

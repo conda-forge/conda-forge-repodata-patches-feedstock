@@ -13,6 +13,9 @@ ALLOWED_TEMPLATE_KEYS = [
     "build_number",
     "subdir",
     "next_version",
+    "major_version",
+    "minor_version",
+    "patch_version",
 ]
 
 from patch_yaml_model import PatchYaml  # noqa
@@ -105,6 +108,14 @@ def _get_next_version(version):
     return ".".join(parts)
 
 
+def _get_ver_comp(version, ind):
+    parts = version.split(".")
+    if ind < len(parts):
+        return parts[ind]
+    else:
+        return "0"
+
+
 def _maybe_process_template(value, record, subdir, old=None):
     tvars = _get_vars_for_template(value, allow_old=old is not None)
     if tvars:
@@ -115,6 +126,12 @@ def _maybe_process_template(value, record, subdir, old=None):
             data["old"] = old
         if "next_version" in tvars:
             data["next_version"] = _get_next_version(record["version"])
+        if "major_version" in tvars:
+            data["major_version"] = _get_ver_comp(record["version"], 0)
+        if "minor_version" in tvars:
+            data["minor_version"] = _get_ver_comp(record["version"], 1)
+        if "patch_version" in tvars:
+            data["patch_version"] = _get_ver_comp(record["version"], 2)
         return string.Template(value).substitute(**data)
     else:
         return value
@@ -213,12 +230,12 @@ def _replace_pin(old_pin, new_pin, deps, record, target="depends"):
     """Replace an exact pin with a new one. deps and target must match."""
     if target not in ("depends", "constrains"):
         raise ValueError
-    if old_pin in deps and new_pin not in deps:
+    if old_pin in deps:
         i = record[target].index(old_pin)
-        record[target][i] = new_pin
-    elif old_pin in deps and new_pin in deps:
-        i = record[target].index(old_pin)
-        record[target].pop(i)
+        if new_pin not in deps:
+            record[target][i] = new_pin
+        elif new_pin != old_pin:
+            record[target].pop(i)
 
 
 def _rename_dependency(fn, record, old_name, new_name):
@@ -511,10 +528,15 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
 
 
 def patch_yaml_edit_index(index, subdir):
+    keep_pkgs = os.environ.get("CF_PKGS", None)
+    if keep_pkgs is not None:
+        keep_pkgs = set(keep_pkgs.split(";"))
     fns = sorted(index)
     for patch_yaml, fname in ALL_YAMLS:
         for fn in fns:
             record = index[fn]
+            if keep_pkgs is not None and record["name"] not in keep_pkgs:
+                continue
             try:
                 if _test_patch_yaml(patch_yaml, record, subdir, fn):
                     _apply_patch_yaml(patch_yaml, record, subdir, fn)
