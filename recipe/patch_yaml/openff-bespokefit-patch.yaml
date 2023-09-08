@@ -1,0 +1,10 @@
+# Down-constrain latest packages to prevent incompatible starlette+anyio combination
+# cc https://github.com/encode/starlette/issues/2262
+# cc https://github.com/openforcefield/openff-bespokefit/issues/283
+if:
+  subdir_in: noarch
+  name: openff-bespokefit
+  has_constrains: "starlette =0.20"
+  timestamp_lt: 1694139596000
+then:
+  - add_constrains: "anyio <4.0.0a0"
