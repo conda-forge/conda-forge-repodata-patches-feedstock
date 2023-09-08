@@ -1,0 +1,22 @@
+# from this code
+# if record_name == "ucx" and record.get("timestamp", 0) < 1682924400000:
+#     constrains = record.get("constrains", [])
+#     for i, c in enumerate(constrains):
+#         if c.startswith("cudatoolkit"):
+#             v = c.split()[-1]
+#             if v != ">=11.2,<12":
+#                 constrains[i] = c = f"cudatoolkit {v}|{v}.*"
+#     record["constrains"] = constrains
+if:
+  name: ucx
+  timestamp_lt: 1682924400000
+then:
+  - replace_constrains:
+      old: "cudatoolkit 11.1"
+      new: "cudatoolkit 11.1|11.1.*"
+  - replace_constrains:
+      old: "cudatoolkit 11.0"
+      new: "cudatoolkit 11.0|11.0.*"
+  - replace_constrains:
+      old: "cudatoolkit 10.2"
+      new: "cudatoolkit 10.2|10.2.*"

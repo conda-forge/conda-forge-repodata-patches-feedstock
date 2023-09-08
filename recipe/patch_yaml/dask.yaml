@@ -46,3 +46,48 @@ then:
   - tighten_depends:
       name: pandas
       upper_bound: "2"
+---
+# from this code bit
+# if record_name in {"distributed", "dask"}:
+#     version = parse_version(record["version"])
+#     if (
+#         version >= parse_version("2021.12.0")
+#         and version < parse_version("2022.8.0")
+#         or version == parse_version("2022.8.0")
+#         and record["build_number"] < 2
+#     ):
+#         for dep in record["depends"]:
+#             if dep.startswith("dask-core") or dep.startswith("distributed"):
+#                 pkg = dep.split()[0]
+#                 major_minor_patch = record["version"].split(".")
+#                 major_minor_patch[2] = str(int(major_minor_patch[2]) + 1)
+#                 next_patch_version = ".".join(major_minor_patch)
+#                 _replace_pin(
+#                     dep,
+#                     f"{pkg} >={version},<{next_patch_version}.0a0",
+#                     record["depends"],
+#                     record,
+#                 )
+if:
+  name: dask
+  version_ge: 2021.12.0
+  version_lt: 2022.8.0
+then:
+  - replace_depends:
+      old: dask-core ${version}.[*]
+      new: dask-core >=${version},<${next_version}.0a0
+  - replace_depends:
+      old: distributed ${version}.[*]
+      new: distributed >=${version},<${next_version}.0a0
+---
+if:
+  name: dask
+  version: 2022.8.0
+  build_number_lt: 2
+then:
+  - replace_depends:
+      old: dask-core *${version}*
+      new: dask-core >=${version},<${next_version}.0a0
+  - replace_depends:
+      old: distributed *${version}*
+      new: distributed >=${version},<${next_version}.0a0

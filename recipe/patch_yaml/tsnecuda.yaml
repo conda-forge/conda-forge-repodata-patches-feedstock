@@ -1,0 +1,23 @@
+# from this coee
+# if record_name == "tsnecuda":
+#     # These have dependencies like
+#     # - libfaiss * *_cuda
+#     # - libfaiss * *cuda
+#     # which conda doesn't like
+#     deps = record.get("depends", [])
+#     for i in range(len(deps)):
+#         dep = deps[i]
+#         if dep.startswith("libfaiss") and dep.endswith("*cuda"):
+#             dep = dep.replace("*cuda", "*_cuda")
+#         deps[i] = dep
+#     record["depends"] = deps
+# logic is different, but patch is the same
+if:
+  name: tsnecuda
+  version: 3.0.0
+  build: cuda*
+  build_number_le: 1
+then:
+  - replace_depends:
+      old: libfaiss 1.6.5 [*]cuda
+      new: libfaiss 1.6.5 *_cuda

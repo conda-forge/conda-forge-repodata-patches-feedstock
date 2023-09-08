@@ -2,7 +2,6 @@
 from __future__ import absolute_import, division, print_function
 
 from collections import defaultdict
-from contextlib import suppress
 import tempfile
 import copy
 import json
@@ -22,7 +21,6 @@ from show_diff import show_record_diffs
 from get_license_family import get_license_family
 from patch_yaml_utils import (
     patch_yaml_edit_index,
-    _replace_pin,
     _relax_exact,
     _pin_looser,
     CB_PIN_REGEX,
@@ -830,100 +828,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             record.setdefault("constrains", []).extend(("gxx_linux-64 !=9.5.0",))
 
         ############################################
-        # CUDA Ecosystem Patches
-        ############################################
-        deps = record.get("depends", ())
-        i = -1
-        with suppress(ValueError):
-            i = deps.index("cudatoolkit 11.2|11.2.*")
-        if i >= 0:
-            deps[i] = "cudatoolkit >=11.2,<12.0a0"
-
-        if (
-            record_name == "cuda-version"
-            and record["build_number"] < 2
-            and record.get("timestamp", 0) < 1683211961000
-        ):
-            cuda_major_minor = ".".join(record["version"].split(".")[:2])
-            constrains = record.get("constrains", [])
-            for i, c in enumerate(constrains):
-                if c.startswith("cudatoolkit"):
-                    constrains[
-                        i
-                    ] = f"cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*"
-                    break
-            else:
-                constrains.append(
-                    f"cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*"
-                )
-            record["constrains"] = constrains
-
-        if (
-            record_name == "nccl"
-            and 1681282800000 < record.get("timestamp", 0) < 1686034800000
-        ):
-            deps = record.get("depends", [])
-            for i in range(len(deps)):
-                dep = deps[i]
-                if dep.startswith("cudatoolkit"):
-                    spec = dep[11:]
-                    dep = f"__cuda{spec}"
-                deps[i] = dep
-
-        if record_name == "ucx" and record.get("timestamp", 0) < 1682924400000:
-            constrains = record.get("constrains", [])
-            for i, c in enumerate(constrains):
-                if c.startswith("cudatoolkit"):
-                    v = c.split()[-1]
-                    if v != ">=11.2,<12":
-                        constrains[i] = c = f"cudatoolkit {v}|{v}.*"
-            record["constrains"] = constrains
-
-        ############################################
         # Custom Patches that cannot be YAML-ized
         ############################################
-
-        if record_name in {"distributed", "dask"}:
-            version = parse_version(record["version"])
-            if (
-                version >= parse_version("2021.12.0")
-                and version < parse_version("2022.8.0")
-                or version == parse_version("2022.8.0")
-                and record["build_number"] < 2
-            ):
-                for dep in record["depends"]:
-                    if dep.startswith("dask-core") or dep.startswith("distributed"):
-                        pkg = dep.split()[0]
-                        major_minor_patch = record["version"].split(".")
-                        major_minor_patch[2] = str(int(major_minor_patch[2]) + 1)
-                        next_patch_version = ".".join(major_minor_patch)
-                        _replace_pin(
-                            dep,
-                            f"{pkg} >={version},<{next_patch_version}.0a0",
-                            record["depends"],
-                            record,
-                        )
-
-        deps = record.get("depends", ())
-        if (
-            record_name in {"slepc", "petsc4py", "slepc4py"}
-            and record.get("timestamp", 0) < 1657407373000
-            and record.get("version").startswith("3.17.")
-        ):
-            # rename scalar pins to workaround conda bug #11612
-            for dep in list(deps):
-                dep_name, *version_build = dep.split()
-                if dep_name not in {"petsc", "slepc", "petsc4py"}:
-                    continue
-                if len(version_build) < 2:
-                    # version only, no build pin
-                    continue
-                version_pin, build_pin = version_build[:2]
-                for scalar in ("real", "complex"):
-                    if build_pin == f"*{scalar}*":
-                        new_build = f"{scalar}_*"
-                        new_dep = f"{dep_name} {version_pin} {new_build}"
-                        _replace_pin(dep, new_dep, deps, record)
 
         # FIXME: this one is buggy
         if record.get("timestamp", 0) < 1663795137000:
@@ -945,19 +851,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         #         depends = record['depends']
         #         depends.append("blas 1.* openblas")
         #         instructions["packages"][fn]["depends"] = depends
-
-        if record_name == "tsnecuda":
-            # These have dependencies like
-            # - libfaiss * *_cuda
-            # - libfaiss * *cuda
-            # which conda doesn't like
-            deps = record.get("depends", [])
-            for i in range(len(deps)):
-                dep = deps[i]
-                if dep.startswith("libfaiss") and dep.endswith("*cuda"):
-                    dep = dep.replace("*cuda", "*_cuda")
-                deps[i] = dep
-            record["depends"] = deps
 
     return index
 

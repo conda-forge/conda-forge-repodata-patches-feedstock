@@ -1,0 +1,42 @@
+# from this code
+# deps = record.get("depends", ())
+# i = -1
+# with suppress(ValueError):
+#     i = deps.index("cudatoolkit 11.2|11.2.*")
+# if i >= 0:
+#     deps[i] = "cudatoolkit >=11.2,<12.0a0"
+if:
+  name: "*"
+then:
+  - replace_depends:
+      old: cudatoolkit 11.2|11.2.[*]
+      new: cudatoolkit >=11.2,<12.0a0
+---
+# from this code
+# if (
+#     record_name == "cuda-version"
+#     and record["build_number"] < 2
+#     and record.get("timestamp", 0) < 1683211961000
+# ):
+#     cuda_major_minor = ".".join(record["version"].split(".")[:2])
+#     constrains = record.get("constrains", [])
+#     for i, c in enumerate(constrains):
+#         if c.startswith("cudatoolkit"):
+#             constrains[
+#                 i
+#             ] = f"cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*"
+#             break
+#     else:
+#         constrains.append(
+#             f"cudatoolkit {cuda_major_minor}|{cuda_major_minor}.*"
+#         )
+#     record["constrains"] = constrains
+if:
+  name: cuda-version
+  build_number_lt: 2
+  timestamp_lt: 1683211961000
+then:
+  - replace_constrains:
+      old: cudatoolkit*
+      new: "cudatoolkit ${major_version}.${minor_version}|${major_version}.${minor_version}.*"
+  - add_constrains: "cudatoolkit ${major_version}.${minor_version}|${major_version}.${minor_version}.*"

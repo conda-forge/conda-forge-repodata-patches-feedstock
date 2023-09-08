@@ -217,37 +217,71 @@ def test_apply_patch_yaml_add(key):
 @pytest.mark.parametrize("key", ["depends", "constrains"])
 def test_apply_patch_yaml_add_template(key, rkey):
     patch_yaml = {"then": [{"add_" + key: f"blah ${rkey}"}]}
-    record = {"version": 10, "name": "foo", "build_number": 2}
+    record = {"version": "10", "name": "foo", "build_number": 2}
     _apply_patch_yaml(patch_yaml, record, "linux-64", None)
-    if rkey != "subdir":
+    if rkey not in [
+        "subdir",
+        "next_version",
+        "major_version",
+        "minor_version",
+        "patch_version",
+    ]:
         assert record == {
-            "version": 10,
+            "version": "10",
             key: [f"blah {record[rkey]}"],
             "name": "foo",
             "build_number": 2,
         }
     else:
+        if rkey == "subdir":
+            nval = "linux-64"
+        elif rkey == "major_version":
+            nval = "10"
+        elif rkey == "minor_version":
+            nval = "0"
+        elif rkey == "patch_version":
+            nval = "0"
+        else:
+            nval = "11"
+
         assert record == {
-            "version": 10,
-            key: ["blah linux-64"],
+            "version": "10",
+            key: [f"blah {nval}"],
             "name": "foo",
             "build_number": 2,
         }
 
     patch_yaml = {"then": [{"add_" + key: f"blah ${rkey}"}]}
-    record = {"version": 10, key: ["foo"], "name": "foo", "build_number": 2}
+    record = {"version": "10", key: ["foo"], "name": "foo", "build_number": 2}
     _apply_patch_yaml(patch_yaml, record, "linux-64", None)
-    if rkey != "subdir":
+    if rkey not in [
+        "subdir",
+        "next_version",
+        "major_version",
+        "minor_version",
+        "patch_version",
+    ]:
         assert record == {
-            "version": 10,
+            "version": "10",
             key: ["foo", f"blah {record[rkey]}"],
             "name": "foo",
             "build_number": 2,
         }
     else:
+        if rkey == "subdir":
+            nval = "linux-64"
+        elif rkey == "major_version":
+            nval = "10"
+        elif rkey == "minor_version":
+            nval = "0"
+        elif rkey == "patch_version":
+            nval = "0"
+        else:
+            nval = "11"
+
         assert record == {
-            "version": 10,
-            key: ["foo", "blah linux-64"],
+            "version": "10",
+            key: ["foo", f"blah {nval}"],
             "name": "foo",
             "build_number": 2,
         }
@@ -330,7 +364,7 @@ def test_apply_patch_yaml_replace_glob(key, pre, post):
     }
     record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
-    assert record == {key: pre + ["numpy 2.0", "numpy 2.0"] + post}
+    assert record == {key: pre + ["numpy 2.0"] + post}
 
 
 @pytest.mark.parametrize("pre", [[], ["foo"]])
@@ -343,6 +377,60 @@ def test_apply_patch_yaml_replace_glob_template(key, pre, post):
     record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {key: pre + ["numpy 1.0,<2.0", "numpy 1.0.1,<2.0"] + post}
+
+
+@pytest.mark.parametrize(
+    "v,nv,v0,v1,v2",
+    [
+        ("1.4", "1.5", "1", "4", "0"),
+        ("1.2.3", "1.2.4", "1", "2", "3"),
+        ("2", "3", "2", "0", "0"),
+    ],
+)
+@pytest.mark.parametrize("pre", [[], ["foo"]])
+@pytest.mark.parametrize("post", [[], ["bar"]])
+@pytest.mark.parametrize("key", ["depends", "constrains"])
+def test_apply_patch_yaml_replace_glob_template_next_version(
+    key, pre, post, v, nv, v0, v1, v2
+):
+    patch_yaml = {
+        "then": [
+            {
+                "replace_"
+                + key: {"old": "numpy 1.0*", "new": "numpy $version,<$next_version"}
+            }
+        ]
+    }
+    record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post, "version": v}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {key: pre + [f"numpy {v},<{nv}"] + post, "version": v}
+
+    patch_yaml = {
+        "then": [
+            {"replace_" + key: {"old": "numpy 1.0*", "new": "numpy $major_version"}}
+        ]
+    }
+    record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post, "version": v}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {key: pre + [f"numpy {v0}"] + post, "version": v}
+
+    patch_yaml = {
+        "then": [
+            {"replace_" + key: {"old": "numpy 1.0*", "new": "numpy $minor_version"}}
+        ]
+    }
+    record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post, "version": v}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {key: pre + [f"numpy {v1}"] + post, "version": v}
+
+    patch_yaml = {
+        "then": [
+            {"replace_" + key: {"old": "numpy 1.0*", "new": "numpy $patch_version"}}
+        ]
+    }
+    record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post, "version": v}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {key: pre + [f"numpy {v2}"] + post, "version": v}
 
 
 @pytest.mark.parametrize("pre", [[], ["foo"]])

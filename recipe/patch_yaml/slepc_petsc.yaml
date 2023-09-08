@@ -1,0 +1,57 @@
+# from this code
+# deps = record.get("depends", ())
+# if (
+#     record_name in {"slepc", "petsc4py", "slepc4py"}
+#     and record.get("timestamp", 0) < 1657407373000
+#     and record.get("version").startswith("3.17.")
+# ):
+#     # rename scalar pins to workaround conda bug #11612
+#     for dep in list(deps):
+#         dep_name, *version_build = dep.split()
+#         if dep_name not in {"petsc", "slepc", "petsc4py"}:
+#             continue
+#         if len(version_build) < 2:
+#             # version only, no build pin
+#             continue
+#         version_pin, build_pin = version_build[:2]
+#         for scalar in ("real", "complex"):
+#             if build_pin == f"*{scalar}*":
+#                 new_build = f"{scalar}_*"
+#                 new_dep = f"{dep_name} {version_pin} {new_build}"
+#                 _replace_pin(dep, new_dep, deps, record)
+# patch logic is different but results are the same
+if:
+  name_in: [slepc, petsc4py, slepc4py]
+  timestamp_lt: 1657407373000
+  version: 3.17.*
+then:
+  - replace_depends:
+      old: petsc [*] [*]complex[*]
+      new: petsc * complex_*
+  - replace_depends:
+      old: petsc [*] [*]real[*]
+      new: petsc * real_*
+  - replace_depends:
+      old: petsc >=3.17.0,<3.18.0a0 [*]complex[*]
+      new: petsc >=3.17.0,<3.18.0a0 complex_*
+  - replace_depends:
+      old: petsc >=3.17.0,<3.18.0a0 [*]real[*]
+      new: petsc >=3.17.0,<3.18.0a0 real_*
+  - replace_depends:
+      old: petsc >=3.17.2,<3.18.0a0 [*]complex[*]
+      new: petsc >=3.17.2,<3.18.0a0 complex_*
+  - replace_depends:
+      old: petsc >=3.17.2,<3.18.0a0 [*]real[*]
+      new: petsc >=3.17.2,<3.18.0a0 real_*
+  - replace_depends:
+      old: slepc [*] [*]complex[*]
+      new: slepc * complex_*
+  - replace_depends:
+      old: slepc [*] [*]real[*]
+      new: slepc * real_*
+  - replace_depends:
+      old: petsc4py 3.17.[*] [*]complex[*]
+      new: petsc4py 3.17.* complex_*
+  - replace_depends:
+      old: petsc4py 3.17.[*] [*]real[*]
+      new: petsc4py 3.17.* real_*
