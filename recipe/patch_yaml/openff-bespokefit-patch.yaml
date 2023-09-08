@@ -6,5 +6,6 @@ if:
   subdir_in: noarch
   name: openff-bespokefit
   has_constrains: "starlette =0.20"
+  timestamp_lt: 1694139596000
 then:
   - add_constrains: "anyio <4.0.0a0"
