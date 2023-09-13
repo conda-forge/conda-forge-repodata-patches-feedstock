@@ -1,0 +1,7 @@
+if:
+  timestamp_lt: 1694587637000
+  has_depends: msys2-conda-epoch >=20160418
+then:
+  - replace_depends:
+      old: msys2-conda-epoch >=20160418
+      new: msys2-conda-epoch ==20160418
