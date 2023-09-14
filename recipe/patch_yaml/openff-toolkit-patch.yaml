@@ -10,4 +10,3 @@ then:
       old: qcportal
       # thing to replace `old` with
       new: qcportal <0.50.0a0
-
