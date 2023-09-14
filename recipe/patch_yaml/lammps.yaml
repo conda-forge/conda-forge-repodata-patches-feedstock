@@ -1,0 +1,9 @@
+if:
+  name: lammps
+  version_le: 2023.08.03
+  has_depends: mlip*
+  timestamp_lt: 1694705144
+then:
+  - replace_depends:
+      old: mlip
+      new: mlip =1.0
