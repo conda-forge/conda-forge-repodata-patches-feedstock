@@ -4,4 +4,4 @@ if:
 then:
   - replace_depends:
       old: traitlets?( *)
-      new: traitlets >=4.2.2,<5.10.0
+      new: traitlets >=4.2.2
