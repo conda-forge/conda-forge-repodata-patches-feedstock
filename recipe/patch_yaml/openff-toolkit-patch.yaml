@@ -1,0 +1,12 @@
+# Downpin openff-toolkit-examples packages to version of qcportal before API change
+if:
+  subdir_in: noarch
+  name: openff-toolkit-examples
+  has_depends: "qcportal"
+  timestamp_lt: 1694139596000
+then:
+  - replace_depends:
+      # str of thing to be replaced
+      old: qcportal
+      # thing to replace `old` with
+      new: qcportal <0.50.0a0

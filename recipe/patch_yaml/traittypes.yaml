@@ -1,0 +1,7 @@
+if:
+  name: traittypes
+  timestamp_lt: 1694720296000
+then:
+  - replace_depends:
+      old: traitlets?( *)
+      new: traitlets >=4.2.2,<5.10.0
