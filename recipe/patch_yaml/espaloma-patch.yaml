@@ -1,0 +1,13 @@
+# Downpin espaloma to version of qcportal before API change
+# https://github.com/choderalab/espaloma/issues/185
+if:
+  subdir_in: noarch
+  name: espaloma
+  has_depends: "qcportal*"
+  timestamp_lt: 1695137390000
+then:
+  - replace_depends:
+      # str of thing to be replaced
+      old: qcportal >=0.15.0
+      # thing to replace `old` with
+      new: qcportal >=0.15.0,<0.50.0a0
