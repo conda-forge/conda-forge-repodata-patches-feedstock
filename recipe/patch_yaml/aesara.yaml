@@ -76,3 +76,29 @@ if:
   version_le: 2.7.7
 then:
   - add_depends: setuptools !=65.0.*
+---
+# Numpy 1.26 breaks Aesara before v2.9.2.
+# <https://github.com/aesara-devs/aesara/pull/1512>
+if:
+  name: aesara-base
+  version_lt: 2.9.2
+  version_ge: 2.7.4
+  timestamp_lt: 1695061975000
+  has_depends: numpy*
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: '1.26'
+---
+# The preceding clause handles the NumPy dependency until v2.7.4 build 1.
+# Before that, there was no aesara-base, and the NumPy dependency was in
+# the `aesara` package.
+if:
+  name: aesara
+  version_le: 2.7.4
+  timestamp_lt: 1695061975000
+  has_depends: numpy*
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: '1.26'
