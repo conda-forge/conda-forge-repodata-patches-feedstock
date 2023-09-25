@@ -1,0 +1,9 @@
+# https://github.com/conda-forge/deepmd-kit-feedstock/issues/56
+if:
+  name: deepmd-kit
+  version_le: "2.2.4"
+  timestamp_lt: 1695668542000
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: 1.26
