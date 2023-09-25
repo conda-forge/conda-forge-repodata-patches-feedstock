@@ -6,4 +6,4 @@ if:
 then:
   - tighten_depends:
       name: numpy
-      upper_bound: 1.26
+      upper_bound: "1.26"
