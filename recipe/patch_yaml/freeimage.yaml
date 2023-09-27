@@ -22,3 +22,14 @@ then:
   - tighten_depends:
       name: libtiff
       upper_bound: 4.4.0
+---
+# To fix https://github.com/conda-forge/freeimage-feedstock/issues/43
+# Older builds had a vendored jpeg that conflicts at runtime with jpeg and libjpeg-turbo
+if:
+  name: freeimage
+  version_in: ["3.18.0", "3.17.0"]
+  build_number: 0
+then:
+  - add_constrains:
+      - "jpeg <0.0.0a"
+      - "libjpeg-turbo <0.0.0a"
