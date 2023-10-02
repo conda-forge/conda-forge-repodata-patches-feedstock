@@ -70,7 +70,8 @@ then:
       old: conda >=4.13
       new: conda >=23.7.3
 ---
-# conda-build <3.25.0 relied on get_prfix removed in https://github.com/conda/conda/commit/a26db05d5abd10a251128e2ce5092e7e8bb72f46
+# conda-build <3.25.0 relied on get_prfix removed in
+# https://github.com/conda/conda/commit/a26db05d5abd10a251128e2ce5092e7e8bb72f46
 if:
   name: conda-build
   version_lt: 3.25.0
