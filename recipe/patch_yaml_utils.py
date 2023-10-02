@@ -349,7 +349,7 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
                 new_upper = upper_bound.split(".")
             upper = pad_list(upper, len(new_upper))
             new_upper = pad_list(new_upper, len(upper))
-            if tuple(upper) > tuple(new_upper):
+            if parse_version(".".join(upper)) > parse_version(".".join(new_upper)):
                 if str(new_upper[-1]) != "0":
                     new_upper += ["0"]
                 depends[dep_idx] = "{} >={},<{}a0".format(
