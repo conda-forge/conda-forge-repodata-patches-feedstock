@@ -119,3 +119,13 @@ then:
   - replace_depends:
       old: conda >=4.8,<23.4
       new: conda >=4.14,<23.4
+---
+# mamba <=1.5.1 relies on conda.cli.common.ensure_name_or_prefix
+# removed in https://github.com/conda/conda/pull/12948
+if:
+  name: mamba
+  version_le: 1.5.1
+then:
+  - tighten_depends:
+      name: conda
+      upper_bound: "23.9.0"
