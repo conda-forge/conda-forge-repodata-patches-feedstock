@@ -1,0 +1,6 @@
+if:
+  artifact_in: mp-api-0.37.1-pyhd8ed1ab_0.conda
+then:
+  - replace_<depends or constrains>:
+      old: emmet-core >=0.54.0
+      new: emmet-core >=0.69.2
