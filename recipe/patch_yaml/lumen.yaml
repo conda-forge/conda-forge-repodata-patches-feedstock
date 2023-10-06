@@ -1,0 +1,10 @@
+# Pinning Param <2 before the release of Param 2
+# Timestamp 1696575733000 <=> Fri Oct 06 2023 07:02:13 GMT+0000
+
+# Before that date Lumen wasn't defining Param 2.0 as a dependency
+# while it directly depended on it.
+if:
+  name: lumen
+  timestamp_lt: 1696575733000
+then:
+  - add_depends: param <2.0

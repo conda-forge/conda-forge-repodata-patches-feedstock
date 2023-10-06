@@ -1,0 +1,22 @@
+# Pinning Param <2 before the release of Param 2
+# Timestamp 1696575733000 <=> Fri Oct 06 2023 07:02:13 GMT+0000
+
+# hvPlot depends directly on Param since version 0.7.3,
+# this was not always specified
+if:
+  name: hvplot
+  timestamp_lt: 1696575733000
+  version_gt: 0.7.2
+  not_has_depends: param*
+then:
+  - add_depends: param <2.0
+---
+# Versions that depended on Param didn't specify any upper pin
+if:
+  name: hvplot
+  timestamp_lt: 1696575733000
+  has_depends: param*
+then:
+  - tighten_depends:
+      name: param
+      upper_bound: 2.0.0

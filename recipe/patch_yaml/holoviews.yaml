@@ -1,0 +1,24 @@
+# Pinning Param <2 before the release of Param 2
+# Timestamp 1696575733000 <=> Fri Oct 06 2023 07:02:13 GMT+0000
+
+# To pin versions that were not pinning Param at all (e.g. 1.10.0)
+if:
+  name: holoviews
+  timestamp_lt: 1696575733000
+  has_depends: param*
+then:
+  - tighten_depends:
+      name: param
+      upper_bound: 2.0.0
+---
+# After 1.10.0 HoloViews was pinning param<2.0, however
+# starting from 1.16.0 the param<2.0 pin was moved to <3.0,
+# that was too early.
+if:
+  name: holoviews
+  timestamp_lt: 1696575733000
+  has_depends: param >=1.12.0,<3.0
+then:
+  - replace_depends:
+      old: param >=1.12.0,<3.0
+      new: param >=1.12.0,<2.0
