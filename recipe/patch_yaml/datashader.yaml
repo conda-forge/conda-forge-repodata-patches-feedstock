@@ -1,0 +1,13 @@
+# Pinning Param <2 before the release of Param 2
+# Timestamp 1696575733000 <=> Fri Oct 06 2023 07:02:13 GMT+0000
+
+# Datashader always depended on Param and either didn't define
+# any upper pin or used <2.0.
+if:
+  name: datashader
+  timestamp_lt: 1696575733000
+  has_depends: param*
+then:
+  - tighten_depends:
+      name: param
+      upper_bound: 2.0.0

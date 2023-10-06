@@ -98,3 +98,26 @@ then:
       old: bokeh*
       new: bokeh >=2.2,<2.3
   - add_depends: bokeh >=2.2,<2.3
+---
+# Pinning Param <2 before the release of Param 2
+# Timestamp 1696575733000 <=> Fri Oct 06 2023 07:02:13 GMT+0000
+
+# Before version 1.0.0 Panel was not upper pinning Param at all
+if:
+  name: panel
+  timestamp_lt: 1696575733000
+  has_depends: param*
+then:
+  - tighten_depends:
+      name: param
+      upper_bound: 2
+---
+# Starting from 1.0.0 Param was pinned to <3.0 while it should have been <2.0
+if:
+  name: panel
+  timestamp_lt: 1696575733000
+  has_depends: param >=1.12.0,<3
+then:
+  - replace_depends:
+      old: param >=1.12.0,<3
+      new: param >=1.12.0,<2.0
