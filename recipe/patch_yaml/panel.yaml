@@ -110,7 +110,7 @@ if:
 then:
   - tighten_depends:
       name: param
-      upper_bound: 2
+      upper_bound: "2"
 ---
 # Starting from 1.0.0 Param was pinned to <3.0 while it should have been <2.0
 if:
