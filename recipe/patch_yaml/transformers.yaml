@@ -17,3 +17,13 @@ then:
   - replace_depends:
       old: "tokenizers >=0.11.1,!=0.11.3"
       new: "tokenizers >=0.11.1,!=0.11.3,<0.13"
+---
+if:
+  name: transformers
+  version_lt: 4.34.0
+  version_ge: 4.23.0
+  timestamp_lt: 1696965205000
+then:
+  - tighten_depends:
+      name: tokenizers
+      upper_bound: 0.14.0
