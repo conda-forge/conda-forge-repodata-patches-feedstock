@@ -1,0 +1,11 @@
+if:
+  name: libxgboost
+  timestamp_gt: 1697007600000
+  timestamp_lt: 1697180400000
+  version: "1.7.6"
+  build_number: 4
+  build: "cuda118*"
+then:
+  - replace_depends:
+      old: cuda-version >=11.2,<12
+      new: cuda-version >=11.8,<12
