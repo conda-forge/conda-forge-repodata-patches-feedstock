@@ -1,0 +1,6 @@
+if:
+  name: tokenizers
+  build_number: 0
+  version_in: ["0.14.0", "0.14.1"]
+then:
+  - add_depends: "huggingface_hub >=0.16.4,<0.18"
