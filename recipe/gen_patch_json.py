@@ -16,6 +16,8 @@ import requests
 from packaging.version import parse as parse_version
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
+import shutil
+
 from conda_build.index import _apply_instructions
 from show_diff import show_record_diffs
 from get_license_family import get_license_family
