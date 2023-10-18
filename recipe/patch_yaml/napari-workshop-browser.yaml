@@ -1,0 +1,8 @@
+# https://github.com/conda-forge/napari-workshop-browser-feedstock/pull/2
+if:
+  name: napari-workshop-browser
+  timestamp_lt: 1697646909347  # 2023-10-18
+then:
+  - replace_depends:
+      old: notebook
+      new: notebook <7.0a0
