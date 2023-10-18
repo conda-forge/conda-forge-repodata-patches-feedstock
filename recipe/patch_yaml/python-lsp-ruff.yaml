@@ -1,0 +1,8 @@
+if:
+  name: python-lsp-ruff
+  version_lt: 1.5.3
+  timestamp_lt: 1697634626000
+then:
+  - tighten_depends:
+      name: ruff
+      upper_bound: 0.1.0
