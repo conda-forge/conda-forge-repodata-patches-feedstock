@@ -1,0 +1,16 @@
+# Versions of invoke from before version 2.0.0 are not compatible with
+# Python 3.11 because of inspect.getargspec being removed.
+if:
+  name: invoke
+  version_lt: 2.0.0
+  timestamp_lt: 1686854880000  # 2023/06/15 18:48Z
+then:
+  - replace_depends:
+      old: python
+      new: python <= 3.11.0a0
+  - replace_depends:
+      old: python 2.7|>=3.4
+      new: python 2.7|>=3.4,<3.11.0a0
+  - tighten_depends:
+      name: python
+      upper_bound: 3.11.0a0
