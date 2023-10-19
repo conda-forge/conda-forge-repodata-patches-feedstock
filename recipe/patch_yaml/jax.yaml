@@ -10,3 +10,14 @@ then:
   - replace_depends:
       old: python >=3.8
       new: python >=3.9
+---
+# incorect minimum jaxlib version
+if:
+  name: jax
+  version: 0.4.16
+  build: pyhd8ed1ab_0
+  timestamp_lt: 1695136590139
+then:
+  - replace_depends:
+      old: jaxlib >=0.4.11
+      new: jaxlib >=0.4.14
