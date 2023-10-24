@@ -36,3 +36,12 @@ then:
   - replace_depends:
       old: pandas >=1.1
       new: pandas >=1.3
+---
+if:
+  name: networkx
+  version: "3.2"
+  build_number: 0
+then:
+  - replace_depends:
+      old: python >=3.8
+      new: python >=3.9
