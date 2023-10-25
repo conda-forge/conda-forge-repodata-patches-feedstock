@@ -1,0 +1,5 @@
+if:
+  name: impi-devel
+  version_le: 2023.2.1
+then:
+  - add_depends: "mpi 1.0 impi"
