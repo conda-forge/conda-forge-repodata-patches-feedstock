@@ -74,12 +74,3 @@ then:
   - replace_depends:
       old: python *
       new: python >=3.8
----
-if:
-  name: anaconda-client
-  version_le: 1.12.1
-  timestamp_le: 1698824272562
-then:
-  - tighten_depends:
-      name: python
-      upper_bound: "3.12"
