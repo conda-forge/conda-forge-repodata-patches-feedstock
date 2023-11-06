@@ -70,3 +70,17 @@ then:
   - replace_depends:
       old: tensorflow-estimator * cuda112py310*
       new: tensorflow-estimator 2.11.0 cuda112py310*_0
+
+---
+# flatbuffers changed the so name model making this particular version
+# tensorflow fail on import
+if:
+  name: tensorflow
+  version: 2.11.1
+  build_number: 0
+  has_depends: flatbuffers >=23.3.3
+
+then:
+  - replace_depends:
+      old: flatbuffers >=23.3.3
+      new: flatbuffers >=23.3.3,<23.3.4.0a0
