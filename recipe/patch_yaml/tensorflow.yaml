@@ -78,7 +78,6 @@ if:
   name: tensorflow
   version: 2.11.1
   build_number: 0
-  has_depends: flatbuffers >=23.3.3
 
 then:
   - replace_depends:
