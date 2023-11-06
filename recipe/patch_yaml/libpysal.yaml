@@ -1,0 +1,10 @@
+# libpysal 4.9.2 requires Python 3.10 and does not run on older versions
+# first build of 4.9.2 still allows installation, breaking the environment
+if:
+  name: libpysal
+  version: 4.9.2
+  build_number_in: [0]
+then:
+  - replace_depends:
+      old: python >=3.8
+      new: python >=3.10
