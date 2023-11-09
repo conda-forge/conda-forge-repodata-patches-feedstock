@@ -75,7 +75,7 @@ then:
 # flatbuffers changed the so name model making this particular version
 # tensorflow fail on import
 if:
-  name: tensorflow
+  name: tensorflow-base
   version: 2.11.1
   build_number: 0
 
