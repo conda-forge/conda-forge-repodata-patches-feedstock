@@ -81,5 +81,5 @@ if:
 
 then:
   - replace_depends:
-      old: flatbuffers >=23.3.3
+      old: flatbuffers >=23.3.3,<24.0a0
       new: flatbuffers >=23.3.3,<23.3.4.0a0
