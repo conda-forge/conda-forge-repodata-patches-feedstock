@@ -12,3 +12,13 @@ then:
   - tighten_depends:
       name: ffmpeg
       max_pin: x.x
+
+---
+
+if:
+  has_depends: ffmpeg >=6.0.[0-1],<7.0a0
+  timestamp_lt: 1699713363000
+then:
+  - tighten_depends:
+      name: ffmpeg
+      max_pin: x.x
