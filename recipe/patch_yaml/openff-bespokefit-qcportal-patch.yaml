@@ -1,0 +1,20 @@
+if:
+  subdir_in: noarch
+  artifact_in:
+    - noarch/openff-bespokefit-0.2.2-pyhd8ed1ab_5.conda
+    - noarch/openff-bespokefit-0.2.2-pyhd8ed1ab_1.conda
+    - noarch/openff-bespokefit-0.2.2-pyhd8ed1ab_0.conda
+    - noarch/openff-bespokefit-0.2.1-pyhd8ed1ab_0.conda
+    - noarch/openff-bespokefit-0.1.3-pyhd8ed1ab_3.conda
+    - noarch/openff-bespokefit-0.1.3-pyhd8ed1ab_2.conda
+    - noarch/openff-bespokefit-0.2.0-pyhd8ed1ab_1.conda
+    - noarch/openff-bespokefit-0.2.0-pyhd8ed1ab_0.conda
+    - noarch/openff-bespokefit-0.1.3-pyhd8ed1ab_0.conda
+    - noarch/openff-bespokefit-0.1.2-pyhd8ed1ab_1.tar.bz2
+    - noarch/openff-bespokefit-0.1.2-pyhd8ed1ab_0.tar.bz2
+    - noarch/openff-bespokefit-0.1.1-pyhd8ed1ab_0.tar.bz2
+    - noarch/openff-bespokefit-0.1.0-pyhd8ed1ab_0.tar.bz2
+then:
+  - replace_depends:
+      old: "qcportal >=0.15.6"
+      new: "qcportal >=0.15.6,<0.50"
