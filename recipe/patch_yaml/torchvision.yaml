@@ -29,7 +29,8 @@ then:
 if:
   name: "torchvision"
   build_number_in: [0, 1, 2]
-  version: "0.15.2"
+  version_ge: 0.15.0
+  version_lt: 0.16.0
   has_depends:
     - "cudatoolkit >=11.2,<12"
     - "pytorch >=2.0.0,<2.1.0a0"
