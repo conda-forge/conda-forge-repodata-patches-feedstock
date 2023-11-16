@@ -1,0 +1,10 @@
+# prometheus_client 0.18.0 requires Python 3.8 and does not run on older versions
+if:
+  name: prometheus_client
+  timestamp_le: 1699961588000  # 2023-11-14
+  version: 0.18.0
+  build_number_in: [0]
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.8
