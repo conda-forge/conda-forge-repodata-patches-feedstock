@@ -23,3 +23,19 @@ then:
   - replace_depends:
       old: "pytorch [*] cuda[*]"
       new: "pytorch 1.10.* cuda*"
+---
+# Nov 13, 2023 -- hmaarrfk
+# It seems that torchvision wants to have the same cuda build as pytorch
+if:
+  name: "torchvision"
+  build_number_in: [0, 1, 2]
+  version_ge: 0.15.0
+  version_lt: 0.16.0
+  has_depends:
+    - "cudatoolkit >=11.2,<12"
+    - "pytorch >=2.0.0,<2.1.0a0"
+
+then:
+  - replace_depends:
+      old: "pytorch >=2.0.0,<2.1.0a0"
+      new: "pytorch 2.0.* cuda112*"
