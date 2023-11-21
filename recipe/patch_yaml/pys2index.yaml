@@ -1,0 +1,8 @@
+if:
+  name: pys2index
+  version_in: ["0.1.3", "0.1.4"]
+  timestamp_lt: 1700488387000
+then:
+  - replace_depends:
+      old: s2geometry
+      new: s2geometry >=0.10.0
