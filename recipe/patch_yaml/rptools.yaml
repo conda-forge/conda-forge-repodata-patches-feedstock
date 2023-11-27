@@ -1,0 +1,10 @@
+# from this snippet
+# pin python min,max python versions (fixed in newer version of rptools)
+if:
+  name: rptools
+  version: 6.4.1
+  timestamp: 1700600480423
+then:
+  - replace_depends:
+      old: python <=3.11
+      new: python >=3.7,<3.11
