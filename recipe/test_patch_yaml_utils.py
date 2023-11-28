@@ -529,8 +529,7 @@ def test_schema_up_to_date():
     assert schema_str == schema_on_disk
 
 
-patch_yaml_files = list((Path(__file__).parent / "patch_yaml").glob("*.yaml"))
-patch_yaml_files.sort()
+patch_yaml_files = sorted((Path(__file__).parent / "patch_yaml").glob("*.yaml"))
 
 
 @pytest.mark.parametrize(
