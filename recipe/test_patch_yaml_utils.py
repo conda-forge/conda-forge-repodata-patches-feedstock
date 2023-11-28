@@ -529,14 +529,14 @@ def test_schema_up_to_date():
     assert schema_str == schema_on_disk
 
 
-def test_schema_validation():
-    passed = True
-    data = Path(__file__).parent / "patch_yaml"
-    for document in data.glob("*.yaml"):
-        for patch in yaml.safe_load_all(document.read_text()):
-            try:
-                PatchYaml(**patch)
-            except Exception as e:
-                print(f"\nSchema error in {document.name}: {e}")
-                passed = False
-    assert passed, "schema validation failed!"
+patch_yaml_files = list((Path(__file__).parent / "patch_yaml").glob("*.yaml"))
+patch_yaml_files.sort()
+
+
+@pytest.mark.parametrize(
+    "document", patch_yaml_files, ids=[f.name for f in patch_yaml_files]
+)
+def test_schema_validation(document):
+    for patch in yaml.safe_load_all(document.read_text()):
+        # Will raise an exception if pydantic validation fails
+        PatchYaml(**patch)
