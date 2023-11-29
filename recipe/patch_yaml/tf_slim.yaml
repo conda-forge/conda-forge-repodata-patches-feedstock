@@ -1,0 +1,9 @@
+# tf_slim 1.1.0 used an internal tensorflow api
+# https://github.com/conda-forge/tf-slim-feedstock/pull/6
+if:
+  name: tf_slim
+  timestamp_lt: 1701179521000
+then:
+  - tighten_depends:
+      name: tensorflow
+      upper_bound: "2.13"
