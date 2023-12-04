@@ -9,4 +9,3 @@ then:
   - replace_depends:
       old: "python >=3.7"
       new: "python >=3.10"
-
