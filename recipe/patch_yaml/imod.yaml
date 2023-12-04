@@ -3,6 +3,7 @@
 if:
   name: imod
   version_le: "0.15.0"
+  timestamp_le: 1701707420000
   has_depends: pandas
 then:
   - replace_depends:
@@ -12,6 +13,7 @@ then:
 # Set python upper limit to Python 3.11 for versions prior to 0.15.0
 if:
   name: imod
+  timestamp_le: 1701707420000
   version_le: "0.12.0"
   has_depends: python >=3.7
 then:
@@ -21,6 +23,7 @@ then:
 ---
 if:
   name: imod
+  timestamp_le: 1701707420000
   version_le: "0.10.1"
   has_depends: python >=3.6
 then:
@@ -31,6 +34,7 @@ then:
 # 0.15.0 works for 3.11, but not for 3.8 and 3.9
 if:
   name: imod
+  timestamp_le: 1701707420000
   version: "0.15.0"
 then:
   - replace_depends:
@@ -41,6 +45,7 @@ then:
 # with regrid_like
 if:
   name: imod
+  timestamp_le: 1701707420000
   version_ge: "0.14.0"
   has_depends: xugrid >=0.3.0
 then:
