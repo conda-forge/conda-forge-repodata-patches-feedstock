@@ -1,0 +1,11 @@
+# Retroactively fix Python lower limit to Python 3.10
+# Upstream package dropped older versions of Python and include incompatible
+# syntax. Autobot was faster than the maintainers and it got merged.
+# Feedstock patched here: https://github.com/conda-forge/pyspectral-feedstock/pull/36
+if:
+  artifact_in: ["pyspectral-0.13.0-pyhd8ed1ab_0.conda"]
+  timestamp_lt: 1701704368000
+then:
+  - replace_depends:
+      old: "python >=3.7"
+      new: "python >=3.10"
