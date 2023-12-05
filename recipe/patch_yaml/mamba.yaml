@@ -129,3 +129,14 @@ then:
   - tighten_depends:
       name: conda
       upper_bound: "23.9.0"
+---
+# conda=23.11.0 broke mamba's cli
+# https://github.com/conda/conda/issues/13400
+if:
+  name: mamba
+  version_le: 1.5.3
+  timestamp_lt: 1701773340000
+then:
+  - tighten_depends:
+      name: conda
+      upper_bound: 23.11.0
