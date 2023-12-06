@@ -1,0 +1,12 @@
+if:
+  name: pyside6
+  timestamp_lt: 1701832611000
+  version_in:
+    - 6.6.0
+then:
+  - replace_depends:
+      old: qt6-main >=6.6.0,<6.7.0a0
+      new: qt6-main >=6.6.0,<6.6.1a0
+
+
+
