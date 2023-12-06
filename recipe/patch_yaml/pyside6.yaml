@@ -7,6 +7,3 @@ then:
   - replace_depends:
       old: qt6-main >=6.6.0,<6.7.0a0
       new: qt6-main >=6.6.0,<6.6.1a0
-
-
-
