@@ -1,0 +1,7 @@
+if:
+  name: openslide
+  version: 4.0.0
+  build_number: 0
+
+then:
+  - add_depends: libdicom >=1.0.5,<1.1.0a0
