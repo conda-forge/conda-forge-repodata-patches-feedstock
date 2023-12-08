@@ -1,0 +1,11 @@
+# While not guaranteed
+# hdf5 1.14.2 and 1.14.3 have the same ABI
+# https://gamma.hdfgroup.org/ftp/pub/outgoing/hdf5/prelim_reports/hdf5-1.14.2-vs-hdf5-1.14.3-1-interface_compatibility_report.html
+if:
+  has_depends: hdf5 >=1.14.2,<1.14.3.0a0
+  timestamp_lt: 1701868616000
+
+then:
+  - loosen_depends:
+      name: hdf5
+      upper_bound: 1.14.4
