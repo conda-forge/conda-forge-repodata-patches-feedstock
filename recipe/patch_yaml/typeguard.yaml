@@ -1,0 +1,8 @@
+if:
+  name: typeguard
+  version_ge: 4.1.5
+  timestamp_lt: 1702067733000
+then:
+  - replace_depends:
+      old: typing_extensions >=4.4.0
+      new: typing_extensions >=4.7.0
