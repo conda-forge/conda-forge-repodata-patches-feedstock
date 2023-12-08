@@ -1,6 +1,7 @@
 if:
   name: typeguard
-  version_ge: 4.1.5
+  # https://github.com/agronholm/typeguard/blob/4.0.1/pyproject.toml#L30C27-L30C32
+  version_ge: 4.0.1
   timestamp_lt: 1702067733000
 then:
   - replace_depends:
