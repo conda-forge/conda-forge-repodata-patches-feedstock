@@ -1,0 +1,54 @@
+# Pandas 2 not supported in iMOD
+# Follow issue: https://gitlab.com/deltares/imod/imod-python/-/issues/352
+if:
+  name: imod
+  version_le: "0.15.0"
+  timestamp_le: 1701707420000
+  has_depends: pandas
+then:
+  - replace_depends:
+      old: pandas
+      new: pandas <2.0a
+---
+# Set python upper limit to Python 3.11 for versions prior to 0.15.0
+if:
+  name: imod
+  timestamp_le: 1701707420000
+  version_le: "0.12.0"
+  has_depends: python >=3.7
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.7,<3.11
+---
+if:
+  name: imod
+  timestamp_le: 1701707420000
+  version_le: "0.10.1"
+  has_depends: python >=3.6
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.6,<3.11
+---
+# 0.15.0 works for 3.11, but not for 3.8 and 3.9
+if:
+  name: imod
+  timestamp_le: 1701707420000
+  version: "0.15.0"
+then:
+  - replace_depends:
+      old: python >3.7,<3.11
+      new: python >=3.10
+---
+# Ensure xugrid version with critical regridding fixes is installed for versions
+# with regrid_like
+if:
+  name: imod
+  timestamp_le: 1701707420000
+  version_ge: "0.14.0"
+  has_depends: xugrid >=0.3.0
+then:
+  - replace_depends:
+      old: xugrid >=0.3.0
+      new: xugrid >=0.6.3
