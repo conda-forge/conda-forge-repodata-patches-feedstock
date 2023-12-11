@@ -1,0 +1,12 @@
+# maxima is an optional dependency of sagelib.
+# Old versions of sagelib (9.5, 9.6, 9.7, 9.8, 10.0) cannot handle a change in
+# maxima 5.47.
+if:
+  name: maxima
+  version: "5.47.0"
+  # Newer builds include this constraint: https://github.com/conda-forge/maxima-feedstock/pull/34
+  build: "*_0"
+then:
+  - replace_constrains:
+      old: "sagelib >=9.5"
+      new: "sagelib >=10.1"
