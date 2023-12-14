@@ -79,3 +79,13 @@ then:
   - tighten_depends:
       name: conda
       upper_bound: 23.9.0
+---
+# conda-build 3.28.x uses menuinst to validate v2 JSONs, but doesn't pin a lower
+# bound version; on Windows, menuinst 1.x is eligible, which breaks the import
+if:
+  name: conda-build
+  version_le: 3.28.1
+then:
+  - replace_depends:
+      old: menuinst
+      new: menuinst >=2.0.1
