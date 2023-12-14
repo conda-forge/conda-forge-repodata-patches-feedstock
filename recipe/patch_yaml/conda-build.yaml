@@ -85,6 +85,7 @@ then:
 if:
   name: conda-build
   version_le: 3.28.1
+  timestamp_le: 1702544267086  # 2023-12-14
 then:
   - replace_depends:
       old: menuinst
