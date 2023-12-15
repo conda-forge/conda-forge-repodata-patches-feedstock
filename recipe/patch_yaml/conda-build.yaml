@@ -84,7 +84,7 @@ then:
 # bound version; on Windows, menuinst 1.x is eligible, which breaks the import
 if:
   name: conda-build
-  version_in: ["3.28.0", "3.28.1"] 
+  version_in: ["3.28.0", "3.28.1"]
   timestamp_le: 1702544267086  # 2023-12-14
 then:
   - replace_depends:
