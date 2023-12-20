@@ -22,7 +22,6 @@ then:
 ---
 if:
   name: conda-smithy
-  version: *
 then:
   - tighten_depends:
       name: conda-build
