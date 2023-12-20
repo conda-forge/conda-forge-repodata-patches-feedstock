@@ -19,3 +19,11 @@ then:
   - tighten_depends:
       name: conda
       upper_bound: "5"
+if:
+  name: conda-smithy
+  version: 3.30.1
+then:
+  - replace_depends:
+    old: conda-build?( *)
+    new: conda-build<3.28.2
+    
