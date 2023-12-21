@@ -1,0 +1,12 @@
+# kartograph requires newer versions of gufe to work
+# https://github.com/conda-forge/kartograf-feedstock/issues/10
+if:
+  subdir_in: noarch
+  name: kartograf
+  timestamp_lt: 1703125261000
+then:
+  - replace_depends:
+      # str of thing to be replaced
+      old: gufe
+      # thing to replace `old` with
+      new: gufe>=0.9.5
