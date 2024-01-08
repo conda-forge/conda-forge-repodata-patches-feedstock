@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+if:
+  name: mkdocs-material
+  timestamp_le: 1704730011000
+  version_ge: "9.4.2"
+then:
+  - replace_depends:
+      old: regex ~=2022.4
+      new: regex >=2022.4
