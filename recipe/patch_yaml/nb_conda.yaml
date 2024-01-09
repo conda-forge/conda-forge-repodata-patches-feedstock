@@ -1,0 +1,13 @@
+# nb_conda is not compatible with notebook >=7.0.0, see
+# https://github.com/conda-forge/nb_conda-feedstock/issues/21
+# https://github.com/conda-forge/nb_conda-feedstock/pull/22
+if:
+  name: nb_conda
+  timestamp_lt: 1704206086000
+then:
+  - replace_depends:
+      old: notebook >=4.2.0
+      new: ${old},<7.0.0
+  - replace_depends:
+      old: notebook >=4.3.1
+      new: ${old},<7.0.0
