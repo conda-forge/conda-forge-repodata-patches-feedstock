@@ -1,0 +1,11 @@
+if:
+  name: cuda-nvcc
+  timestamp_lt: 1704441600000
+  subdir_in: linux-ppc64le
+then:
+  - replace_depends:
+      old: gcc_linux-ppc64le 12.*
+      new: gcc_linux-ppc64le
+  - replace_depends:
+      old: gxx_linux-ppc64le 12.*
+      new: gxx_linux-ppc64le

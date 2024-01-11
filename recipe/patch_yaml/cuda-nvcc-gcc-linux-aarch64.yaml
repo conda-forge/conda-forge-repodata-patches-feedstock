@@ -1,0 +1,11 @@
+if:
+  name: cuda-nvcc
+  timestamp_lt: 1704441600000
+  subdir_in: linux-aarch64
+then:
+  - replace_depends:
+      old: gcc_linux-aarch64 12.*
+      new: gcc_linux-aarch64
+  - replace_depends:
+      old: gxx_linux-aarch64 12.*
+      new: gxx_linux-aarch64
