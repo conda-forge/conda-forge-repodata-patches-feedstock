@@ -1,0 +1,10 @@
+if:
+  name: cpptango
+  version: 9.5.0
+  has_depends: omniorb-libs >=4.3.1,<4.4.0a0
+  subdir_in: ["osx-64", "osx-arm64"]
+  timestamp_lt: 1705487016000
+then:
+  - tighten_depends:
+      name: omniorb-libs
+      max_pin: 'x.x.x'
