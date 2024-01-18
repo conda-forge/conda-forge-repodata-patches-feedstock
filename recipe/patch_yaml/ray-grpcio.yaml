@@ -1,7 +1,7 @@
 # Prevent ray2.9.0 and grpcio 1.58 (https://github.com/conda-forge/ray-packages-feedstock/issues/136)
 if:
   name: ray-default
-  version_gt: "2.8.99"
+  version_le: "2.9.0"
 then:
   - replace_depends:
       old: grpcio
@@ -9,7 +9,7 @@ then:
 ---
 if:
   name: ray-client
-  version_gt: "2.8.99"
+  version_le: "2.9.0"
 then:
   - replace_depends:
       old: grpcio !=1.56.0
