@@ -1,0 +1,9 @@
+---
+if:
+  timestamp_lt: 1705581898000
+  has_depends:
+    - elfutils >=0.18*
+then:
+  - loosen_depends:
+      name: elfutils
+      upper_bound: '0.191'
