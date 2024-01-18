@@ -1,0 +1,10 @@
+# incorect minimum aiohttp version
+if:
+  name: aiohttp-jinja2
+  version: "1.6"
+  build: pyhd8ed1ab_0
+  timestamp_lt: 1702421347000
+then:
+  - replace_depends:
+      old: aiohttp >=3.6.3
+      new: aiohttp >=3.9.0
