@@ -150,10 +150,13 @@ then:
   - add_depends: pytorch 1.6
 
 ---
+# The first build of libtorch clobbered other headers such as
+# those from pybind11
+# https://github.com/conda-forge/pytorch-cpu-feedstock/issues/212
 if:
   name: libtorch
   version: 2.1.0
-  build_number_in: [2, 102, 202]
+  build_number_in: [2, 102, 302]
 
 then:
   - add_constrains: pybind11 <0.0.0a0
