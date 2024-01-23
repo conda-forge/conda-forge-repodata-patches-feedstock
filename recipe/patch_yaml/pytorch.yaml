@@ -148,3 +148,12 @@ if:
   not_has_depends: pytorch?( *)
 then:
   - add_depends: pytorch 1.6
+
+---
+if:
+  name: libtorch
+  version: 2.1.0
+  build_number: 2
+
+then:
+  - add_constrains: pybind11 <0.0.0a0
