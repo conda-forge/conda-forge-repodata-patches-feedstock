@@ -1,6 +1,7 @@
 """
 Pydantic model for patch_yaml documents
 """
+
 from __future__ import annotations
 import itertools
 import json
