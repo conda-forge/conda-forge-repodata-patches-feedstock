@@ -1,0 +1,20 @@
+---
+# see https://github.com/conda-forge/ray-packages-feedstock/issues/136
+if:
+  name: ray-default
+  version_le: 2.9.0
+  timestamp_lt: 1706548610000
+then:
+  - replace_depends:
+      old: grpcio?( *)
+      new: ${old},!=1.58.*
+---
+# see https://github.com/conda-forge/ray-packages-feedstock/issues/136
+if:
+  name: ray-client
+  version_le: 2.9.0
+  timestamp_lt: 1706548610000
+then:
+  - replace_depends:
+      old: grpcio?( *)
+      new: ${old},!=1.58.*
