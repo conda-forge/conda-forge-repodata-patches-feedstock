@@ -7,7 +7,7 @@
 # https://github.com/conda-forge/azure-core-cpp-feedstock/pull/11
 if:
   name: tiledb
-  has_depends: azure-core-cpp*
+  has_depends: azure-core-cpp >=1.10*
   timestamp_lt: 1705699107000
 then:
   - tighten_depends:
