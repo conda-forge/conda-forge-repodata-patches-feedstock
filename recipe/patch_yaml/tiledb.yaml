@@ -1,0 +1,15 @@
+# azure-core-cpp 1.11.0 broke tiledb
+# https://github.com/conda-forge/tiledb-feedstock/issues/228
+#
+# azure-core-cpp minor releases are documented as backwards compatible, but
+# clearly are not. Future azure-core-cpp conda binaries will have run exports
+# with max_pin="x.x" to prevent future problems
+# https://github.com/conda-forge/azure-core-cpp-feedstock/pull/11
+if:
+  name: tiledb
+  has_depends: azure-core-cpp >=1.10*
+  timestamp_lt: 1705699107000
+then:
+  - tighten_depends:
+      name: azure-core-cpp
+      upper_bound: 1.11.0
