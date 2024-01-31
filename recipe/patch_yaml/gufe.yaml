@@ -10,4 +10,4 @@ then:
       # str of thing to be replaced
       old: openff-toolkit >=0.13,<0.14
       # thing to replace `old` with
-      new: openff-toolkit <0.15
+      new: openff-toolkit >=0.13,<0.15
