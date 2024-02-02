@@ -1,0 +1,10 @@
+# airflow <=2.7.2 is not compatible with pendulum >=3.0.0,
+# see https://github.com/conda-forge/airflow-feedstock/issues/127
+# fixed in https://github.com/conda-forge/airflow-feedstock/pull/123
+if:
+  name: airflow
+  timestamp_lt: 1706650867000
+then:
+  - replace_depends:
+      old: pendulum >=2.0
+      new: ${old},<3.0
