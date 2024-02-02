@@ -4,6 +4,6 @@ if:
   version_lt: 0.23.4
   timestamp_le: 1706889375000
 then:
-  - replace_depends:
-      old: pytest >=7.0.0
-      new: pytest >=7.0.0,<8
+  - tighten_depends:
+      name: pytest
+      upper_bound: '8.0.0'
