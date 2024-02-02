@@ -6,8 +6,11 @@ if:
   timestamp_lt: 1706548610000
 then:
   - replace_depends:
-      old: grpcio?( *)
+      old: grpcio *
       new: ${old},!=1.58.*
+  - replace_depends:
+      old: grpcio
+      new: grpcio !=1.58.*
 ---
 # see https://github.com/conda-forge/ray-packages-feedstock/issues/136
 if:
@@ -16,5 +19,8 @@ if:
   timestamp_lt: 1706548610000
 then:
   - replace_depends:
-      old: grpcio?( *)
+      old: grpcio *
       new: ${old},!=1.58.*
+  - replace_depends:
+      old: grpcio
+      new: grpcio !=1.58.*
