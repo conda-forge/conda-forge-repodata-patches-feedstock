@@ -1,32 +1,60 @@
 # from this bit of code
-# Version constraints for jupyterlab in jupyterlab-git<=0.22.0 were incorrect.
+# jupyterlab-git never depended on JupyterLab, it should have been a run_constrained from the beginning.
 # These have been corrected in PR
-# https://github.com/conda-forge/jupyterlab-git-feedstock/pull/27
-# if record_name == "jupyterlab-git":
-#     if "jupyterlab >=2.0.0" in record["depends"]:
-#         i = record["depends"].index("jupyterlab >=2.0.0")
-#         record["depends"][i] = "jupyterlab >=2.0.0,<3.0.0"
-#     if "jupyterlab >=1.1.0" in record["depends"]:
-#         i = record["depends"].index("jupyterlab >=1.1.0")
-#         record["depends"][i] = "jupyterlab >=1.1.0,<2.0.0"
-#     if "jupyterlab >=1.0.0" in record["depends"]:
-#         i = record["depends"].index("jupyterlab >=1.0.0")
-#         record["depends"][i] = "jupyterlab >=1.0.0,<2.0.0"
-#     if "jupyterlab" in record["depends"]:
-#         i = record["depends"].index("jupyterlab")
-#         record["depends"][i] = "jupyterlab <1.0.0"
+# https://github.com/conda-forge/jupyterlab-git-feedstock/pull/66
 if:
   name: jupyterlab-git
+  has_depends: jupyterlab >=4.0
+  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
 then:
-  - replace_depends:
-      old: jupyterlab >=2.0.0
-      new: jupyterlab >=2.0.0,<3.0.0
-  - replace_depends:
-      old: jupyterlab >=1.1.0
-      new: jupyterlab >=1.1.0,<2.0.0
-  - replace_depends:
-      old: jupyterlab >=1.0.0
-      new: jupyterlab >=1.0.0,<2.0.0
-  - replace_depends:
-      old: jupyterlab
-      new: jupyterlab <1.0.0
+  - remove_depends: jupyterlab >=4.0
+  - add_constrains: jupyterlab >=4,<5
+---
+if:
+  name: jupyterlab-git
+  has_depends: jupyterlab <4.0
+  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+then:
+  - remove_depends: jupyterlab <4.0
+  - add_constrains: jupyterlab >=3,<4
+---
+if:
+  name: jupyterlab-git
+  version_ge: "0.30.1"
+  version_le: "0.36.0"
+  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+then:
+  - remove_depends: jupyterlab*
+  - add_constrains: jupyterlab >=3,<4
+---
+if:
+  name: jupyterlab-git
+  has_depends: jupyterlab >=2.0.0,<3.0.0
+  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+then:
+  - remove_depends: jupyterlab >=2.0.0,<3.0.0
+  - add_constrains: jupyterlab >=2.0.0,<3.0.0
+---
+if:
+  name: jupyterlab-git
+  has_depends: jupyterlab >=2.0.0
+  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+then:
+  - remove_depends: jupyterlab >=2.0.0
+  - add_constrains: jupyterlab >=2,<3
+---
+if:
+  name: jupyterlab-git
+  has_depends: jupyterlab >=1.1.0
+  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+then:
+  - remove_depends: jupyterlab >=1.1.0
+  - add_constrains: jupyterlab >=1.1,<2
+---
+if:
+  name: jupyterlab-git
+  has_depends: jupyterlab
+  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+then:
+  - remove_depends: jupyterlab
+  - add_constrains: jupyterlab <1
