@@ -14,3 +14,13 @@ then:
   - tighten_depends:
       name: mamba
       upper_bound: "0.15"
+---
+# https://github.com/mamba-org/boa/issues/392
+if:
+  name: boa
+  timestamp_le: 1707432932930
+  version_in: ["0.15.0", "0.15.1", "0.16.0"]
+then:
+  - tighten_depends:
+      name: conda-build
+      upper_bound: "24.1"

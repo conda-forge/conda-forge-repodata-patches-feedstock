@@ -1,0 +1,26 @@
+---
+# see https://github.com/conda-forge/ray-packages-feedstock/issues/136
+if:
+  name: ray-default
+  version_le: 2.9.0
+  timestamp_lt: 1706548610000
+then:
+  - replace_depends:
+      old: grpcio
+      new: grpcio <1.58.0b0
+  - replace_depends:
+      old: grpcio >=1.50,<1.59
+      new: grpcio >=1.50,<1.58.0b0
+---
+# see https://github.com/conda-forge/ray-packages-feedstock/issues/136
+if:
+  name: ray-client
+  version_le: 2.9.0
+  timestamp_lt: 1706548610000
+then:
+  - replace_depends:
+      old: grpcio
+      new: grpcio <1.58.0b0
+  - replace_depends:
+      old: grpcio !=1.56.0
+      new: grpcio !=1.56.0,<1.58.0b0
