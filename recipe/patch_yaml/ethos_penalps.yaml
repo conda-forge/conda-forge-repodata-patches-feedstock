@@ -1,0 +1,10 @@
+# The old numpy version raises an error in the tests on windows
+if:
+  name: ethos_penalps
+  version_le: 1.0.0
+then:
+  - replace_depends::
+      old: numpy <1.24.0
+      new: numpy >1.23.5
+---
+
