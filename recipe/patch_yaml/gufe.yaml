@@ -1,0 +1,13 @@
+# gufe works with newer versions of the openff-toolkit
+# https://github.com/OpenFreeEnergy/gufe/issues/280
+if:
+  subdir_in: noarch
+  name: gufe
+  timestamp_lt: 1706657189000
+  version_lt: 0.10.0
+then:
+  - replace_depends:
+      # str of thing to be replaced
+      old: openff-toolkit >=0.13,<0.14
+      # thing to replace `old` with
+      new: openff-toolkit >=0.13,<0.15
