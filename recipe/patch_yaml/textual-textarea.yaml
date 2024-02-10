@@ -1,0 +1,11 @@
+if:
+  name: textual-textarea
+  version: "0.11.0"
+  build: "*_0"
+  timestamp_lt: 1707472948000
+then:
+  - replace_depends:
+      old: textual >=0.27.0,<1.0.0
+      new: textual >=0.48.1,<1.0.0
+  - add_depends:
+      - tree_sitter_languages <1.10.0
