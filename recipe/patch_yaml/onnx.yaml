@@ -1,0 +1,8 @@
+if:
+  name: onnx
+  version: "1.12.0"
+  build: "*_0"
+then:
+  - replace_depends:
+      old: protobuf
+      new: protobuf >=3.12.2,<=3.20.1
