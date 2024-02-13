@@ -20,4 +20,4 @@ if:
 then:
   - tighten_depends:
       name: qcportal
-      upper_bound: 0.49
+      upper_bound: "0.49"
