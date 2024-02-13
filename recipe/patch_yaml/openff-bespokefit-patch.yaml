@@ -8,3 +8,16 @@ if:
   timestamp_lt: 1694139596000
 then:
   - add_constrains: "anyio <4.0.0a0"
+
+---
+
+# Bespokefit directly calls the QCPortal API, however this API changed in QCPortal 0.50
+if:
+  subdir_in: noarch
+  name: openff-bespokefit
+  timestamp_lt: 1707768684000
+  has_depends: qcportal*
+then:
+  - tighten_depends:
+      name: qcportal
+      upper_bound: 0.49
