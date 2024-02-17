@@ -6,3 +6,18 @@ then:
   - tighten_depends:
       name: traitlets
       upper_bound: 5.10.0
+---
+# while the python-level compatibility is fine, some browser assets are broken
+# see:
+# - https://github.com/jupyter/notebook/issues/7248
+# - https://github.com/conda-forge/notebook-feedstock/pull/144
+if:
+  name: notebook
+  timestamp_lt: 1707513052000
+then:
+  - replace_depends:
+      old: jupyterlab >=4.0.7,<5
+      new: jupyterlab >=4.0.7,<4.1.0a0
+  - replace_depends:
+      old: jupyterlab >=4.0.2,<5
+      new: jupyterlab >=4.0.2,<4.1.0a0
