@@ -22,3 +22,13 @@ then:
       new: setuptools <60.0.0
   - add_depends:  # doesn't add duplicates
       - setuptools <60.0.0
+---
+if:
+  name: setuptools
+  version_in:
+    - "69.1.0"
+  build: pyhd8ed1ab_0
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8
