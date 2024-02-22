@@ -1,0 +1,10 @@
+if:
+  name: fine
+  version_in: ["2.3.2", "2.3.1", "2.3.0", "2.2.3", "2.2.2"]
+then:
+  - tighten_depends:
+    name: pytest
+    upper_bound: "7.0"
+  - tighten_depends:
+    name: scikit-learn
+    upper_bound: "2.0"
