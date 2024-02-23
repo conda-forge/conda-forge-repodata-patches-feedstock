@@ -15,3 +15,12 @@ then:
   - replace_constrains:
       old: libcugraph >=0.19.0,<1.0a0
       new: libcugraph >=0.19.0
+---
+if:
+  name: cupy-core
+  version: 13.0.0
+  build_number_in: [0, 1, 2, 3]
+  timestamp_lt: 1708656816000
+then:
+  # create conflicts with older cupy to avoid coexistence
+  - add_constrains: cupy<13.0a0
