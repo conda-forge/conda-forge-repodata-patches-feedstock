@@ -1,0 +1,13 @@
+if:
+  name: cuda-python
+  version_ge: 12.0.0
+  version_lt: 13.0.0
+  timestamp_lt: 1706947200000
+then:
+  - remove_depends:
+      - cuda-cudart*
+  - add_constrains:
+      - cuda-cudart >=12,<13.0a0
+  - replace_depends:
+      old: cuda-nvrtc*
+      new: cuda-nvrtc >=12,<13.0a0
