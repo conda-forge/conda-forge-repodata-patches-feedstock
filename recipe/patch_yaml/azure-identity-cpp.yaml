@@ -1,0 +1,13 @@
+# The Azure SDK for C++ maintainers do not guarantee binary compatibility
+# between any releases
+# https://github.com/Azure/azure-sdk-for-cpp/issues/5322
+#
+# The run_exports max_pin was set to "x.x.x" in
+# https://github.com/conda-forge/azure-identity-cpp-feedstock/pull/6
+if:
+  has_depends: azure-identity-cpp*
+  timestamp_lt: 1709048999000
+then:
+  - tighten_depends:
+      name: azure-identity-cpp
+      max_pin: x.x.x
