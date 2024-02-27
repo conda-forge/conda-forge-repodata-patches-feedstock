@@ -1,0 +1,28 @@
+# Dev environment for preparing repodata patches. Enables you to run `python
+# show_diff.py` and `pre-commit run -a`
+#
+# usage:
+#   cd recipe/
+#   mamba env create --file dev-env-for-patches.yaml
+#   mamba activate repodata-patches
+#   pre-commit run -a
+#   # Check the patch for a few architectures
+#   python show_diff.py --subdirs noarch linux-64
+#   # Check the patch for all architectures
+#   python show_diff.py
+#   # Use the cache for quicker feedback
+#   python show_diff.py --use-cache
+#
+# NOTE: If these requirements are out-of-date, please open an Issue or send a PR
+# to update them
+name: repodata-patches
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - annotated-types
+  - conda-build
+  - license-expression
+  - pre-commit
+  - pydantic
+  - python

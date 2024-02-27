@@ -158,7 +158,17 @@ then:
   ...
 ```
 
+> [!WARNING]
+> The condition `timestamp_lt` is required to prevent your patch from modifying
+> any packages built in the future. Don't forget to calculate it with `python -c
+> "import time; print(f'{time.time():.0f}000')"` and include it in the `if:`
+> section of your patch
+
 ## Testing New Patches using `show_diff.py`
+
+> [!TIP]
+> You can install a development environment for testing your repodata patch
+> using the environment file `dev-env-for-patches.yaml`
 
 The `show_diff.py` script in this directory can be used to test out
 modifications to `gen_patch_json.py`.  This scripts shows the difference
@@ -187,6 +197,13 @@ path specified by the `CACHE_DIR` environment variable.
 Typically, `show_diff.py` is run without any argument to download the
 necessary repodata followed by repeated calls to `show_diff.py --use-cache`
 to test out changes to the `gen_patch_json.py` script.
+
+> [!TIP]
+> If you're having trouble running `show_diff.py` locally, don't despair. You
+> should still submit your patch. The Azure job also returns this information.
+> Search the build log for `patching repodata:` and copy-paste the output for
+> all the architectures to your Pull Request. Stop copying once you've reached
+> `patching repodata: 100%`
 
 ## Patch JSON Format for `anaconda.org`
 
