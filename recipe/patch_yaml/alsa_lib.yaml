@@ -4,8 +4,7 @@
 # https://github.com/conda-forge/alsa-lib-feedstock/pull/18
 if:
   has_depends: alsa-lib >=1.2.10,<1.2.11.0a0
-  # python -c "import time; print(f'{time.time():.0f}000')"
-  timestamp_lt: 1708909734000
+  timestamp_lt: 1709396227000
 
 then:
   - loosen_depends:
