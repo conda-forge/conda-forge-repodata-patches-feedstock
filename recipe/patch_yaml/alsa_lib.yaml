@@ -1,0 +1,12 @@
+# 2024/02
+# alsa_lib moved to minor level pinning
+# https://github.com/conda-forge/conda-forge-pinning-feedstock/pull/5448#issuecomment-1963146321
+# https://github.com/conda-forge/alsa-lib-feedstock/pull/18
+if:
+  has_depends: alsa-lib >=1.2.10,<1.2.11.0a0
+  timestamp_lt: 1709396227000
+
+then:
+  - loosen_depends:
+      name: alsa-lib
+      max_pin: 'x.x'
