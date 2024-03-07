@@ -23,4 +23,4 @@ if:
   timestamp_lt: 1708656816000
 then:
   # create conflicts with older cupy to avoid coexistence
-  - add_constrains: cupy<13.0a0
+  - add_constrains: cupy=${version}
