@@ -9,7 +9,9 @@ if:
   has_depends: "jedi?( *)"
 then:
   - add_depends: "jedi <0.18"
+
 ---
+
 if:
   name: ipython
   version_ge: 8.18.0
@@ -22,3 +24,14 @@ then:
   - replace_depends:
       old: prompt_toolkit >=3.0.30,<3.1.0,!=3.0.37
       new: prompt-toolkit >=3.0.41,<3.1.0
+
+---
+
+if:
+  name: ipython
+  version_ge: 8.22.0
+  timestamp_lt: 1708707329000
+then:
+  - replace_depends:
+      old: traitlets >=5
+      new: traitlets >=5.13

@@ -1,0 +1,95 @@
+# knitr often bumps its minimum required version of xfun, which we miss when the
+# update PR is automerged. This can lead to errors, eg
+# https://github.com/conda-forge/r-knitr-feedstock/issues/35
+#
+# This patch fixes the xfun requirement for all the knitr versions that
+# specified a minimum required version. The first minimum was added in knitr
+# 1.29
+# https://github.com/yihui/knitr/commit/76fef5b9c535afa244989732b53cc8dfb7ffb471
+
+# xfun (>= 0.15)
+# https://github.com/yihui/knitr/blob/v1.29/DESCRIPTION#L114
+# https://github.com/yihui/knitr/blob/v1.30/DESCRIPTION#L114
+if:
+  name: r-knitr
+  version_in: ["1.29", "1.30"]
+  timestamp_lt: 1709048999000
+then:
+  - replace_depends:
+      old: r-xfun*
+      new: r-xfun >=0.15
+---
+# xfun (>= 0.19)
+# https://github.com/yihui/knitr/blob/v1.31/DESCRIPTION#L115
+if:
+  name: r-knitr
+  version_in: ["1.31"]
+  timestamp_lt: 1709048999000
+then:
+  - replace_depends:
+      old: r-xfun*
+      new: r-xfun >=0.19
+---
+# xfun (>= 0.21)
+# https://github.com/yihui/knitr/blob/v1.32/DESCRIPTION#L117
+# https://github.com/yihui/knitr/blob/v1.33/DESCRIPTION#L118
+# https://github.com/yihui/knitr/blob/v1.34/DESCRIPTION#L117
+# https://github.com/yihui/knitr/blob/v1.35/DESCRIPTION#L117
+# https://github.com/yihui/knitr/blob/v1.36/DESCRIPTION#L117
+if:
+  name: r-knitr
+  version_in: ["1.32", "1.33", "1.34", "1.35", "1.36"]
+  timestamp_lt: 1709048999000
+then:
+  - replace_depends:
+      old: r-xfun*
+      new: r-xfun >=0.21
+---
+# xfun (>= 0.27)
+# https://github.com/yihui/knitr/blob/v1.37/DESCRIPTION#L117
+if:
+  name: r-knitr
+  version_in: ["1.37"]
+  timestamp_lt: 1709048999000
+then:
+  - replace_depends:
+      old: r-xfun*
+      new: r-xfun >=0.27
+---
+# xfun (>= 0.29)
+# https://github.com/yihui/knitr/blob/v1.38/DESCRIPTION#L118
+# https://github.com/yihui/knitr/blob/v1.39/DESCRIPTION#L118
+# https://github.com/yihui/knitr/blob/v1.40/DESCRIPTION#L122
+if:
+  name: r-knitr
+  version_in: ["1.38", "1.39", "1.40"]
+  timestamp_lt: 1709048999000
+then:
+  - replace_depends:
+      old: r-xfun*
+      new: r-xfun >=0.29
+---
+# xfun (>= 0.34)
+# https://github.com/yihui/knitr/blob/v1.41/DESCRIPTION#L123
+# https://github.com/yihui/knitr/blob/v1.42/DESCRIPTION#L122
+if:
+  name: r-knitr
+  version_in: ["1.41", "1.42"]
+  timestamp_lt: 1709048999000
+then:
+  - replace_depends:
+      old: r-xfun*
+      new: r-xfun >=0.34
+---
+# xfun (>= 0.39)
+# https://github.com/yihui/knitr/blob/v1.43/DESCRIPTION#L123
+# https://github.com/yihui/knitr/blob/v1.44/DESCRIPTION#L123
+# https://github.com/yihui/knitr/blob/v1.45/DESCRIPTION#L123
+if:
+  name: r-knitr
+  version_in: ["1.43", "1.44", "1.45"]
+  timestamp_lt: 1709048999000
+then:
+  - replace_depends:
+      old: r-xfun*
+      new: r-xfun >=0.39
