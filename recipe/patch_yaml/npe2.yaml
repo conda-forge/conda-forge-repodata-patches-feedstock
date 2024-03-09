@@ -1,8 +1,8 @@
 if:
   name: npe2
   version_in: ["0.7.3", "0.7.4"]
-  timestamp_lt: 1710016095000 # 2024-03-09
+  timestamp_lt: 1710016095000  # 2024-03-09
 then:
   - replace_depends:
-      old: pydantic <2.0a0 
+      old: pydantic <2.0a0
       new: pydantic
