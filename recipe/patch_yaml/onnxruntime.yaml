@@ -1,0 +1,7 @@
+if:
+  name: onnxruntime
+  has_depends: cuda-version >=12.0,<13
+  timestamp_le: 1709924080000
+
+then:
+  - add_depends: cuda-cudart >=12.0,<13
