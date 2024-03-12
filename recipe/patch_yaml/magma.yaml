@@ -1,0 +1,15 @@
+if:
+  timestamp_lt: 1710258820000
+  version: 2.7.2
+  build_number_in: [2]
+  has_depends: cuda-version >=12.0,<13
+then:
+  - replace_depends:
+    old: cuda-cudart >=12.1.105,<13.0a0
+    new: cuda-cudart >=12.0.107,<13.0a0
+  - replace_depends:
+    old: libcublas >=12.1.3.1,<13.0a0
+    new: libcublas >=12.0.1.189,<13.0a0
+  - replace_depends:
+    old: libcusparse >=12.1.0.106,<13.0a0
+    new: libcusparse >=12.0.0.76,<13.0a0
