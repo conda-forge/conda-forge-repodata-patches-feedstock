@@ -1,5 +1,6 @@
 if:
   timestamp_lt: 1710258820000
+  name: libmagma_sparse
   version: 2.7.2
   build_number_in: [2]
   has_depends: cuda-version >=12.0,<13
