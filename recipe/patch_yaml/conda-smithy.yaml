@@ -27,3 +27,9 @@ then:
   - tighten_depends:
       name: conda-build
       upper_bound: 3.28.2
+---
+if:
+  subdir_in: noarch
+  artifact_in: conda-smithy-3.32.0-pyhd8ed1ab_0.conda
+then:
+  - add_depends: jsonschema
