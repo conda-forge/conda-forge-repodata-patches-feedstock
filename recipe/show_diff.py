@@ -7,7 +7,7 @@ import os
 import urllib
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
-from conda_build.index import _apply_instructions
+from conda_index.index import _apply_instructions
 
 CACHE_DIR = os.environ.get(
     "CACHE_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
