@@ -1,6 +1,6 @@
 # https://github.com/conda-forge/conda-forge.github.io/issues/2117
 if:
-  name: conda-forge-check-solvable
+  name: conda-forge-feedstock-check-solvable
   timestamp_lt: 1710847759000
 then:
   - tighten_depends:
