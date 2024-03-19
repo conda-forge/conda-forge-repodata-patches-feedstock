@@ -79,3 +79,15 @@ then:
   - tighten_depends:
       name: conda
       upper_bound: 23.9.0
+---
+# conda.auxlib.packaging was removed in 24.3.0 but still neeeded by conda-build
+# https://github.com/conda/conda-build/pull/5221
+if:
+  name: conda-build
+  version_gt: 3.21.8
+  version_lt: 24.3.0
+  timestamp_le: 1710834612324  # 2024-03-19
+then:
+  - tighten_depends:
+      name: conda
+      upper_bound: 24.3.0
