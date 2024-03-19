@@ -86,6 +86,7 @@ if:
   name: conda-build
   version_gt: 3.21.8
   version_lt: 24.3.0
+  timestamp_le: 1710834612324  # 2024-03-19
 then:
   - tighten_depends:
       name: conda
