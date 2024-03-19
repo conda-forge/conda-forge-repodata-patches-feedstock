@@ -90,4 +90,4 @@ if:
 then:
   - tighten_depends:
       name: conda
-      upper_bound: 24.3.0 
+      upper_bound: 24.3.0
