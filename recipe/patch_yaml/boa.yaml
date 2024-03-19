@@ -24,3 +24,12 @@ then:
   - tighten_depends:
       name: conda-build
       upper_bound: "24.1"
+---
+# https://github.com/conda-forge/conda-forge.github.io/issues/2117
+if:
+  name: boa
+  timestamp_lt: 1710847759000
+then:
+  - tighten_depends:
+      name: conda-build
+      upper_bound: 24.3.0
