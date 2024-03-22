@@ -343,6 +343,38 @@ def test_apply_patch_yaml_remove_track_features():
     assert record == {"track_features": "baz foo bla bar"}
 
 
+def test_apply_patch_yaml_add_track_features():
+    patch_yaml = {"then": [{"add_track_features": "blahhh"}]}
+
+    record = {}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"track_features": "blahhh"}
+
+    record = {"track_features": None}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"track_features": "blahhh"}
+
+    record = {"track_features": "blah"}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"track_features": "blah blahhh"}
+
+    record = {"track_features": "blah foo"}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"track_features": "blah foo blahhh"}
+
+    record = {"track_features": "blah foo bar"}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"track_features": "blah foo bar blahhh"}
+
+    record = {"track_features": "baz blah foo"}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"track_features": "baz blah foo blahhh"}
+
+    record = {"track_features": "baz blah foo bar"}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"track_features": "baz blah foo bar blahhh"}
+
+
 @pytest.mark.parametrize("pre", [[], ["foo"]])
 @pytest.mark.parametrize("post", [[], ["bar"]])
 @pytest.mark.parametrize("key", ["depends", "constrains"])

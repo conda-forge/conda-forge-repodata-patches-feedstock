@@ -163,6 +163,10 @@ class _ThenClauseItem(_ForbidExtra):
         None,
         description="Remove item(s) from track_features to matched packages",
     )
+    add_track_features: _NonEmptyStr | list[_NonEmptyStr] = Field(
+        None,
+        description="Add item(s) to track_features for matched packages",
+    )
     replace_depends: _Old2New = Field(
         None,
         description="Replace 'old' dependency with 'new'.",
