@@ -227,7 +227,7 @@ def _extract_track_feature(record, feature_name):
 
 
 def _add_track_feature(record, feature_name):
-    return (record.get("track_features", "") or "") + " " + feature_name
+    return " ".join((record.get("track_features", "") or "").split() + [feature_name])
 
 
 def _replace_pin(old_pin, new_pin, deps, record, target="depends"):
