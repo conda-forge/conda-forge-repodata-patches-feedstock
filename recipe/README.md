@@ -78,6 +78,9 @@ then:
   # remove entries from track_features
   - remove_track_features: <list of str or str>
 
+  # add entries to track_features
+  - add_track_features: <list of str or str>
+
   # reset the depends or constrains section of the repodata
   # this function resets the depends or constrains to the specified value(s)
   - reset_<depends or constrains>: <list of str or single str>

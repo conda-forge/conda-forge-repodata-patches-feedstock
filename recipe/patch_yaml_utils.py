@@ -226,6 +226,10 @@ def _extract_track_feature(record, feature_name):
     return " ".join(features) or None
 
 
+def _add_track_feature(record, feature_name):
+    return " ".join((record.get("track_features", "") or "").split() + [feature_name])
+
+
 def _replace_pin(old_pin, new_pin, deps, record, target="depends"):
     """Replace an exact pin with a new one. deps and target must match."""
     if target not in ("depends", "constrains"):
@@ -452,6 +456,12 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                         record["track_features"] = _extract_track_feature(record, _v)
                         if record["track_features"] is None:
                             break
+
+            elif k == "add_track_features":
+                if not isinstance(v, list):
+                    v = [v]
+                for _v in v:
+                    record["track_features"] = _add_track_feature(record, _v)
 
             elif k.startswith("replace_") and k[len("replace_") :] in [
                 "depends",

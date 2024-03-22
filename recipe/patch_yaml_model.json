@@ -1983,6 +1983,24 @@
           "description": "Remove item(s) from track_features to matched packages",
           "title": "Remove Track Features"
         },
+        "add_track_features": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Add item(s) to track_features for matched packages",
+          "title": "Add Track Features"
+        },
         "replace_depends": {
           "allOf": [
             {
