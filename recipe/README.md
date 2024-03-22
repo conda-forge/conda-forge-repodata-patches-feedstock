@@ -79,7 +79,7 @@ then:
   - remove_track_features: <list of str or str>
 
   # add entries to track_features
-  - aa_track_features: <list of str or str>
+  - add_track_features: <list of str or str>
 
   # reset the depends or constrains section of the repodata
   # this function resets the depends or constrains to the specified value(s)
