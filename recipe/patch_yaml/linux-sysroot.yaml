@@ -1,6 +1,31 @@
+# https://github.com/conda-forge/linux-sysroot-feedstock/issues/58
 if:
   name: sysroot_linux-64
   version_eq: "2.28"
   build_number_le: 1
 then:
   - add_track_features: sysroot_linux-64_2.28_feature_2
+---
+# https://github.com/conda-forge/linux-sysroot-feedstock/issues/58
+if:
+  name: sysroot_linux-aarch64
+  version_eq: "2.28"
+  build_number_le: 1
+then:
+  - add_track_features: sysroot_linux-aarch64_2.28_feature_2
+---
+# https://github.com/conda-forge/linux-sysroot-feedstock/issues/58
+if:
+  name: sysroot_linux-ppc64le
+  version_eq: "2.28"
+  build_number_le: 1
+then:
+  - add_track_features: sysroot_linux-ppc64le_2.28_feature_2
+---
+# https://github.com/conda-forge/linux-sysroot-feedstock/issues/58
+if:
+  name: sysroot_linux-s390x
+  version_eq: "2.28"
+  build_number_le: 1
+then:
+  - add_track_features: sysroot_linux-s390x_2.28_feature_2
