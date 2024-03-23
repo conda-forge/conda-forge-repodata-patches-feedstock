@@ -1,0 +1,8 @@
+# https://github.com/conda-forge/conda-forge.github.io/issues/2117
+if:
+  name: conda-forge-feedstock-check-solvable
+  timestamp_lt: 1710847759000
+then:
+  - tighten_depends:
+      name: conda-build
+      upper_bound: 24.5.0

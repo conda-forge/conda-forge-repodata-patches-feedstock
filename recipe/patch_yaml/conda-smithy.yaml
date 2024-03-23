@@ -33,3 +33,12 @@ if:
   artifact_in: conda-smithy-3.32.0-pyhd8ed1ab_0.conda
 then:
   - add_depends: jsonschema
+---
+# https://github.com/conda-forge/conda-forge.github.io/issues/2117
+if:
+  name: conda-smithy
+  timestamp_lt: 1710847759000
+then:
+  - tighten_depends:
+      name: conda-build
+      upper_bound: 24.5.0
