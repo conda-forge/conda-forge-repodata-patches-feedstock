@@ -52,3 +52,16 @@ then:
   - replace_depends:
       old: xugrid >=0.3.0
       new: xugrid >=0.6.3
+---
+# Ensure xarray's xr.Coordinates can be used, which were introduced in xarray
+# v2023.08.0
+if:
+  name: imod
+  timestamp_le: 1710864962000
+  version_ge: "0.15.2"
+  version_le: "0.15.3"
+  has_depends: xarray >=2023.04.0
+then:
+  - replace_depends:
+      old: xarray >=2023.04.0
+      new: xarray >=2023.08.0
