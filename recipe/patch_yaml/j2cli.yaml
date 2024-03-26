@@ -1,0 +1,9 @@
+if:
+  name: j2cli
+  timestamp_lt: 1711413151000
+
+then:
+  - tighten_depends:
+      name: python
+      upper_bound: 3.12
+
