@@ -1,3 +1,6 @@
+# j2cli versions 0.3.10 and older used imp
+# which was removed from python 3.12
+# https://github.com/conda-forge/j2cli-feedstock/pull/2
 if:
   name: j2cli
   timestamp_lt: 1711413151000
