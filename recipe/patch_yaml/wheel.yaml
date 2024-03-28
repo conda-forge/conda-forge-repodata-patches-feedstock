@@ -1,0 +1,10 @@
+# wheel 0.43.0 requires Python 3.8 and does not run on older versions
+if:
+  name: wheel
+  timestamp_le: 1711548041000  # 2024-3-27
+  version: 0.43.0
+  build_number_in: [0]
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8
