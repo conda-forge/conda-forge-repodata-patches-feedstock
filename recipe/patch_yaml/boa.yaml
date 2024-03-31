@@ -24,3 +24,12 @@ then:
   - tighten_depends:
       name: conda-build
       upper_bound: "24.1"
+---
+# https://github.com/conda-forge/boa-feedstock/issues/81
+if:
+  name: boa
+  timestamp_le: 1711876073301
+  version: "0.17.0"
+then:
+  - add_depends: boltons
+  - add_depends: "conda >=23.3"
