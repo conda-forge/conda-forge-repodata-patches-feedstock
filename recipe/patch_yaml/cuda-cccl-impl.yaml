@@ -33,8 +33,8 @@ if:
   build_number: 0
 then:
   - replace_depends:
-      old: cuda-cccl-impl ==2.0.1
-      new: cccl ==2.2.0
+      old: cuda-cccl-impl 2.0.1
+      new: cccl 2.2.0
 ---
 # The cccl package replaces cuda-cccl-impl. This patch fixes previous cuda-cccl dependencies
 if:
@@ -43,5 +43,5 @@ if:
   build_number: 0
 then:
   - replace_depends:
-      old: cuda-cccl-impl ==2.0.1
-      new: cccl ==2.1.0
+      old: cuda-cccl-impl 2.0.1
+      new: cccl 2.1.0
