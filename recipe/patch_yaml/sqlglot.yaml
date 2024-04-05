@@ -1,0 +1,58 @@
+if:
+  name: sqlglot
+  timestamp_lt: 1712352563000
+  version_ge: 20.10.0
+  version_le: 21.0.1
+then:
+  - add_constrains:
+      - sqlglotrs 0.1.0.*
+  - remove_constrains:
+      - sqlglot 0.1.0.*
+
+---
+if:
+  name: sqlglot
+  timestamp_lt: 1712352563000
+  version_ge: 21.0.2
+  version_le: 22.0.1
+then:
+  - add_constrains:
+      - sqlglotrs 0.1.1.*
+  - remove_constrains:
+      - sqlglot 0.1.1.*
+
+---
+if:
+  name: sqlglot
+  timestamp_lt: 1712352563000
+  version_ge: 22.1.0
+  version_le: 23.0.5
+then:
+  - add_constrains:
+      - sqlglotrs 0.1.2.*
+  - remove_constrains:
+      - sqlglot 0.1.2.*
+
+---
+if:
+  name: sqlglot
+  timestamp_lt: 1712352563000
+  version_ge: 23.2.0
+  version_le: 23.3.0
+then:
+  - add_constrains:
+      - sqlglotrs 0.1.3.*
+  - remove_constrains:
+      - sqlglot 0.1.3.*
+
+---
+if:
+  name: sqlglot
+  timestamp_lt: 1712352563000
+  version_ge: 23.6.3
+  version_le: 23.7.0
+then:
+  - add_constrains:
+      - sqlglotrs 0.2.0.*
+  - remove_constrains:
+      - sqlglot 0.2.0.*
