@@ -44,6 +44,7 @@ then:
       - sqlglotrs 0.1.3.*
   - remove_constrains:
       - sqlglot 0.1.3.*
+      - sqlglot 0.1.2.*
 
 ---
 if:
