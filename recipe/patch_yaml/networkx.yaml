@@ -45,3 +45,12 @@ then:
   - replace_depends:
       old: python >=3.8
       new: python >=3.9
+---
+if:
+  name: networkx
+  version: "3.3"
+  build_number: 0
+then:
+  - replace_depends:
+      old: python >=3.9
+      new: python >=3.10
