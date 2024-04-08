@@ -14,7 +14,7 @@ then:
 # See: https://github.com/conda-forge/snappy-feedstock/issues/35
 if:
   name: "*"
-  has_depends: snappy
+  has_depends: snappy*
   timestamp_lt: 1712498454329
 then:
   - tighten_depends:
