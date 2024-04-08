@@ -6,3 +6,13 @@ then:
   - replace_depends:
       old: snappy >=1.1.7,<1.1.8.0a0
       new: snappy >=1.1.7,<2.0.0.0a0
+---
+# For context, see: https://github.com/conda-forge/snappy-feedstock/issues/35
+if:
+  name: "*"
+  has_depends: snappy
+  timestamp_lt: 1712498454329
+then:
+  - tighten_depends:
+      name: snappy
+      max_pin: 'x.x'
