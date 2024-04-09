@@ -1,0 +1,23 @@
+if:
+  name: vs2017_win-64
+  timestamp_lt: 1712701412000
+then:
+  - add_constrains: vs_win-64 2017.*
+---
+if:
+  name: vs2019_win-64
+  timestamp_lt: 1712701412000
+then:
+  - add_constrains: vs_win-64 2019.*
+---
+if:
+  name: vs2022_win-64
+  timestamp_lt: 1712701412000
+then:
+  - add_constrains: vs_win-64 2022.*
+---
+if:
+  name: vs2022_win-arm64
+  timestamp_lt: 1712701412000
+then:
+  - add_constrains: vs_win-arm64 2022.*
