@@ -7,5 +7,3 @@ then:
   - replace_depends:
       old: xsdata >=22.12
       new: xsdata >=22.12,<23
-
-
