@@ -1,0 +1,7 @@
+# ArviZ <=0.17.1 uses scipy.signal.gaussian which was moved to scipy.signal.windows.gaussian in scipy 1.13
+if:
+  name: arviz
+  timestamp_le: 1712866805000
+  version_le: "0.17.1"
+then:
+  - add_depends: scipy <1.13
