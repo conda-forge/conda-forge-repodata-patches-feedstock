@@ -7,3 +7,11 @@ then:
   - tighten_depends:
       name: c-blosc2
       max_pin: "x.x"
+---
+if:
+  has_depends: c-blosc2 >=2.14.[0123],*
+  timestamp_lt: 1712834915000
+then:
+  - tighten_depends:
+      name: c-blosc2
+      max_pin: "x.x.x"
