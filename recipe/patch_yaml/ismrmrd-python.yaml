@@ -1,0 +1,11 @@
+if:
+  name: ismrmrd-python
+  version: "1.14.0"
+  build: "pyhd8ed1ab_0"
+  timetstamp_lt: 1712841295000  # 20240411
+then:
+  - replace_depends:
+      old: xsdata >=22.12
+      new: xsdata >=22.12,<23
+
+
