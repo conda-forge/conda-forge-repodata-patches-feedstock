@@ -1,0 +1,9 @@
+# c-blosc2 bumps major ABI version in 2.14.4,
+# breaking builds prior to 2.14.3 which have run_exports < 3.0
+if:
+  has_depends: c-blosc2 *
+  timestamp_lt: 1712834915000
+then:
+  - tighten_depends:
+      name: c-blosc2
+      max_pin: "x.x"
