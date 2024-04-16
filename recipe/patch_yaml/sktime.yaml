@@ -1,0 +1,8 @@
+if:
+  name: sktime
+  timestamp_lt: 1713265776000
+  version_in: "0.28.0"
+then:
+  - replace_constrains:
+      old: pycatch22 >=0.4,<0.4.4,
+      new: pycatch22 >=0.4,<0.4.4
