@@ -1,0 +1,9 @@
+# We erroneously pinned libclang instead of letting it manage its own
+# runtime dependencies
+# https://github.com/conda-forge/qt-main-feedstock/issues/240
+if:
+  timestamp_lt: 1713651382000
+  name: qt6-main
+then:
+  - remove_depends: libclang >=17.0.6,<18.0a0
+
