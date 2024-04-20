@@ -1,6 +1,7 @@
 if:
-  has_depends: numpy?( *)
-  has_depends: python >=3.9*
+  has_depends:
+    - numpy?( *)
+    - python >=3.9*
   timestamp_lt: 1713569710960
 then:
   - tighten_depends:
@@ -8,8 +9,9 @@ then:
       upper_bound: "2.0"
 ---
 if:
-  has_depends: numpy?( *)
-  has_depends: python >=3.10*
+  has_depends:
+    - numpy?( *)
+    - python >=3.10*
   timestamp_lt: 1713569710960
 then:
   - tighten_depends:
@@ -17,8 +19,9 @@ then:
       upper_bound: "2.0"
 ---
 if:
-  has_depends: numpy?( *)
-  has_depends: python >=3.11*
+  has_depends:
+    - numpy?( *)
+    - python >=3.11*
   timestamp_lt: 1713569710960
 then:
   - tighten_depends:
@@ -26,8 +29,9 @@ then:
       upper_bound: "2.0"
 ---
 if:
-  has_depends: numpy?( *)
-  has_depends: python >=3.12*
+  has_depends:
+    - numpy?( *)
+    - python >=3.12*
   timestamp_lt: 1713569710960
 then:
   - tighten_depends:
