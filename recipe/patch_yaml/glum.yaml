@@ -1,0 +1,36 @@
+# ensure that breaking changes from tabmat 4.0.0
+# do not interfere with older versions of glum
+if:
+  name: glum
+  version_lt: 3.0.0
+  has_depends:
+    - tabmat>=3.1.0
+  not_has_constrains:
+    - tabmat>=3.1.0, <4.0.0
+then:
+  - replace_depends:
+      old: tabmat>=3.1.0
+      new: tabmat>=3.1.0, <4.0.0
+---
+if:
+  name: glum
+  version_lt: 3.0.0
+  has_depends:
+    - tabmat>=3.0.1
+then:
+  - replace_depends:
+      old: tabmat>=3.0.1
+      new: tabmat>=3.0.1, <4.0.0
+---
+if:
+  name: glum
+  version_lt: 3.0.0
+  has_depends:
+    - tabmat
+  not_has_constrains:
+    - tabmat>=3.0.1, <4.0.0
+    - tabmat>=3.1.0, <4.0.0
+then:
+  - replace_depends:
+      old: tabmat
+      new: tabmat<4.0.0
