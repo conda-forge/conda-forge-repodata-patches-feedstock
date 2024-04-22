@@ -24,3 +24,23 @@ if:
 then:
   # create conflicts with older cupy to avoid coexistence
   - add_constrains: cupy=${version}
+---
+if:
+  name: cupy-core
+  version_le: 13.1.0
+  timestamp_lt: 1713751559000
+  has_depends: cuda-version >=11.2,<12
+then:
+  # move cuda-version from run to run_constrained
+  - remove_depends: cuda-version >=11.2,<12
+  - add_constrains: cuda-version >=11.2,<12
+---
+if:
+  name: cupy-core
+  version_le: 13.1.0
+  timestamp_lt: 1713751559000
+  has_depends: cuda-version >=12.0,<13
+then:
+  # move cuda-version from run to run_constrained
+  - remove_depends: cuda-version >=12.0,<13
+  - add_constrains: cuda-version >=12.0,<13
