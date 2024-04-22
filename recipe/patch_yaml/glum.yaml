@@ -5,6 +5,7 @@ if:
   timestamp_lt: 1713800640000
   version_lt: 2.6.0
   has_depends:
-    - tabmat
+    - tabmat*
+  not_has_constrains: tabmat < 4.0.0
 then:
   - add_constrains: tabmat < 4.0.0
