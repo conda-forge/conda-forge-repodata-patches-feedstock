@@ -1,5 +1,5 @@
-# ensure that breaking changes from tabmat 4.0.0
-# do not interfere with older versions of glum
+#  ensure that breaking changes from tabmat 4.0.0
+#  do not interfere with older versions of glum
 if:
   name: glum
   version_lt: 3.0.0
