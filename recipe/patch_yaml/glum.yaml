@@ -5,8 +5,8 @@ if:
   timestamp_lt: 1713800640000
   version_lt: 2.6.0
   has_depends: tabmat >=*
-  not_has_depends: tabmat >=*, <*
+  not_has_depends: tabmat >=*,<*
 then:
   - replace_depends:
       old: tabmat >=*
-      new: ${old}, <4
+      new: ${old},<4
