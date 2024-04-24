@@ -4,27 +4,9 @@ if:
   name: glum
   timestamp_lt: 1713800640000
   version_lt: 2.6.0
-  version_ge: 2.1.0
-  has_depends:
-    - tabmat*
-  not_has_depends:
-    - tabmat>=3.1.0, <4
+  has_depends: tabmat>=*
+  not_has_depends: tabmat>=*, <*
 then:
   - replace_depends:
-      old: tabmat>=3.1.0
-      new: tabmat>=3.1.0, <4
----
-if:
-  name: glum
-  timestamp_lt: 1713800640000
-  version_lt: 2.1.0
-  version_ge: 2.0.0
-  has_depends:
-    - tabmat*
-  not_has_depends:
-    - tabmat>=3.0.1, <4
-then:
-  - replace_depends:
-      old: tabmat>=3.0.1
-      new: tabmat>=3.0.1, <4
----
+      old: tabmat>=*
+      new: ${old}, <4
