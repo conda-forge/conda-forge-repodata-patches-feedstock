@@ -60,9 +60,7 @@ REMOVALS = {
         "strawberry-graphql-with-asgi-0.162.0-pyhd8ed1ab_0.conda",
         # end of removals for failed uploads
     ),
-    "linux-aarch64": (
-        "awscli-1.29.39-py38he37f277_0.conda",  # failed upload
-    ),
+    "linux-aarch64": ("awscli-1.29.39-py38he37f277_0.conda",),  # failed upload
     "linux-64": (
         "airflow-with-gcp_api-1.9.0-1.tar.bz2",
         "airflow-with-gcp_api-1.9.0-2.tar.bz2",
