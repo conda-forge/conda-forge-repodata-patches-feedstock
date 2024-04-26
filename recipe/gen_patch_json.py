@@ -60,7 +60,11 @@ REMOVALS = {
         "strawberry-graphql-with-asgi-0.162.0-pyhd8ed1ab_0.conda",
         # end of removals for failed uploads
     ),
-    "linux-aarch64": ("awscli-1.29.39-py38he37f277_0.conda",),  # failed upload
+    "linux-aarch64": (
+        # the removals starting here are failed uploads
+        "awscli-1.29.39-py38he37f277_0.conda",
+        # end of removals for failed uploads
+    ),
     "linux-64": (
         "airflow-with-gcp_api-1.9.0-1.tar.bz2",
         "airflow-with-gcp_api-1.9.0-2.tar.bz2",
@@ -215,7 +219,9 @@ REMOVALS = {
         "nlopt-2.4.2-0.tar.bz2",
         "pygpu-0.6.5-0.tar.bz2",
         "pytest-regressions-1.0.1-0.tar.bz2",
-        "libgz-sim8-8.1.0-h86fce40_0.conda",  # failed upload
+        # the removals starting here are failed uploads
+        "libgz-sim8-8.1.0-h86fce40_0.conda",
+        # end of removals for failed uploads
     ),
 }
 
