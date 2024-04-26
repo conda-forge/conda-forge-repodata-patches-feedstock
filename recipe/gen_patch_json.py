@@ -42,7 +42,29 @@ SUBDIRS = (
 )
 
 REMOVALS = {
-    "noarch": ("sendgrid-5.3.0-py_0.tar.bz2",),
+    "noarch": (
+        "sendgrid-5.3.0-py_0.tar.bz2",
+        # the removals starting here are failed uploads
+        "boto3-stubs-lite-1.26.89-pyhd8ed1ab_0.conda",
+        "ca-policy-lcg-1.119-hd8ed1ab_0.conda",
+        "cfn-lint-0.74.2-pyhd8ed1ab_0.conda",
+        "conda-forge-pinning-2023.06.08.10.36.51-hd8ed1ab_0.conda",
+        "conda-forge-repodata-patches-20230516.19.05.39-hd8ed1ab_0.conda",
+        "ffmpeg-progress-yield-0.7.6-pyhd8ed1ab_0.conda",
+        "idds-doma-1.3.0-pyhd8ed1ab_0.conda",
+        "pandera-core-0.14.3-pyhd8ed1ab_0.conda",
+        "pandera-pyspark-0.14.3-hd8ed1ab_0.conda",
+        "perl-extutils-makemaker-7.68-pl5321hd8ed1ab_0.conda",
+        "pyhanko-0.17.2-pyhd8ed1ab_0.conda",
+        "python-flatbuffers-23.3.3-pyhd8ed1ab_0.conda",
+        "strawberry-graphql-with-asgi-0.162.0-pyhd8ed1ab_0.conda",
+        # end of removals for failed uploads
+    ),
+    "linux-aarch64": (
+        # the removals starting here are failed uploads
+        "awscli-1.29.39-py38he37f277_0.conda",
+        # end of removals for failed uploads
+    ),
     "linux-64": (
         "airflow-with-gcp_api-1.9.0-1.tar.bz2",
         "airflow-with-gcp_api-1.9.0-2.tar.bz2",
@@ -197,6 +219,9 @@ REMOVALS = {
         "nlopt-2.4.2-0.tar.bz2",
         "pygpu-0.6.5-0.tar.bz2",
         "pytest-regressions-1.0.1-0.tar.bz2",
+        # the removals starting here are failed uploads
+        "libgz-sim8-8.1.0-h86fce40_0.conda",
+        # end of removals for failed uploads
     ),
 }
 
