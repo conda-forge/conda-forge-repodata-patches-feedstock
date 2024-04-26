@@ -43,8 +43,8 @@ SUBDIRS = (
 
 REMOVALS = {
     "noarch": (
-        # the removals starting here are failed uploads
         "sendgrid-5.3.0-py_0.tar.bz2",
+        # the removals starting here are failed uploads
         "boto3-stubs-lite-1.26.89-pyhd8ed1ab_0.conda",
         "ca-policy-lcg-1.119-hd8ed1ab_0.conda",
         "cfn-lint-0.74.2-pyhd8ed1ab_0.conda",
