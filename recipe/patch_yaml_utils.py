@@ -11,6 +11,7 @@ ALLOWED_TEMPLATE_KEYS = [
     "name",
     "version",
     "build_number",
+    "build",
     "subdir",
     "next_version",
     "major_version",
