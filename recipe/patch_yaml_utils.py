@@ -538,13 +538,33 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 raise KeyError("Unrecognized 'then' key '%s'!" % k)
 
 
+CONDA_PKG_NAME_RE = re.compile(r"^[a-z0-9_.-]+$")
+
+
+def shortlist_relevant_filenames(index, package_name_selector):
+    if CONDA_PKG_NAME_RE.match(package_name_selector) is not None:
+        # package name does not contain wildcards
+        return [
+            fn
+            for fn, record in index.items()
+            if record["name"] == package_name_selector
+        ]
+    return index.keys()
+
+
 def patch_yaml_edit_index(index, subdir):
     keep_pkgs = os.environ.get("CF_PKGS", None)
     if keep_pkgs is not None:
         keep_pkgs = set(keep_pkgs.split(";"))
     fns = sorted(index)
     for patch_yaml, fname in ALL_YAMLS:
-        for fn in fns:
+        if "name" in patch_yaml["if"]:
+            pkg_name = patch_yaml["if"]["name"]
+            fns_to_process = shortlist_relevant_filenames(index, pkg_name)
+        else:
+            fns_to_process = fns
+
+        for fn in fns_to_process:
             record = index[fn]
             if keep_pkgs is not None and record["name"] not in keep_pkgs:
                 continue
