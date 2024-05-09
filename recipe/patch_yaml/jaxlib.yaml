@@ -17,3 +17,15 @@ if:
 then:
   - add_depends:
       - abseil-cpp ==20220623.0
+---
+# To fix https://github.com/conda-forge/cuda-cupti-feedstock/issues/9
+# Some CUDA 12 builds used a cuda-cupti-dev with a missing run_exports
+if:
+  name: jaxlib
+  version: 0.4.23
+  build_number_in: [200, 201]
+  has_depends: cuda-version >=12.0,<13
+  subdir_in: [linux-64]
+then:
+  - add_depends:
+      - "cuda-cupti >=12.0.90,<13.0a0"
