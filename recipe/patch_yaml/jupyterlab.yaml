@@ -3,6 +3,6 @@ if:
   timestamp_lt: 1715435708000
   version_eq: 4.20.0
 then:
-  - tighten_depends:
-      name: jupyterlab_server
-      lower_bound: 2.27.1
+  - replace_depends:
+      old: jupyterlab_server >=2.19.0,<3
+      new: jupyterlab_server >=2.27.1,<3
