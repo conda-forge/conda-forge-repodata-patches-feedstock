@@ -1,7 +1,7 @@
 if:
   name: jupyterlab
   timestamp_lt: 1715435708000
-  version_eq: 4.20.0
+  version_eq: 4.2.0
 then:
   - replace_depends:
       old: jupyterlab_server >=2.19.0,<3
