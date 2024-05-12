@@ -29,3 +29,17 @@ then:
       name: numpy
       max_pin: x
       upper_bound: "1.20"
+---
+# Prior to Pyarrow 15.0.0 the pandas_compat code made use of pandas.core.internals.DatetimeTZBlock,
+# which will no longer be exposed as of Pandas 3. This means that converting a Table to a Dataframe
+# using Pyarrow<15.0.0 and Pandas>=3 will result in an AttributeError. Therefore, we constrain the
+# Pandas version to less than 3 if the Pyarrow version is less than 15.
+# DatetimeTZBlock no longer exposed: https://github.com/pandas-dev/pandas/pull/58467/
+# Usage of DatetimeTZBlock removed: https://github.com/apache/arrow/pull/38321
+if:
+  name: pyarrow
+  timestamp_lt: 1715513055000  # Sun 12 May 2024 11:24:15 GMT
+  version_lt: 15.0.0
+  not_has_constrains: pandas?( *)
+then:
+  - add_constrains: pandas <=3.0a0
