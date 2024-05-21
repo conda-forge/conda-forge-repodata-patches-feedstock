@@ -1,10 +1,10 @@
-# https://github.com/conda-forge/parcels-feedstock/pull/104
+# https://github.com/conda-forge/parcels-feedstock/pull/107
 if:
   name: parcels
   timestamp_le: 1715955583000  # 2024-05-17
   version: 3.0.2
-  build_number_in: [0]
+  build_number_in: [0, 1]
 then:
   - replace_depends:
       old: zarr >=2.11.0
-      new: zarr >=2.11.0,<2.18.0
+      new: zarr >=2.11.0,!=2.18.0
