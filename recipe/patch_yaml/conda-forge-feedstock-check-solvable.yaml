@@ -6,3 +6,11 @@ then:
   - tighten_depends:
       name: conda-build
       upper_bound: 24.5.0
+---
+if:
+  name: conda-forge-feedstock-check-solvable
+  version_le: 0.5.2
+then:
+  - tighten_depends:
+      name: mamba
+      upper_bound: "2"
