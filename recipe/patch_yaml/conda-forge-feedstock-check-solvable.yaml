@@ -12,5 +12,5 @@ if:
   version_le: 0.5.2
 then:
   - tighten_depends:
-    name: mamba
-    upper_bound: 2.0a0
+      name: mamba
+      upper_bound: 2.0a0
