@@ -13,4 +13,4 @@ if:
 then:
   - tighten_depends:
       name: mamba
-      upper_bound: 2.0a0
+      upper_bound: "2"
