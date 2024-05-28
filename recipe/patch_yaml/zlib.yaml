@@ -1,8 +1,17 @@
 # zlib was pinning to minor level, but 1.2 is compatible with 1.3
 if:
   has_depends: libzlib >=1.2*
-  timestamp_gt: 1714521600000  # 2024-05-01 00:00 UTC
+  timestamp_ge: 1714521600000  # 2024-05-01 00:00 UTC
   timestamp_lt: 1717200000000  # 2024-06-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_ge: 1711929600000  # 2024-04-01 00:00 UTC
+  timestamp_lt: 1714521600000  # 2024-05-01 00:00 UTC
 then:
   - loosen_depends:
       name: libzlib
