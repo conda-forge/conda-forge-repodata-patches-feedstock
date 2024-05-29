@@ -16,3 +16,12 @@ then:
   - loosen_depends:
       name: libzlib
       upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_ge: 1709251200000  # 2024-03-01 00:00 UTC
+  timestamp_lt: 1711929600000  # 2024-04-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
