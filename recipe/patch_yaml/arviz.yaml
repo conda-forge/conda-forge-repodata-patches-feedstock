@@ -6,6 +6,7 @@ if:
 then:
   - add_depends: scipy <1.13
 
+---
 # ArviZ ==0.13.0 has mismatched dependencies with respecto to pypi
 if:
   name: arviz
