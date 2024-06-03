@@ -9,7 +9,7 @@ then:
 # ArviZ ==0.13.0 has mismatched dependencies with respecto to pypi
 if:
   name: arviz
-  timestamp_le: 1712866805000
+  timestamp_le: 1717431278000
   version_le: "0.13.0"
   version_ge: "0.13.0"
 then:
