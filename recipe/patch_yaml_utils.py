@@ -246,16 +246,12 @@ def _replace_pin(old_pin, new_pin, deps, record, target="depends"):
 def _rename_dependency(fn, record, old_name, new_name, target="depends"):
     if target not in ("depends", "constrains"):
         raise ValueError(target)
-
     if target not in record:
         return
-
     specs = record[target]
-    
     dep_idx = next(
         (q for q, dep in enumerate(specs) if dep.split(" ")[0] == old_name), None
     )
-    
     if dep_idx is not None:
         parts = specs[dep_idx].split(" ")
         remainder = (" " + " ".join(parts[1:])) if len(parts) > 1 else ""
@@ -501,7 +497,7 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                     record,
                     _maybe_process_template(v["old"], record, subdir),
                     _maybe_process_template(v["new"], record, subdir),
-                    target=subk
+                    target=subk,
                 )
 
             elif k == "relax_exact_depends":
