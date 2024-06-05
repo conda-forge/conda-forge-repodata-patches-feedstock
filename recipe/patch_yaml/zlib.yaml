@@ -115,3 +115,120 @@ then:
   - loosen_depends:
       name: libzlib
       upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1682899200000  # 2023-05-01 00:00 UTC
+  timestamp_ge: 1680307200000  # 2023-04-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1680307200000  # 2023-04-01 00:00 UTC
+  timestamp_ge: 1677628800000  # 2023-03-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1677628800000  # 2023-03-01 00:00 UTC
+  timestamp_ge: 1675209600000  # 2023-02-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1675209600000  # 2023-02-01 00:00 UTC
+  timestamp_ge: 1672531200000  # 2023-01-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1672531200000  # 2023-01-01 00:00 UTC
+  timestamp_ge: 1669852800000  # 2022-12-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1669852800000  # 2022-12-01 00:00 UTC
+  timestamp_ge: 1667260800000  # 2022-11-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1667260800000  # 2022-11-01 00:00 UTC
+  timestamp_ge: 1664582400000  # 2022-10-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1664582400000  # 2022-10-01 00:00 UTC
+  timestamp_ge: 1661990400000  # 2022-09-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1661990400000  # 2022-09-01 00:00 UTC
+  timestamp_ge: 1659312000000  # 2022-08-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1659312000000  # 2022-08-01 00:00 UTC
+  timestamp_ge: 1656633600000  # 2022-07-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1656633600000  # 2022-07-01 00:00 UTC
+  timestamp_ge: 1654041600000  # 2022-06-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1654041600000  # 2022-06-01 00:00 UTC
+  timestamp_ge: 1651363200000  # 2022-05-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
+---
+if:
+  has_depends: libzlib >=1.2*
+  timestamp_lt: 1651363200000  # 2022-05-01 00:00 UTC
+  timestamp_ge: 1648771200000  # 2022-04-01 00:00 UTC
+then:
+  - loosen_depends:
+      name: libzlib
+      upper_bound: "2"
