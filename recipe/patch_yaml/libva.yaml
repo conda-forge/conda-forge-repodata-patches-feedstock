@@ -1,0 +1,10 @@
+if:
+  timestamp_lt: 1717762383000
+  name: libva
+  # libxcb constraint was accidentally removed
+  # https://github.com/conda-forge/libva-feedstock/pull/38
+  version: 2.21.0
+  build_number: 2
+
+then:
+  - add_depends: libxcb >=1.15.0,<1.16.0
