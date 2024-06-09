@@ -28,8 +28,29 @@ if:
   timestamp_lt: 1717950401000
 then:
   - replace_depends:
+      old: setuptools >=38.4
+      new: setuptools >=60.0
+  - replace_depends:
+      old: matplotlib-base >=3.0
+      new: matplotlib-base >=3.5
+  - replace_depends:
+      old: numpy >=1.12
+      new: numpy >=1.20
+  - replace_depends:
       old: scipy >=0.19
       new: scipy >=1.8.0
+  - replace_depends:
+      old: pandas >=0.23
+      new: pandas >=1.4
+  - replace_depends:
+      old: xarray >=0.16.1
+      new: xarray >=0.21.0
+  - replace_depends:
+      old: typing_extensions >=3.7.4.3
+      new: typing_extensions >=4.1.0
+  - replace_depends:
+      old: xarray-einstats >=0.2
+      new: xarray-einstats >=0.3
 
 ---
 
