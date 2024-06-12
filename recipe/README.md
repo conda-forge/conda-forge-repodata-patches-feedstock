@@ -119,7 +119,7 @@ then:
       new: ${old},<1.4.0  # you can refer to the "old" value as well
 
   # rename a dependency - this preserves the version information and simply renames the package
-  - rename_depends:
+  - rename_<depends or constrains>:
       # str of thing to be renamed
       old: matplotlib
       # new name for thing

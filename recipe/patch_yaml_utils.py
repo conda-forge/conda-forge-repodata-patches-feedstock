@@ -243,16 +243,20 @@ def _replace_pin(old_pin, new_pin, deps, record, target="depends"):
             record[target].pop(i)
 
 
-def _rename_dependency(fn, record, old_name, new_name):
-    depends = record["depends"]
+def _rename_dependency(fn, record, old_name, new_name, target="depends"):
+    if target not in ("depends", "constrains"):
+        raise ValueError(target)
+    if target not in record:
+        return
+    specs = record[target]
     dep_idx = next(
-        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == old_name), None
+        (q for q, dep in enumerate(specs) if dep.split(" ")[0] == old_name), None
     )
     if dep_idx is not None:
-        parts = depends[dep_idx].split(" ")
+        parts = specs[dep_idx].split(" ")
         remainder = (" " + " ".join(parts[1:])) if len(parts) > 1 else ""
-        depends[dep_idx] = new_name + remainder
-        record["depends"] = depends
+        specs[dep_idx] = new_name + remainder
+        record[target] = specs
 
 
 def pad_list(lst, num):
@@ -483,12 +487,17 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                             target=subk,
                         )
 
-            elif k == "rename_depends":
+            elif k.startswith("rename_") and k[len("rename_") :] in [
+                "depends",
+                "constrains",
+            ]:
+                subk = k[len("rename_") :]
                 _rename_dependency(
                     fn,
                     record,
                     _maybe_process_template(v["old"], record, subdir),
                     _maybe_process_template(v["new"], record, subdir),
+                    target=subk,
                 )
 
             elif k == "relax_exact_depends":

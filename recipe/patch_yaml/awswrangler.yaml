@@ -1,0 +1,9 @@
+# https://github.com/conda-forge/awswrangler-feedstock/pull/126
+if:
+  name: awswrangler
+  subdir_in: noarch
+  timestamp_lt: 1717407771000
+then:
+  - rename_constrains:
+      old: "ray[default,data]"
+      new: ray
