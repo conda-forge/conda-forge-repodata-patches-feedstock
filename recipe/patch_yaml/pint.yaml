@@ -17,9 +17,9 @@ then:
 # pint 0.24 requires Python 3.10 and does not run on older versions
 if:
   name: pint
-  timestamp_le: 1717950401000
   version: 0.24
   build_number_in: [0]
 then:
   - replace_depends:
       old: python >=3.9
+      new: python >=3.10
