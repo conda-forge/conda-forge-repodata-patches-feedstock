@@ -1,0 +1,10 @@
+if:
+  name: py-opencv
+  version: 4.10.0
+  build_number_in: [0, 500, 600]
+  timestamp_lt: 1718160989000
+
+then:
+  - replace_depends:
+      old: numpy >=2.0.0rc.2,<3.0a0
+      new: numpy >=1.19.0,<3.0a0
