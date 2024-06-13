@@ -108,6 +108,7 @@ then:
 if:
   name_in: [nbconvert, nbconvert-core]
   version_lt: "7.1.0"
+  version_ge: "7.0.0"
   timestamp_le: 1680046165000
 then:
   - add_depends: lxml <5.2.0a0
