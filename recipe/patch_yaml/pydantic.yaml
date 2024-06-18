@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# Fixes https://github.com/pydantic/pydantic/issues/9637
+if:
+  name_in: [pydantic, pydantic-core]
+  timestamp_lt: 1718714598887  # 2024-06-18
+then:
+  - tighten_depends:
+      name: python
+      upper_bound: "3.12.4"
