@@ -52,6 +52,7 @@ then:
 if:
   name: jax
   version_le: 0.3.0
+  version_ge: 0.2.26
 then:
   - replace_depends:
       old: jaxlib
