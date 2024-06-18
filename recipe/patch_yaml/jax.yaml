@@ -21,3 +21,29 @@ then:
   - replace_depends:
       old: jaxlib >=0.4.11
       new: jaxlib >=0.4.14
+---
+# no minimum jaxlib version which causes issues
+if:
+  name: jax
+  version_le: 0.3.14
+  version_gt: 0.3.7
+then:
+  - replace_depends:
+      old: jaxlib
+      new: jaxlib >=0.3.7
+---
+if:
+  name: jax
+  version: 0.3.7
+then:
+  - replace_depends:
+      old: jaxlib
+      new: jaxlib >=0.3.2
+---
+if:
+  name: jax
+  version: 0.3.5
+then:
+  - replace_depends:
+      old: jaxlib
+      new: jaxlib >=0.3.0
