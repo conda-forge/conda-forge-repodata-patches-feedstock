@@ -23,5 +23,5 @@ if:
 
 then:
   - remove_depends:
-    - gstreamer*
-    - gst-plugins-base*
+      - gstreamer*
+      - gst-plugins-base*
