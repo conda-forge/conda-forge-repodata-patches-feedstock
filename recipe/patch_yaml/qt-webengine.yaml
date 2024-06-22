@@ -16,7 +16,7 @@ then:
 ---
 
 if:
-  name: qt-webngine
+  name: qt-webengine
   version: 5.15.8
   build_number_ge: 4
   build_number_lt: 7
