@@ -11,6 +11,7 @@ ALLOWED_TEMPLATE_KEYS = [
     "name",
     "version",
     "build_number",
+    "build",
     "subdir",
     "next_version",
     "major_version",
@@ -242,16 +243,20 @@ def _replace_pin(old_pin, new_pin, deps, record, target="depends"):
             record[target].pop(i)
 
 
-def _rename_dependency(fn, record, old_name, new_name):
-    depends = record["depends"]
+def _rename_dependency(fn, record, old_name, new_name, target="depends"):
+    if target not in ("depends", "constrains"):
+        raise ValueError(target)
+    if target not in record:
+        return
+    specs = record[target]
     dep_idx = next(
-        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == old_name), None
+        (q for q, dep in enumerate(specs) if dep.split(" ")[0] == old_name), None
     )
     if dep_idx is not None:
-        parts = depends[dep_idx].split(" ")
+        parts = specs[dep_idx].split(" ")
         remainder = (" " + " ".join(parts[1:])) if len(parts) > 1 else ""
-        depends[dep_idx] = new_name + remainder
-        record["depends"] = depends
+        specs[dep_idx] = new_name + remainder
+        record[target] = specs
 
 
 def pad_list(lst, num):
@@ -482,12 +487,17 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                             target=subk,
                         )
 
-            elif k == "rename_depends":
+            elif k.startswith("rename_") and k[len("rename_") :] in [
+                "depends",
+                "constrains",
+            ]:
+                subk = k[len("rename_") :]
                 _rename_dependency(
                     fn,
                     record,
                     _maybe_process_template(v["old"], record, subdir),
                     _maybe_process_template(v["new"], record, subdir),
+                    target=subk,
                 )
 
             elif k == "relax_exact_depends":
@@ -537,13 +547,33 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 raise KeyError("Unrecognized 'then' key '%s'!" % k)
 
 
+CONDA_PKG_NAME_RE = re.compile(r"^[a-z0-9_.-]+$")
+
+
+def shortlist_relevant_filenames(index, package_name_selector):
+    if CONDA_PKG_NAME_RE.match(package_name_selector) is not None:
+        # package name does not contain wildcards
+        return [
+            fn
+            for fn, record in index.items()
+            if record["name"] == package_name_selector
+        ]
+    return index.keys()
+
+
 def patch_yaml_edit_index(index, subdir):
     keep_pkgs = os.environ.get("CF_PKGS", None)
     if keep_pkgs is not None:
         keep_pkgs = set(keep_pkgs.split(";"))
     fns = sorted(index)
     for patch_yaml, fname in ALL_YAMLS:
-        for fn in fns:
+        if "name" in patch_yaml["if"]:
+            pkg_name = patch_yaml["if"]["name"]
+            fns_to_process = shortlist_relevant_filenames(index, pkg_name)
+        else:
+            fns_to_process = fns
+
+        for fn in fns_to_process:
             record = index[fn]
             if keep_pkgs is not None and record["name"] not in keep_pkgs:
                 continue

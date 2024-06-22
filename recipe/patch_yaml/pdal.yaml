@@ -1,0 +1,7 @@
+if:
+  name: pdal
+  timestamp_lt: 1718743123000
+  version: "2.7.1"
+
+then:
+  - add_constrains: libpdal-core <0.0a0

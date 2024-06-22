@@ -1,0 +1,8 @@
+# need to tighten run-export from major to minor, see
+# https://github.com/conda-forge/arrow-cpp-feedstock/pull/1409
+if:
+  has_depends: libarrow >=16.0.0,<17.0a0
+then:
+  - tighten_depends:
+      name: libarrow
+      upper_bound: "16.1"

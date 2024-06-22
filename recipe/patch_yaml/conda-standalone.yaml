@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+if:
+  name: conda-standalone
+  timestamp_lt: 1718356255000  # 2024-06-14
+  version_eq: "23.5.0"
+  subdir_eq: osx-64
+then:
+  - add_depends: __osx >=10.13

@@ -1,0 +1,165 @@
+# packages from https://github.com/numpy/numpy/issues/26191
+# where we DO NOT know the lowest version that supports numpy 2.0;
+# so patch everything using current timestamp.
+#
+# TODO: As soon as the lower bounds (for numpy 2.0 support) of these packages
+# become known, these should move to numpy2_known_lower_bound.yaml
+if:
+  name: biopython
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: dask
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: imagecodecs
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: imageio
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: keras
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: mdanalysis
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: netcdf4
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: py-opencv
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: pymc
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: pytables
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: pytensor
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: sparse
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: tensorflow
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: treelite
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: xarray
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: zfpy
+  has_depends: python >=3.9*
+  timestamp_lt: 1715576845035
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"

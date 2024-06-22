@@ -1,5 +1,12 @@
 # `conda-forge` Repodata Patching
 
+## What is a repodata patch?
+
+Sometimes, already published conda packages contain metadata errors (which can be repaired without needing to rebuild
+the packages). Most commonly, package dependencies are incorrect, but the package artifacts themselves
+are fine. A repodata patch specifies which packages are contain errors and how the package
+should be modified to fix the error.
+
 The best way to make a new patch is to use the patch YAML specification below. Custom patches
 in python can be put into the `gen_patch_json.py` file.
 
@@ -112,7 +119,7 @@ then:
       new: ${old},<1.4.0  # you can refer to the "old" value as well
 
   # rename a dependency - this preserves the version information and simply renames the package
-  - rename_depends:
+  - rename_<depends or constrains>:
       # str of thing to be renamed
       old: matplotlib
       # new name for thing
