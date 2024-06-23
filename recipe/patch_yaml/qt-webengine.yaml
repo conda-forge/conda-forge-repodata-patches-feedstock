@@ -12,3 +12,16 @@ then:
   - replace_constrains:
       old: qt *
       new: qt 5.15.2|5.15.3|5.15.4
+
+---
+
+if:
+  name: qt-webengine
+  version: 5.15.8
+  build_number_ge: 4
+  build_number_lt: 7
+
+then:
+  - remove_depends:
+      - gstreamer*
+      - gst-plugins-base*
