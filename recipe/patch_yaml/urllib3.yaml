@@ -1,0 +1,10 @@
+# https://github.com/conda-forge/urllib3-feedstock/issues/84
+# urllib3 2.2.2 is not compatible with Python 3.7
+if:
+  name: urllib3
+  version: 2.2.2
+  timestamp_lt: 1719424349134  # 2024/06/26 12:52 GMT
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8
