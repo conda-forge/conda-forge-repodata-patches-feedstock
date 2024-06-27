@@ -1,0 +1,7 @@
+# csp has not yet had a release that supports NumPy 2,
+# so we need to add a run_constrained requirement.
+if:
+  name: csp
+  version_lt: 0.0.5
+then:
+  - add_constrains: numpy <2.0.0a0
