@@ -1,0 +1,9 @@
+# Make ibis-framework-core pin exact
+if:
+  name: ibis-framework
+  timestamp_lt: 1719511671000
+  not_has_depends: param*
+then:
+  - tighten_depends:
+      name: ibis-framework-core
+      max_pin: x.x.x
