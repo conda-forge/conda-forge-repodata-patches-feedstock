@@ -1,0 +1,11 @@
+# https://github.com/conda-forge/azure-storage-blob-feedstock/issues/51
+# azure-storage-blob 12.20.0 is not compatible with Python 3.7
+if:
+  name: azure-storage-blob
+  version: 12.20.0
+  build_number_in: [0]
+  timestamp_lt: 1719583158000  # 2024/06/28 GMT
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8
