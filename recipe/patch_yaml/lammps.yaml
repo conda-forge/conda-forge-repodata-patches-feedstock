@@ -8,3 +8,44 @@ then:
   - replace_depends:
       old: mlip
       new: mlip =1.0
+---
+# https://github.com/conda-forge/lammps-feedstock/issues/199
+# build against libpnetcdf 1.12.3
+# Affected versions: 2023.08.02 build 7 mpi ~ 2024.02.07 build 1
+if:
+  name: lammps
+  version: 2023.08.02
+  build_number_in: [7, 8]
+  # nompi is not affected
+  has_depends: mpi4py
+  timestamp_lt: 1719814219000
+then:
+  - add_depends: libpnetcdf ==1.12.3
+---
+if:
+  name: lammps
+  version: 2023.11.21
+  has_depends: mpi4py
+  timestamp_lt: 1719814219000
+then:
+  - add_depends: libpnetcdf ==1.12.3
+---
+if:
+  name: lammps
+  version: 2023.08.02
+  build_number_in: [0, 1]
+  has_depends: mpi4py
+  timestamp_lt: 1719814219000
+then:
+  - add_depends: libpnetcdf ==1.12.3
+---
+# build against libpnetcdf 1.13.0
+# Affected versions: 2024.02.07 build 2
+if:
+  name: lammps
+  version: 2024.02.07
+  build_number_in: [2]
+  has_depends: mpi4py
+  timestamp_lt: 1719814219000
+then:
+  - add_depends: libpnetcdf ==1.13.0
