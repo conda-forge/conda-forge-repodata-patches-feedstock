@@ -8,7 +8,9 @@ then:
       name: numpy
       upper_bound: '1.26'
 ---
+# Updated the build/host deps but forgot the run deps.
 # <https://github.com/conda-forge/pytensor-suite-feedstock/issues/109>
+# Fixed in <https://github.com/conda-forge/pytensor-suite-feedstock/pull/108/files>
 if:
   name: pytensor-base
   version_ge: '2.24'
@@ -21,6 +23,7 @@ then:
 ---
 # Due to a skipped verison I merged a recipe update when the corresponding
 # dependency update was in a failed PR for the skipped version.
+# Fixed in <https://github.com/conda-forge/pytensor-suite-feedstock/pull/114>
 if:
   name: pytensor-base
   timestamp_lt: 1720687870000
