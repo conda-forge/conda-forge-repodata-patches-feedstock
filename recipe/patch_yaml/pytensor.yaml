@@ -1,9 +1,32 @@
 if:
   name: pytensor-base
-  version_le: 2.16.1
+  version_le: '2.16.1'
   timestamp_lt: 1695061975000
   has_depends: numpy*
 then:
   - tighten_depends:
       name: numpy
       upper_bound: '1.26'
+---
+# <https://github.com/conda-forge/pytensor-suite-feedstock/issues/109>
+if:
+  name: pytensor-base
+  version_ge: '2.24'
+  version_le: '2.25'
+  timestamp_lt: 1720687870000
+then:
+  - replace_depends:
+      old: setuptools >=48.0.0
+      new: setuptools >=59.0.0
+---
+# Due to a skipped verison I merged a recipe update when the corresponding
+# dependency update was in a failed PR for the skipped version.
+if:
+  name: pytensor-base
+  timestamp_lt: 1720687870000
+  version_eq: '2.25.1'
+  build_number_eq: 0
+then:
+  - replace_depends:
+      old: filelock
+      new: filelock >=3.15
