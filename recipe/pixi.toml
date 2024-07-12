@@ -1,0 +1,18 @@
+[project]
+name = "repodata-patches"
+version = "0.1.0"
+description = "Add a short description here"
+authors = ["Wolf Vollprecht <w.vollprecht@gmail.com>"]
+channels = ["conda-forge", "nodefaults"]
+platforms = ["osx-arm64"]
+
+[tasks]
+show-diff = "python ./show_diff.py"
+
+[dependencies]
+annotated-types = "*"
+conda-build = "*"
+license-expression = "*"
+pre-commit = "*"
+pydantic = "*"
+python = "*"
