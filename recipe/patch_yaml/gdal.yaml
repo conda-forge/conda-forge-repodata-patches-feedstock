@@ -29,3 +29,11 @@ then:
   - replace_depends:
       old: tiledb >=2.11,<3.0a0
       new: tiledb >=2.11.3,<2.12.0a0
+---
+if:
+  name: libgdal
+  timestamp_lt: 1720805984000
+  version: "3.9.1"
+
+then:
+  - add_constrains: libgdal-core <0.0a0
