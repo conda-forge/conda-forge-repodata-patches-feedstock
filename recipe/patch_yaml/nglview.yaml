@@ -1,0 +1,10 @@
+# Backport of https://github.com/conda-forge/nglview-feedstock/pull/67
+if:
+  name: nglview
+  version: 3.1.*
+  timestamp_lt: 1720690532000
+then:
+  - add_depends: notebook >=7
+  - replace_depends:
+      old: ipywidgets >=7
+      new: ipywidgets >=8
