@@ -84,4 +84,3 @@ then:
   - replace_constrains:
       old: pyside6 <6.5,>=6.7
       new: pyside6 <6.5|>=6.7
-
