@@ -73,4 +73,4 @@ if:
 then:
   - tighten_depends:
       name: libmambapy
-      upper_bound: 2.0
+      upper_bound: '2.0'
