@@ -11,6 +11,6 @@ if:
   name: rattler-build-conda-compat
   timestamp_lt: 1721317413373
 then:
-  - tighten_depends:
-      name: python
-      lower_bound: "3.11"
+  - replace_depends:
+      old: "python >=3.8"
+      new: "python >=3.11"
