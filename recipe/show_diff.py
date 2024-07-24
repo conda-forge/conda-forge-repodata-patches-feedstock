@@ -37,7 +37,9 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
         final_lines = []
 
     for index_key in ["packages", "packages.conda"]:
-        all_names = set(ref_repodata.get(index_key, {}).keys()) | set(new_repodata.get(index_key, {}).keys())
+        all_names = set(ref_repodata.get(index_key, {}).keys()) | set(
+            new_repodata.get(index_key, {}).keys()
+        )
         for name in all_names:
             ref_pkg = ref_repodata.get(index_key, {}).get(name, {})
             new_pkg = new_repodata.get(index_key, {}).get(name, {})
