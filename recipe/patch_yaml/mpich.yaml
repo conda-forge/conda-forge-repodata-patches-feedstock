@@ -10,3 +10,20 @@ then:
   - loosen_depends:
       name: mpich
       upper_bound: "5.0"
+---
+# add back external package for v4.0.2 on linux per request here
+# https://github.com/conda-forge/admin-requests/pull/1009#issuecomment-2245501214
+# we add the deps of the real package to fix the solver issues per the issue above
+# and links in it.
+if:
+  subdir_in: linux-64
+  name: mpich
+  version: 4.0.2
+  build: external_0
+then:
+  - add_depends:
+      - libgcc-ng >=10.3.0
+      - libgfortran-ng
+      - libgfortran5 >=10.3.0
+      - libstdcxx-ng >=10.3.0
+      - mpi 1.0 mpich
