@@ -12,4 +12,4 @@ if:
 then:
   - add_constrains:
       # str of constraint to add
-      - openff-models <0.3.0
+      - openff-models <0.2
