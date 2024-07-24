@@ -35,14 +35,14 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
         final_lines = {}
     else:
         final_lines = []
-    for index_key in ["packages", "packages.conda"]:
-        for name, ref_pkg in ref_repodata[index_key].items():
-            if name in new_repodata[index_key]:
-                new_pkg = new_repodata[index_key][name]
-            else:
-                new_pkg = {}
 
-            if keep_pkgs is not None and ref_pkg["name"] not in keep_pkgs:
+    for index_key in ["packages", "packages.conda"]:
+        all_names = set(ref_repodata.get(index_key, {}).keys()) | set(new_repodata.get(index_key, {}).keys())
+        for name in all_names:
+            ref_pkg = ref_repodata.get(index_key, {}).get(name, {})
+            new_pkg = new_repodata.get(index_key, {}).get(name, {})
+
+            if keep_pkgs is not None and ref_pkg and ref_pkg["name"] not in keep_pkgs:
                 continue
 
             # license_family gets added for new packages, ignore it in the diff
