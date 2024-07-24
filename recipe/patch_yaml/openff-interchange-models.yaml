@@ -7,9 +7,8 @@
 if:
   subdir_in: noarch
   name: openff-interchange-base
-  timestamp_lt: 1721823670
+  timestamp_lt: 1721829214000
   version_lt: 0.4.0
 then:
   - add_constrains:
-      # str of constraint to add
       - openff-models <0.2
