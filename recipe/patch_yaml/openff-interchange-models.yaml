@@ -1,0 +1,15 @@
+# Pydantic v2 has soft incompatibility with v1, which is what all
+# released versions of our software rely on. This is handled in a
+# microrepo (openff-models) which will get a minor version bump
+# when the new version(s) of things is released. One package
+# (openff-interchange) serves as a fulcrum in our stack, so this
+# is the minimal change that handles it for all of our packages
+if:
+  subdir_in: noarch
+  name: openff-interchange-base
+  timestamp_lt: 1721823670
+  version_lt: 0.4.0
+then:
+  - add_constrains:
+    # str of constraint to add
+    - openff-models <0.3.0
