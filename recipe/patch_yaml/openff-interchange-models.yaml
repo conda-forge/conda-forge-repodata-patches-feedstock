@@ -11,5 +11,5 @@ if:
   version_lt: 0.4.0
 then:
   - add_constrains:
-    # str of constraint to add
-    - openff-models <0.3.0
+      # str of constraint to add
+      - openff-models <0.3.0
