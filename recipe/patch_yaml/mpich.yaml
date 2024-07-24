@@ -19,7 +19,7 @@ if:
   subdir_in: linux-64
   name: mpich
   version: 4.0.2
-  build_number_in: [0]
+  build: external_0
 then:
   - add_depends:
       - libgcc-ng >=10.3.0
