@@ -1,0 +1,7 @@
+if:
+  name: fenics-dolfin
+  timestamp_lt: 1722322410000
+then:
+  - replace_depends:
+      old: mpi4py
+      new: mpi4py >=3,<4
