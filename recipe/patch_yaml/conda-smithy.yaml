@@ -42,3 +42,11 @@ then:
   - tighten_depends:
       name: conda-build
       upper_bound: 24.5.0
+---
+if:
+  name: conda-smithy
+  version_le: 3.37.1
+then:
+  - tighten_depends:
+      name: conda-build
+      upper_bound: 24.7.0
