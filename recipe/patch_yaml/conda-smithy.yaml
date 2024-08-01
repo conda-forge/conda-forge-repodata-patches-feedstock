@@ -50,3 +50,12 @@ then:
   - tighten_depends:
       name: conda-build
       upper_bound: 24.7.0
+---
+if:
+  name: conda-smithy
+  has_depends: rattler-build-conda-compat?( *)
+  timestamp_lt: 1722516295000
+then:
+  - tighten_depends:
+      name: rattler-build-conda-compat
+      max_pin: "x"
