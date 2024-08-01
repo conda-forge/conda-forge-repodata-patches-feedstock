@@ -883,7 +883,7 @@ def _gen_new_index(repodata, subdir):
     return indexes
 
 
-def _add_removals(instructions, subdir):
+def _add_removals(instructions, subdir, package_removal_keeplist=None):
     r = requests.get(
         "https://conda.anaconda.org/conda-forge/"
         "label/broken/%s/repodata.json" % subdir
@@ -892,16 +892,22 @@ def _add_removals(instructions, subdir):
     if r.status_code != 200:
         r.raise_for_status()
 
+    package_removal_keeplist = package_removal_keeplist or {}
+
     data = r.json()
     currvals = list(REMOVALS.get(subdir, []))
     for pkgs_section_key in ["packages", "packages.conda"]:
         for pkg_name in data.get(pkgs_section_key, []):
+            if package_removal_keeplist:
+                nm = data.get(pkgs_section_key, {}).get(pkg_name, {}).get("name", None)
+                if nm in package_removal_keeplist:
+                    continue
             currvals.append(pkg_name)
 
     instructions["remove"].extend(tuple(set(currvals)))
 
 
-def _gen_patch_instructions(index, new_index, subdir):
+def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=None):
     instructions = {
         "patch_instructions_version": 1,
         "packages": defaultdict(dict),
@@ -910,7 +916,9 @@ def _gen_patch_instructions(index, new_index, subdir):
         "remove": [],
     }
 
-    _add_removals(instructions, subdir)
+    _add_removals(
+        instructions, subdir, package_removal_keeplist=package_removal_keeplist
+    )
 
     # diff all items in the index and put any differences in the instructions
     for pkgs_section_key in ["packages", "packages.conda"]:

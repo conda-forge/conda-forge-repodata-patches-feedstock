@@ -101,7 +101,12 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
 
 
 def do_subdir(
-    subdir, raw_repodata_path, ref_repodata_path, fail_fast, group_diffs=True
+    subdir,
+    raw_repodata_path,
+    ref_repodata_path,
+    fail_fast,
+    group_diffs=True,
+    package_removal_keeplist=None,
 ):
     from gen_patch_json import _gen_new_index, _gen_patch_instructions
 
@@ -110,7 +115,12 @@ def do_subdir(
     with bz2.open(ref_repodata_path) as fh:
         ref_repodata = json.load(fh)
     new_index = _gen_new_index(raw_repodata, subdir)
-    instructions = _gen_patch_instructions(raw_repodata, new_index, subdir)
+    instructions = _gen_patch_instructions(
+        raw_repodata,
+        new_index,
+        subdir,
+        package_removal_keeplist=package_removal_keeplist,
+    )
     new_repodata = _apply_instructions(subdir, raw_repodata, instructions)
     return show_record_diffs(
         subdir, ref_repodata, new_repodata, fail_fast, group_diffs=group_diffs
@@ -124,7 +134,9 @@ def download_subdir(subdir, raw_repodata_path, ref_repodata_path):
     urllib.request.urlretrieve(ref_url, ref_repodata_path)
 
 
-def _process_subdir(subdir, use_cache, fail_fast, group_diffs=True):
+def _process_subdir(
+    subdir, use_cache, fail_fast, group_diffs=True, package_removal_keeplist=None
+):
     subdir_dir = os.path.join(CACHE_DIR, subdir)
     if not os.path.exists(subdir_dir):
         os.makedirs(subdir_dir)
@@ -133,7 +145,12 @@ def _process_subdir(subdir, use_cache, fail_fast, group_diffs=True):
     if not use_cache:
         download_subdir(subdir, raw_repodata_path, ref_repodata_path)
     vals = do_subdir(
-        subdir, raw_repodata_path, ref_repodata_path, fail_fast, group_diffs=group_diffs
+        subdir,
+        raw_repodata_path,
+        ref_repodata_path,
+        fail_fast,
+        group_diffs=group_diffs,
+        package_removal_keeplist=package_removal_keeplist,
     )
     return subdir, vals
 
@@ -158,6 +175,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "--no-group-diffs", action="store_true", help="do not group diffs by content"
     )
+    parser.add_argument(
+        "--package-removal-keeplist",
+        type=str,
+        help=(
+            "comma-separated list of packages to exclude from removals - "
+            "used for testing patches for broken packages before adding them "
+            "back to the repodata"
+        ),
+    )
     args = parser.parse_args()
 
     from gen_patch_json import SUBDIRS
@@ -175,6 +201,11 @@ if __name__ == "__main__":
                 args.use_cache,
                 args.fail_fast,
                 group_diffs=not args.no_group_diffs,
+                package_removal_keeplist=(
+                    [item.strip() for item in args.package_removal_keeplist.split(",")]
+                    if args.package_removal_keeplist
+                    else None
+                ),
             )
             for subdir in subdirs
         ]
