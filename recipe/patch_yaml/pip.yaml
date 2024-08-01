@@ -37,7 +37,7 @@ then:
 # we dropped setuptools+wheel from pip before a proper deprecation cycle
 if:
   name: pip
-  version: "24.1.2"
+  version_in: ["24.1.2"]
 then:
   - add_depends:
       - setuptools
