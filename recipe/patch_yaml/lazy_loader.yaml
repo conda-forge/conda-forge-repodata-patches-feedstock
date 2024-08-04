@@ -1,0 +1,9 @@
+# The lazy_loader package got renamed to lazy-loader
+# https://github.com/conda-forge/lazy_loader-feedstock/pull/11
+if:
+  timestamp_le: 1722783338000
+  name: lazy_loader
+  not_has_depends: lazy-loader?( *)
+
+then:
+  - add_depends: lazy-loader <0.0a
