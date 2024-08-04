@@ -1,19 +1,8 @@
-if:
-  name: pyside6
-  timestamp_lt: 1701832611000
-  version_in:
-    - 6.6.0
-then:
-  - replace_depends:
-      old: qt6-main >=6.6.0,<6.7.0a0
-      new: qt6-main >=6.6.0,<6.6.1a0
-
----
 # We erroneously pinned libclang instead of letting it manage its own
 # runtime dependencies
 # https://github.com/conda-forge/qt-main-feedstock/issues/240
 if:
-  name: pyside6
+  name: qt6-main
   timestamp_lt: 1713651382000
 then:
   - remove_depends: libclang >=17.0.6,<18.0a0
