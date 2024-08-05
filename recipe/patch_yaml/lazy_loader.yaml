@@ -3,7 +3,6 @@
 if:
   timestamp_le: 1722783338000
   name: lazy_loader
-  not_has_depends: lazy-loader?( *)
 
 then:
-  - add_depends: lazy-loader <0.0a
+  - add_constrains: lazy-loader <0.0a
