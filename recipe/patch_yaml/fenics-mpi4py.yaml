@@ -1,5 +1,5 @@
 if:
-  name: fenics-dolfin
+  name: fenics-*
   timestamp_lt: 1722322410000
 then:
   - replace_depends:
