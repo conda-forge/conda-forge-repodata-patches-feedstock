@@ -683,7 +683,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                     if pkg in new_constrains:
                         del new_constrains[pkg]
                     if any(
-                        constraint.startswith(f"{pkg} ") for constraint in new_constrains
+                        constraint.startswith(f"{pkg} ")
+                        for constraint in new_constrains
                     ):
                         continue
                     new_constrains.append(f"{pkg} {version}.*")
