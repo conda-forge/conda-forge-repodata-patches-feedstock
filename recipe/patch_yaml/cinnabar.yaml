@@ -1,4 +1,4 @@
-# See
+# See https://github.com/conda-forge/cinnabar-feedstock/issues/6
 # breaking changes in openff-models 0.2.x
 if:
   subdir_in: noarch
