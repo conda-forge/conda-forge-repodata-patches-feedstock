@@ -676,17 +676,18 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name in llvm_pkgs:
             new_constrains = record.get("constrains", [])
             version = record["version"]
-            for pkg in llvm_pkgs:
-                if record_name == pkg:
-                    continue
-                if pkg in new_constrains:
-                    del new_constrains[pkg]
-                if any(
-                    constraint.startswith(f"{pkg} ") for constraint in new_constrains
-                ):
-                    continue
-                new_constrains.append(f"{pkg} {version}.*")
-            record["constrains"] = new_constrains
+            if parse_version(version) < parse_version("17.0.0.a0"):
+                for pkg in llvm_pkgs:
+                    if record_name == pkg:
+                        continue
+                    if pkg in new_constrains:
+                        del new_constrains[pkg]
+                    if any(
+                        constraint.startswith(f"{pkg} ") for constraint in new_constrains
+                    ):
+                        continue
+                    new_constrains.append(f"{pkg} {version}.*")
+                record["constrains"] = new_constrains
 
         if record_name == "gcc_impl_{}".format(subdir):
             _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
