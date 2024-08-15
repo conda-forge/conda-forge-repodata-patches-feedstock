@@ -1,11 +1,12 @@
-import yaml
+import fnmatch as _fnmatch
 import glob
 import os
-import string
-from packaging.version import parse as parse_version
-import fnmatch as _fnmatch
 import re
+import string
 from functools import lru_cache
+
+import yaml
+from packaging.version import parse as parse_version
 
 ALLOWED_TEMPLATE_KEYS = [
     "name",

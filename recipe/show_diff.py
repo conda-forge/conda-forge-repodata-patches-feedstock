@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import bz2
 import difflib
 import json
 import os
 import urllib
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
+import zstandard
 from conda_index.index import _apply_instructions
 
 CACHE_DIR = os.environ.get(
@@ -110,9 +110,9 @@ def do_subdir(
 ):
     from gen_patch_json import _gen_new_index, _gen_patch_instructions
 
-    with bz2.open(raw_repodata_path) as fh:
+    with zstandard.open(raw_repodata_path) as fh:
         raw_repodata = json.load(fh)
-    with bz2.open(ref_repodata_path) as fh:
+    with zstandard.open(ref_repodata_path) as fh:
         ref_repodata = json.load(fh)
     new_index = _gen_new_index(raw_repodata, subdir)
     instructions = _gen_patch_instructions(
@@ -128,9 +128,9 @@ def do_subdir(
 
 
 def download_subdir(subdir, raw_repodata_path, ref_repodata_path):
-    raw_url = f"{BASE_URL}/{subdir}/repodata_from_packages.json.bz2"
+    raw_url = f"{BASE_URL}/{subdir}/repodata_from_packages.json.zst"
     urllib.request.urlretrieve(raw_url, raw_repodata_path)
-    ref_url = f"{BASE_URL}/{subdir}/repodata.json.bz2"
+    ref_url = f"{BASE_URL}/{subdir}/repodata.json.zst"
     urllib.request.urlretrieve(ref_url, ref_repodata_path)
 
 
@@ -140,8 +140,8 @@ def _process_subdir(
     subdir_dir = os.path.join(CACHE_DIR, subdir)
     if not os.path.exists(subdir_dir):
         os.makedirs(subdir_dir)
-    raw_repodata_path = os.path.join(subdir_dir, "repodata_from_packages.json.bz2")
-    ref_repodata_path = os.path.join(subdir_dir, "repodata.json.bz2")
+    raw_repodata_path = os.path.join(subdir_dir, "repodata_from_packages.json.zst")
+    ref_repodata_path = os.path.join(subdir_dir, "repodata.json.zst")
     if not use_cache:
         download_subdir(subdir, raw_repodata_path, ref_repodata_path)
     vals = do_subdir(

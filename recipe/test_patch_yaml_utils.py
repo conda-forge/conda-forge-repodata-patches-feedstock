@@ -2,9 +2,8 @@ from pathlib import Path
 
 import pytest
 import yaml
-
-from patch_yaml_utils import _test_patch_yaml, _apply_patch_yaml, ALLOWED_TEMPLATE_KEYS
-from patch_yaml_model import generate_schema, PatchYaml
+from patch_yaml_model import PatchYaml, generate_schema
+from patch_yaml_utils import ALLOWED_TEMPLATE_KEYS, _apply_patch_yaml, _test_patch_yaml
 
 
 def test_test_patch_yaml_record_key():
