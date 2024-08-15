@@ -26,6 +26,7 @@ requirements:
     - pydantic
     - pytest
     - conda-build
+    - zstandard
   host:
   run:
 
