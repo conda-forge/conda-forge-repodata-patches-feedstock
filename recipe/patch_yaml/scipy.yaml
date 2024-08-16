@@ -1,3 +1,28 @@
+# missing lower bounds for numpy after 2.0 migration, c.f.
+# https://github.com/conda-forge/numpy-feedstock/issues/324
+# the upper bound has been there correctly, c.f.
+# https://github.com/conda-forge/scipy-feedstock/commit/0711eb22f502ce2f1ea1bd7a22ffd4b8f73b73a7
+if:
+  name: scipy
+  version: 1.14.0
+
+then:
+  # https://github.com/scipy/scipy/blob/v1.14.0/pyproject.toml#L55
+  - add_constrains: numpy >=1.23.5
+
+---
+
+if:
+  name: scipy
+  version_lt: 1.14.0
+  version_ge: 1.13.0
+
+then:
+  # https://github.com/scipy/scipy/blob/v1.13.1/pyproject.toml#L55
+  - add_constrains: numpy >=1.22.4
+
+---
+
 # 2024/01 -- hmaarrfk
 # scipy version 1.12.0 build 2 was patched
 # for compatibility with libopenblas 0.3.26
