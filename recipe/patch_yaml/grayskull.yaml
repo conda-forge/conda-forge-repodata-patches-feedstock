@@ -1,0 +1,35 @@
+# Accidentally unconstrained semver dependency in 0th build, fixed in
+# <https://github.com/conda-forge/grayskull-feedstock/pull/74>
+if:
+  name: grayskull
+  version_eq: "2.3.0"
+  build_number_eq: 0
+  timestamp_lt: 1723758527000
+then:
+  - replace_depends:
+      old: semver
+      new: semver >=2.13.0,<2.14.dev0
+---
+# Misinterpreted compatible release operator, fixed in
+# <https://github.com/conda-forge/grayskull-feedstock/pull/92>
+if:
+  name: grayskull
+  version_ge: "2.3.1"
+  version_lt: "2.6.0"
+  timestamp_lt: 1723758527000
+then:
+  - replace_depends:
+      old: semver >=3.0.0,<4.0.0
+      new: semver >=3.0.0,<3.1.dev0
+---
+# One last instance of the previous, fixed in build 1:
+# <https://github.com/conda-forge/grayskull-feedstock/pull/92>
+if:
+  name: grayskull
+  version_eq: "2.6.0"
+  build_number_eq: 0
+  timestamp_lt: 1723758527000
+then:
+  - replace_depends:
+      old: semver >=3.0.0,<4.0.0
+      new: semver >=3.0.0,<3.1.dev0
