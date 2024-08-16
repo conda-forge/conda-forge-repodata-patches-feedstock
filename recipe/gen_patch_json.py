@@ -1,30 +1,30 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-from collections import defaultdict
-import tempfile
 import copy
 import json
 import os
-import urllib
-import bz2
-from os.path import join, isdir
-import sys
-import tqdm
 import re
-import requests
-from packaging.version import parse as parse_version
+import sys
+import tempfile
+import urllib
+from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from os.path import isdir, join
 
+import requests
+import tqdm
+import zstandard
 from conda_index.index import _apply_instructions
-from show_diff import show_record_diffs
 from get_license_family import get_license_family
+from packaging.version import parse as parse_version
 from patch_yaml_utils import (
-    patch_yaml_edit_index,
-    _relax_exact,
     CB_PIN_REGEX,
+    _relax_exact,
     pad_list,
+    patch_yaml_edit_index,
 )
+from show_diff import show_record_diffs
 
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda.anaconda.org"
@@ -954,16 +954,16 @@ def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=N
 
 def _do_subdir(subdir):
     with tempfile.TemporaryDirectory() as tmpdir:
-        raw_repodata_path = os.path.join(tmpdir, "repodata_from_packages.json.bz2")
-        ref_repodata_path = os.path.join(tmpdir, "repodata.json.bz2")
-        raw_url = f"{BASE_URL}/{subdir}/repodata_from_packages.json.bz2"
+        raw_repodata_path = os.path.join(tmpdir, "repodata_from_packages.json.zst")
+        ref_repodata_path = os.path.join(tmpdir, "repodata.json.zst")
+        raw_url = f"{BASE_URL}/{subdir}/repodata_from_packages.json.zst"
         urllib.request.urlretrieve(raw_url, raw_repodata_path)
-        ref_url = f"{BASE_URL}/{subdir}/repodata.json.bz2"
+        ref_url = f"{BASE_URL}/{subdir}/repodata.json.zst"
         urllib.request.urlretrieve(ref_url, ref_repodata_path)
 
-        with bz2.open(raw_repodata_path) as fh:
+        with zstandard.open(raw_repodata_path) as fh:
             repodata = json.load(fh)
-        with bz2.open(ref_repodata_path) as fh:
+        with zstandard.open(ref_repodata_path) as fh:
             ref_repodata = json.load(fh)
 
         prefix_dir = os.getenv("PREFIX", "tmp")

@@ -3,13 +3,14 @@ Pydantic model for patch_yaml documents
 """
 
 from __future__ import annotations
+
 import itertools
 import json
 from pathlib import Path
 from typing import Annotated
 
-from annotated_types import MinLen, Ge
-from pydantic import BaseModel, Field, ConfigDict
+from annotated_types import Ge, MinLen
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class _ForbidExtra(BaseModel):
