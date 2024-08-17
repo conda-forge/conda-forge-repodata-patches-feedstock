@@ -8,7 +8,9 @@ if:
 
 then:
   # https://github.com/scipy/scipy/blob/v1.14.0/pyproject.toml#L55
-  - add_constrains: numpy >=1.23.5
+  - replace_depends:
+      old: numpy <2.3
+      new: numpy >=1.23.5,<2.3
 
 ---
 
@@ -19,7 +21,9 @@ if:
 
 then:
   # https://github.com/scipy/scipy/blob/v1.13.1/pyproject.toml#L55
-  - add_constrains: numpy >=1.22.4
+  - replace_depends:
+      old: numpy <2.3
+      new: numpy >=1.22.4,<2.3
 
 ---
 
