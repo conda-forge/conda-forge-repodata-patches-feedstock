@@ -1,0 +1,8 @@
+if:
+  name: voluptuous
+  version: 0.15.*
+  timestamp_lt: 1724427343000
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.9
