@@ -1,0 +1,11 @@
+if:
+  name: astropy
+  version: 6.1.1
+  timestamp_lt: 1721656550000
+  build_number: 0
+  subdir_in:
+    - win-64
+then:
+  - replace_depends:
+      old: numpy >=1.19,<3
+      new: numpy >=1.19,<2

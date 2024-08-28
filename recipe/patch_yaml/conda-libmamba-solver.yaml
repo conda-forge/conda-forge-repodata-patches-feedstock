@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
 # from this code
 # conda-libmamba-solver uses calver YY.MM.micro
 # if record_name == "conda-libmamba-solver":
@@ -64,3 +65,12 @@ then:
   - replace_depends:
       old: conda >=22.11.0
       new: conda >=22.11.0,<23.2.0a
+---
+# https://github.com/conda/conda-libmamba-solver/pull/492
+if:
+  name: conda-libmamba-solver
+  timestamp_le: 1721137085269  # 2024-07-16
+then:
+  - tighten_depends:
+      name: libmambapy
+      upper_bound: '2.0'

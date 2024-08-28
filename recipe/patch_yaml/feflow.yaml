@@ -1,0 +1,9 @@
+# We only support pydantic 1 so far
+if:
+  subdir_in: noarch
+  name: feflow
+  timestamp_lt: 1722885208000
+  version: 0.1.0
+  not_has_constrains: pydantic?(*)
+then:
+  - add_constrains: pydantic <2
