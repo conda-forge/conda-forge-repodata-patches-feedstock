@@ -14,3 +14,19 @@ then:
   - replace_depends:
       old: python >=3.7
       new: python >=3.8
+---
+# etils 1.6.0 dropped support for Python 3.9, but the initial conda-forge build
+# number 0 didn't update the minimum Python version. It was subsequently fixed
+# in build number 1
+# https://github.com/conda-forge/etils-feedstock/pull/21
+# https://github.com/google/etils/issues/531
+# https://github.com/conda-forge/etils-feedstock/pull/22
+if:
+  name: etils
+  version: "1.6.0"
+  build_number: 0
+  timestamp_lt: 1724770940000
+then:
+  - replace_depends:
+      old: "python >=3.9"
+      new: "python >=3.10"
