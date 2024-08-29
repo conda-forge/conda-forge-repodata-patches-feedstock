@@ -11,3 +11,17 @@ then:
   - replace_depends:
       old: anaconda-cloud-auth
       new: anaconda-cloud-auth <0.6.0
+---
+if:
+  artifact_in: anaconda-cloud-cli-0.2.0-pyhd8ed1ab_0.conda
+  timestamp_lt: 1724944679000
+then:
+  - replace_depends:
+      old: anaconda-cli-base >=0.2
+      new: anaconda-cli-base >=0.2,<0.3
+  - replace_depends:
+      old: anaconda-cloud-auth >=0.3
+      new: anaconda-cloud-auth >=0.3,<0.6
+  - replace_depends:
+      old: anaconda-client >=1.12.2
+      new: anaconda-client >=1.12.2,<1.13
