@@ -1,0 +1,9 @@
+# https://github.com/conda-forge/dohq-artifactory-feedstock/issues/5
+---
+if:
+  name: dohq-artifactory
+  timestamp_lt: 1724951023000  # 2024 Aug 29
+then:
+  - tighten_depends:
+      name: python
+      upper_bound: "3.12"
