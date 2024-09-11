@@ -1,7 +1,7 @@
 # add constraint on numpy <2.0
 if:
   name: shap
-  version_le: 0.40
+  version_le: 0.40.0
   timestamp_lt: 1726005600 # 2024-09-11
 then:
   - replace_depends:
