@@ -1,0 +1,11 @@
+# scvi-tools 1.1.6 requires lightning<2.2
+# https://github.com/conda-forge/scvi-tools-feedstock/issues/54
+if:
+  name: scvi-tools
+  version: "1.1.6"
+  build_number: 1
+  timestamp_lt: 1726156541000
+then:
+  - tighten_depends:
+      name: lightning
+      upper_bound: 2.2
