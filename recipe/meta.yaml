@@ -23,7 +23,7 @@ requirements:
     - license-expression
     - packaging
     - pyyaml
-    - pydantic
+    - pydantic !=2.9.*
     - pytest
     - conda-build
     - zstandard
