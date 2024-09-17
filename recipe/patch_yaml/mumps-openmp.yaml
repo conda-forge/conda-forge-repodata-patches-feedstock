@@ -1,0 +1,10 @@
+if:
+  name_in:
+    - mumps-seq
+    - mumps-mpi
+  version: 5.7.3
+  timestamp_lt: 1726574983858
+  build_number_in: [1, 2, 3]
+  subdir_in: linux-*
+then:
+  - add_constrains: libopenblas * *openmp*
