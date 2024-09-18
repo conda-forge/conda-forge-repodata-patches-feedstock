@@ -1,0 +1,26 @@
+if:
+  name: rabbitmq-delayed-message-exchange
+  timestamp_lt: 1692543265000
+  version_in: ["3.10.0", "3.10.2"]
+then:
+  - replace_depends:
+      old: rabbitmq-server >=3.8.16
+      new: rabbitmq-server >=3.10.0,<3.11
+---
+if:
+  name: rabbitmq-delayed-message-exchange
+  timestamp_lt: 1692543265000
+  version: 3.11.1
+then:
+  - replace_depends:
+      old: rabbitmq-server >=3.11.0
+      new: rabbitmq-server >=3.11.0,<3.12
+---
+if:
+  name: rabbitmq-delayed-message-exchange
+  timestamp_lt: 1692543265000
+  version: 3.9.0
+then:
+  - replace_depends:
+      old: rabbitmq-server >=3.8.16
+      new: rabbitmq-server >=3.9.0,<3.10
