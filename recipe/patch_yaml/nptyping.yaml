@@ -1,0 +1,8 @@
+if:
+  name: nptyping
+  timestamp_lt: 1726607615000
+  has_depends: numpy
+then:
+  - replace_depends:
+      old: numpy
+      new: numpy <2
