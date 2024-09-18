@@ -1,0 +1,9 @@
+# Versions of furo before 2023.5.20 do not work with sphinx 7.2 or greater.
+if:
+  name: furo
+  version_lt: 2023.5.21
+  timestamp_lt: 1686854880000  # 2023/06/15 18:48Z
+then:
+  - tighten_depends:
+      name: sphinx
+      upper_bound: 7.2.0
