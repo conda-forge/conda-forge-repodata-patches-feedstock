@@ -1,0 +1,11 @@
+if:
+  name_in:
+    - "ld64_osx-64"
+    - "ld64_osx-arm64"
+  version: "951.9"
+  timestamp_lt: 1726767642000
+  subdir_in:
+    - "linux-64"
+then:
+  - add_depends:
+      - libdispatch 5.*
