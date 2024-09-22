@@ -7,7 +7,7 @@
 if:
   name: mlflow
   has_depends: "databricks-cli*"
-  timestamp_lt: 1712756434000 # Wed 10 Apr 2024 13:40:33 GMT
+  timestamp_lt: 1712756434000  # Wed 10 Apr 2024 13:40:33 GMT
 then:
   - tighten_depends:
       name: databricks-cli
@@ -18,7 +18,7 @@ then:
 if:
   name: mlflow-skinny
   has_depends: "databricks-cli*"
-  timestamp_lt: 1712756434000 # Wed 10 Apr 2024 13:40:33 GMT
+  timestamp_lt: 1712756434000  # Wed 10 Apr 2024 13:40:33 GMT
 then:
   - tighten_depends:
       name: databricks-cli

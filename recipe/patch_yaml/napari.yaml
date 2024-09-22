@@ -77,7 +77,7 @@ then:
 # https://github.com/conda-forge/napari-feedstock/pull/65
 if:
   name: napari
-  timestamp_lt: 1721096299000 # 2024-07-16
+  timestamp_lt: 1721096299000  # 2024-07-16
   version: 0.5.0
   build_number: 0
 then:
