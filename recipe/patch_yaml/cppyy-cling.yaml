@@ -1,0 +1,10 @@
+if:
+  name: cppyy-cling
+  subdir_in: ["osx-64", "osx-arm64"]
+  version: 6.30.0
+  build_number_in: [0, 1, 2]
+  timestamp_lt: 1726941093000
+then:
+  - replace_depends:
+      old: libcxx >=14.0.6
+      new: ${old},<18
