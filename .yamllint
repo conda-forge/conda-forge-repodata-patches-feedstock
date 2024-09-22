@@ -4,3 +4,7 @@ rules:
   document-start: disable
   line-length:
     max: 120
+  comments:
+    level: error
+    require-starting-space: true
+    min-spaces-from-content: 2
