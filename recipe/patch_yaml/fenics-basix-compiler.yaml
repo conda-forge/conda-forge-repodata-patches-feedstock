@@ -26,7 +26,7 @@ if:
   subdir_in: osx-*
   has_depends: libcxx >=17
 then:
-  - add_constrains: clangxx_impl_${subdir} 17.*
+  - add_constrains: clangxx 17.*
 ---
 if:
   name: fenics-basix
@@ -35,4 +35,4 @@ if:
   subdir_in: osx-*
   has_depends: libcxx >=16
 then:
-  - add_constrains: clangxx_impl_${subdir} 16.*
+  - add_constrains: clangxx 16.*
