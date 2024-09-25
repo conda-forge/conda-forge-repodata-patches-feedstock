@@ -4,5 +4,5 @@ if:
     - libxcb >=1.16,<1.17.0a0
 then:
   - loosen_depends:
-      name: libxml2
+      name: libxcb
       upper_bound: 2.0.0
