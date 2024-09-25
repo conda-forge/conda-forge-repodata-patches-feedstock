@@ -1,0 +1,8 @@
+if:
+  timestamp_lt: 1727275597000
+  has_depends:
+    - libxcb >=1.16,<1.17.0a0
+then:
+  - loosen_depends:
+      name: libxcb
+      upper_bound: 2.0.0
