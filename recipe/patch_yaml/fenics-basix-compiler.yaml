@@ -4,11 +4,11 @@
 if:
   name: fenics-basix
   version: 0.8.0
-  build_number_in: [0, 1, 2]
+  build_number_in: [0, 1, 2, 3]
   subdir_in: linux-*
   has_depends: libstdcxx >=13
 then:
-  - add_constrains: gxx 13.*
+  - add_constrains: gxx_impl_${subdir} 13.*
 ---
 if:
   name: fenics-basix
@@ -17,12 +17,12 @@ if:
   subdir_in: linux-*
   has_depends: libstdcxx-ng >=12
 then:
-  - add_constrains: gxx 12.*
+  - add_constrains: gxx_impl_${subdir} 12.*
 ---
 if:
   name: fenics-basix
   version: 0.8.0
-  build_number_in: [0, 1, 2]
+  build_number_in: [0, 1, 2, 3]
   subdir_in: osx-*
   has_depends: libcxx >=17
 then:
@@ -31,7 +31,7 @@ then:
 if:
   name: fenics-basix
   version: 0.8.0
-  build_number_in: [0, 1, 2]
+  build_number_in: [0, 1, 2, 3]
   subdir_in: osx-*
   has_depends: libcxx >=16
 then:
