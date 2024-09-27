@@ -1,0 +1,9 @@
+# chromadb depends on uvicorn-standard not uvicorn
+# Fixed in https://github.com/conda-forge/chromadb-feedstock/pull/51
+if:
+  name: chromadb
+  timestamp_lt: 1727439944000
+then:
+  - replace_depends:
+      old: uvicorn
+      new: uvicorn-standard
