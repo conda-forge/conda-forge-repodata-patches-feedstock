@@ -4,6 +4,6 @@ if:
   name: chromadb
   timestamp_lt: 1727439944000
 then:
-  - replace_depends:
+  - rename_depends:
       old: uvicorn
       new: uvicorn-standard
