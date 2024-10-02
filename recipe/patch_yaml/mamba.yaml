@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
 # from this code
 # if (
 #     subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
@@ -141,3 +142,14 @@ then:
   - replace_depends:
       old: conda >=23.9,<24
       new: conda >=23.9,<23.11.0
+---
+# conda=24.9.0 deprecated symbols used in mamba <=1.5.8
+# fixes available with mamba >=1.5.9,<2
+if:
+  name: mamba
+  version_in: ["1.5.7", "1.5.8"]
+  timestamp_lt: 1727886892000  # 2024-10-02
+then:
+  - replace_depends:
+      old: "conda >=24,<25"
+      new: "conda >=24,<24.9.0"
