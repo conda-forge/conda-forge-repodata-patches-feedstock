@@ -148,8 +148,8 @@ then:
 if:
   name: mamba
   version_in: ["1.5.7", "1.5.8"]
-  timestamp_lt: 1727884242871  # 2024-10-02
+  timestamp_lt: 1727886892000  # 2024-10-02
 then:
-  - tighten_depends:
-      name: conda
-      upper_bound: "24.9.0"
+  - replace_depends:
+      old: "conda >=24,<25"
+      new: "conda >=24,<24.9.0"
