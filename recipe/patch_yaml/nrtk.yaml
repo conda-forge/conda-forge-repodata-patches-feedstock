@@ -1,0 +1,12 @@
+# nrtk==0.12.0 released without dependecy updates
+---
+if:
+  name: nrtk
+  timestamp_lt: 1727977324000  # 2024-10-03
+  version: 0.12.0
+  build_number: 0
+then:
+  - remove_depends: "opencv >=4.6"
+  - replace_depends:
+      old: "pybsm >=0.5.1"
+      new: "pybsm >=0.7.0"
