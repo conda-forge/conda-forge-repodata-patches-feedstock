@@ -63,8 +63,7 @@ then:
 ---
 if:
   name: cupy
-  version_lt: 14.0.0
-  has_depends: python >=3.9*
+  version_lt: 13.0.0
   not_has_depends: numpy *,<2.0a0
 then:
   - tighten_depends:
