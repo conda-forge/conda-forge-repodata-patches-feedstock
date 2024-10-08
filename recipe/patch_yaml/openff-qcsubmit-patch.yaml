@@ -1,0 +1,12 @@
+# This is another Pydantic v2 patch, one of our upstreams
+# (QCElemental) is undergoing their v1 -> v2 migration which will
+# likely result in API breaks
+if:
+  name: openff-qcsubmit
+  timestamp_lt: 1728401565
+  version_lt: 0.53.1
+  has_depends: qcelemental
+then:
+  - replace_depends:
+    old: qcelemental
+    new: qcelemental <=0.28
