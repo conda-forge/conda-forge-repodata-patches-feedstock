@@ -113,6 +113,6 @@ if:
   name: xarray
   timestamp_lt: 1728373192000
 then:
-  - rename_depends:
+  - rename_constrains:
       old: seaborn
       new: seaborn-base
