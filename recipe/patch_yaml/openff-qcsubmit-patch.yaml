@@ -8,5 +8,5 @@ if:
   has_depends: qcelemental
 then:
   - replace_depends:
-    old: qcelemental
-    new: qcelemental <=0.28
+      old: qcelemental
+      new: qcelemental <=0.28
