@@ -4,9 +4,9 @@
 if:
   name: openff-qcsubmit
   timestamp_lt: 1728401565
-  version_lt: 0.53.1
+  version_le: 0.53.0
   has_depends: qcelemental
 then:
   - replace_depends:
-      old: qcelemental
-      new: qcelemental <=0.28
+      old: "qcelemental"
+      new: "qcelemental <=0.28"
