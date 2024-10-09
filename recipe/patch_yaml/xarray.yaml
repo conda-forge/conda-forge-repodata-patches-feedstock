@@ -106,3 +106,13 @@ then:
   - replace_depends:
       old: numpy >=1.21
       new: numpy >=1.22
+---
+# xarray depends on seaborn-base not seaborn
+# Fixed in https://github.com/conda-forge/xarray-feedstock/pull/118
+if:
+  name: xarray
+  timestamp_lt: 1728373192000
+then:
+  - rename_constrains:
+      old: seaborn
+      new: seaborn-base
