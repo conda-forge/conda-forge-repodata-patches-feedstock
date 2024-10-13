@@ -25,6 +25,13 @@ jobs:
     displayName: Configure binfmt_misc
 
   - script: |
+         sudo fallocate -l 8GiB /swapfile || true
+         sudo chmod 600 /swapfile || true
+         sudo mkswap /swapfile || true
+         sudo swapon /swapfile || true
+    displayName: Create swap file
+
+  - script: |
         export CI=azure
         export flow_run_id=azure_$(Build.BuildNumber).$(System.JobAttempt)
         export remote_url=$(Build.Repository.Uri)
