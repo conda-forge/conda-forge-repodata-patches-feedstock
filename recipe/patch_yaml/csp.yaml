@@ -1,0 +1,7 @@
+# csp does not yet have a release that will support libprotobuf 5+,
+# we need to add a constraint to the existing libprotobuf requirement.
+if:
+  name: csp
+  version_le: 0.0.5
+then:
+  - add_constrains: libprotobuf <5
