@@ -1,0 +1,10 @@
+# Fix to use pydicom < 3.0 for Python < 3.10
+if:
+  name: pydicom
+  subdir_in: noarch
+  timestamp_lt: 1727272800000
+  version_ge: 3.0.0
+then:
+  - replace_depends:
+      old: python
+      new: python >=3.10
