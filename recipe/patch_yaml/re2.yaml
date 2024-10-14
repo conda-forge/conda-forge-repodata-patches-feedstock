@@ -18,4 +18,4 @@ if:
 then:
   - loosen_depends:
       name: libre2-11
-      upper_bound: None
+      upper_bound: null
