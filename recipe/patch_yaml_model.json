@@ -1820,11 +1820,17 @@
           "type": "string"
         },
         "upper_bound": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
           "default": null,
           "description": "Explicit upper bound version to apply to the package (e.g. `2.0`).",
-          "minLength": 1,
-          "title": "Upper Bound",
-          "type": "string"
+          "title": "Upper Bound"
         }
       },
       "required": [
