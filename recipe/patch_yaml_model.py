@@ -64,7 +64,7 @@ class _Name_MaxPin_UpperBound(_ForbidExtra):
         None,
         description="Maximum version pin expression to apply to the package (e.g. `x.x`).",  # noqa: E501
     )
-    upper_bound: _NonEmptyStr = Field(
+    upper_bound: str = Field(
         None,
         description="Explicit upper bound version to apply to the package (e.g. `2.0`).",  # noqa: E501
     )
