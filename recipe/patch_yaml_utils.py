@@ -385,7 +385,7 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
         lower = m.group("lower")
         upper = m.group("upper").split(".")
 
-        if (upper_bound is None or str(upper_bound).lower() == "none") and max_pin is None:
+        if (upper_bound is None or upper_bound == "None") and max_pin is None:
             # case where we fully remove upper bound
             depends[dep_idx] = f"{dep_parts[0]} >={lower}"
             if len(dep_parts) == 3:
