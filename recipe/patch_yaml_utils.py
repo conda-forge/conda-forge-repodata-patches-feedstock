@@ -385,6 +385,13 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
         lower = m.group("lower")
         upper = m.group("upper").split(".")
 
+        if upper_bound == "None":
+            msg = (
+                "To remove an upper bound, use `upper_bound: null`; "
+                "`upper_bound: None` wrongly gets interpreted as a string!"
+            )
+            raise ValueError(msg)
+
         if upper_bound is None and max_pin is None:
             # case where we fully remove upper bound
             depends[dep_idx] = f"{dep_parts[0]} >={lower}"
