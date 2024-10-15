@@ -8,3 +8,14 @@ then:
   - rename_depends:
       old: re2
       new: re2 <2020.05.01
+---
+# libre2-<x> encodes the SOVERSION in the package name, and is intended to not have
+# an upper bound; however the implicit `max_pin='x'` in pin_subpackage caused one
+# to be added anyway, until https://github.com/conda-forge/re2-feedstock/pull/84
+if:
+  has_depends: libre2-11 >=*
+  timestamp_lt: 1728778173959
+then:
+  - loosen_depends:
+      name: libre2-11
+      upper_bound: null
