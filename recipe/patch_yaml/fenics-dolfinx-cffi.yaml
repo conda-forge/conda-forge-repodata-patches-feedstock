@@ -1,0 +1,10 @@
+# fenics-dolfinx 0.9.0 requires cffi<1.17
+# but this pin wasn't added until build 2
+if:
+  name: fenics-dolfinx
+  version: 0.9.0
+  build_number_in: [0, 1]
+then:
+  - replace_depends:
+      old: cffi
+      new: cffi <1.17
