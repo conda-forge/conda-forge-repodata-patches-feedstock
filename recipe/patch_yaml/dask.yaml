@@ -91,3 +91,14 @@ then:
   - replace_depends:
       old: distributed *${version}*
       new: distributed >=${version},<${next_version}.0a0
+---
+# pyarrow minimum version was bumped to 14.0.1 in dask 2024.8.2
+if:
+  name: dask
+  version_ge: 2024.8.2
+  version_lt: 2024.10.0
+then:
+  - replace_depends:
+      old: pyarrow >=7.0
+      new: pyarrow >=14.0.1
+  - remove_depends: pyarrow-hotfix

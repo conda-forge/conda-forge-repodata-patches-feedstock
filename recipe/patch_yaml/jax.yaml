@@ -150,3 +150,14 @@ then:
 #   - replace_depends:
 #       old: jaxlib
 #       new: jaxlib >=???
+---
+# Fix for incorrect minimum python version in jax 0.4.31
+# See https://github.com/conda-forge/jax-feedstock/issues/155
+if:
+  name: jax
+  version: 0.4.31
+  timestamp_lt: 1728645860000
+then:
+  - replace_depends:
+      old: python >=3.9
+      new: python >=3.10
