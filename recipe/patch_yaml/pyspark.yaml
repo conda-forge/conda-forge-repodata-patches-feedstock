@@ -7,4 +7,4 @@ if:
 then:
   - tighten_depends:
       name: numpy
-      upper_bound: 2.0
+      upper_bound: "2.0"
