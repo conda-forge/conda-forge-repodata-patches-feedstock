@@ -9,3 +9,4 @@ skip_render:
 upload_on_branch: main
 provider:
   linux_64: github_actions
+
