@@ -1,0 +1,11 @@
+# twine version 1.13.0 build 0 is missing the
+# readme_renderer dependency that was added in
+# https://github.com/pypa/twine/pull/395
+if:
+  name: twine
+  version_eq: "1.13.0"
+  build_number_eq: 0
+  timestamp_lt: 1730900960000
+then:
+  - add_depends:
+      - readme_renderer >=21.0
