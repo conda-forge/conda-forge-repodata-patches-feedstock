@@ -34,3 +34,12 @@ then:
   - tighten_depends:
       name: python
       upper_bound: "3.13"
+---
+if:
+  name: pint
+  timestamp_lt: 1730982234000
+  has_depends: flexparser
+then:
+  replace_depends:
+    old: flexparser >=0.3
+    new: flexparser >=0.3,<0.4
