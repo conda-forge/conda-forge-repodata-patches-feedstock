@@ -38,8 +38,8 @@ then:
 if:
   name: pint
   timestamp_lt: 1730982234000
-  has_depends: flexparser
+  version_gt: 0.24.0
 then:
-  replace_depends:
-    old: flexparser >=0.3
-    new: flexparser >=0.3,<0.4
+  - replace_depends:
+      old: flexparser >=0.3
+      new: flexparser >=0.3,<0.4
