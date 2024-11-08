@@ -5,3 +5,14 @@ if:
   timestamp_lt: 1720034169000
 then:
   - add_depends: __cuda
+
+---
+
+if:
+  name: lightgbm
+  version: 4.4.0
+  build: cuda*
+  not_has_depends: cudatoolkit*
+  timestamp_lt: 1720034169000
+then:
+  - add_depends: __cuda
