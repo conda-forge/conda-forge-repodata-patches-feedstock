@@ -1,0 +1,37 @@
+# https://github.com/conda-forge/hatchling-feedstock has broken metadata for
+# the minimum Python version required from v1.18.0 onwards (currently v1.25.0).
+# The last version of hatchling that was compatible with Python 3.7 was v1.17.1
+# as after that https://github.com/pypa/hatch/pull/1386 introduced Python 3.8+
+# syntax that made its way into hatchling v1.23.0 onward, though hatchling v1.18.0
+# was the first version to require Python 3.8+
+# (c.f. https://github.com/pypa/hatch/releases/tag/hatchling-v1.18.0).
+# c.f. https://github.com/conda-forge/pyhf-feedstock/pull/28#issuecomment-2464060369
+#
+# This is getting patched for hatchling v1.25.0 (rebuild) and future versions
+# in https://github.com/conda-forge/hatchling-feedstock/pull/59, so only apply this
+# python replacement patch for releases created prior to now (1731056098000
+# which in human readable metadata is on 2024-11-08.)
+if:
+  name: hatchling
+  version_in:
+    - 1.18.0
+    - 1.19.0
+    - 1.19.1
+    - 1.20.0
+    - 1.21.0
+    - 1.21.1
+    - 1.22.1
+    - 1.22.2
+    - 1.22.3
+    - 1.22.4
+    - 1.22.5
+    - 1.23.0
+    - 1.24.0
+    - 1.24.1
+    - 1.24.2
+    - 1.25.0
+  timestamp_lt: 1731056098000
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8
