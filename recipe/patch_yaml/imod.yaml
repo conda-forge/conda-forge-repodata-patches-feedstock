@@ -71,8 +71,8 @@ if:
   name: imod
   timestamp_le: 1731329388000
   version_le: "0.17.1"
-  has_depends: numpy >=2.0
+  has_depends: numpy
 then:
   - replace_depends:
-      old: numpy >=2.0
+      old: numpy
       new: numpy <2.0
