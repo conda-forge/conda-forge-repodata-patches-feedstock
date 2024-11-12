@@ -234,3 +234,9 @@ instructions = {
 
 A tool downloads this package when it sees updates to it, and applies the `patch_instructions.json`
 to the repodata of the `conda-forge` channel on anaconda.org
+
+## Deployment of patches to `anaconda.org`
+
+After a patch PR is merged there are no further actions for patch submitters, feedstock maintainers, or conda-forge to take.
+Anaconda, Inc. manages the infrastructure that applies patches from this repository to the repodata of distributions on [anaconda.org/conda-forge/](https://anaconda.org/conda-forge/).
+This infrastructure is related to the process for updating their CDN, so patches should generally be applied and usable within a few hours after a patch PR is merged.
