@@ -19,3 +19,19 @@ then:
   - replace_depends:
       old: "python >=3.6"
       new: "python >=3.8"
+---
+# anndata 0.11.0 dropped support for Python 3.9 but build 0 didn't update the
+# Python pin. Fixed for build_number 1 in
+# https://github.com/conda-forge/anndata-feedstock/pull/45
+if:
+  name: anndata
+  version: "0.11.0"
+  build_number: 0
+  timestamp_lt: 1731005774000
+then:
+  - replace_depends:
+      old: "python >=3.9"
+      new: "python >=3.10"
+  - replace_depends:
+      old: "h5py >=3.1"
+      new: "h5py >=3.6"

@@ -1,0 +1,12 @@
+---
+# Versions of invoke from before version 2.0.0 are not compatible with
+# Python 3.11 because of inspect.getargspec being removed.
+if:
+  name: azure-core
+  subdir_in: noarch
+  artifact_in: azure-core-1.31.0-pyhd8ed1ab_0.conda
+  timestamp_lt: 1731940921000  # 2024/11/18
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.9
