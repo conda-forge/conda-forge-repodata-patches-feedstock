@@ -65,3 +65,14 @@ then:
   - replace_depends:
       old: xarray >=2023.04.0
       new: xarray >=2023.08.0
+---
+# iMOD Python <= 0.17.1 doesn't support numpy 2.0
+if:
+  name: imod
+  timestamp_le: 1731329388000
+  version_le: "0.17.1"
+  has_depends: numpy
+then:
+  - replace_depends:
+      old: numpy
+      new: numpy <2.0
