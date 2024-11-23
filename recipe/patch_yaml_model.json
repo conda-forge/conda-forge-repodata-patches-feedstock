@@ -2008,65 +2008,37 @@
           "title": "Add Track Features"
         },
         "replace_depends": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/_Old2New"
-            }
-          ],
+          "$ref": "#/$defs/_Old2New",
           "default": null,
           "description": "Replace 'old' dependency with 'new'."
         },
         "replace_constrains": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/_Old2New"
-            }
-          ],
+          "$ref": "#/$defs/_Old2New",
           "default": null,
           "description": "Replace 'old' constraint with 'new'."
         },
         "rename_depends": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/_Old2New"
-            }
-          ],
+          "$ref": "#/$defs/_Old2New",
           "default": null,
           "description": "Rename 'old' dependency as 'new', leaving version and build string fields untouched."
         },
         "rename_constrains": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/_Old2New"
-            }
-          ],
+          "$ref": "#/$defs/_Old2New",
           "default": null,
           "description": "Rename 'old' constraint as 'new', leaving version and build string fields untouched."
         },
         "relax_exact_depends": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/_Name_MaxPin_UpperBound"
-            }
-          ],
+          "$ref": "#/$defs/_Name_MaxPin_UpperBound",
           "default": null,
           "description": "Relax an exact pin (e.g., `blah ==1.0.0`) to something like blah `>=1.0.0` and possibly with `,<2.0a0` added if max_pin='x'"
         },
         "tighten_depends": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/_Name_MaxPin_UpperBound"
-            }
-          ],
+          "$ref": "#/$defs/_Name_MaxPin_UpperBound",
           "default": null,
           "description": "Make a dependency version constraint stricter"
         },
         "loosen_depends": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/_Name_MaxPin_UpperBound"
-            }
-          ],
+          "$ref": "#/$defs/_Name_MaxPin_UpperBound",
           "default": null,
           "description": "Make a dependency version constraint looser"
         }
