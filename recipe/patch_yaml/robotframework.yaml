@@ -3,6 +3,7 @@
 if:
   name: robotframework
   version_gte: 7.0
+  version_lt: 7.1
 then:
   - replace_depends:
       old: python >=3.6
