@@ -28,7 +28,8 @@ then:
 # cryptography 44.0.0 is:
 #   .pixi/envs/default/lib/python3.12/site-packages/OpenSSL/crypto.py:1598: in X509StoreFlags
 #       NOTIFY_POLICY = _lib.X509_V_FLAG_NOTIFY_POLICY
-#   E   AttributeError: module 'lib' has no attribute 'X509_V_FLAG_NOTIFY_POLICY'. Did you mean: 'X509_V_FLAG_EXPLICIT_POLICY'?
+#   E   AttributeError: module 'lib' has no attribute 'X509_V_FLAG_NOTIFY_POLICY'.
+#       Did you mean: 'X509_V_FLAG_EXPLICIT_POLICY'?
 if:
   name: pyopenssl
   version_lt: "22.0.0"
