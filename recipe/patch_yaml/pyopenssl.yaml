@@ -18,6 +18,14 @@ then:
       old: cryptography >=35.0
       new: cryptography >=35.0,<39
 ---
+# The X509_V_FLAG_NOTIFY_POLICY constant was removed from cryptography in version 42.0.0.
+# xref: https://github.com/pyca/cryptography/pull/9163
+# This constant was used in pyopenssl versions prior to version 23.2.0.
+# xref: https://github.com/pyca/pyopenssl/pull/1213
+# pyopenssl versions prior to 22.0.0 did not have an upper bound on cryptograpy to exclude newer versions.
+# Therefore, pyopenssl less than 23.2.0 is not compatible with cryptography greater than or equal to 42.0.0,
+# but there is nothing preventing pyopenssl<22.0.0 being solved with later versions of cryptography.
+
 # The above patch has the effect of encouraging the solver
 # to prefer pyopenssl 21.0.0 instead of the latest version
 # if there is a newer cryptography version available that is
