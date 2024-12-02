@@ -1,0 +1,8 @@
+# bitstring is not compatable with bitarray 3.0
+if:
+  name: bitstring
+  timestamp_lt: 1733161794000
+then:
+  - replace_depends:
+      old: bitarray >=2.8.0
+      new: bitarray >=2.8.0,<3
