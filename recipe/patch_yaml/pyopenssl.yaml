@@ -18,18 +18,26 @@ then:
       old: cryptography >=35.0
       new: cryptography >=35.0,<39
 ---
-# The above patch has the effect of encouraging the solver
-# to prefer pyopenssl 21.0.0 instead of the latest version
-# if there is a newer cryptography version available that is
-# incompatible with all modern versions of pyopenssl. Thus
-# we need to add upper bounds for all previous versions as
-# well.
-# The specific error I see with pyopenssl 21.0.0 and
-# cryptography 44.0.0 is:
+# The X509_V_FLAG_NOTIFY_POLICY constant was removed from cryptography in version 42.0.0.
+# xref: https://github.com/pyca/cryptography/pull/9163
+# This constant was used in pyopenssl versions prior to version 23.2.0.
+# xref: https://github.com/pyca/pyopenssl/pull/1213
+# pyopenssl versions prior to 22.0.0 did not have an upper bound on cryptograpy to exclude newer versions.
+# Therefore, pyopenssl less than 23.2.0 is not compatible with cryptography greater than or equal to 42.0.0,
+# but there is nothing preventing pyopenssl<22.0.0 being solved with later versions of cryptography.
+
+# The specific error I see with pyopenssl 21.0.0 and cryptography 44.0.0 is:
 #   .pixi/envs/default/lib/python3.12/site-packages/OpenSSL/crypto.py:1598: in X509StoreFlags
 #       NOTIFY_POLICY = _lib.X509_V_FLAG_NOTIFY_POLICY
 #   E   AttributeError: module 'lib' has no attribute 'X509_V_FLAG_NOTIFY_POLICY'.
 #       Did you mean: 'X509_V_FLAG_EXPLICIT_POLICY'?
+
+# The above patch has the effect of encouraging the solver to prefer pyopenssl 21.0.0
+# instead of the latest version when the newest cryptography version is incompatible
+# with all modern versions of pyopenssl. While we want an upper bound of <42, we also
+# want the upper bounds to be monotonic so that the solver does not fall into a local
+# optimum. Thus we instead of implementing the bound <42 we propagate the stricter
+# upper bound of <39 from pyopenssl 22.0.0 to all previous versions.
 if:
   name: pyopenssl
   version_lt: "22.0.0"
