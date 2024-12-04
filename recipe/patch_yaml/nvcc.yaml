@@ -6,6 +6,11 @@ if:
   version_lt: 12.0.0
   version_ge: 11.2.0
   timestamp_lt: 1733272752000
+  subdir_in:
+    - linux-64
+    - win-64
+    - linux-ppc64le
+    - linux-aarch64
 then:
   - add_depends: cudatoolkit >=${version},<12
 ---
@@ -15,5 +20,10 @@ if:
   # This will patch all the way back to version 9.2
   version_lt: 11.2.0
   timestamp_lt: 1733272752000
+  subdir_in:
+    - linux-64
+    - win-64
+    - linux-ppc64le
+    - linux-aarch64
 then:
   - add_depends: "cudatoolkit ${version}.*"
