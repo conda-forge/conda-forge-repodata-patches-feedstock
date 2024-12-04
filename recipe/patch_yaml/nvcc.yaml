@@ -8,6 +8,7 @@ if:
   timestamp_lt: 1733272752000
 then:
   - add_depends: cudatoolkit >=${version},<12
+---
 # No enhanced compatability until CUDA 11.2; everything before is pinned to minor version
 if:
   name: "nvcc_*"
