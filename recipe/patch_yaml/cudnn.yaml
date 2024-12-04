@@ -7,4 +7,4 @@ if:
   timestamp_lt: 1733272752000
   subdir_in: win-64
 then:
-  - remove_depends: libzlib-wapi
+  - remove_depends: "libzlib-wapi *"
