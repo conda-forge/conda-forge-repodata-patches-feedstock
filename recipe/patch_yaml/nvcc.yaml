@@ -1,0 +1,18 @@
+# Fixes https://github.com/conda-forge/nvcc-feedstock/issues/108 for older builds by
+# appying https://github.com/conda-forge/nvcc-feedstock/pull/109/files#diff-f3725a55bf339595bf865fec73bda8ac99f283b0810c205442021f29c06eea9a
+# tl;dr prevents older versions of nvcc from being installed with newer 12+ versions
+if:
+  name: "nvcc_*"
+  version_lt: 12.0.0
+  version_ge: 11.2.0
+  timestamp_lt: 1733272752000
+then:
+  - add_depends: cudatoolkit >=${version},<12
+# No enhanced compatability until CUDA 11.2; everything before is pinned to minor version
+if:
+  name: "nvcc_*"
+  # This will patch all the way back to version 9.2
+  version_lt: 11.2.0
+  timestamp_lt: 1733272752000
+then:
+  - add_depends: "cudatoolkit ${version}.*"
