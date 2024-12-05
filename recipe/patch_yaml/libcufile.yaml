@@ -9,5 +9,5 @@ if:
 then:
   - add_depends: __glibc >=2.28,<3.0.a0
   - replace_depends:
-        old: __glibc [*]
-        new: __glibc >=2.28,<3.0.a0
+      old: __glibc [*]
+      new: __glibc >=2.28,<3.0.a0
