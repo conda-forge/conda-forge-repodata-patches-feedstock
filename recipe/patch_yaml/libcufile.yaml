@@ -1,0 +1,13 @@
+# For uninvestigated reasons, old aarch64 builds of libcufile have no constraint on __glibc
+# This is a follow-up to https://github.com/conda-forge/libcufile-feedstock/pull/24
+if:
+  name: "libcufile*"
+  version_ge: 1.7.0
+  timestamp_lt: 1733272752000
+  subdir_in:
+    - linux-aarch64
+then:
+  - add_depends: __glibc >=2.28,<3.0.a0
+  - replace_depends:
+        old: __glibc [*]
+        new: __glibc >=2.28,<3.0.a0
