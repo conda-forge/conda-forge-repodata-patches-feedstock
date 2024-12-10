@@ -1,0 +1,9 @@
+# typo in constraints for msal_extensions 1.2.0 build 1
+if:
+  name: msal_extensions
+  version: 1.2.0
+  build_number: 1
+then:
+  - replace_depends:
+      old: msal >=1.2.9,<2.0
+      new: msal >=1.29,<2.0
