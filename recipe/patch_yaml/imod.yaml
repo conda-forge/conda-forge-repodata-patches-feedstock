@@ -76,3 +76,24 @@ then:
   - replace_depends:
       old: numpy
       new: numpy <2.0
+---
+# iMOD Python <= 0.18.1 doesn't support Python 3.13
+if:
+  name: imod
+  timestamp_le: 1733911551000
+  version_le: "0.18.1"
+then:
+  - tighten_depends:
+      name: python
+      upper_bound: "3.13"
+---
+# iMOD Python <= 0.18.1 gives trouble with copying and writing HFBs for
+# xarray < 2024.10.0
+if:
+  name: imod
+  timestamp_le: 1733911551000
+  version_le: "0.18.1"
+then:
+  - tighten_depends:
+      name: xarray
+      upper_bound: "2024.10.0"
