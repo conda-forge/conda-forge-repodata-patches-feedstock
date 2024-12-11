@@ -105,7 +105,7 @@ then:
 # https://github.com/conda/conda-build/issues/5564
 if:
   name: conda-build
-  version_lt: 24.11.2
+  version_lt: 24.11.3
   timestamp_le: 1733914099000  # 2024-12-11
 then:
   - tighten_depends:
