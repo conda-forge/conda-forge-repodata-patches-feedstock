@@ -80,7 +80,7 @@ then:
 # iMOD Python <= 0.18.1 doesn't support Python 3.13
 if:
   name: imod
-  timestamp_le: 1733909310000
+  timestamp_le: 1733911551000
   version_le: "0.18.1"
   has_depends: python
 then:
@@ -92,7 +92,7 @@ then:
 # xarray < 2024.10.0
 if:
   name: imod
-  timestamp_le: 1733909310000
+  timestamp_le: 1733911551000
   version_le: "0.18.1"
   has_depends: xarray
 then:
