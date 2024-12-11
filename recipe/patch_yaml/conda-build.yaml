@@ -102,6 +102,7 @@ then:
       name: py-lief
       upper_bound: "0.14"
 ---
+# https://github.com/conda/conda-build/issues/5564
 if:
   name: conda-build
   version_lt: 24.11.2
