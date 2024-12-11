@@ -39,6 +39,7 @@ then:
 if:
   name: ray-default
   version_ge: 2.10.0
+  version_lt: 2.40.0
 then:
   - replace_depends:
       old: virtualenv >=20.0.24,<20.21.1
