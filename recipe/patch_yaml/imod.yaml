@@ -82,21 +82,18 @@ if:
   name: imod
   timestamp_le: 1733911551000
   version_le: "0.18.1"
-  has_depends: python
 then:
-  - replace_depends:
-      old: python >=3.10
-      new: python >=3.10,<3.13
+  - tighten_depends:
+      name: python
+      upper_bound: 3.13
 ---
-# iMOD Python <= 0.18.1 gives trouble with copyging and writing HFBs for
+# iMOD Python <= 0.18.1 gives trouble with copying and writing HFBs for
 # xarray < 2024.10.0
 if:
   name: imod
   timestamp_le: 1733911551000
   version_le: "0.18.1"
-  has_depends: xarray
 then:
-  - replace_depends:
-      old: xarray >=2023.08.0
-      new: xarray >=2023.08.0,<2024.10.0
----
+  - tighten_depends:
+      name: xarray
+      upper_bound: 2024.10.0
