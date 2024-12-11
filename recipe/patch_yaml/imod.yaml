@@ -88,7 +88,7 @@ then:
       old: python >=3.10
       new: python >=3.10,<3.13
 ---
-# iMOD Python <= 0.18.1 gives trouble with copyging and writing HFBs for 
+# iMOD Python <= 0.18.1 gives trouble with copyging and writing HFBs for
 # xarray < 2024.10.0
 if:
   name: imod
