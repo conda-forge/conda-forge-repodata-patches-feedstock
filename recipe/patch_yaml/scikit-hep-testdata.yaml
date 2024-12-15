@@ -1,0 +1,16 @@
+# https://github.com/conda-forge/scikit-hep-testdata-feedstock has broken
+# metadata for package scikit-hep-testdata-0.5.0-pyhd8ed1ab_0.conda.
+# The package has a 'run' requirement of python >=3.8 but scikit-hep-testdata
+# v0.5.0 dropped 3.8 support and is Python 3.9+. This was fixed in PR
+# https://github.com/conda-forge/scikit-hep-testdata-feedstock/pull/68 on
+# 2024-11-20, so use 1732172400000 (2024-11-21 in human readable metadata)
+# as the cutoff timestamp.
+if:
+  name: scikit-hep-testdata
+  version_in:
+    - 0.5.0
+  timestamp_lt: 1732172400000
+then:
+  - replace_depends:
+      old: python >=3.8
+      new: python >=3.9
