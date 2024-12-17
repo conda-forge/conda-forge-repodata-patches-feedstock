@@ -42,3 +42,15 @@ then:
   - add_depends:
       - setuptools
       - wheel
+---
+# See https://github.com/conda-forge/pip-feedstock/issues/132
+# There is a build of pip that does not have wheel and setuptools
+# dependency, and does not have the correct constraint on the python version
+if:
+  name: pip
+  version_in: ["24.3.1"]
+  build: pyh145f28c_1
+then:
+  - replace_depends:
+      old: python >=3.9
+      new: python >=3.13.0a0
