@@ -1,0 +1,9 @@
+if:
+  name: nvidia-ml-py
+  version_ge: 12.0.0
+  version_le: 12.560.30
+  timestamp_lt: 1734561375000
+then:
+  - replace_constrains:
+      old: "pynvml ==9999999999"
+      new: "pynvml ~=12.0"
