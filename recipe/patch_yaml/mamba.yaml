@@ -153,3 +153,16 @@ then:
   - replace_depends:
       old: "conda >=24,<25"
       new: "conda >=24,<24.9.0"
+---
+# conda 24.11.0 deprecated a shell function used by mamba 1.x
+# conda 24.11.2 reintroduced with a faulty deprecation message
+# see https://github.com/conda/conda/pull/14468
+# mamba 1.5.12 added a fix to stop using that shell function
+if:
+  name: mamba
+  version_in: ["1.5.9", "1.5.10", "1.5.11"]
+  timestamp_lt: 1735926001000  # 2025-01-03 17:40 UTC
+then:
+  - replace_depends:
+      old: "conda >=24,<25"
+      new: "conda >=24,<24.11.0"
