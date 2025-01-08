@@ -1,0 +1,7 @@
+# old xz builds conflict with new liblzma output
+if:
+  name: xz
+  version_lt: "5.6"
+  timestamp_lt: 1736337155000
+then:
+  - add_constrains: liblzma ==0.0.0
