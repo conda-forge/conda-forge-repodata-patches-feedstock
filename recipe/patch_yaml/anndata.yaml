@@ -35,3 +35,16 @@ then:
   - replace_depends:
       old: "h5py >=3.1"
       new: "h5py >=3.6"
+---
+# scipy 1.15 introduced an incompatibility, which anndata fixed in 0.11.2. This
+# patch prevents previous releases from being co-installed with scipy 1.15
+# https://github.com/scverse/anndata/pull/1806
+# https://github.com/conda-forge/anndata-feedstock/pull/49
+if:
+  name: anndata
+  version_lt: "0.11.2"
+  timestamp_lt: 1736438107000
+then:
+  - tighten_depends:
+      name: scipy
+      upper_bound: 1.15.0
