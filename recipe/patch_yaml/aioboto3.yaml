@@ -2,7 +2,8 @@ if:
   name: aioboto3
   version: 13.3.0
   build_number: 0
+  timestamp_lt: 1736674738000
 then:
   - replace_depends:
-     old: aiobotocore 2.13.1
-     new: aiobotocore 2.16.1
+      old: aiobotocore 2.13.1
+      new: aiobotocore 2.16.1
