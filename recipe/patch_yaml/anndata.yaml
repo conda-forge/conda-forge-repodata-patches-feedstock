@@ -48,3 +48,14 @@ then:
   - tighten_depends:
       name: scipy
       upper_bound: 1.15.0
+---
+# anndata requires zarr<3. Runtime constraint added in 0.11.3
+# https://github.com/conda-forge/anndata-feedstock/pull/52
+# https://github.com/scverse/anndata/releases/tag/0.11.3
+# https://github.com/scverse/anndata/pull/1819
+if:
+  name: anndata
+  version_lt: "0.11.3"
+  timestamp_lt: 1736784424000
+then:
+  - add_constrains: "zarr<3"
