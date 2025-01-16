@@ -111,3 +111,13 @@ then:
   - tighten_depends:
       name: py-lief
       upper_bound: "0.15"
+---
+# https://github.com/conda/conda-build/issues/5594
+if:
+  name: conda-build
+  version_le: 25.11.1
+  timestamp_le: 1737049820000  # 2024-01-16
+then:
+  - tighten_depends:
+      name: py-lief
+      upper_bound: "0.16"
