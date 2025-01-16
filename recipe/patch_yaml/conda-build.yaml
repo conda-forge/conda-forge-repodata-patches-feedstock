@@ -116,8 +116,8 @@ then:
 if:
   name: conda-build
   version_le: 25.11.1
-  timestamp_le: 1737049820000  # 2024-01-16
+  timestamp_le: 1737049820000  # 2025-01-16
 then:
   - tighten_depends:
       name: py-lief
-      upper_bound: "0.16"
+      upper_bound: "0.15"
