@@ -9,8 +9,8 @@ if:
 
 then:
   - replace_depends:
-      old: numpy<2.0a0
-      new: numpy<1.26.0
+      old: numpy >=1.19.5,<2.0a0
+      new: numpy >=1.19.5,<1.26.0
 
 ---
 
