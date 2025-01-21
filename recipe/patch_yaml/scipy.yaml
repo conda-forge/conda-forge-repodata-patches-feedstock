@@ -1,3 +1,18 @@
+# upper bound for numpy in version 1.9.0, 1.9.1, 1.9.2 not tight enough
+# which allowed installation next with numpy 1.26
+
+if:
+  name: scipy
+  version_le: 1.9.2
+  version_ge: 1.9.0
+
+then:
+  - replace_depends:
+      old: numpy<2.0a0
+      new: numpy<1.26.0
+
+---
+
 # missing lower bounds for numpy after 2.0 migration, c.f.
 # https://github.com/conda-forge/numpy-feedstock/issues/324
 # the upper bound has been there correctly, c.f.
