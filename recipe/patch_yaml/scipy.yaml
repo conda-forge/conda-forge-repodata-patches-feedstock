@@ -5,6 +5,7 @@ if:
   name: scipy
   version_le: 1.9.2
   version_ge: 1.9.0
+  timestamp_lt: 1737471013000
 
 then:
   - replace_depends:
