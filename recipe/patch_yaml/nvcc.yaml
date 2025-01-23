@@ -27,3 +27,46 @@ if:
     - linux-aarch64
 then:
   - add_depends: "cudatoolkit ${version}.*"
+---
+
+
+# Relax `sysroot` pins of `nvcc_{{ target_platform }}`
+# Done by arch to handle package name differences
+if:
+  name: nvcc_linux-64
+  version_lt: 12.0.0
+  timestamp_lt: 1737594364000
+  has_depends: "sysroot_linux-64?( *)"
+then:
+  - replace_depends:
+      old: sysroot_linux-64 2.17.*
+      new: sysroot_linux-64 >=2.17,<3.0a0
+  - replace_depends:
+      old: sysroot_linux-64 >=2.17
+      new: sysroot_linux-64 >=2.17,<3.0a0
+---
+if:
+  name: nvcc_linux-aarch64
+  version_lt: 12.0.0
+  timestamp_lt: 1737594364000
+  has_depends: "sysroot_linux-aarch64?( *)"
+then:
+  - replace_depends:
+      old: sysroot_linux-aarch64 2.17.*
+      new: sysroot_linux-aarch64 >=2.17,<3.0a0
+  - replace_depends:
+      old: sysroot_linux-aarch64 >=2.17
+      new: sysroot_linux-aarch64 >=2.17,<3.0a0
+---
+if:
+  name: nvcc_linux-ppc64le
+  version_lt: 12.0.0
+  timestamp_lt: 1737594364000
+  has_depends: "sysroot_linux-ppc64le?( *)"
+then:
+  - replace_depends:
+      old: sysroot_linux-ppc64le 2.17.*
+      new: sysroot_linux-ppc64le >=2.17,<3.0a0
+  - replace_depends:
+      old: sysroot_linux-ppc64le >=2.17
+      new: sysroot_linux-ppc64le >=2.17,<3.0a0
