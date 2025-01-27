@@ -1,0 +1,9 @@
+# Fix google-cloud-bigquery-storage-core protobuf pin
+if:
+  name: google-cloud-bigquery-storage-core
+  timestamp_lt: 1738005502000
+  version_ge: 2.26.0
+then:
+  - replace_depends:
+      old: protobuf >=3.19.5,<5.0.0dev,!=3.20.0,!=3.20.1,!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5
+      new: protobuf >=3.20.2,<6.0.0dev,!=3.20.0,!=3.20.1,!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5
