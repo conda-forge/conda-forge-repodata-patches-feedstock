@@ -1,0 +1,9 @@
+# https://github.com/conda-forge/prefect-feedstock/issues/320
+if:
+  name: prefect
+  version_lt: "2.11.0"
+  timestamp_lt: 1722325657000
+then:
+  - replace_depends:
+      old: pydantic >=1.8.2
+      new: pydantic >=1.8.2,<2

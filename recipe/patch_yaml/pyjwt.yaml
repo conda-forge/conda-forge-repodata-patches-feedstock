@@ -1,0 +1,31 @@
+# https://github.com/conda-forge/pyjwt-feedstock/issues/33
+# pyjwt 2.7 and 2.8 need typing_extensions
+---
+if:
+  name: pyjwt
+  version: 2.7.0
+  timestamp_lt: 1724951023000  # 2024 Aug 29
+then:
+  - add_depends:
+      - typing_extensions
+---
+if:
+  name: pyjwt
+  version: 2.8.0
+  timestamp_lt: 1724951023000  # 2024 Aug 29
+then:
+  - add_depends:
+      - typing_extensions
+---
+# pyjwt 2.9 doesn't support py37
+if:
+  name: pyjwt
+  version: 2.9.0
+  timestamp_lt: 1724951023000  # 2024 Aug 29
+then:
+  - replace_constrains:
+      old: "cryptography >=3.3.1"
+      new: "cryptography >=3.4.0"
+  - replace_depends:
+      old: "python >=3.7"
+      new: "python >=3.8"

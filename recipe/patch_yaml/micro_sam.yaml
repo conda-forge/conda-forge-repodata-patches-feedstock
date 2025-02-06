@@ -1,0 +1,9 @@
+# micro_sam 1.2 isn't yet compatible with zarr 3, see
+# https://github.com/conda-forge/micro_sam-feedstock/pull/29
+# https://github.com/conda-forge/python-elf-feedstock/pull/20
+if:
+  name: micro_sam
+  version_le: 1.2.0
+  timestamp_lt: 1736608309000
+then:
+  - add_constrains: zarr <3.0a0

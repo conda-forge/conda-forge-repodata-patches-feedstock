@@ -1,0 +1,19 @@
+if:
+  artifact_in:
+    - ants-2.5.3-h434a139_0.conda
+    - ants-2.5.3-h3c5361c_0.conda
+    - ants-2.5.3-h420ef59_0.conda
+then:
+  - replace_depends:
+      old: libitk
+      new: libitk >=5.4,<5.5
+---
+if:
+  artifact_in:
+    - ants-2.5.1-h7728843_0.conda
+    - ants-2.5.1-h2ffa867_0.conda
+    - ants-2.5.1-h00ab1b0_0.conda
+then:
+  - replace_depends:
+      old: libitk
+      new: libitk >=5.3,<5.4

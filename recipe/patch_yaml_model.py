@@ -3,13 +3,14 @@ Pydantic model for patch_yaml documents
 """
 
 from __future__ import annotations
+
 import itertools
 import json
 from pathlib import Path
 from typing import Annotated
 
-from annotated_types import MinLen, Ge
-from pydantic import BaseModel, Field, ConfigDict
+from annotated_types import Ge, MinLen
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class _ForbidExtra(BaseModel):
@@ -63,7 +64,7 @@ class _Name_MaxPin_UpperBound(_ForbidExtra):
         None,
         description="Maximum version pin expression to apply to the package (e.g. `x.x`).",  # noqa: E501
     )
-    upper_bound: _NonEmptyStr = Field(
+    upper_bound: str | None = Field(
         None,
         description="Explicit upper bound version to apply to the package (e.g. `2.0`).",  # noqa: E501
     )

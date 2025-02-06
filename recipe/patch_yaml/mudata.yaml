@@ -1,0 +1,24 @@
+# mudata 0.3.0 dropped support for Python 3.9, but the initial conda-forge build
+# number 0 didn't update the minimum Python version. It was subsequently fixed
+# in build number 1
+# https://github.com/scverse/mudata/commit/ce28ac42c941103f1d8521a5d805777d1af3651e
+# https://github.com/conda-forge/mudata-feedstock/pull/12
+# https://github.com/conda-forge/mudata-feedstock/pull/13
+if:
+  name: mudata
+  version: "0.3.0"
+  build_number: 0
+  timestamp_lt: 1724770940000
+then:
+  - replace_depends:
+      old: "python >=3.9"
+      new: "python >=3.10"
+---
+if:
+  name: mudata
+  version_lt: "0.3.1"
+  timestamp_lt: 1725468863000
+then:
+  - tighten_depends:
+      name: anndata
+      upper_bound: 0.10.9

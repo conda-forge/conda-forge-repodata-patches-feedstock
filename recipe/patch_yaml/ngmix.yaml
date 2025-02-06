@@ -12,6 +12,7 @@
 #     record["depends"] = deps
 if:
   name: ngmix
+  has_depends: numba?( *)
   not_has_depends: numba *!=0.54.0*
 then:
   - add_depends: numba !=0.54.0

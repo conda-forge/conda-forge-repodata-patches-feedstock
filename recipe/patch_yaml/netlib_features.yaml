@@ -1,0 +1,19 @@
+# backport https://github.com/conda-forge/lapack-feedstock/pull/71
+if:
+  name_in:
+    - libblas
+    - libtmglib
+    - libcblas
+    - liblapack
+    - liblapacke
+    - blas-devel
+    - blas
+    - lapack
+  build: "*netlib*"
+  timestamp_lt: 1727167107000
+then:
+  # no reset_track_features, so remove & add to avoid duplicating
+  - remove_track_features:
+      - blas_netlib_2
+  - add_track_features:
+      - blas_netlib_2

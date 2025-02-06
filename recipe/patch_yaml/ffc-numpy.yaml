@@ -1,0 +1,14 @@
+# fenics-ffc up to 2019.1.0 doesn't support numpy 2
+# but has unbounded numpy dependency
+# conda-forge only has version 2019.1.0 of this package
+# a patch was backported in 2019.1.0 build 40
+if:
+  name: fenics-ffc
+  version: "2019.1.0"
+  build_number_lt: 40
+  timestamp_lt: 1733402352000
+then:
+  - tighten_depends:
+      # don't support numpy 2
+      name: numpy
+      upper_bound: 2.0.0
