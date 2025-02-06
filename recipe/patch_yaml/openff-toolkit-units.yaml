@@ -1,6 +1,7 @@
 # I botched a detail in dependencies between a few of my projects,
 # basically misremembering a pin which, if not present, caused
-# me to break things accidentally
+# me to break things accidentally. Short version: openff-toolkit(-base)
+# hasn't yet been updated to use openff-units 0.3.x
 if:
   name: openff-toolkit-base
   timestamp_lt: 1738876242000
@@ -10,4 +11,3 @@ then:
   - replace_depends:
       old: "openff-units >=0.2.0"
       new: "openff-units ~=0.2.0"
-
