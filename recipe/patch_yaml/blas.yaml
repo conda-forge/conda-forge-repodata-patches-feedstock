@@ -34,3 +34,20 @@ then:
   - replace_depends:
       old: liblapacke >=3.8.0,<3.9.0a0
       new: liblapacke >=3.8.0,<4.0.0a0
+---
+# apply https://github.com/conda-forge/blas-feedstock/pull/134 to older builds
+# to avoid solver thrashing in the presence of new MKL version
+if:
+  name_in:
+    - libblas
+    - libcblas
+    - liblapack
+    - liblapacke
+  # MKL 2025 only exists on {linux,win}-x64
+  subdir_in:
+    - linux-64
+    - win-64
+  version_ge: 3.9.0
+  timestamp_lt: 1739090831114
+then:
+  - add_constrains: mkl <2025
