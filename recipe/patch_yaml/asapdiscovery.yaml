@@ -1,4 +1,4 @@
-# We need to pin to a newer version of openfe due to changes in openmm api 
+# We need to pin to a newer version of openfe due to changes in openmm api
 # https://github.com/conda-forge/asapdiscovery-feedstock/issues/17
 if:
   name: asapdiscovery
