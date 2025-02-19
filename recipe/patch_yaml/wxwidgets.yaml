@@ -2,6 +2,7 @@
 # see issue https://github.com/wxWidgets/wxWidgets/issues/25173
 # so we are tightening the upper bin going forward, starting with 3.2.5
 if:
+  subdir_in: [osx-64, osx-arm64]
   has_depends: wxwidgets >=3.2.5,<3.3.0a0
   timestamp_lt: 1739974364803
 then:
