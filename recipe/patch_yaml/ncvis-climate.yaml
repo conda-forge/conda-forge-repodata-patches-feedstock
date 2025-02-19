@@ -1,6 +1,6 @@
 if:
   name: ncvis-climate
-  timestamp_lt: 1739760494852 # Mon Feb 17 02:48:49 2025
+  timestamp_lt: 1739760494852  # Mon Feb 17 02:48:49 2025
 then:
   - tighten_depends:
       name: wxwidgets
