@@ -1,0 +1,20 @@
+---
+# backport https://github.com/conda-forge/ligo.em-bright-feedstock/pull/28
+if:
+  name: ligo.em-bright
+  subdir_in: noarch
+  version: 1.2.2
+  build_number_lt: 2
+then:
+  - replace_depends:
+      old: astropy >=6.0
+      new: astropy >=6.0,<7.0.0a0
+  - replace_depends:
+      old: astropy-base >=6.0
+      new: astropy-base >=6.0,<7.0.0a0
+  - replace_depends:
+      old: h5py >=3.11.0
+      new: h5py >=3.11.0,<4.0.0a0
+  - replace_depends:
+      old: pandas >=2.2
+      new: pandas >=2.2,<3.0.0a0
