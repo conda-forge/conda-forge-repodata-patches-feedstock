@@ -1,0 +1,10 @@
+# cuDNN is a redist. zlib has been statically linked into the windows library since cuDNN 9
+# Resolves: https://github.com/conda-forge/cudnn-feedstock/issues/98
+if:
+  name: "cudnn"
+  version_lt: 9.3.1
+  version_ge: 9.0.0
+  timestamp_lt: 1733272752000
+  subdir_in: win-64
+then:
+  - remove_depends: "libzlib-wapi *"

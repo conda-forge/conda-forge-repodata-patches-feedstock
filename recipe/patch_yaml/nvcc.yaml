@@ -1,0 +1,72 @@
+# Fixes https://github.com/conda-forge/nvcc-feedstock/issues/108 for older builds by applying
+# https://github.com/conda-forge/nvcc-feedstock/pull/109/files#diff-f3725a55bf339595bf865fec73bda8ac99f283b0810c205442021f29c06eea9a
+# tl;dr prevents older versions of nvcc from being installed with newer 12+ versions
+if:
+  name: "nvcc_*"
+  version_lt: 12.0.0
+  version_ge: 11.2.0
+  timestamp_lt: 1733272752000
+  subdir_in:
+    - linux-64
+    - win-64
+    - linux-ppc64le
+    - linux-aarch64
+then:
+  - add_depends: cudatoolkit >=${version},<12
+---
+# No enhanced compatability until CUDA 11.2; everything before is pinned to minor version
+if:
+  name: "nvcc_*"
+  # This will patch all the way back to version 9.2
+  version_lt: 11.2.0
+  timestamp_lt: 1733272752000
+  subdir_in:
+    - linux-64
+    - win-64
+    - linux-ppc64le
+    - linux-aarch64
+then:
+  - add_depends: "cudatoolkit ${version}.*"
+---
+
+
+# Relax `sysroot` pins of `nvcc_{{ target_platform }}`
+# Done by arch to handle package name differences
+if:
+  name: nvcc_linux-64
+  version_lt: 12.0.0
+  timestamp_lt: 1737594364000
+  has_depends: "sysroot_linux-64?( *)"
+then:
+  - replace_depends:
+      old: sysroot_linux-64 2.17.*
+      new: sysroot_linux-64 >=2.17,<3.0a0
+  - replace_depends:
+      old: sysroot_linux-64 >=2.17
+      new: sysroot_linux-64 >=2.17,<3.0a0
+---
+if:
+  name: nvcc_linux-aarch64
+  version_lt: 12.0.0
+  timestamp_lt: 1737594364000
+  has_depends: "sysroot_linux-aarch64?( *)"
+then:
+  - replace_depends:
+      old: sysroot_linux-aarch64 2.17.*
+      new: sysroot_linux-aarch64 >=2.17,<3.0a0
+  - replace_depends:
+      old: sysroot_linux-aarch64 >=2.17
+      new: sysroot_linux-aarch64 >=2.17,<3.0a0
+---
+if:
+  name: nvcc_linux-ppc64le
+  version_lt: 12.0.0
+  timestamp_lt: 1737594364000
+  has_depends: "sysroot_linux-ppc64le?( *)"
+then:
+  - replace_depends:
+      old: sysroot_linux-ppc64le 2.17.*
+      new: sysroot_linux-ppc64le >=2.17,<3.0a0
+  - replace_depends:
+      old: sysroot_linux-ppc64le >=2.17
+      new: sysroot_linux-ppc64le >=2.17,<3.0a0

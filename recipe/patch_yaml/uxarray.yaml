@@ -1,0 +1,11 @@
+# this patch fixes incorrect python constraints in uxarray
+# https://github.com/conda-forge/uxarray-feedstock/issues/89
+if:
+  name: uxarray
+  version_ge: "2024.12.0"
+  version_le: "2025.01.0"
+  timestamp_lt: 1737840060000
+then:
+  - replace_depends:
+      old: python >=3.9
+      new: python >=3.10
