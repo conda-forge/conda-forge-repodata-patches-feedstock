@@ -6,3 +6,10 @@ then:
   - replace_depends:
       old: matplotlib-base
       new: matplotlib-base >=3.9.2
+---
+if:
+  name: ultraplot
+  version_le: 1.0.8.post2
+then:
+  - add_constrains:
+      - ipython <9.0a0
