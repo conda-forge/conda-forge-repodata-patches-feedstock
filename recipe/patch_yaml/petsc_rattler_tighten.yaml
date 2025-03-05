@@ -1,0 +1,18 @@
+if:
+  has_depends: petsc *
+  not_has_depends: petsc >=*
+  timestamp_lt: 1741092174000
+  timestamp_gt: 1738128903000
+then:
+  - add_depends:
+      - petsc >=3.22.3,<3.23.0a0
+---
+if:
+  has_depends: fenics-dolfinx
+  not_has_depends: fenics-libdolfinx
+  not_subdir_in: noarch
+  timestamp_lt: 1741092174000
+  timestamp_gt: 1736935395000
+then:
+  - add_depends:
+      - fenics-libdolfinx >=0.9.0,<0.9.1a0
