@@ -1,0 +1,36 @@
+# https://github.com/conda-forge/cuda-nvcc-impl-feedstock/issues/42 an arm-variant
+# dependency is needed to be added to the outputs of cuda-nvcc-impl-feedstock because
+# run_exports do not work for noarch packages
+if:
+  timestamp_lt: 1748544655000
+  subdir_in:
+    - linux-aarch64
+    - noarch
+  artifact_in:
+    - cuda-crt-dev_linux-aarch64-12.8.93-h579c4fd_2.conda
+    - cuda-crt-tools-12.8.93-h579c4fd_2.conda
+    - cuda-nvcc-dev_linux-aarch64-12.8.93-h4310d6a_2.conda
+    - cuda-nvcc-impl-12.8.93-h614329b_2.conda
+    - cuda-nvcc-tools-12.8.93-h614329b_2.conda
+    - cuda-nvvm-dev_linux-aarch64-12.8.93-h579c4fd_2.conda
+    - cuda-nvvm-impl-12.8.93-h614329b_2.conda
+    - cuda-nvvm-tools-12.8.93-h614329b_2.conda
+then:
+  - add_depends: "arm-variant * sbsa"
+---
+if:
+  timestamp_lt: 1748544655000
+  subdir_in:
+    - linux-aarch64
+    - noarch
+  artifact_in:
+    - cuda-crt-dev_linux-aarch64-12.8.93-h465204a_2.conda
+    - cuda-crt-tools-12.8.93-h465204a_2.conda
+    - cuda-nvcc-dev_linux-aarch64-12.8.93-hef5b290_2.conda
+    - cuda-nvcc-impl-12.8.93-hcab966f_2.conda
+    - cuda-nvcc-tools-12.8.93-h32d051c_2.conda
+    - cuda-nvvm-dev_linux-aarch64-12.8.93-h465204a_2.conda
+    - cuda-nvvm-impl-12.8.93-h32d051c_2.conda
+    - cuda-nvvm-tools-12.8.93-h32d051c_2.conda
+then:
+  - add_depends: "arm-variant * tegra"
