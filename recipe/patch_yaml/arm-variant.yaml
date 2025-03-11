@@ -1,0 +1,16 @@
+# https://github.com/conda-forge/arm-variant-feedstock/issues/6 arm-variant should be a run
+# dependency not a run constrained. We want to move the dependency from run_constrained to
+# run, but the patcher raises an error if we do that, so we just add the dependency to run.
+if:
+  subdir_in: linux-aarch64
+  has_constrains: "arm-variant * sbsa"
+then:
+  - add_depends: "arm-variant * sbsa"
+  # - remove_constrains: "arm-variant * sbsa"
+---
+if:
+  subdir_in: linux-aarch64
+  has_constrains: "arm-variant * tegra"
+then:
+  - add_depends: "arm-variant * tegra"
+  # - remove_constrains: "arm-variant * tegra"
