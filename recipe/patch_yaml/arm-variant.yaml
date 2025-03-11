@@ -1,0 +1,83 @@
+# https://github.com/conda-forge/arm-variant-feedstock/issues/6 arm-variant should be a run
+# dependency not a run constrained. We want to move the dependency from run_constrained to
+# run, but the patcher raises an error if we do that, so we just add the dependency to run.
+if:
+  subdir_in:
+    - linux-aarch64
+    - noarch
+  has_constrains: "arm-variant * sbsa"
+  timestamp_lt: 1748544655000
+  name_in:
+    - cuda-*
+    - cudatoolkit
+    - cudensitymat
+    - cudnn
+    - cuquantum*
+    - cusparselt
+    - custatevec
+    - cutensor
+    - cutensornet
+    - libcal*
+    - libcublas*
+    - libcudss*
+    - libcufft*
+    - libcufile*
+    - libcurand*
+    - libcusolver*
+    - libcusparse*
+    - libmathdx*
+    - libnpp*
+    - libnvfatbin*
+    - libnvjitlink*
+    - libnvjpeg*
+    - libnvshmem*
+    - libnvtiff*
+    - nccl*
+    - nsight-compute
+    - nvcomp*
+    - nvimgcodec*
+    - nvmath-python*
+then:
+  - add_depends: "arm-variant * sbsa"
+  # - remove_constrains: "arm-variant * sbsa"
+---
+if:
+  subdir_in:
+    - linux-aarch64
+    - noarch
+  has_constrains: "arm-variant * tegra"
+  timestamp_lt: 1748544655000
+  name_in:
+    - cuda-*
+    - cudatoolkit
+    - cudensitymat
+    - cudnn
+    - cuquantum*
+    - cusparselt
+    - custatevec
+    - cutensor
+    - cutensornet
+    - libcal*
+    - libcublas*
+    - libcudss*
+    - libcufft*
+    - libcufile*
+    - libcurand*
+    - libcusolver*
+    - libcusparse*
+    - libmathdx*
+    - libnpp*
+    - libnvfatbin*
+    - libnvjitlink*
+    - libnvjpeg*
+    - libnvshmem*
+    - libnvtiff*
+    - nccl*
+    - nsight-compute
+    - nvcomp*
+    - nvimgcodec*
+    - nvmath-python*
+then:
+  - add_depends: "arm-variant * tegra"
+  # - remove_constrains: "arm-variant * tegra"
+---
