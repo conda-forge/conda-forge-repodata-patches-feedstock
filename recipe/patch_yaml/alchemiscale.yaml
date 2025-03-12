@@ -4,7 +4,7 @@ if:
   version: 0.6.1
   timestamp_le: 1741796254000
 then:
-  - add_depends: libsqlite <3.49 
+  - add_depends: libsqlite <3.49
 ---
 if:
   subdir_in: noarch
@@ -12,7 +12,7 @@ if:
   version: 0.6.1
   timestamp_le: 1741796254000
 then:
-  - add_depends: libsqlite <3.49 
+  - add_depends: libsqlite <3.49
 ---
 if:
   subdir_in: noarch
@@ -20,5 +20,4 @@ if:
   version: 0.6.1
   timestamp_le: 1741796254000
 then:
-  - add_depends: libsqlite <3.49 
-
+  - add_depends: libsqlite <3.49
