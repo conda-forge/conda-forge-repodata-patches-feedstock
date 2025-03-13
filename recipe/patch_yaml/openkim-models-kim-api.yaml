@@ -1,5 +1,6 @@
 if:
   name: openkim-models
+  timestamp_lt: 1741895610000
 then:
   - tighten_depends:
       name: kim-api
