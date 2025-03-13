@@ -1,0 +1,6 @@
+if:
+  name: openkim-models
+then:
+  - tighten_depends:
+      name: kim-api
+      upper_bound: 2.3.0
