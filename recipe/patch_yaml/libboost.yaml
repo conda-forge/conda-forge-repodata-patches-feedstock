@@ -5,4 +5,4 @@ if:
   version: "1.87.0"
   subdir_in: win-64
 then:
-  - add_constrains: __win>=10
+  - add_constrains: __win==0|>=10
