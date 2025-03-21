@@ -1,0 +1,10 @@
+# https://github.com/conda-forge/cling-feedstock/pull/63
+# https://github.com/conda/conda-build/issues/5624
+if:
+  name: cling
+  version: "1.2"
+  build_number_lt: 1
+then:
+  - replace_depends:
+      old: clangdev 18.1.8 cling_1.*
+      new: clangdev 18.1.8 cling_1.2*
