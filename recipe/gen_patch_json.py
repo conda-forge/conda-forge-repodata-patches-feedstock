@@ -850,7 +850,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 deps += ["clangdev * flang*"]
 
         # add as run_constrained for cling
-        if record_name == "cling" and record["version"] >= "0.8":
+        if (
+            record_name == "cling"
+            and record["version"] >= "0.8"
+            and record.get("timestamp", 0) < 1667260800000  # 2022-11-01
+        ):
             record.setdefault("constrains", []).extend(("gxx_linux-64 !=9.5.0",))
 
         ############################################
