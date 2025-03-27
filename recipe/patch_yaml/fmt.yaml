@@ -7,7 +7,7 @@ if:
 then:
   - replace_depends:
       old: fmt >=11.0.1,<12.0a0
-      new: fmt >=11.0.1,<11.1
+      new: fmt >=11.0.1,<11.1a0
   - replace_depends:
       old: fmt >=11.0.2,<12.0a0
-      new: fmt >=11.0.2,<11.1
+      new: fmt >=11.0.2,<11.1a0
