@@ -1,7 +1,7 @@
 # see https://github.com/conda-forge/fmt-feedstock/issues/61
 # and https://github.com/conda-forge/admin-requests/pull/1433
 if:
-  timestamp_lt: 1743030622335
+  timestamp_lt: 1743030622336
   has_depends: fmt >=11.0*
   subdir_in: win-64
 then:
