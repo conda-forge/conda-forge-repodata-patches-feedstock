@@ -1,0 +1,9 @@
+# Fix to use pydicom < 3.0 for Python < 3.10
+if:
+  name: pydicom
+  timestamp_lt: 1727272800000  # 2024-09-26
+  version_ge: 3.0.0
+then:
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.10

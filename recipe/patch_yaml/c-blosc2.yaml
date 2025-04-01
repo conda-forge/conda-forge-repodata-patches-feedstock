@@ -1,0 +1,44 @@
+# c-blosc2 had an ABI transition at 2.13.0
+# but delayed bumping SOVERSION until 2.14.4
+# 2.0-2.12 pin <2.13
+if:
+  has_depends: c-blosc2 >=2.[0123456789].*
+  timestamp_lt: 1712848295774
+then:
+  - tighten_depends:
+      name: c-blosc2
+      upper_bound: "2.13"
+---
+if:
+  has_depends: c-blosc2 >=2.1[012].*
+  timestamp_lt: 1712848295774
+then:
+  - tighten_depends:
+      name: c-blosc2
+      upper_bound: "2.13"
+---
+# next range: 2.13.0 - 2.14.3
+if:
+  has_depends: c-blosc2 >=2.13.*
+  timestamp_lt: 1712848295774
+then:
+  - tighten_depends:
+      name: c-blosc2
+      upper_bound: "2.14.4"
+---
+if:
+  has_depends: c-blosc2 >=2.14.[0-3]*
+  timestamp_lt: 1712848295774
+then:
+  - tighten_depends:
+      name: c-blosc2
+      upper_bound: "2.14.4"
+---
+# minor pin for 2.14.4+, which is in run_exports going forward
+if:
+  has_depends: c-blosc2 >=2.14.4,*
+  timestamp_lt: 1712848295774
+then:
+  - tighten_depends:
+      name: c-blosc2
+      max_pin: "x.x"

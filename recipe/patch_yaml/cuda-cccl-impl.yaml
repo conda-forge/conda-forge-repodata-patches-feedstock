@@ -25,3 +25,23 @@ if:
 then:
   # Prevent clobbering with cccl
   - add_constrains: cccl <0.0.0a0
+---
+# The cccl package replaces cuda-cccl-impl. This patch fixes previous cuda-cccl dependencies
+if:
+  name: cuda-cccl
+  version: 12.3.101
+  build_number: 0
+then:
+  - replace_depends:
+      old: cuda-cccl-impl 2.0.1
+      new: cccl 2.2.0
+---
+# The cccl package replaces cuda-cccl-impl. This patch fixes previous cuda-cccl dependencies
+if:
+  name: cuda-cccl
+  version: 12.2.140
+  build_number: 0
+then:
+  - replace_depends:
+      old: cuda-cccl-impl 2.0.1
+      new: cccl 2.1.0

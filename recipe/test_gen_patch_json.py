@@ -1,5 +1,6 @@
-from gen_patch_json import _gen_patch_instructions, REMOVALS, add_python_abi
 import copy
+
+from gen_patch_json import REMOVALS, _gen_patch_instructions, add_python_abi
 
 
 def test_gen_patch_instructions():

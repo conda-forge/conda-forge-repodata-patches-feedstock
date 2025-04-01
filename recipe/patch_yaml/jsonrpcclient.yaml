@@ -1,0 +1,29 @@
+# jsonrpcclient removed click dependency in 4.0.0
+# See https://github.com/explodinglabs/jsonrpcclient/commit/3a5fa2a33e6aa63ceb6eac4843df97631aa48e81
+if:
+  name: jsonrpcclient
+  version_ge: 4.0.0
+  timestamp_lt: 1732100712000
+  has_depends: click <7
+then:
+  - remove_depends: click <7
+---
+# jsonrpcclient removed apply_defaults dependency in 4.0.1
+# See https://github.com/explodinglabs/jsonrpcclient/blob/4.0.1/setup.py
+if:
+  name: jsonrpcclient
+  version_ge: 4.0.1
+  timestamp_lt: 1732100712000
+  has_depends: apply_defaults <1
+then:
+  - remove_depends: apply_defaults <1
+---
+# jsonrpcclient removed jsonschema dependency in 4.0.1
+# See https://github.com/explodinglabs/jsonrpcclient/blob/4.0.1/setup.py
+if:
+  name: jsonrpcclient
+  version_ge: 4.0.1
+  timestamp_lt: 1732100712000
+  has_depends: jsonschema <4
+then:
+  - remove_depends: jsonschema <4

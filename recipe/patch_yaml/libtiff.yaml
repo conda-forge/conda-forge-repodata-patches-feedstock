@@ -32,3 +32,15 @@ if:
   timestamp_lt: 1678151067000
 then:
   - add_constrains: jpeg <0.0.0a
+
+---
+
+# libtiff 4.6.0 is ABI compatible with 4.7.0
+# https://github.com/conda-forge/conda-forge-pinning-feedstock/pull/6432
+if:
+  has_depends: libtiff >=4.6.0,<4.7.0a0?( *)
+  timestamp_lt: 1726703338000
+then:
+  - loosen_depends:
+      name: libtiff
+      upper_bound: 4.8.0

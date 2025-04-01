@@ -1,0 +1,45 @@
+# Pint has not yet had a release that supports NumPy 2,
+# so we need to add a run_constrained requirement.
+if:
+  name: pint
+  version_lt: 0.23.0
+then:
+  - add_constrains: numpy <2.0.0a0
+---
+# Grab build 0 for 0.23 as well
+if:
+  name: pint
+  version: 0.23.0
+  build_number: 0
+then:
+  - add_constrains: numpy <2.0.0a0
+---
+# pint 0.24 requires Python 3.10 and does not run on older versions
+if:
+  name: pint
+  version: "0.24"
+  build_number_in: [0]
+then:
+  - replace_depends:
+      old: python >=3.9
+      new: python >=3.10
+---
+# pint doesn't support python 3.13 yet
+# see https://github.com/hgrecco/pint/pull/2037
+if:
+  name: pint
+  version_le: 0.24.3
+  timestamp_lt: 1729953082000
+then:
+  - tighten_depends:
+      name: python
+      upper_bound: "3.13"
+---
+if:
+  name: pint
+  timestamp_lt: 1730982234000
+  version_gt: 0.24.0
+then:
+  - replace_depends:
+      old: flexparser >=0.3
+      new: flexparser >=0.3,<0.4

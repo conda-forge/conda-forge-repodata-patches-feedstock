@@ -6,7 +6,7 @@
 #  - https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/pull/984/
 #  - https://github.com/conda-forge/admin-requests/pull/1468#issuecomment-2769312616
 if:
-  timestamp_lt: 1743030622335
+  timestamp_lt: 1743030622336
   has_depends: fmt >=11.0*
   subdir_in: [win-64, linux-64]
 then:

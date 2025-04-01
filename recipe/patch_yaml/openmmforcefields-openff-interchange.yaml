@@ -1,0 +1,8 @@
+if:
+  subdir_in: noarch
+  name: openmmforcefields
+  timestamp_lt: 1740770689000
+  version_le: 0.14.1
+then:
+  - add_constrains:
+      - openff-interchange <0.4.2

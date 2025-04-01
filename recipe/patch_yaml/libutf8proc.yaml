@@ -1,0 +1,5 @@
+if:
+  has_depends: libutf8proc*,<3.0a0
+  timestamp_lt: 1732866506000
+then:
+  - add_depends: libutf8proc <2.9

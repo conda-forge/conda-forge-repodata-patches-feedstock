@@ -2,9 +2,8 @@ from pathlib import Path
 
 import pytest
 import yaml
-
-from patch_yaml_utils import _test_patch_yaml, _apply_patch_yaml, ALLOWED_TEMPLATE_KEYS
-from patch_yaml_model import generate_schema, PatchYaml
+from patch_yaml_model import PatchYaml, generate_schema
+from patch_yaml_utils import ALLOWED_TEMPLATE_KEYS, _apply_patch_yaml, _test_patch_yaml
 
 
 def test_test_patch_yaml_record_key():
@@ -217,8 +216,9 @@ def test_apply_patch_yaml_add(key):
 @pytest.mark.parametrize("key", ["depends", "constrains"])
 def test_apply_patch_yaml_add_template(key, rkey):
     patch_yaml = {"then": [{"add_" + key: f"blah ${rkey}"}]}
-    record = {"version": "10", "name": "foo", "build_number": 2}
-    _apply_patch_yaml(patch_yaml, record, "linux-64", None)
+    record = {"version": "10", "name": "foo", "build_number": 2, "build": "pyhd8_0"}
+    patched_record = record.copy()
+    _apply_patch_yaml(patch_yaml, patched_record, "linux-64", None)
     if rkey not in [
         "subdir",
         "next_version",
@@ -226,12 +226,7 @@ def test_apply_patch_yaml_add_template(key, rkey):
         "minor_version",
         "patch_version",
     ]:
-        assert record == {
-            "version": "10",
-            key: [f"blah {record[rkey]}"],
-            "name": "foo",
-            "build_number": 2,
-        }
+        assert patched_record == (record | {key: [f"blah {patched_record[rkey]}"]})
     else:
         if rkey == "subdir":
             nval = "linux-64"
@@ -244,16 +239,18 @@ def test_apply_patch_yaml_add_template(key, rkey):
         else:
             nval = "11"
 
-        assert record == {
-            "version": "10",
-            key: [f"blah {nval}"],
-            "name": "foo",
-            "build_number": 2,
-        }
+        assert patched_record == (
+            record
+            | {
+                key: [f"blah {nval}"],
+            }
+        )
 
     patch_yaml = {"then": [{"add_" + key: f"blah ${rkey}"}]}
-    record = {"version": "10", key: ["foo"], "name": "foo", "build_number": 2}
-    _apply_patch_yaml(patch_yaml, record, "linux-64", None)
+    patched_record = record | {
+        key: ["foo"],
+    }
+    _apply_patch_yaml(patch_yaml, patched_record, "linux-64", None)
     if rkey not in [
         "subdir",
         "next_version",
@@ -261,12 +258,12 @@ def test_apply_patch_yaml_add_template(key, rkey):
         "minor_version",
         "patch_version",
     ]:
-        assert record == {
-            "version": "10",
-            key: ["foo", f"blah {record[rkey]}"],
-            "name": "foo",
-            "build_number": 2,
-        }
+        assert patched_record == (
+            record
+            | {
+                key: ["foo", f"blah {patched_record[rkey]}"],
+            }
+        )
     else:
         if rkey == "subdir":
             nval = "linux-64"
@@ -279,12 +276,12 @@ def test_apply_patch_yaml_add_template(key, rkey):
         else:
             nval = "11"
 
-        assert record == {
-            "version": "10",
-            key: ["foo", f"blah {nval}"],
-            "name": "foo",
-            "build_number": 2,
-        }
+        assert patched_record == (
+            record
+            | {
+                key: ["foo", f"blah {nval}"],
+            }
+        )
 
 
 @pytest.mark.parametrize("key", ["depends", "constrains"])

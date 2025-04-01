@@ -1,0 +1,9 @@
+if:
+  name: piecash
+  timestamp_lt: 1722691941000
+  version_lt: 1.2.1
+  has_depends: sqlalchemy?( *)
+then:
+  - tighten_depends:
+      name: sqlalchemy
+      upper_bound: "1.4"

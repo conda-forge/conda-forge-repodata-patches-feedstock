@@ -12,3 +12,15 @@ then:
   - replace_depends:
       old: pydantic?( *)
       new: ${old},<2.0a0
+
+---
+
+# Pins APSW to a recent version
+# https://github.com/conda-forge/qcfractal-feedstock/pull/52
+if:
+  name: qcportal
+  timestamp_lt: 1727210616000
+then:
+  - replace_depends:
+      old: apsw
+      new: apsw >=3.42

@@ -1,0 +1,404 @@
+# packages from https://github.com/numpy/numpy/issues/26191
+# where we know the lowest version that supports numpy 2.0
+if:
+  name: astropy
+  version_lt: 6.1.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: awkward
+  version_lt: 2.6.3
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: bokeh
+  version_lt: 3.4.1
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  # legacy name for libboost-python
+  name: boost
+  version_lt: 1.86.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: cartopy
+  version_lt: 0.23.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: contourpy
+  version_lt: 1.2.1
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: cupy
+  version_lt: 13.0.0
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: cython
+  version_lt: 3.0.4
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: gdal
+  version_lt: 3.9.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: geopandas
+  version_lt: 0.14.4
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: h5py
+  version_lt: 3.11.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: hypothesis
+  version_lt: 6.100.2
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: jax
+  version_lt: 0.4.26
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  # no need to do -devel as well, as it depends exactly on this package
+  name: libboost-python
+  version_lt: 1.86.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: matplotlib-base
+  version_lt: 3.8.4
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: ml_dtypes
+  version_lt: 0.4.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: networkx
+  version_lt: 3.3.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: numba
+  version_lt: 0.60.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: numcodecs
+  version_lt: 0.12.1
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: numexpr
+  version_lt: 2.10.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: pandas
+  version_lt: 2.2.2
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: pyarrow
+  version_lt: 16.0.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: pybind11
+  version_lt: 2.12.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: pytorch
+  version_lt: 2.3.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: pythran
+  # upstream only supports explicitly from 0.16.0, but 0.15.0 is
+  # both enough as well as necessary to build scipy
+  version_lt: 0.15.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: pywavelets
+  version_lt: 1.6.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: rasterio
+  version_lt: 1.3.10
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: seaborn
+  version_lt: 0.13.2
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: scikit-bio
+  version_lt: 0.6.1
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: scikit-image
+  version_lt: 0.23.1
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: scikit-learn
+  version_lt: 1.4.2
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: shapely
+  version_lt: 2.0.4
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: statsmodels
+  version_lt: 0.14.2
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: sympy
+  version_lt: 1.12.1
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: threadpoolctl
+  version_lt: 3.5.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: tifffile
+  version_lt: 2024.4.24
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: unyt
+  version_lt: 3.0.2
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: xgboost
+  version_lt: 2.1.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: yt
+  version_lt: 4.3.1
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
+---
+if:
+  name: zarr
+  version_lt: 2.18.0
+  has_depends: python >=3.9*
+  not_has_depends: numpy *,<2.0a0
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"

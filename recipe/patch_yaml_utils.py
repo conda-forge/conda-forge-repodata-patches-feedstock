@@ -1,16 +1,18 @@
-import yaml
+import fnmatch as _fnmatch
 import glob
 import os
-import string
-from packaging.version import parse as parse_version
-import fnmatch as _fnmatch
 import re
+import string
 from functools import lru_cache
+
+import yaml
+from packaging.version import parse as parse_version
 
 ALLOWED_TEMPLATE_KEYS = [
     "name",
     "version",
     "build_number",
+    "build",
     "subdir",
     "next_version",
     "major_version",
@@ -242,16 +244,20 @@ def _replace_pin(old_pin, new_pin, deps, record, target="depends"):
             record[target].pop(i)
 
 
-def _rename_dependency(fn, record, old_name, new_name):
-    depends = record["depends"]
+def _rename_dependency(fn, record, old_name, new_name, target="depends"):
+    if target not in ("depends", "constrains"):
+        raise ValueError(target)
+    if target not in record:
+        return
+    specs = record[target]
     dep_idx = next(
-        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == old_name), None
+        (q for q, dep in enumerate(specs) if dep.split(" ")[0] == old_name), None
     )
     if dep_idx is not None:
-        parts = depends[dep_idx].split(" ")
+        parts = specs[dep_idx].split(" ")
         remainder = (" " + " ".join(parts[1:])) if len(parts) > 1 else ""
-        depends[dep_idx] = new_name + remainder
-        record["depends"] = depends
+        specs[dep_idx] = new_name + remainder
+        record[target] = specs
 
 
 def pad_list(lst, num):
@@ -365,6 +371,33 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
 
             continue
 
+        if (
+            len(dep_parts) == 2
+            and dep_parts[1].startswith("<")
+            and upper_bound is not None
+        ):
+            upper_bound = upper_bound.split(".")
+            if str(upper_bound[-1]) != "0":
+                upper_bound += ["0"]
+            upper_bound = ".".join(upper_bound)
+
+            old_upper = dep_parts[1].split("<")[1]
+            if old_upper.startswith("="):
+                # if the old pin is <=, we need to remove the =
+                # and we allow changes of eg <=15 to <15.0a0
+                # hence the condition includes >=
+                old_upper = old_upper[1:]
+                cond = parse_version(old_upper) >= parse_version(upper_bound)
+            else:
+                cond = parse_version(old_upper) > parse_version(upper_bound)
+            if cond:
+                depends[dep_idx] = "{} <{}a0".format(
+                    dep_parts[0],
+                    upper_bound,
+                )
+                record["depends"] = depends
+            continue
+
 
 def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
     depends = record.get("depends", ())
@@ -379,7 +412,14 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
         lower = m.group("lower")
         upper = m.group("upper").split(".")
 
-        if upper_bound is None:
+        if (upper_bound is None or upper_bound == "None") and max_pin is None:
+            # case where we fully remove upper bound
+            depends[dep_idx] = f"{dep_parts[0]} >={lower}"
+            if len(dep_parts) == 3:
+                depends[dep_idx] = f"{depends[dep_idx]} {dep_parts[2]}"
+            record["depends"] = depends
+            continue
+        elif upper_bound is None:
             new_upper = get_upper_bound(lower, max_pin).split(".")
         else:
             new_upper = upper_bound.split(".")
@@ -482,12 +522,17 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                             target=subk,
                         )
 
-            elif k == "rename_depends":
+            elif k.startswith("rename_") and k[len("rename_") :] in [
+                "depends",
+                "constrains",
+            ]:
+                subk = k[len("rename_") :]
                 _rename_dependency(
                     fn,
                     record,
                     _maybe_process_template(v["old"], record, subdir),
                     _maybe_process_template(v["new"], record, subdir),
+                    target=subk,
                 )
 
             elif k == "relax_exact_depends":
@@ -537,13 +582,33 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 raise KeyError("Unrecognized 'then' key '%s'!" % k)
 
 
+CONDA_PKG_NAME_RE = re.compile(r"^[a-z0-9_.-]+$")
+
+
+def shortlist_relevant_filenames(index, package_name_selector):
+    if CONDA_PKG_NAME_RE.match(package_name_selector) is not None:
+        # package name does not contain wildcards
+        return [
+            fn
+            for fn, record in index.items()
+            if record["name"] == package_name_selector
+        ]
+    return index.keys()
+
+
 def patch_yaml_edit_index(index, subdir):
     keep_pkgs = os.environ.get("CF_PKGS", None)
     if keep_pkgs is not None:
         keep_pkgs = set(keep_pkgs.split(";"))
     fns = sorted(index)
     for patch_yaml, fname in ALL_YAMLS:
-        for fn in fns:
+        if "name" in patch_yaml["if"]:
+            pkg_name = patch_yaml["if"]["name"]
+            fns_to_process = shortlist_relevant_filenames(index, pkg_name)
+        else:
+            fns_to_process = fns
+
+        for fn in fns_to_process:
             record = index[fn]
             if keep_pkgs is not None and record["name"] not in keep_pkgs:
                 continue

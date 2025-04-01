@@ -1,0 +1,5 @@
+if:
+  name: liblzma
+  timestamp_lt: 1737022431000
+then:
+  - add_constrains: xz ==${version}=*_${build_number}

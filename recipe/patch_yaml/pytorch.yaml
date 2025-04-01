@@ -160,3 +160,66 @@ if:
 
 then:
   - add_constrains: pybind11 <0.0.0a0
+
+
+---
+# Pytorch 2.4.1 did not upload a package for pytorch-gpu and pytorch-cpu that
+# compatible with all versions of python
+# Only the linux builds use the "megabuild" that cause the issue
+# The OSX builds were "safe"
+# https://github.com/conda-forge/pytorch-cpu-feedstock/issues/338
+# https://github.com/conda-forge/pytorch-cpu-feedstock/pull/341
+
+if:
+  name: pytorch-gpu
+  version: 2.4.1
+  subdir_in: linux-64
+  # cpu is build number 0-5
+  # mkl is +100
+  # cuda compiler + mkl is +300
+  # Cuda without mkl doesn't exist for 2.4.1
+  # cuda compiler is +200
+  build_number_in:
+    - 300
+    - 301
+    - 302
+    - 303
+    - 304
+    - 305
+
+then:
+  - replace_depends:
+      old: "pytorch 2.4.1 cuda118_*"
+      new: "pytorch 2.4.1 cuda118_*_${build_number}"
+  - replace_depends:
+      old: "pytorch 2.4.1 cuda120_*"
+      new: "pytorch 2.4.1 cuda120_*_${build_number}"
+
+---
+if:
+  name: pytorch-cpu
+  version: 2.4.1
+  subdir_in: linux-64
+  # cpu is build number 0-5
+  # mkl is +100
+  # cuda compiler + mkl is +300
+  # Cuda without mkl doesn't exist for 2.4.1
+  # cuda compiler is +200
+  build_number_in:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 100
+    - 101
+    - 102
+    - 103
+    - 104
+    - 105
+
+then:
+  - replace_depends:
+      old: "pytorch 2.4.1 cpu_*"
+      new: "pytorch 2.4.1 cpu_*_${build_number}"

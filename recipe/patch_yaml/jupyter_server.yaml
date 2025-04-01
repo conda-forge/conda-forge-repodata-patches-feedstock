@@ -6,3 +6,31 @@ then:
   - tighten_depends:
       name: anyio
       upper_bound: "4"
+---
+# backport of https://github.com/conda-forge/jupyter_server-feedstock/pull/156
+if:
+  name: jupyter_server
+  version: 2.14.*
+  timestamp_lt: 1720533911000
+then:
+  - replace_depends:
+      old: argon2-cffi
+      new: argon2-cffi >=21.1
+  - replace_depends:
+      old: jinja2
+      new: jinja2 >=3.0.3
+  - replace_depends:
+      old: jupyter_server_terminals
+      new: jupyter_server_terminals >=0.4.4
+  - replace_depends:
+      old: overrides
+      new: overrides >=5.0
+  - replace_depends:
+      old: packaging
+      new: packaging >=22.0
+  - replace_depends:
+      old: prometheus_client
+      new: prometheus_client >=0.9
+  - replace_depends:
+      old: websocket-client
+      new: websocket-client >=1.7

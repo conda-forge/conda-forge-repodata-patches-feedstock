@@ -1,30 +1,30 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-from collections import defaultdict
-import tempfile
 import copy
 import json
 import os
-import urllib
-import bz2
-from os.path import join, isdir
-import sys
-import tqdm
 import re
-import requests
-from packaging.version import parse as parse_version
+import sys
+import tempfile
+import urllib
+from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from os.path import isdir, join
 
+import requests
+import tqdm
+import zstandard
 from conda_index.index import _apply_instructions
-from show_diff import show_record_diffs
 from get_license_family import get_license_family
+from packaging.version import parse as parse_version
 from patch_yaml_utils import (
-    patch_yaml_edit_index,
-    _relax_exact,
     CB_PIN_REGEX,
+    _relax_exact,
     pad_list,
+    patch_yaml_edit_index,
 )
+from show_diff import show_record_diffs
 
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda.anaconda.org"
@@ -42,7 +42,29 @@ SUBDIRS = (
 )
 
 REMOVALS = {
-    "noarch": ("sendgrid-5.3.0-py_0.tar.bz2",),
+    "noarch": (
+        "sendgrid-5.3.0-py_0.tar.bz2",
+        # the removals starting here are failed uploads
+        "boto3-stubs-lite-1.26.89-pyhd8ed1ab_0.conda",
+        "ca-policy-lcg-1.119-hd8ed1ab_0.conda",
+        "cfn-lint-0.74.2-pyhd8ed1ab_0.conda",
+        "conda-forge-pinning-2023.06.08.10.36.51-hd8ed1ab_0.conda",
+        "conda-forge-repodata-patches-20230516.19.05.39-hd8ed1ab_0.conda",
+        "ffmpeg-progress-yield-0.7.6-pyhd8ed1ab_0.conda",
+        "idds-doma-1.3.0-pyhd8ed1ab_0.conda",
+        "pandera-core-0.14.3-pyhd8ed1ab_0.conda",
+        "pandera-pyspark-0.14.3-hd8ed1ab_0.conda",
+        "perl-extutils-makemaker-7.68-pl5321hd8ed1ab_0.conda",
+        "pyhanko-0.17.2-pyhd8ed1ab_0.conda",
+        "python-flatbuffers-23.3.3-pyhd8ed1ab_0.conda",
+        "strawberry-graphql-with-asgi-0.162.0-pyhd8ed1ab_0.conda",
+        # end of removals for failed uploads
+    ),
+    "linux-aarch64": (
+        # the removals starting here are failed uploads
+        "awscli-1.29.39-py38he37f277_0.conda",
+        # end of removals for failed uploads
+    ),
     "linux-64": (
         "airflow-with-gcp_api-1.9.0-1.tar.bz2",
         "airflow-with-gcp_api-1.9.0-2.tar.bz2",
@@ -197,6 +219,9 @@ REMOVALS = {
         "nlopt-2.4.2-0.tar.bz2",
         "pygpu-0.6.5-0.tar.bz2",
         "pytest-regressions-1.0.1-0.tar.bz2",
+        # the removals starting here are failed uploads
+        "libgz-sim8-8.1.0-h86fce40_0.conda",
+        # end of removals for failed uploads
     ),
 }
 
@@ -651,17 +676,19 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if record_name in llvm_pkgs:
             new_constrains = record.get("constrains", [])
             version = record["version"]
-            for pkg in llvm_pkgs:
-                if record_name == pkg:
-                    continue
-                if pkg in new_constrains:
-                    del new_constrains[pkg]
-                if any(
-                    constraint.startswith(f"{pkg} ") for constraint in new_constrains
-                ):
-                    continue
-                new_constrains.append(f"{pkg} {version}.*")
-            record["constrains"] = new_constrains
+            if parse_version(version) < parse_version("17.0.0.a0"):
+                for pkg in llvm_pkgs:
+                    if record_name == pkg:
+                        continue
+                    if pkg in new_constrains:
+                        del new_constrains[pkg]
+                    if any(
+                        constraint.startswith(f"{pkg} ")
+                        for constraint in new_constrains
+                    ):
+                        continue
+                    new_constrains.append(f"{pkg} {version}.*")
+                record["constrains"] = new_constrains
 
         if record_name == "gcc_impl_{}".format(subdir):
             _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
@@ -823,7 +850,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 deps += ["clangdev * flang*"]
 
         # add as run_constrained for cling
-        if record_name == "cling" and record["version"] >= "0.8":
+        if (
+            record_name == "cling"
+            and record["version"] >= "0.8"
+            and record.get("timestamp", 0) < 1667260800000  # 2022-11-01
+        ):
             record.setdefault("constrains", []).extend(("gxx_linux-64 !=9.5.0",))
 
         ############################################
@@ -858,7 +889,7 @@ def _gen_new_index(repodata, subdir):
     return indexes
 
 
-def _add_removals(instructions, subdir):
+def _add_removals(instructions, subdir, package_removal_keeplist=None):
     r = requests.get(
         "https://conda.anaconda.org/conda-forge/"
         "label/broken/%s/repodata.json" % subdir
@@ -867,16 +898,22 @@ def _add_removals(instructions, subdir):
     if r.status_code != 200:
         r.raise_for_status()
 
+    package_removal_keeplist = package_removal_keeplist or {}
+
     data = r.json()
     currvals = list(REMOVALS.get(subdir, []))
     for pkgs_section_key in ["packages", "packages.conda"]:
         for pkg_name in data.get(pkgs_section_key, []):
+            if package_removal_keeplist:
+                nm = data.get(pkgs_section_key, {}).get(pkg_name, {}).get("name", None)
+                if nm in package_removal_keeplist:
+                    continue
             currvals.append(pkg_name)
 
     instructions["remove"].extend(tuple(set(currvals)))
 
 
-def _gen_patch_instructions(index, new_index, subdir):
+def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=None):
     instructions = {
         "patch_instructions_version": 1,
         "packages": defaultdict(dict),
@@ -885,7 +922,9 @@ def _gen_patch_instructions(index, new_index, subdir):
         "remove": [],
     }
 
-    _add_removals(instructions, subdir)
+    _add_removals(
+        instructions, subdir, package_removal_keeplist=package_removal_keeplist
+    )
 
     # diff all items in the index and put any differences in the instructions
     for pkgs_section_key in ["packages", "packages.conda"]:
@@ -919,16 +958,16 @@ def _gen_patch_instructions(index, new_index, subdir):
 
 def _do_subdir(subdir):
     with tempfile.TemporaryDirectory() as tmpdir:
-        raw_repodata_path = os.path.join(tmpdir, "repodata_from_packages.json.bz2")
-        ref_repodata_path = os.path.join(tmpdir, "repodata.json.bz2")
-        raw_url = f"{BASE_URL}/{subdir}/repodata_from_packages.json.bz2"
+        raw_repodata_path = os.path.join(tmpdir, "repodata_from_packages.json.zst")
+        ref_repodata_path = os.path.join(tmpdir, "repodata.json.zst")
+        raw_url = f"{BASE_URL}/{subdir}/repodata_from_packages.json.zst"
         urllib.request.urlretrieve(raw_url, raw_repodata_path)
-        ref_url = f"{BASE_URL}/{subdir}/repodata.json.bz2"
+        ref_url = f"{BASE_URL}/{subdir}/repodata.json.zst"
         urllib.request.urlretrieve(ref_url, ref_repodata_path)
 
-        with bz2.open(raw_repodata_path) as fh:
+        with zstandard.open(raw_repodata_path) as fh:
             repodata = json.load(fh)
-        with bz2.open(ref_repodata_path) as fh:
+        with zstandard.open(ref_repodata_path) as fh:
             ref_repodata = json.load(fh)
 
         prefix_dir = os.getenv("PREFIX", "tmp")

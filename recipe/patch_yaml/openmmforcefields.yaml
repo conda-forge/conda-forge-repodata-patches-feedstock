@@ -1,0 +1,13 @@
+# new versions of ambertools change behavior so we need to not pull it in
+# https://github.com/openmm/openmmforcefields/issues/281
+if:
+  subdir_in: noarch
+  name: openmmforcefields
+  timestamp_lt: 1714412049000
+  version_lt: 0.12.0
+then:
+  - replace_depends:
+      # str of thing to be replaced
+      old: ambertools >=20.0
+      # thing to replace `old` with
+      new: ambertools >=20.0,<23

@@ -1,0 +1,9 @@
+# See https://github.com/conda-forge/cinnabar-feedstock/issues/6
+# breaking changes in openff-models 0.2.x
+if:
+  subdir_in: noarch
+  name: cinnabar
+  timestamp_lt: 1722885208000
+  not_has_constrains: openff-models?(*)
+then:
+  - add_constrains: openff-models ~=0.1.2

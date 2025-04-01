@@ -1,0 +1,25 @@
+#  ensure that breaking changes from tabmat 4.0.0
+#  do not interfere with older versions of glum
+if:
+  name: glum
+  timestamp_lt: 1713800640000
+  version_lt: 2.6.0
+  has_depends: tabmat >=*
+  not_has_depends: tabmat >=*,<*
+then:
+  - replace_depends:
+      old: tabmat >=*
+      new: ${old},<4
+---
+#  ensure that changes to the private API of sklearn 1.5.0
+#  do not break older versions of glum
+if:
+  name: glum
+  timestamp_lt: 1716389793000
+  version_le: 3.0.0
+  has_depends: scikit-learn >=*
+  not_has_depends: scikit-learn >=*,<*
+then:
+  - replace_depends:
+      old: scikit-learn >=*
+      new: ${old},<1.5

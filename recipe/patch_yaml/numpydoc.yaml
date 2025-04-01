@@ -18,3 +18,18 @@ then:
   - replace_depends:
       old: python
       new: python >=3.5
+---
+# backport of https://github.com/conda-forge/numpydoc-feedstock/pull/27
+if:
+  name: numpydoc
+  version_ge: 1.7.0
+  version_le: 1.7.1
+  timestamp_le: 1717504915000
+then:
+  - add_depends: tomli >=1.1.0
+  - replace_depends:
+      old: sphinx >=5
+      new: sphinx >=6
+  - replace_depends:
+      old: python >=3.7
+      new: python >=3.8
