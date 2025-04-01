@@ -8,7 +8,7 @@
 if:
   timestamp_lt: 1743030622336
   has_depends: fmt >=11.0*
-  subdir_in: [win-64, linux-64]
+  subdir_in: [win-64, linux-64, linux-aarch64, linux-ppc64le]
 then:
   - replace_depends:
       old: fmt >=11.0.1,<12.0a0
