@@ -14,7 +14,7 @@ then:
 #     _pin_stricter(fn, record, "libffi", "x.x")
 if:
   has_depends: libffi >=3.2.1,<4.0a0
-  timestamp_lt: 1605980936031
+  timestamp_lt: 1743689268000
 then:
   - tighten_depends:
       name: libffi
