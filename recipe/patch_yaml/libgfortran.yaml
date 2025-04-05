@@ -1,0 +1,7 @@
+if:
+  timestamp_lt: 1743886623000
+  has_depends: libgfortran 5.*
+then:
+  - replace_depends:
+      old: libgfortran 5.*
+      new: libgfortran >=5
