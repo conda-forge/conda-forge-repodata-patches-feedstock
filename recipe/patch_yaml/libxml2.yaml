@@ -12,7 +12,7 @@ then:
       upper_bound: 2.14.0
 ---
 if:
-  timestamp_lt: 1705357488000
+  timestamp_lt: 1744044827000
   has_depends:
     - libxml2 >=2.10*
 then:
@@ -21,7 +21,7 @@ then:
       upper_bound: 2.14.0
 ---
 if:
-  timestamp_lt: 1705357488000
+  timestamp_lt: 1744044827000
   has_depends:
     - libxml2 >=2.11*
 then:
@@ -30,7 +30,7 @@ then:
       upper_bound: 2.14.0
 ---
 if:
-  timestamp_lt: 1705357488000
+  timestamp_lt: 1744044827000
   has_depends:
     - libxml2 >=2.12*
 then:
@@ -39,7 +39,7 @@ then:
       upper_bound: 2.14.0
 ---
 if:
-  timestamp_lt: 1743792233000
+  timestamp_lt: 1744044827000
   has_depends:
     - libxml2 >=2.13*
 then:
