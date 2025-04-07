@@ -11,7 +11,7 @@ if:
 then:
   - tighten_depends:
       name: libxml2
-      upper_bound: 2.11.0
+      upper_bound: "2.11.0"
 ---
 if:
   timestamp_lt: 1744044827000
@@ -20,4 +20,4 @@ if:
 then:
   - tighten_depends:
       name: libxml2
-      upper_bound: 2.14
+      upper_bound: "2.14"
