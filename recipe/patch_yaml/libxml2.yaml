@@ -47,4 +47,17 @@ if:
 then:
   - tighten_depends:
       name: libxml2
-      upper_bound: "2.14"
+      upper_bound: 2.14.0
+---
+if:
+  timestamp_lt: 1744044827000
+  # for anything not caught by the above, ensure that packages (built before 2.14)
+  # which assumed major-level compatibility get the right upper bound too
+  has_depends:
+    - libxml2 *<3.0a0
+  not_has_depends:
+    - libxml2 >=2.14*
+then:
+  - tighten_depends:
+      name: libxml2
+      upper_bound: 2.14.0
