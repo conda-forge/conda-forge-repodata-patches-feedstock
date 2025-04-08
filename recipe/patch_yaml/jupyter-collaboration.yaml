@@ -1,0 +1,14 @@
+if:
+  name: jupyter-collaboration
+  version: 3.*
+  timestamp_lt: 1744114015000
+then:
+  - tighten_depends:
+      name: jupyter-collaboration
+      upper_bound: "2.0"
+  - tighten_depends:
+      name: jupyter-docprovider
+      upper_bound: "2.0"
+  - tighten_depends:
+      name: jupyter_server_ydoc
+      upper_bound: "2.0"
