@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+
 # from this snippet
 # if record.get('timestamp', 0) < 1666320182000:
 #     if any(dep.startswith("libxml2 >=2.9") for dep in deps):
@@ -42,6 +44,19 @@ if:
   timestamp_lt: 1744044827000
   has_depends:
     - libxml2 >=2.13*
+then:
+  - tighten_depends:
+      name: libxml2
+      upper_bound: 2.14.0
+---
+if:
+  timestamp_lt: 1744044827000
+  # for anything not caught by the above, ensure that packages (built before 2.14)
+  # which assumed major-level compatibility get the right upper bound too
+  has_depends:
+    - libxml2 *<3.0a0
+  not_has_depends:
+    - libxml2 >=2.14*
 then:
   - tighten_depends:
       name: libxml2
