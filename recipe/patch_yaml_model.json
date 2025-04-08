@@ -1804,6 +1804,56 @@
       "title": "_IfClause",
       "type": "object"
     },
+    "_Name_LowerBound_UpperBound_Other": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "lower_bound": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Explicit lower bound version to apply to the package (e.g. `1.0`). Will be >=[value] if provided.",
+          "title": "Lower Bound"
+        },
+        "upper_bound": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Explicit upper bound version to apply to the package (e.g. `2.0`). Will be <[value] if provided.",
+          "title": "Upper Bound"
+        },
+        "other": {
+          "default": null,
+          "description": "List of additional constraints to apply to the package (e.g. `['~=1.2.5', '!=1.3.*']`). Overrides any existing 'other' constraints. To clear existing 'other' constraints, set 'other' to an empty string.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Other",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "_Name_LowerBound_UpperBound_Other",
+      "type": "object"
+    },
     "_Name_MaxPin_UpperBound": {
       "additionalProperties": false,
       "properties": {
@@ -2008,39 +2058,76 @@
           "title": "Add Track Features"
         },
         "replace_depends": {
-          "$ref": "#/$defs/_Old2New",
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Old2New"
+            }
+          ],
           "default": null,
           "description": "Replace 'old' dependency with 'new'."
         },
         "replace_constrains": {
-          "$ref": "#/$defs/_Old2New",
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Old2New"
+            }
+          ],
           "default": null,
           "description": "Replace 'old' constraint with 'new'."
         },
         "rename_depends": {
-          "$ref": "#/$defs/_Old2New",
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Old2New"
+            }
+          ],
           "default": null,
           "description": "Rename 'old' dependency as 'new', leaving version and build string fields untouched."
         },
         "rename_constrains": {
-          "$ref": "#/$defs/_Old2New",
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Old2New"
+            }
+          ],
           "default": null,
           "description": "Rename 'old' constraint as 'new', leaving version and build string fields untouched."
         },
         "relax_exact_depends": {
-          "$ref": "#/$defs/_Name_MaxPin_UpperBound",
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Name_MaxPin_UpperBound"
+            }
+          ],
           "default": null,
           "description": "Relax an exact pin (e.g., `blah ==1.0.0`) to something like blah `>=1.0.0` and possibly with `,<2.0a0` added if max_pin='x'"
         },
         "tighten_depends": {
-          "$ref": "#/$defs/_Name_MaxPin_UpperBound",
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Name_MaxPin_UpperBound"
+            }
+          ],
           "default": null,
           "description": "Make a dependency version constraint stricter"
         },
         "loosen_depends": {
-          "$ref": "#/$defs/_Name_MaxPin_UpperBound",
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Name_MaxPin_UpperBound"
+            }
+          ],
           "default": null,
           "description": "Make a dependency version constraint looser"
+        },
+        "change_depends": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/_Name_LowerBound_UpperBound_Other"
+            }
+          ],
+          "default": null,
+          "description": "Change a dependency version constraint"
         }
       },
       "title": "_ThenClauseItem",
