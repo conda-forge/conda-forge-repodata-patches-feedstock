@@ -1,0 +1,17 @@
+if:
+  name: itango
+  version_lt: 0.2.0
+  timestamp_lt: 1744182930000
+then:
+  - replace_depends:
+      old: ipython >=1.0
+      new: ipython >=1.0,<9.0
+---
+if:
+  name: itango
+  version: 0.2.0
+  timestamp_lt: 1744182930000
+then:
+  - replace_depends:
+      old: ipython >=4.0
+      new: ipython >=4.0,<9.0
