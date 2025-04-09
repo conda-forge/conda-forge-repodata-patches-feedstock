@@ -16,3 +16,16 @@ then:
   - replace_constrains:
       old: conda-libmamba-solver*
       new: conda-libmamba-solver >=22.12.0
+---
+# The lower bound on conda-libmamba-solver was increased for 25.1.0 in
+# <https://github.com/conda/conda/commit/6db7b91585aa7e111f2df6565e7053b6234c0b3b>
+# but not updated in conda-feedstock, leading to breakage described in
+# <https://github.com/conda-forge/conda-feedstock/issues/259>.
+# This was corrected in <https://github.com/conda-forge/conda-feedstock/pull/267>.
+if:
+  name: conda
+  version_ge: "25.1.0"
+  version_le: "25.3.0"
+  timestamp_lt: 1744201428000
+then:
+  - add_depends: conda-libmamba-solver >=24.11.0
