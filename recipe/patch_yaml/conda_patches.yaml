@@ -22,10 +22,13 @@ then:
 # but not updated in conda-feedstock, leading to breakage described in
 # <https://github.com/conda-forge/conda-feedstock/issues/259>.
 # This was corrected in <https://github.com/conda-forge/conda-feedstock/pull/267>.
+# There is a strange discrepancy with v25.3.1 having been published to conda-forge
+# while the recipe was still on v25.3.0. I have inquired about this in
+# <https://github.com/conda-forge/conda-feedstock/pull/266#issuecomment-2789657700>.
 if:
   name: conda
   version_ge: "25.1.0"
-  version_le: "25.3.0"
+  version_le: "25.3.1"
   timestamp_lt: 1744201428000
 then:
   - add_depends: conda-libmamba-solver >=24.11.0
