@@ -29,6 +29,6 @@ if:
   name: conda
   version_ge: "25.1.0"
   version_le: "25.3.1"
-  timestamp_lt: 1744201428000
+  timestamp_lt: 1744218305000
 then:
   - add_depends: conda-libmamba-solver >=24.11.0
