@@ -1,0 +1,10 @@
+# See https://github.com/conda-forge/pytest-benchmark-feedstock/pull/27
+# for the fix in pytest-benchmark 5.1.0, build 2
+if:
+  name: pytest-benchmark
+  version_eq: 5.1.0
+  build_number_in: [0, 1]
+then:
+  - replace_depends:
+      old: pytest >=3.8
+      new: pytest >=8.1
