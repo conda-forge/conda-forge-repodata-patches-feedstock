@@ -6,180 +6,180 @@
 # https://code.qt.io/cgit/qt/qtreleasenotes.git/about/qt/6.9.0/release-note.md
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-main >=6.7*"
+  has_depends: qt6-main >=6.7*
 then:
   - loosen_depends:
       name: qt6-main
-      upper_bound: "6.10"
+      upper_bound: "6.9"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-quick3d >=6.7*"
+  has_depends: qt6-quick3d >=6.7*
 then:
   - loosen_depends:
       name: qt6-quick3d
-      upper_bound: "6.10"
+      upper_bound: "6.9"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-charts >=6.7*"
+  has_depends: qt6-charts >=6.7*
 then:
   - loosen_depends:
       name: qt6-charts
-      upper_bound: "6.10"
+      upper_bound: "6.9"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-graphs >=6.7*"
+  has_depends: qt6-graphs >=6.7*
 then:
   - loosen_depends:
       name: qt6-graphs
-      upper_bound: "6.10"
+      upper_bound: "6.9"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-multimedia >=6.7*"
+  has_depends: qt6-multimedia >=6.7*
 then:
   - loosen_depends:
       name: qt6-multimedia
-      upper_bound: "6.10"
+      upper_bound: "6.9"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-wayland >=6.7*"
+  has_depends: qt6-wayland >=6.7*
 then:
   - loosen_depends:
       name: qt6-wayland
-      upper_bound: "6.10"
+      upper_bound: "6.9"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-gtk-platformtheme >=6.7*"
+  has_depends: qt6-gtk-platformtheme >=6.7*
 then:
   - loosen_depends:
       name: qt6-gtk-platformtheme
-      upper_bound: "6.10"
+      upper_bound: "6.9"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-networkauth >=6.7*"
+  has_depends: qt6-networkauth >=6.7*
 then:
   - loosen_depends:
       name: qt6-networkauth
-      upper_bound: "6.10"
+      upper_bound: "6.9"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-3d >=6.7*"
+  has_depends: qt6-3d >=6.7*
 then:
   - loosen_depends:
       name: qt6-3d
-      upper_bound: "6.10"
+      upper_bound: "6.9"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-datavis3d >=6.7*"
+  has_depends: qt6-datavis3d >=6.7*
 then:
   - loosen_depends:
       name: qt6-datavis3d
-      upper_bound: "6.10"
+      upper_bound: "6.9"
 
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-main >=6.8*"
+  has_depends: qt6-main *<6.9.0a0
 then:
   - loosen_depends:
       name: qt6-main
-      upper_bound: "6.10"
+      upper_bound: "6.10.0"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-quick3d >=6.8*"
+  has_depends: qt6-quick3d *<6.9.0a0
 then:
   - loosen_depends:
       name: qt6-quick3d
-      upper_bound: "6.10"
+      upper_bound: "6.10.0"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-charts >=6.8*"
+  has_depends: qt6-charts *<6.9.0a0
 then:
   - loosen_depends:
       name: qt6-charts
-      upper_bound: "6.10"
+      upper_bound: "6.10.0"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-graphs >=6.8*"
+  has_depends: qt6-graphs *<6.9.0a0
 then:
   - loosen_depends:
       name: qt6-graphs
-      upper_bound: "6.10"
+      upper_bound: "6.10.0"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-multimedia >=6.8*"
+  has_depends: qt6-multimedia *<6.9.0a0
 then:
   - loosen_depends:
       name: qt6-multimedia
-      upper_bound: "6.10"
+      upper_bound: "6.10.0"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-wayland >=6.8*"
+  has_depends: qt6-wayland *<6.9.0a0
 then:
   - loosen_depends:
       name: qt6-wayland
-      upper_bound: "6.10"
+      upper_bound: "6.10.0"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-gtk-platformtheme >=6.8*"
+  has_depends: qt6-gtk-platformtheme *<6.9.0a0
 then:
   - loosen_depends:
       name: qt6-gtk-platformtheme
-      upper_bound: "6.10"
+      upper_bound: "6.10.0"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-networkauth >=6.8*"
+  has_depends: qt6-networkauth *<6.9.0a0
 then:
   - loosen_depends:
       name: qt6-networkauth
-      upper_bound: "6.10"
+      upper_bound: "6.10.0"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-3d >=6.8*"
+  has_depends: qt6-3d *<6.9.0a0
 then:
   - loosen_depends:
       name: qt6-3d
-      upper_bound: "6.10"
+      upper_bound: "6.10.0"
 
 ---
 if:
   timestamp_lt: 1744562838000
-  has_depends: "qt6-datavis3d >=6.8*"
+  has_depends: qt6-datavis3d *<6.9.0a0
 then:
   - loosen_depends:
       name: qt6-datavis3d
-      upper_bound: "6.10"
+      upper_bound: "6.10.0"
