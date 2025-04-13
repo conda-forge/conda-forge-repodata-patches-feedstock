@@ -10,7 +10,7 @@ if:
 then:
   - loosen_depends:
       name: qt6-main
-      upper_bound: "6.9"
+      upper_bound: "6.10"
 
 ---
 if:
@@ -19,7 +19,7 @@ if:
 then:
   - loosen_depends:
       name: qt6-quick3d
-      upper_bound: "6.9"
+      upper_bound: "6.10"
 
 ---
 if:
@@ -28,7 +28,7 @@ if:
 then:
   - loosen_depends:
       name: qt6-charts
-      upper_bound: "6.9"
+      upper_bound: "6.10"
 
 ---
 if:
@@ -37,7 +37,7 @@ if:
 then:
   - loosen_depends:
       name: qt6-graphs
-      upper_bound: "6.9"
+      upper_bound: "6.10"
 
 ---
 if:
@@ -46,7 +46,7 @@ if:
 then:
   - loosen_depends:
       name: qt6-multimedia
-      upper_bound: "6.9"
+      upper_bound: "6.10"
 
 ---
 if:
@@ -55,7 +55,7 @@ if:
 then:
   - loosen_depends:
       name: qt6-wayland
-      upper_bound: "6.9"
+      upper_bound: "6.10"
 
 ---
 if:
@@ -64,7 +64,7 @@ if:
 then:
   - loosen_depends:
       name: qt6-gtk-platformtheme
-      upper_bound: "6.9"
+      upper_bound: "6.10"
 
 ---
 if:
@@ -73,7 +73,7 @@ if:
 then:
   - loosen_depends:
       name: qt6-networkauth
-      upper_bound: "6.9"
+      upper_bound: "6.10"
 
 ---
 if:
@@ -82,7 +82,7 @@ if:
 then:
   - loosen_depends:
       name: qt6-3d
-      upper_bound: "6.9"
+      upper_bound: "6.10"
 
 ---
 if:
@@ -91,7 +91,7 @@ if:
 then:
   - loosen_depends:
       name: qt6-datavis3d
-      upper_bound: "6.9"
+      upper_bound: "6.10"
 
 
 ---
