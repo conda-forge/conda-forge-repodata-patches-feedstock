@@ -97,3 +97,13 @@ then:
   - tighten_depends:
       name: xarray
       upper_bound: "2024.10.0"
+---
+# fastcore removed typedispatching, pin versions before migration to plum.
+if:
+  name: imod
+  timestamp_le: 1744722730000
+  version_le: "1.0.0rc2"
+then:
+  - tighten_depends:
+      name: fastcore
+      upper_bound: "1.7.20"
