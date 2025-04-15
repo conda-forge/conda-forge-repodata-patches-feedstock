@@ -20,7 +20,6 @@ then:
 if:
   subdir_in: noarch
   name: openff-toolkit-base
-  #has_depends: "openff-units"
   timestamp_lt: 1739572714000
 then:
   - add_constrains: "openff-units<0.3.0a0"
