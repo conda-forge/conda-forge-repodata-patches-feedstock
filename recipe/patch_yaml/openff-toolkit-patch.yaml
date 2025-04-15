@@ -10,3 +10,17 @@ then:
       old: qcportal
       # thing to replace `old` with
       new: qcportal <0.50.0a0
+
+---
+
+# Changes in openff-units 0.3.0 (an update for Pint 0.24 and enabling caching in Pint)
+# causes an unforseen interaction with openff-toolkit <0.16.8
+# Details at: https://github.com/conda-forge/openff-units-feedstock/pull/27
+
+if:
+  subdir_in: noarch
+  name: openff-toolkit-base
+  #has_depends: "openff-units"
+  timestamp_lt: 1739572714000
+then:
+  - add_constrains: "openff-units<0.3.0a0"
