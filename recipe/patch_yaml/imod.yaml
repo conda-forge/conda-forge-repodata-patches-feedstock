@@ -106,4 +106,4 @@ if:
 then:
   - tighten_depends:
       name: fastcore
-      upper_bound: "1.7.20"
+      upper_bound: "1.7.21"
