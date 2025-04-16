@@ -10,3 +10,31 @@ then:
       old: qcportal
       # thing to replace `old` with
       new: qcportal <0.50.0a0
+
+---
+
+# Changes in openff-units 0.3.0 (an update for Pint 0.24 and enabling caching in Pint)
+# causes an unforseen interaction with openff-toolkit <0.16.8
+
+
+# The root issue here is that a change in openff-units 0.3.0 [1]
+# introduced a somewhat hard to trigger bug[2], and a change [3]
+# that went into openff-toolkit 0.16.8 avoids triggering it.
+# However, openff-toolkit 0.16.7 and earlier trigger the bug, so
+# this metadata patch aims to keep those earlier versions of
+# openff-toolkit from being installed with openff-units 0.3.0
+
+# [1] https://github.com/openforcefield/openff-units/pull/98/
+# files#diff-3d4f287a6f0aeda573b6079ebdc718f057cbb04243c01179c37433448da9b834R79
+# [2] https://github.com/openforcefield/openff-units/issues/116
+# [3] https://github.com/openforcefield/openff-toolkit/pull/1990/
+# files#diff-68cb3f9873e00994ccf957cc089b18cbaf34302d5eeb90c34ca289803e10a69eL3181
+# Additional discussion at https://github.com/conda-forge/openff-units-feedstock/pull/27
+
+if:
+  subdir_in: noarch
+  name: openff-toolkit-base
+  timestamp_lt: 1739572714000
+  version_le: 0.16.7
+then:
+  - add_constrains: "openff-units<0.3.0a0"
