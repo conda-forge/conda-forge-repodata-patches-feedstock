@@ -35,5 +35,6 @@ if:
   subdir_in: noarch
   name: openff-toolkit-base
   timestamp_lt: 1739572714000
+  version_le: 0.16.7
 then:
   - add_constrains: "openff-units<0.3.0a0"
