@@ -5,7 +5,7 @@ repos:
     - id: flake8
       files: recipe\/.*\.py
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.11.4
+  rev: v0.11.8
   hooks:
     - id: ruff
       args: [--fix, --exit-non-zero-on-fix]
@@ -16,7 +16,7 @@ repos:
     - id: black
       files: recipe\/.*\.py
 - repo: https://github.com/adrienverge/yamllint.git
-  rev: v1.37.0
+  rev: v1.37.1
   hooks:
     - id: yamllint
       files: recipe\/patch_yaml\/.*\.yaml
