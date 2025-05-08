@@ -1,0 +1,9 @@
+# snowflake-snowpark-python 1.29.0/1.29.1/1.30.0/1.31.0 lag behind in updating the cloudpickle dependency.
+if:
+  name: snowflake-snowpark-python
+  version_in: [1.29.0, 1.29.1, 1.30.0, 1.31.0]
+  build_number: 0
+then:
+  - replace_depends:
+      old: cloudpickle >=1.6.0,<=2.2.1,!=2.1.0,!=2.2.0
+      new: cloudpickle >=1.6.0,<=3.0.0,!=2.1.0,!=2.2.0
