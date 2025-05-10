@@ -24,6 +24,19 @@ then:
       old: "pytorch [*] cuda[*]"
       new: "pytorch 1.10.* cuda*"
 ---
+# avoid that old torchvision (with unpinned pytorch) gets pulled in when
+# we release a new pytorch version but haven't migrated torchvision yet;
+# as seen above 0.11 was built against pytorch 1.10, so <2 is a very loose
+# constraint, owing to how long things have been like this. See
+# https://github.com/conda-forge/torchvision-feedstock/issues/71
+if:
+  name: "torchvision"
+  version_lt: "0.11.0"
+then:
+  - tighten_depends:
+      name: pytorch
+      upper_bound: 2.0.0
+---
 # Nov 13, 2023 -- hmaarrfk
 # It seems that torchvision wants to have the same cuda build as pytorch
 if:
