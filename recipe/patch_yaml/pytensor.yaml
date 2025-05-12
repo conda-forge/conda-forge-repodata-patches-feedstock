@@ -41,5 +41,6 @@ if:
   name: pytensor
   timestamp_lt: 1747065846000
   version_le: '2.30.3'
+  subdir_in: win-64
 then:
   - add_constrains: libstdcxx !=15.1.0
