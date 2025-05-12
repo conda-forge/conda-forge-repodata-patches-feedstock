@@ -33,3 +33,13 @@ then:
   - replace_depends:
       old: filelock
       new: filelock >=3.15
+---
+# Workaround for missing `_ZSt21ios_base_library_initv`:
+# <https://github.com/conda-forge/ctng-compilers-feedstock/issues/174>
+# Fixed in <https://github.com/conda-forge/pytensor-suite-feedstock/pull/158>
+if:
+  name: pytensor
+  timestamp_lt: 1747065846000
+  version_le: '2.30.3'
+then:
+  - add_constrains: libstdcxx !=15.1.0
