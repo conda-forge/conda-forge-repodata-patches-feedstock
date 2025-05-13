@@ -36,3 +36,22 @@ if:
   has_depends: libcxx >=16
 then:
   - add_constrains: clangxx 16.*
+# apply matching constraint on dolfinx_mpc
+---
+if:
+  name: dolfinx_mpc
+  version: 0.8.*
+  timestamp_lt: 1727766271000
+  subdir_in: linux-*
+  has_depends: libstdcxx-ng >=12
+then:
+  - add_constrains: gxx_impl_${subdir} 12.*
+---
+if:
+  name: dolfinx_mpc
+  version: 0.8.*
+  timestamp_lt: 1727766271000
+  subdir_in: osx-*
+  has_depends: libcxx >=16
+then:
+  - add_constrains: clangxx 16.*

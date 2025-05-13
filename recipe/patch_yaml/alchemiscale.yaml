@@ -1,0 +1,24 @@
+# See https://github.com/OpenFreeEnergy/alchemiscale/pull/365
+if:
+  subdir_in: noarch
+  name: alchemiscale-client
+  version: 0.6.1
+  timestamp_le: 1741796254000
+then:
+  - add_depends: libsqlite <3.49
+---
+if:
+  subdir_in: noarch
+  name: alchemiscale-server
+  version: 0.6.1
+  timestamp_le: 1741796254000
+then:
+  - add_depends: libsqlite <3.49
+---
+if:
+  subdir_in: noarch
+  name: alchemiscale-compute
+  version: 0.6.1
+  timestamp_le: 1741796254000
+then:
+  - add_depends: libsqlite <3.49

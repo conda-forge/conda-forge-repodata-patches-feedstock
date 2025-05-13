@@ -1,0 +1,8 @@
+# see https://github.com/conda-forge/boost-feedstock/pull/228
+if:
+  name: libboost
+  timestamp_lt: 1742094791000
+  version: "1.87.0"
+  subdir_in: win-64
+then:
+  - add_constrains: __win==0|>=10

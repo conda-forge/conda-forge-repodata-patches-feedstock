@@ -18,3 +18,16 @@ then:
   - replace_depends:
       old: numcodecs >=0.6.4
       new: numcodecs >=0.10.0
+
+
+---
+
+
+if:
+  name: zarr
+  version_lt: 3.0.0
+  timestamp_lt: 1735718400000
+then:
+  - tighten_depends:
+      name: numcodecs
+      upper_bound: 0.16.0

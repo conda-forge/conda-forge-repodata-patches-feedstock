@@ -1,0 +1,7 @@
+if:
+  timestamp_lt: 1741621209000
+  has_depends: tinyxml2 >=10.0.*
+then:
+  - tighten_depends:
+      name: tinyxml2
+      max_pin: x.x
