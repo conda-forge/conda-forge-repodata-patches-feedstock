@@ -8,3 +8,14 @@ then:
   - replace_depends:
       old: rhash >=1.4.3,<2.0a0
       new: rhash >=1.4.3,<1.4.4a0
+---
+if:
+  has_depends: rhash?( *)
+  timestamp_lt: 1747216048000
+  subdir_in:
+    - osx-64
+    - osx-arm64
+then:
+  - replace_depends:
+      old: rhash >=1.4.5,<2.0a0
+      new: rhash >=1.4.5,<1.4.6a0
