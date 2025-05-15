@@ -29,3 +29,16 @@ if:
 then:
   - add_depends:
       - "cuda-cupti >=12.0.90,<13.0a0"
+---
+# To fix https://github.com/conda-forge/jaxlib-feedstock/issues/312
+# cudnn 9.10.0 initiall had missing run_exports, see
+# https://github.com/conda-forge/cudnn-feedstock/pull/114
+if:
+  name: jaxlib
+  version: 0.5.2
+  build_number_in: [202]
+  has_depends: cuda-version >=12.6,<13
+  subdir_in: [linux-64]
+then:
+  - add_depends:
+      - "cudnn >=9.10.0.56,<10.0a0"
