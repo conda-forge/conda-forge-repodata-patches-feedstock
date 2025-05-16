@@ -1,0 +1,8 @@
+if:
+  name: openfe
+  timestamp_lt: 1747415004000 
+  version_in: 1.4.0
+then:
+  - replace_depends:
+      old: click
+      new: click <8.2
