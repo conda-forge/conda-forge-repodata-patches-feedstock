@@ -13,3 +13,10 @@ if:
 then:
   - add_constrains:
       - ipython <9.0a0
+---
+if:
+  name: ultraplot
+  version_le: 1.50.2
+then:
+  - add_depends:
+      - matplotlib-base <3.10
