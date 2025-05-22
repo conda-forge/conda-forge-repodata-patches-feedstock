@@ -1,0 +1,9 @@
+# https://github.com/conda-forge/ollama-python-feedstock/pull/11
+if:
+  name: ollama-python
+  timestamp_lt: 1747837821000
+  version: 0.4.8
+then:
+  - replace_depends:
+      old: httpx >=0.27.0,<0.28.0
+      new: httpx >=0.27,<0.29
