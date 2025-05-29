@@ -1,0 +1,9 @@
+# backport https://github.com/conda-forge/python_abi-feedstock/pull/28
+if:
+  name_in:
+    - python_abi
+  build: "*cp313t"
+  timestamp_lt: 1736113896000
+then:
+  - add_track_features:
+      - freethreading
