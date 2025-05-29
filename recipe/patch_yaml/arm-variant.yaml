@@ -6,7 +6,7 @@ if:
     - linux-aarch64
     - noarch
   has_constrains: "arm-variant * sbsa"
-  timestamp_lt: 1744158002000
+  timestamp_lt: 1748544655000
 then:
   - add_depends: "arm-variant * sbsa"
   # - remove_constrains: "arm-variant * sbsa"
@@ -16,7 +16,7 @@ if:
     - linux-aarch64
     - noarch
   has_constrains: "arm-variant * tegra"
-  timestamp_lt: 1744158002000
+  timestamp_lt: 1748544655000
 then:
   - add_depends: "arm-variant * tegra"
   # - remove_constrains: "arm-variant * tegra"
@@ -25,7 +25,7 @@ then:
 # dependency is needed to be added to the outputs of cuda-nvcc-impl-feedstock because
 # run_exports do not work for noarch packages
 if:
-  timestamp_lt: 1744158002000
+  timestamp_lt: 1748544655000
   subdir_in:
     - linux-aarch64
     - noarch
@@ -42,7 +42,7 @@ then:
   - add_depends: "arm-variant * sbsa"
 ---
 if:
-  timestamp_lt: 1744158002000
+  timestamp_lt: 1748544655000
   subdir_in:
     - linux-aarch64
     - noarch
@@ -57,3 +57,14 @@ if:
     - cuda-nvvm-tools-12.8.93-h32d051c_2.conda
 then:
   - add_depends: "arm-variant * tegra"
+---
+if:
+  timestamp_lt: 1748544655000
+  subdir_in:
+    - linux-aarch64
+    - noarch
+  has_depends: "cuda-version?( *)"
+  not_has_depends: "arm-variant?( *)"
+  not_has_constrains: "arm-variant?( *)"
+then:
+  - add_depends: "arm-variant * sbsa"
