@@ -1,0 +1,13 @@
+# v0.1.1 and v0.1.2 of better-optimize were built without
+# the lower bound on scipy.
+# Details: <https://github.com/conda-forge/better-optimize-feedstock/issues/8>
+
+if:
+  name: better-optimize
+  version_ge: 0.1.1
+  version_le: 0.1.2
+  timestamp_lt: 1749029871000
+then:
+  - replace_depends:
+      old: scipy
+      new: scipy >=1.15
