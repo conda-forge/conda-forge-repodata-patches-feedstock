@@ -4,4 +4,4 @@ if:
 then:
   - replace_depends:
     old: geopandas
-    new: geopandas >=1.0 
+    new: geopandas >=1.0
