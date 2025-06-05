@@ -1,7 +1,7 @@
-# this patch fixes dependencies of polartoolkit 
+# this patch fixes dependencies of polartoolkit
 if:
   version: 1.0.3
 then:
   - replace_depends:
     old: geopandas
-    new: geopandas >=1.0
+    new: geopandas >=1.0 
