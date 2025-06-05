@@ -5,5 +5,5 @@ if:
   timestamp_lt: 1749114976000
 then:
   - replace_depends:
-    old: geopandas
-    new: geopandas >=1.0
+      old: geopandas
+      new: geopandas >=1.0
