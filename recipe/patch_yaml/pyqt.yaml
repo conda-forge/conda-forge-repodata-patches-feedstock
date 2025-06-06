@@ -1,0 +1,8 @@
+if:
+  name: pyqt
+  version_lt: 6.0.0
+  timestamp_lt: 1749235324000
+then:
+  - replace_depends:
+      old: pyqt-builder
+      new: pyqt-builder <1.16.0
