@@ -11,3 +11,10 @@ then:
   - replace_depends:
       old: cuda-nvrtc*
       new: cuda-nvrtc >=12,<13.0a0
+---
+if:
+  name: cuda-core
+  version: 0.2.0
+  build_number: 0
+then:
+  - remove_depends: "cuda-version >=12.8,<13"
