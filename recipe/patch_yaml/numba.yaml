@@ -49,3 +49,13 @@ then:
   - replace_depends:
       old: numpy >=*
       new: ${old},<1.21.0a0
+---
+if:
+  name: numba
+  timestamp_le: 1749486739000
+  version: "0.61.2"
+  has_depends: numpy >=1.24
+then:
+  - replace_depends:
+      old: numpy >=1.24
+      new: ${old},<2.3.0a0
