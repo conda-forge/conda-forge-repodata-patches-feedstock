@@ -8,7 +8,7 @@ if:
 then:
   - tighten_depends:
       name: dask-core
-      upper_bound: "2024.11.0"
+      upper_bound: "2025"
   - tighten_depends:
       name: xarray
       upper_bound: "2024.10"
