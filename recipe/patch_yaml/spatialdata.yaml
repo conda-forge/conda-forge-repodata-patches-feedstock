@@ -1,0 +1,14 @@
+# Both dask-core and xarray introduced breaking changes that cause earlier
+# versions of spatialdata to fail. Upper bounds were added to spatialdata 0.2.3
+# build number 1 in https://github.com/conda-forge/spatialdata-feedstock/pull/17
+if:
+  name: spatialdata
+  version_le: "0.2.3"
+  timestamp_lt: 1749755828000
+then:
+  - tighten_depends:
+      name: dask-core
+      upper_bound: "2024.11.0"
+  - tighten_depends:
+      name: xarray
+      upper_bound: "2024.10"
