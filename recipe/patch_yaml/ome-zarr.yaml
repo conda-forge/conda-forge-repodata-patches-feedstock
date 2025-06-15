@@ -11,7 +11,7 @@
 if:
   name: ome-zarr
   version_lt: "0.10.3"
-  timestamp_lt: 1736594995
+  timestamp_lt: 1736594995000
   # Saturday, January 11, 2025 12:29:55 PM GMT+01:00
 then:
   - tighten_depends:
