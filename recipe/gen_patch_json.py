@@ -614,10 +614,6 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         ):
             record["track_features"] = "pypy"
 
-        # # Remove `track_features` key from the `pytorch-cpu` packages
-        # if record_name == "pytorch-cpu" and "track_features" in record:
-        #     record["track_features"] = None
-        
         # replace =2.7 with ==2.7.* for compatibility with older conda
         new_deps = []
         changed = False

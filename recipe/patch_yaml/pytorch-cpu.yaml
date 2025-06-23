@@ -1,6 +1,6 @@
 # from this code
 # Remove track_features from pytorch-cpu records
-# Related change in pytorch-cpu package: 
+# Related change in pytorch-cpu package:
 # https://github.com/conda-forge/pytorch-cpu-feedstock/pull/394
 # if record_name == "pytorch-cpu" and "track_features" in record:
 #     recordd_["track_features"] = None
