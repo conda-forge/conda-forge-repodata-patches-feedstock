@@ -31,3 +31,10 @@ then:
   - replace_depends:
       old: python >=3.5
       new: python >=3.5,<3.12
+---
+if:
+  name: sardana-core
+  version_le: 3.5.2
+  timestamp_lt: 1749040348000
+then:
+  - add_depends: ipython <9.0

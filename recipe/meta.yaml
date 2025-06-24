@@ -23,7 +23,7 @@ requirements:
     - license-expression
     - packaging
     - pyyaml
-    - pydantic
+    - pydantic !=2.9.*
     - pytest
     - conda-build
     - zstandard
@@ -32,9 +32,14 @@ requirements:
 
 test:
   commands:
-    {% for subdir in ("noarch", "linux-64", "linux-armv7l", "linux-ppc64le", "osx-64", "osx-arm64", "win-32", "win-64") %}
-    - test -e $PREFIX/{{ subdir }}/patch_instructions.json
-    {% endfor %}
+    - test -e $PREFIX/noarch/patch_instructions.json
+    - test -e $PREFIX/linux-64/patch_instructions.json
+    - test -e $PREFIX/linux-armv7l/patch_instructions.json
+    - test -e $PREFIX/linux-ppc64le/patch_instructions.json
+    - test -e $PREFIX/osx-64/patch_instructions.json
+    - test -e $PREFIX/osx-arm64/patch_instructions.json
+    - test -e $PREFIX/win-32/patch_instructions.json
+    - test -e $PREFIX/win-64/patch_instructions.json
 
 about:
   summary: generate tweaks to index metadata, hosted separately from anaconda.org index

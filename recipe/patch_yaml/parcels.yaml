@@ -8,3 +8,15 @@ then:
   - replace_depends:
       old: zarr >=2.11.0
       new: zarr >=2.11.0,!=2.18.0
+
+---
+
+# https://github.com/conda-forge/parcels-feedstock/pull/129
+if:
+  name: parcels
+  version: 3.1.1
+  build_number_in: [0, 1]
+then:
+  - replace_depends:
+      old: zarr >=2.11.0,!=2.18.0
+      new: zarr >=2.11.0,!=2.18.0,<3

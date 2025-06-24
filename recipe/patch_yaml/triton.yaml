@@ -1,0 +1,10 @@
+# for https://github.com/conda-forge/triton-feedstock/issues/47;
+# build _0 needs libllvm20 20.1.0.rc1, which is <20.1.0 in conda version arithmetic
+if:
+  name: triton
+  version: 3.2.0
+  build_number_lt: 1
+then:
+  - replace_depends:
+      old: libllvm20
+      new: libllvm20 <20.1.0

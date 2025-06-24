@@ -1,0 +1,5 @@
+if:
+  name: libfabric
+  timestamp_lt: 1734374000000
+then:
+  - add_constrains: libfabric1 ==0.0.0

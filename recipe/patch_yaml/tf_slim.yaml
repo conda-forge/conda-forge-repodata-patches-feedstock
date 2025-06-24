@@ -7,3 +7,14 @@ then:
   - tighten_depends:
       name: tensorflow
       upper_bound: "2.13"
+
+---
+
+# tf_slim greatly predates keras 3.
+# Installing it with keras 3 just doesn't work with the offically released versions
+# https://github.com/conda-forge/tf-slim-feedstock/pull/8
+if:
+  name: tf_slim
+  timestamp_lt: 1725414290000
+then:
+  - add_constrains: keras <3.0a

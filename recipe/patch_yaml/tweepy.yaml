@@ -1,0 +1,8 @@
+# tweepy is not compatible with requests-oauthlib 2.0 yet
+if:
+  name: tweepy
+  timestamp_lt: 1733163793000
+then:
+  - tighten_depends:
+      name: requests-oauthlib
+      upper_bound: "2.0"

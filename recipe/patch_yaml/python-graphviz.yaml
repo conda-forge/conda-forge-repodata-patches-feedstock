@@ -1,0 +1,9 @@
+if:
+  name: python-graphviz
+  version_ge: 0.20.2
+  has_depends: python >=3
+  timestamp_lt: 1727836164000
+then:
+  - replace_depends:
+      old: python >=3
+      new: python >=3.8

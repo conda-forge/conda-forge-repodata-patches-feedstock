@@ -1,0 +1,9 @@
+# backport of https://github.com/conda-forge/anyio-feedstock/pull/67
+if:
+  name: anyio
+  version: 4.6.0
+  timestamp_lt: 1726930537000
+then:
+  - replace_depends:
+      old: python >=3.8
+      new: python >=3.9

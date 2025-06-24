@@ -222,6 +222,8 @@ if __name__ == "__main__":
                     print(val, flush=True)
             else:
                 for key, val in vals.items():
+                    # sort packages belonging to a given repodata diff
+                    val = sorted(list(val))
                     for v in val:
                         print(v, flush=True)
                     for k in key:

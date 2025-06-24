@@ -1,0 +1,10 @@
+# Limit numba_celltree version to < 0.4.0 for xugrid =< 0.12.4, to avoid
+# importing deleted constant.
+if:
+  name: xugrid
+  timestamp_le: 1744901701000
+  version_le: "0.12.4"
+then:
+  - tighten_depends:
+      name: numba_celltree
+      upper_bound: "0.4.0"

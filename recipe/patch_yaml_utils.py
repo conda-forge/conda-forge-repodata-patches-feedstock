@@ -371,6 +371,33 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
 
             continue
 
+        if (
+            len(dep_parts) == 2
+            and dep_parts[1].startswith("<")
+            and upper_bound is not None
+        ):
+            upper_bound = upper_bound.split(".")
+            if str(upper_bound[-1]) != "0":
+                upper_bound += ["0"]
+            upper_bound = ".".join(upper_bound)
+
+            old_upper = dep_parts[1].split("<")[1]
+            if old_upper.startswith("="):
+                # if the old pin is <=, we need to remove the =
+                # and we allow changes of eg <=15 to <15.0a0
+                # hence the condition includes >=
+                old_upper = old_upper[1:]
+                cond = parse_version(old_upper) >= parse_version(upper_bound)
+            else:
+                cond = parse_version(old_upper) > parse_version(upper_bound)
+            if cond:
+                depends[dep_idx] = "{} <{}a0".format(
+                    dep_parts[0],
+                    upper_bound,
+                )
+                record["depends"] = depends
+            continue
+
 
 def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
     depends = record.get("depends", ())
@@ -385,7 +412,14 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
         lower = m.group("lower")
         upper = m.group("upper").split(".")
 
-        if upper_bound is None:
+        if (upper_bound is None or upper_bound == "None") and max_pin is None:
+            # case where we fully remove upper bound
+            depends[dep_idx] = f"{dep_parts[0]} >={lower}"
+            if len(dep_parts) == 3:
+                depends[dep_idx] = f"{depends[dep_idx]} {dep_parts[2]}"
+            record["depends"] = depends
+            continue
+        elif upper_bound is None:
             new_upper = get_upper_bound(lower, max_pin).split(".")
         else:
             new_upper = upper_bound.split(".")

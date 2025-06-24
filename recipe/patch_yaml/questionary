@@ -1,0 +1,31 @@
+# pip prompt_toolkit constrain was relaxed in 2.1.0
+# This was missed by the auto bump bot
+# Package fix: https://github.com/conda-forge/questionary-feedstock/pull/14
+if:
+  name: questionary
+  version: 2.1.0
+  build_number_lt: 2
+then:
+  - replace_depends:
+      old: prompt_toolkit <=3.0.36,>=2.0
+      new: prompt_toolkit >=2.0,<4.0
+---
+# pip prompt_toolkit constrain was more stringent for 2.0.x
+# https://github.com/conda-forge/questionary-feedstock/pull/7
+if:
+  name: questionary
+  version: 2.0.1
+  build_number_lt: 1
+then:
+  - replace_depends:
+      old: prompt_toolkit >=2.0,<4.0
+      new: prompt_toolkit >=2.0,<=3.0.36
+---
+if:
+  name: questionary
+  version: 2.0.0
+  build_number_lt: 1
+then:
+  - replace_depends:
+      old: prompt_toolkit >=2.0,<4.0
+      new: prompt_toolkit >=2.0,<=3.0.36

@@ -74,3 +74,11 @@ then:
   - replace_depends:
       old: python *
       new: python >=3.8
+---
+if:
+  name: anaconda-client
+  version: 1.13.0
+  build_number: 0
+  timestamp_le: 1741961643000
+then:
+  - add_depends: pillow >=8.2

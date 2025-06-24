@@ -1,0 +1,8 @@
+# numexpr numexpr requires numpy >=1.23.0
+if:
+  name: numexpr
+  timestamp_le: 1728901402000  # 2024-10-14
+  version: 2.10.1
+  build_number_in: [0, 1, 100, 101]
+then:
+  - add_depends: numpy >=1.23.0

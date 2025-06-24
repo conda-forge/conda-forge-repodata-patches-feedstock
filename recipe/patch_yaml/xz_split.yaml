@@ -1,0 +1,8 @@
+if:
+  name_in:
+    - liblzma
+    - xz-tools
+    - xz-gpl-tools
+  timestamp_lt: 1746558949000
+then:
+  - add_constrains: xz ==${version}=*_${build_number}

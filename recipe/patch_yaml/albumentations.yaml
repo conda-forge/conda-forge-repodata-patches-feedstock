@@ -1,0 +1,12 @@
+# https://github.com/albumentations-team/albumentations/issues/1946
+# Upper bound set for albumnetations 1.4.15 and above
+# https://github.com/conda-forge/albumentations-feedstock/pull/38
+if:
+  timestamp_lt: 1727025727000
+  name: albumentations
+  version_lt: "1.4.15"
+  has_depends: albucore*
+then:
+  - tighten_depends:
+      name: albucore
+      upper_bound: 0.0.17

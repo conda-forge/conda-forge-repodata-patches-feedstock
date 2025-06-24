@@ -1,0 +1,24 @@
+# scvi-tools 1.1.6 requires lightning<2.2
+# https://github.com/conda-forge/scvi-tools-feedstock/issues/54
+if:
+  name: scvi-tools
+  version: "1.1.6"
+  build_number: 1
+  timestamp_lt: 1726156541000
+then:
+  - tighten_depends:
+      name: lightning
+      upper_bound: "2.2"
+---
+# scvi-tools 1.1.6.post2 requires anndata<=0.10.8
+# https://github.com/scverse/scvi-tools/pull/2971
+# https://github.com/conda-forge/scvi-tools-feedstock/pull/57#issuecomment-2353371071
+if:
+  name: scvi-tools
+  version: "1.1.6.post2"
+  build_number: 0
+  timestamp_lt: 1726588981000
+then:
+  - tighten_depends:
+      name: anndata
+      upper_bound: "0.10.9"
