@@ -6,3 +6,6 @@ __pycache__
 # pixi environments
 .pixi
 *.egg-info
+
+# Diff results
+show_diff_result.txt

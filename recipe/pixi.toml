@@ -1,18 +1,26 @@
 [project]
 name = "repodata-patches"
-version = "0.1.0"
-description = "Add a short description here"
-authors = ["Wolf Vollprecht <w.vollprecht@gmail.com>"]
-channels = ["conda-forge", "nodefaults"]
+channels = ["conda-forge"]
 platforms = ["osx-arm64", "linux-64", "win-64"]
 
-[tasks]
-show-diff = "python ./show_diff.py"
+[tasks.diff]
+cmd = "python show_diff.py {{ arguments }} 1> show_diff_result.txt"
+description = "Slow!! Writes repodata changes to file, add this result to the PR."
+args = [{arg = "arguments", default = ""}]
+
+[tasks.diff-cached]
+depends-on = [{task = "show-diff", args = ["--use-cache"]}]
+
+[tasks.lint]
+cmd = "pre-commit run --all-files"
+description = "Run pre-commit hooks to lint the code."
+
+[tasks.timestamp]
+cmd = "python -c \"import time; print(f'{time.time():.0f}000')\""
+description = "Generate a timestamp in milliseconds since epoch."
 
 [dependencies]
-annotated-types = "*"
 conda-build = "*"
 license-expression = "*"
 pre-commit = "*"
 pydantic = "*"
-python = "*"
