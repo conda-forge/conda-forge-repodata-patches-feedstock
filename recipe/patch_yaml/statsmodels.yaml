@@ -1,0 +1,10 @@
+https://github.com/conda-forge/statsmodels-feedstock/pull/72
+if:
+  name: statsmodels
+  timestamp_le: 1751295000  # 2024-06-30
+  version: 0.14.4
+  build_number_in: [0]
+then:
+  - replace_depends:
+      old: scipy >=1.13.0
+      new: scipy >=1.13.0,<1.16.0
