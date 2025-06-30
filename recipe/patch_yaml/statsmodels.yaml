@@ -7,3 +7,14 @@ then:
   - tighten_depends:
       name: scipy
       upper_bound: 1.16.0
+---
+# constraint of the form `scipy !=1.9.2,>=1.8` doesn't work with tighen_depends ATM,
+# c.f. https://github.com/conda-forge/conda-smithy/issues/2343
+if:
+  name: statsmodels
+  timestamp_le: 1751302301000  # 2025-06-30
+  version_ge: 0.13.3
+then:
+  - replace_depends:
+      old: scipy !=1.9.2,>=1.8
+      new: scipy >=1.8,!=1.9.2,<1.16.0a0
