@@ -2,8 +2,7 @@
 if:
   name: statsmodels
   timestamp_le: 1751302301000  # 2025-06-30
-  version: 0.14.4
-  build_number_in: [0, 1]
+  version_ge: 0.13.3
 then:
   - replace_depends:
       old: scipy >=1.13.0
