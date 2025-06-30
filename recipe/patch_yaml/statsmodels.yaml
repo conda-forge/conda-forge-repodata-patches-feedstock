@@ -1,7 +1,7 @@
 # https://github.com/conda-forge/statsmodels-feedstock/pull/72
 if:
   name: statsmodels
-  timestamp_le: 1751295000  # 2024-06-30
+  timestamp_le: 1751295000  # 2025-06-30
   version: 0.14.4
   build_number_in: [0, 1]
 then:
