@@ -4,6 +4,6 @@ if:
   timestamp_le: 1751302301000  # 2025-06-30
   version_ge: 0.13.3
 then:
-  - replace_depends:
-      old: scipy >=1.13.0
-      new: scipy >=1.13.0,<1.16.0
+  - tighten_depends:
+      name: scipy
+      upper_bound: 1.16.0
