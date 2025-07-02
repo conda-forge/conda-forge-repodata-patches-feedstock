@@ -1,0 +1,54 @@
+# Relax cuda-version lower bound
+if:
+  name: libnvjitlink
+  timestamp_lt: 1751470107000
+  version: 12.1.105
+then:
+  - replace_depends:
+      old: cuda-version*
+      new: cuda-version>=12.0.0,<12.2.0a0
+---
+if:
+  name: libnvjitlink
+  timestamp_lt: 1751470107000
+  version: 12.2.140
+then:
+  - replace_depends:
+      old: cuda-version*
+      new: cuda-version>=12.0.0,<12.3.0a0
+---
+if:
+  name: libnvjitlink
+  timestamp_lt: 1751470107000
+  version: 12.3.101
+then:
+  - replace_depends:
+      old: cuda-version*
+      new: cuda-version>=12.0.0,<12.4.0a0
+---
+if:
+  name: libnvjitlink
+  timestamp_lt: 1751470107000
+  version: 12.4.127
+then:
+  - replace_depends:
+      old: cuda-version*
+      new: cuda-version>=12.0.0,<12.5.0a0
+---
+if:
+  name: libnvjitlink
+  timestamp_lt: 1751470107000
+  version: 12.5.40
+then:
+  - replace_depends:
+      old: cuda-version*
+      new: cuda-version>=12.0.0,<12.6.0a0
+---
+if:
+  name: libnvjitlink
+  timestamp_lt: 1751470107000
+  version: 12.5.82
+then:
+  - replace_depends:
+      old: cuda-version*
+      new: cuda-version>=12.0.0,<12.6.0a0
