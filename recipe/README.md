@@ -199,7 +199,7 @@ then:
 > [!WARNING]
 > The condition `timestamp_lt` is required to prevent your patch from modifying
 > any packages built in the future. Don't forget to calculate it with:
-> `python -c "import pandas; ts = pandas.Timestamp.now(tz='UTC').timestamp(); print(f'{ts:.0f}000')"`
+> `python -c "import time; print(f'{time.time():.0f}000')"`
 > or run `pixi run timestamp` to get the current timestamp in the required format.
 > and include it in the `if:` section of your patch.
 

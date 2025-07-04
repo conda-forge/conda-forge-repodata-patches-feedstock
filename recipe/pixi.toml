@@ -16,7 +16,7 @@ cmd = "pre-commit run --all-files"
 description = "Run pre-commit hooks to lint the code."
 
 [tasks.timestamp]
-cmd = "python -c \"import pandas; ts = pandas.Timestamp.now(tz='UTC').timestamp(); print(f'{ts:.0f}000')\""
+cmd = "python -c \"import time; print(f'{time.time():.0f}000')\""
 description = "Generate a UTC timestamp in milliseconds since epoch."
 
 [dependencies]
