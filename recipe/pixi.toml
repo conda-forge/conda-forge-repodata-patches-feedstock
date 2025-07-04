@@ -1,0 +1,26 @@
+[project]
+name = "repodata-patches"
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "linux-64", "win-64"]
+
+[tasks.diff]
+cmd = "python show_diff.py {{ arguments }} 1> show_diff_result.txt"
+description = "Slow!! Writes repodata changes to file, add this result to the PR."
+args = [{arg = "arguments", default = ""}]
+
+[tasks.diff-cached]
+depends-on = [{task = "show-diff", args = ["--use-cache"]}]
+
+[tasks.lint]
+cmd = "pre-commit run --all-files"
+description = "Run pre-commit hooks to lint the code."
+
+[tasks.timestamp]
+cmd = "python -c \"import time; print(f'{time.time():.0f}000')\""
+description = "Generate a UTC timestamp in milliseconds since epoch."
+
+[dependencies]
+conda-build = "*"
+license-expression = "*"
+pre-commit = "*"
+pydantic = "*"
