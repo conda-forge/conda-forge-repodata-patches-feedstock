@@ -1,4 +1,5 @@
 # https://github.com/conda-forge/statsmodels-feedstock/pull/72
+# https://github.com/conda-forge/statsmodels-feedstock/pull/73
 if:
   name: statsmodels
   timestamp_le: 1751302301000  # 2025-06-30
@@ -18,3 +19,6 @@ then:
   - replace_depends:
       old: scipy !=1.9.2,>=1.8
       new: scipy >=1.8,!=1.9.2,<1.16.0a0
+  - replace_depends:
+      old: scipy !=1.9.2,>=1.4
+      new: scipy >=1.4,!=1.9.2,<1.16.0a0
