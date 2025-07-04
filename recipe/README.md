@@ -18,6 +18,8 @@ You can run it with the command:
 
     ```shell
     pixi run diff
+    # or
+    python show_diff.py
     ```
 
     > [!NOTE]
@@ -27,11 +29,13 @@ You can run it with the command:
 
     ```shell
     pixi run lint
+    # or
+    pre-commit run --all-files
     ```
 
 4. Commit your changes to a new branch in **your fork** of the `conda-forge-repodata-patches-feedstock` repository.
 5. Open a pull request, describing the changes you made and why they are necessary.
-6. Include the result of the `pixi run diff` command in the pull request description, which can be found in the `show_diff_result.txt`, so that reviewers can see the changes your patch would make to the repodata.
+6. Include the result of the `pixi run diff`/`python show-diff.py` command in the pull request description, which can be found in the `show_diff_result.txt`, so that reviewers can see the changes your patch would make to the repodata.
 
 
 ## Repodata patch YAML specification
@@ -194,7 +198,8 @@ then:
 
 > [!WARNING]
 > The condition `timestamp_lt` is required to prevent your patch from modifying
-> any packages built in the future. Don't forget to calculate it with `pixi run timestamp`
+> any packages built in the future. Don't forget to calculate it with:
+> `pixi run timestamp` or `python -c "import pandas; ts = pandas.Timestamp.now(tz='UTC').timestamp(); print(f'{ts:.0f}000')"`
 > and include it in the `if:` section of your patch.
 
 ## Testing New Patches using `show_diff.py`
@@ -202,6 +207,7 @@ then:
 > [!TIP]
 > You can use `pixi` to develop and test your patches locally.
 > Install the environment with `pixi install`.
+> Or use the `dev-env-for-patches.yaml` file to create a new conda environment.
 
 The `show_diff.py` script in this directory can be used to test out
 modifications to `gen_patch_json.py`.  This scripts shows the difference
