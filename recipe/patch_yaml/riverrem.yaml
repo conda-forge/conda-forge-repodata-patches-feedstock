@@ -1,0 +1,14 @@
+if:
+  name: riverrem
+  version_le: 1.0.4
+
+then:
+  - replace_depends:
+      old: osmnx
+      new: osmnx <2.0, >=1.3
+  - replace_depends:
+      old: gdal >=3.1.4
+      new: gdal >=3.1.4, <3.9
+  - replace_depends:
+      old: shapely
+      new: shapely >=2.0
