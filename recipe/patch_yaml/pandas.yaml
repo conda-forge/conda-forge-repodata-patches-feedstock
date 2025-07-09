@@ -18,7 +18,6 @@ then:
       old: pytz >=2017.2
       new: pytz >=2020.1
 
-
 ---
 
 if:
@@ -29,6 +28,7 @@ then:
   - replace_depends:
       old: numpy >=1.19
       new: numpy >1.22.3
+
 ---
 
 if:
@@ -39,6 +39,7 @@ then:
   - replace_depends:
       old: numpy >=1.19
       new: numpy >1.22.3
+
 ---
 
 if:
