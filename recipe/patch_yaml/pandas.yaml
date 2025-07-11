@@ -29,4 +29,3 @@ then:
   - replace_depends:
       old: numpy >=1.19
       new: numpy >=1.22.4
-
