@@ -7,8 +7,36 @@ the packages). Most commonly, package dependencies are incorrect, but the packag
 are fine. A repodata patch specifies which packages are contain errors and how the package
 should be modified to fix the error.
 
-The best way to make a new patch is to use the patch YAML specification below. Custom patches
-in python can be put into the `gen_patch_json.py` file.
+## How to submit a patch
+
+1. There are **two** main ways to submit a patch to the conda-forge repodata:
+    - Modify or add a patch YAML file in the `patch_yaml` directory, following the specification [below](#repodata-patch-yaml-specification). (This is the preferred method.)
+    - Modify the `gen_patch_json.py` script to generate a patch in Python. (Only if the static YAML specification is not sufficient for your needs.)
+
+2. Test your patch using the `show_diff.py` script in this directory, which will show you the changes that would be made to the repodata if your patch were applied.
+You can run it with the command:
+
+    ```shell
+    pixi run diff
+    # or
+    python show_diff.py
+    ```
+
+    > [!NOTE]
+    > This can take a while, as it downloads the current repodata from anaconda.org/conda-forge and then applies your patch to it.
+
+3. Make sure to run the formatting and linting checks:
+
+    ```shell
+    pixi run lint
+    # or
+    pre-commit run --all-files
+    ```
+
+4. Commit your changes to a new branch in **your fork** of the `conda-forge-repodata-patches-feedstock` repository.
+5. Open a pull request, describing the changes you made and why they are necessary.
+6. Include the result of the `python show-diff.py > show_diff_result.txt` or `pixi run diff` command in the pull request description, which can be found in the `show_diff_result.txt`, so that reviewers can see the changes your patch would make to the repodata.
+
 
 ## Repodata patch YAML specification
 
@@ -170,15 +198,17 @@ then:
 
 > [!WARNING]
 > The condition `timestamp_lt` is required to prevent your patch from modifying
-> any packages built in the future. Don't forget to calculate it with `python -c
-> "import time; print(f'{time.time():.0f}000')"` and include it in the `if:`
-> section of your patch
+> any packages built in the future. Don't forget to calculate it with:
+> `python -c "import time; print(f'{time.time():.0f}000')"`
+> or run `pixi run timestamp` to get the current timestamp in the required format.
+> and include it in the `if:` section of your patch.
 
 ## Testing New Patches using `show_diff.py`
 
 > [!TIP]
-> You can install a development environment for testing your repodata patch
-> using the environment file `dev-env-for-patches.yaml`
+> You can use `pixi` to develop and test your patches locally.
+> Install the environment with `pixi install`.
+> Or use the `dev-env-for-patches.yaml` file to create a new conda environment.
 
 The `show_diff.py` script in this directory can be used to test out
 modifications to `gen_patch_json.py`.  This scripts shows the difference
