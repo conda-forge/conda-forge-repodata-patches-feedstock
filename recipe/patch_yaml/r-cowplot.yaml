@@ -1,4 +1,4 @@
-# cowplot v1.2.0 set its ggplot2 minimum to v3.5.2 
+# cowplot v1.2.0 set its ggplot2 minimum to v3.5.2
 # but this was not adjusted in build 0, hence the patch
 # see https://github.com/conda-forge/r-cowplot-feedstock/issues/24
 
