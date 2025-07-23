@@ -1,0 +1,14 @@
+if:
+  name: nanobind
+  timestamp_lt: 1753243510000
+  version_ge: 2.6.0
+then:
+  - replace_constrains:
+      old: nanobind-abi ==15
+      new: nanobind-abi ==16
+---
+if:
+  name: nanobind-abi
+  timestamp_lt: 1753243510000
+then:
+  - add_constrains: "nanobind >=2.4"
