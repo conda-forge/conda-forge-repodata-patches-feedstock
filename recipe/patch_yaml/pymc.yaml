@@ -30,3 +30,21 @@ then:
   - replace_depends:
       old: threadpoolctl
       new: threadpoolctl >=3.1.0,<4.0.0
+
+---
+
+# Build 0 of pymc-base 5.25.0 depends on:
+#   pytensor-base >=2.31.2,<2.32
+# but this should have been instead:
+#   pytensor-base >=2.31.7,<2.32
+# This error was fixed in build 1:
+# <https://github.com/conda-forge/pymc-feedstock/pull/149>
+if:
+  name: pymc-base
+  version: '5.25.0'
+  build_number: 0
+  timestamp_lt: 1753309834000
+then:
+  - replace_depends:
+      old: pytensor-base >=2.31.2,<2.32
+      new: pytensor-base >=2.31.7,<2.32
