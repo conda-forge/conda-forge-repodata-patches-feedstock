@@ -3,3 +3,11 @@ tmp
 __pycache__
 **/.pytest_cache/
 **/.ruff_cache/
+
+# pixi environments
+.pixi
+*.egg-info
+pixi.lock
+
+# Diff results
+show_diff_result.txt
