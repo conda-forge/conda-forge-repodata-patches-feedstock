@@ -80,4 +80,3 @@ if:
 then:
   - add_depends: "arm-variant * tegra"
   # - remove_constrains: "arm-variant * tegra"
----
