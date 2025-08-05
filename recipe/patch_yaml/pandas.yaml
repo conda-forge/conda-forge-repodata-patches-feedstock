@@ -17,3 +17,13 @@ then:
   - replace_depends:
       old: pytz >=2017.2
       new: pytz >=2020.1
+
+---
+if:
+  name: pandas
+  timestamp_lt: 1753977379000
+  version: 2.2.2
+then:
+  - replace_depends:
+      new: numpy >=1.22.4,<3
+      old: numpy >=1.19,<3
