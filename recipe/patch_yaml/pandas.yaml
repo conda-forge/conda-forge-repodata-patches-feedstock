@@ -12,11 +12,12 @@ if:
   version_le: 1.14.2
 then:
   - replace_depends:
-      new: python-dateutil >=2.8.1
       old: python-dateutil >=2.7.3
+      new: python-dateutil >=2.8.1
   - replace_depends:
-      new: pytz >=2020.1
       old: pytz >=2017.2
+      new: pytz >=2020.1
+      
 ---
 if:
   name: pandas
