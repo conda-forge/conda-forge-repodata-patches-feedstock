@@ -17,7 +17,7 @@ then:
   - replace_depends:
       old: pytz >=2017.2
       new: pytz >=2020.1
-      
+
 ---
 if:
   name: pandas
