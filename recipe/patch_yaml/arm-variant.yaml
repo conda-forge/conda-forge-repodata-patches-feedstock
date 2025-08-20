@@ -45,15 +45,6 @@ then:
   - add_depends: "arm-variant * tegra"
 ---
 if:
-  subdir_in:
-    - linux-aarch64
-    - noarch
-  has_depends: "arm-variant * tegra"
-  timestamp_lt: 1755713876000
-then:
-  - remove_constrains: "arm-variant * tegra"
----
-if:
   timestamp_lt: 1755713876000
   subdir_in:
     - linux-aarch64
