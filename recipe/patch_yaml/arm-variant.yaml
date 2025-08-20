@@ -35,6 +35,9 @@ if:
 then:
   - add_depends: "arm-variant * tegra"
 ---
+# Patch any packages that we missed above who have only constrains and not depends on
+# arm-variant tegra. These packages should not be in use and should only be nvcc
+# toolchain packages.
 if:
   subdir_in:
     - linux-aarch64
@@ -44,11 +47,12 @@ if:
 then:
   - add_depends: "arm-variant * tegra"
 ---
+# Do not patch noarch packages below. "noarch" means they are agnostic, such as
+# meta-packages and headers, so they should be agnostic to arm-variant as well.
 if:
   timestamp_lt: 1755713876000
   subdir_in:
     - linux-aarch64
-    - noarch
   has_depends: "cuda-version?( *)"
   not_has_depends: "arm-variant?( *)"
   not_has_constrains: "arm-variant?( *)"
