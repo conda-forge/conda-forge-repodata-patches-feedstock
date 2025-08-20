@@ -133,3 +133,138 @@ then:
   - replace_depends:
       old: libnvjitlink >=12.9.86,<12.10.0a0
       new: libnvjitlink >=12.9.86,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.0.0.76
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.0.76,<12.1.0a0
+      new: libnvjitlink >=12.0.76,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.1.0.106
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.1.105,<12.2.0a0
+      new: libnvjitlink >=12.1.105,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.1.2.141
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.2.140,<12.3.0a0
+      new: libnvjitlink >=12.2.140,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.2.0.103
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.3.101,<12.4.0a0
+      new: libnvjitlink >=12.3.101,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.3.0.142
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.4.99,<12.5.0a0
+      new: libnvjitlink >=12.4.99,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.3.1.170
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.4.127,<12.5.0a0
+      new: libnvjitlink >=12.4.127,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.4.1.24
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.5.40,<12.6.0a0
+      new: libnvjitlink >=12.5.40,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.5.1.3
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.5.82,<12.6.0a0
+      new: libnvjitlink >=12.5.82,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.5.2.23
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.6.20,<12.7.0a0
+      new: libnvjitlink >=12.6.20,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.5.3.3
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.6.68,<12.7.0a0
+      new: libnvjitlink >=12.6.68,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.5.4.2
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.6.77,<12.7.0a0
+      new: libnvjitlink >=12.6.77,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.5.7.53
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.8.61,<12.9.0a0
+      new: libnvjitlink >=12.8.61,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.5.8.93
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.8.93,<12.9.0a0
+      new: libnvjitlink >=12.8.93,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.5.9.5
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.9.41,<12.10.0a0
+      new: libnvjitlink >=12.9.41,<13.0a0
+---
+if:
+  name: libcusparse-dev
+  version: 12.5.10.65
+  timestamp_lt: 1751987921000
+then:
+  - replace_depends:
+      old: libnvjitlink >=12.9.86,<12.10.0a0
+      new: libnvjitlink >=12.9.86,<13.0a0
