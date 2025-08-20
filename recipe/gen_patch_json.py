@@ -379,7 +379,12 @@ def _fix_libgfortran(fn, record):
     dep_idx = next(
         (q for q, dep in enumerate(depends) if dep.split(" ")[0] == "libgfortran"), None
     )
-    if dep_idx is not None:
+    if (
+        dep_idx is not None
+        # timestamp corresponds to 2025-06-21, just ahead of
+        # https://github.com/conda-forge/gfortran_osx-64-feedstock/commit/7764b8460e37355492aa058d69cf620f0aebeeec
+        and record.get("timestamp", 0) < 1655769600000
+    ):
         # make sure respect minimum versions still there
         # 'libgfortran'         -> >=3.0.1,<4.0.0.a0
         # 'libgfortran ==3.0.1' -> ==3.0.1

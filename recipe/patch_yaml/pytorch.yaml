@@ -223,3 +223,13 @@ then:
   - replace_depends:
       old: "pytorch 2.4.1 cpu_*"
       new: "pytorch 2.4.1 cpu_*_${build_number}"
+
+---
+# Remove track_features from old pytorch-cpu records to prevent solver bias towards older versions
+# See: https://github.com/conda-forge/pytorch-cpu-feedstock/pull/394
+if:
+  name: "pytorch-cpu"
+  # 23-Jun-2025
+  timestamp_lt: 1750671297000
+then:
+  - remove_track_features: pytorch-cpu

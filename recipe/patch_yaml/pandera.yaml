@@ -1,0 +1,26 @@
+# https://github.com/conda-forge/pandera-feedstock/issues/82
+if:
+  name: pandera*
+  version: 0.24.0
+  build: hd8ed1ab_0
+  timestamp_lt: 1749288107000
+then:
+  - replace_depends:
+      old: pandera-base >=0.24.0,<0.24.1.0a0
+      new: pandera-base 0.24.0 pyhd8ed1ab_0
+  - replace_depends:
+      old: pandera >=0.24.0,<0.24.1.0a0
+      new: pandera 0.24.0 hd8ed1ab_0
+---
+if:
+  name: pandera*
+  version: 0.24.0
+  build: hd8ed1ab_1
+  timestamp_lt: 1749288107000
+then:
+  - replace_depends:
+      old: pandera-base >=0.24.0,<0.24.1.0a0
+      new: pandera-base 0.24.0 pyhd8ed1ab_1
+  - replace_depends:
+      old: pandera >=0.24.0,<0.24.1.0a0
+      new: pandera 0.24.0 hd8ed1ab_1

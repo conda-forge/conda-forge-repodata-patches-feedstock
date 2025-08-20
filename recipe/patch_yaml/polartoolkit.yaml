@@ -1,0 +1,9 @@
+# this patch fixes dependencies of polartoolkit
+if:
+  name: polartoolkit
+  version: "1.0.3"
+  timestamp_lt: 1749114976000
+then:
+  - replace_depends:
+      old: geopandas
+      new: geopandas >=1.0
