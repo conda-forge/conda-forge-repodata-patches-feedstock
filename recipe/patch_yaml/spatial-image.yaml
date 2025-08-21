@@ -1,0 +1,11 @@
+# Missing lower bound xarray >=2024.10.0 for spatial-image 1.2.3
+# https://github.com/conda-forge/spatial-image-feedstock/pull/14
+if:
+  name: spatial-image
+  version: "1.2.3"
+  build_number: 0
+  timestamp_lt: 1755797300000
+then:
+  - replace_depends:
+      old: xarray
+      new: "xarray >=2024.10.0"
