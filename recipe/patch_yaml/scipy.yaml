@@ -62,12 +62,12 @@ then:
 if:
   name: scipy
   version: 1.8.1
-  build_number_in: [0, 2]
+  build_number_in: [0, 1, 2]
   timestamp_le: 1686323537000
 then:
   - replace_depends:
       old: numpy >=1.19.5,<2.0a0
-      new: scipy >=1.17.3,<1.25.0
+      new: numpy >=1.19.5,<1.25.0
   - replace_depends:
       old: numpy >=1.21.6,<2.0a0
-      new: scipy >=1.17.3,<1.25.0
+      new: numpy >=1.19.5,<1.25.0
