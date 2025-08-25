@@ -53,3 +53,21 @@ if:
 
 then:
   - add_constrains: libopenblas <0.3.26
+
+---
+# Allign constrains with limits in 1.8.x maintenance branch
+# The numpy min and max versions are documented here:
+# https://github.com/scipy/scipy/blob/maintenance/1.8.x/setup.py
+# https://github.com/scipy/scipy/blob/maintenance/1.8.x/scipy/__init__.py
+if:
+  name: scipy
+  version: 1.8.1
+  build_number_in: [0, 2]
+  timestamp_le: 1686323537000
+then:
+  - replace_depends:
+      old: numpy >=1.19.5,<2.0a0
+      new: scipy >=1.17.3,<1.25.0
+  - replace_depends:
+      old: numpy >=1.21.6,<2.0a0
+      new: scipy >=1.17.3,<1.25.0
