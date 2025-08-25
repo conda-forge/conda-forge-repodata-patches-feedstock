@@ -70,4 +70,4 @@ then:
       new: numpy >=1.19.5,<1.25.0
   - replace_depends:
       old: numpy >=1.21.6,<2.0a0
-      new: numpy >=1.19.5,<1.25.0
+      new: numpy >=1.21.6,<1.25.0
