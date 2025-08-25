@@ -55,7 +55,7 @@ then:
   - add_constrains: libopenblas <0.3.26
 
 ---
-# Allign constrains with limits in 1.8.x maintenance branch
+# Align constrains with limits in 1.8.x maintenance branch
 # The numpy min and max versions are documented here:
 # https://github.com/scipy/scipy/blob/maintenance/1.8.x/setup.py
 # https://github.com/scipy/scipy/blob/maintenance/1.8.x/scipy/__init__.py
