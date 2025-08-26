@@ -63,7 +63,8 @@ then:
 if:
   name: conda-smithy
   version_eq: 3.52.0
+  build_number: 0
 then:
-  - tighten_depends:
-      name: rattler-build-conda-compat
-      lower_bound: 1.4.5
+  - replace_depends:
+      old: rattler-build-conda-compat >=1.2.0,<2.0.0a0
+      new: rattler-build-conda-compat >=1.4.5,<2.0.0a0
