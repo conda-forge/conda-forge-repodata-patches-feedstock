@@ -17,3 +17,15 @@ then:
   - tighten_depends:
       name: zarr
       upper_bound: 3.0.0
+---
+# pip understands "zarr >=v3.0.0" but not conda. Need to patch all ome-zarr
+# 0.12.0+ binaries https://github.com/conda-forge/ome-zarr-feedstock/pull/31
+if:
+  name: ome-zarr
+  version_ge: "0.12.0"
+  version_le: "0.12.2"
+  timestamp_lt: 1756219577000
+then:
+  - replace_depends:
+      old: zarr >=v3.0.0
+      new: zarr >=3.0.0
