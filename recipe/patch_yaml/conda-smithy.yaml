@@ -59,3 +59,11 @@ then:
   - tighten_depends:
       name: rattler-build-conda-compat
       max_pin: "x"
+---
+if:
+  name: conda-smithy
+  version_eq: 3.52.0
+then:
+  - tighten_depends:
+      name: rattler-build-conda-compat
+      lower_bound: 1.4.5
