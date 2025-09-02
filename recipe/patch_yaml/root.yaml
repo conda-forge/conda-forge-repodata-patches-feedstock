@@ -33,3 +33,11 @@ then:
   - replace_depends:
       old: vector-classes >=1.4.1,<1.5.0a0
       new: vector-classes >=1.4.1,<1.4.2a0
+---
+# Patch ROOT on OSX to require clangdev <19 due to compatibility issues
+if:
+  name: root*
+  subdir_in: ["osx-64", "osx-arm64"]
+  timestamp_lt: 1756841604000
+then:
+  - add_depends: clangdev <19.0.0a0
