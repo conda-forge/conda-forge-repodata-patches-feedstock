@@ -89,7 +89,9 @@ class _IfClause(_ForbidExtra):
             and key != "version"
         ):
             continue  # no point in comparing non-version strings with gt, ge, lt, le
-        if op in ("", "eq", "ne", "in") and type_hint == "_PosInt":  # accept globs too
+        if (
+            op in ("", "eq", "ne", "in") and type_hint == "_PosInt"
+        ):  # accept globs too
             type_hint += " | _NonEmptyStr"
         if op == "in":
             descr = f"List of '{key}' values to match against. A single scalar value is also allowed."  # noqa: E501
@@ -209,7 +211,9 @@ class PatchYaml(_ForbidExtra):
 def generate_schema(write=False):
     schema_str = json.dumps(PatchYaml.model_json_schema(), indent=2)
     if write:
-        (Path(__file__).parent / ("patch_yaml_model.json")).write_text(schema_str)
+        (Path(__file__).parent / ("patch_yaml_model.json")).write_text(
+            schema_str
+        )
     return schema_str
 
 

@@ -25,7 +25,9 @@ from patch_yaml_model import PatchYaml  # noqa
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
 ALL_YAMLS = []
-for fname in sorted(glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml")):
+for fname in sorted(
+    glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml")
+):
     with open(fname, "r") as fp:
         fname_yamls = [
             patch_yaml
@@ -38,7 +40,9 @@ for fname in sorted(glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml"))
 @lru_cache(maxsize=32768)
 def _fnmatch_build_re(pat):
     repat = (
-        "(?s:\\ .*)?".join([_fnmatch.translate(p)[:-2] for p in pat.split("?( *)")])
+        "(?s:\\ .*)?".join(
+            [_fnmatch.translate(p)[:-2] for p in pat.split("?( *)")]
+        )
         + "\\Z"
     )
     return re.compile(repat).match
@@ -197,12 +201,16 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             subk = k[:-3]
             _keep = _fnmatch_str_or_list(record[subk], v)
 
-        elif k.startswith("has_") and k[len("has_") :] in ["depends", "constrains"]:
+        elif k.startswith("has_") and k[len("has_") :] in [
+            "depends",
+            "constrains",
+        ]:
             subk = k[len("has_") :]
             if not isinstance(v, list):
                 v = [v]
             _keep = all(
-                any(fnmatch(dep, _v) for dep in record.get(subk, [])) for _v in v
+                any(fnmatch(dep, _v) for dep in record.get(subk, []))
+                for _v in v
             )
 
         elif k == "artifact_in":
@@ -229,7 +237,9 @@ def _extract_track_feature(record, feature_name):
 
 
 def _add_track_feature(record, feature_name):
-    return " ".join((record.get("track_features", "") or "").split() + [feature_name])
+    return " ".join(
+        (record.get("track_features", "") or "").split() + [feature_name]
+    )
 
 
 def _replace_pin(old_pin, new_pin, deps, record, target="depends"):
@@ -251,7 +261,8 @@ def _rename_dependency(fn, record, old_name, new_name, target="depends"):
         return
     specs = record[target]
     dep_idx = next(
-        (q for q, dep in enumerate(specs) if dep.split(" ")[0] == old_name), None
+        (q for q, dep in enumerate(specs) if dep.split(" ")[0] == old_name),
+        None,
     )
     if dep_idx is not None:
         parts = specs[dep_idx].split(" ")
@@ -277,7 +288,8 @@ def get_upper_bound(version, max_pin):
 def _relax_exact(fn, record, fix_dep, max_pin=None):
     depends = record.get("depends", ())
     dep_idx = next(
-        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == fix_dep), None
+        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == fix_dep),
+        None,
     )
     if dep_idx is not None:
         dep_parts = depends[dep_idx].split(" ")
@@ -286,19 +298,25 @@ def _relax_exact(fn, record, fix_dep, max_pin=None):
         ):
             if max_pin is not None:
                 upper_bound = get_upper_bound(dep_parts[1], max_pin) + "a0"
-                depends[dep_idx] = "{} >={},<{}".format(*dep_parts[:2], upper_bound)
+                depends[dep_idx] = "{} >={},<{}".format(
+                    *dep_parts[:2], upper_bound
+                )
             else:
                 depends[dep_idx] = "{} >={}".format(*dep_parts[:2])
             record["depends"] = depends
 
 
-CB_PIN_REGEX = re.compile(r"^>=(?P<lower>\d+(\.\d+)*a?),<(?P<upper>\d+(\.\d+)*)a0$")
+CB_PIN_REGEX = re.compile(
+    r"^>=(?P<lower>\d+(\.\d+)*a?),<(?P<upper>\d+(\.\d+)*)a0$"
+)
 CB_GT_REGEX = re.compile(r"^>=(?P<lower>\d+(\.\d+)*a?)[^<*]*$")
 
 
 def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
     depends = record.get("depends", ())
-    dep_indices = [q for q, dep in enumerate(depends) if dep.split(" ")[0] == fix_dep]
+    dep_indices = [
+        q for q, dep in enumerate(depends) if dep.split(" ")[0] == fix_dep
+    ]
     for dep_idx in dep_indices:
         dep_parts = depends[dep_idx].split(" ")
 
@@ -329,7 +347,9 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
             _lower = pad_list(_lower, len(new_upper))
             new_upper = pad_list(new_upper, len(_lower))
 
-            if parse_version(".".join(_lower)) < parse_version(".".join(new_upper)):
+            if parse_version(".".join(_lower)) < parse_version(
+                ".".join(new_upper)
+            ):
                 if str(new_upper[-1]) != "0":
                     new_upper += ["0"]
                 new_upper = ".".join(new_upper)
@@ -343,7 +363,9 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
                         dep_parts[0], dep_parts[1], new_upper, dep_parts[2]
                     )
                 else:
-                    raise RuntimeError(f"Weird dep length in item '{depends[dep_idx]}'")
+                    raise RuntimeError(
+                        f"Weird dep length in item '{depends[dep_idx]}'"
+                    )
 
                 record["depends"] = depends
 
@@ -359,14 +381,18 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
                 new_upper = upper_bound.split(".")
             upper = pad_list(upper, len(new_upper))
             new_upper = pad_list(new_upper, len(upper))
-            if parse_version(".".join(upper)) > parse_version(".".join(new_upper)):
+            if parse_version(".".join(upper)) > parse_version(
+                ".".join(new_upper)
+            ):
                 if str(new_upper[-1]) != "0":
                     new_upper += ["0"]
                 depends[dep_idx] = "{} >={},<{}a0".format(
                     dep_parts[0], lower, ".".join(new_upper)
                 )
                 if len(dep_parts) == 3:
-                    depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
+                    depends[dep_idx] = "{} {}".format(
+                        depends[dep_idx], dep_parts[2]
+                    )
                 record["depends"] = depends
 
             continue
@@ -401,7 +427,9 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
 
 def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
     depends = record.get("depends", ())
-    dep_indices = [q for q, dep in enumerate(depends) if dep.split(" ")[0] == fix_dep]
+    dep_indices = [
+        q for q, dep in enumerate(depends) if dep.split(" ")[0] == fix_dep
+    ]
     for dep_idx in dep_indices:
         dep_parts = depends[dep_idx].split(" ")
         if len(dep_parts) not in [2, 3]:
@@ -434,14 +462,19 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
                 dep_parts[0], lower, ".".join(new_upper)
             )
             if len(dep_parts) == 3:
-                depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
+                depends[dep_idx] = "{} {}".format(
+                    depends[dep_idx], dep_parts[2]
+                )
             record["depends"] = depends
 
 
 def _apply_patch_yaml(patch_yaml, record, subdir, fn):
     for inst in patch_yaml["then"]:
         for k, v in inst.items():
-            if k.startswith("add_") and k[len("add_") :] in ["depends", "constrains"]:
+            if k.startswith("add_") and k[len("add_") :] in [
+                "depends",
+                "constrains",
+            ]:
                 subk = k[len("add_") :]
                 if not isinstance(v, list):
                     v = [v]
@@ -486,14 +519,21 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 if not isinstance(v, list):
                     v = [v]
 
-                record[subk] = [_maybe_process_template(_v, record, subdir) for _v in v]
+                record[subk] = [
+                    _maybe_process_template(_v, record, subdir) for _v in v
+                ]
 
             elif k == "remove_track_features":
-                if "track_features" in record and record["track_features"] is not None:
+                if (
+                    "track_features" in record
+                    and record["track_features"] is not None
+                ):
                     if not isinstance(v, list):
                         v = [v]
                     for _v in v:
-                        record["track_features"] = _extract_track_feature(record, _v)
+                        record["track_features"] = _extract_track_feature(
+                            record, _v
+                        )
                         if record["track_features"] is None:
                             break
 
@@ -623,7 +663,10 @@ def patch_yaml_edit_index(index, subdir):
                     + "\n"
                     + "=" * 80
                     + "\nError in testing/applying patch yaml from '%s': \n\n%s"
-                    % (fname, yaml.safe_dump(patch_yaml, default_flow_style=False)),
+                    % (
+                        fname,
+                        yaml.safe_dump(patch_yaml, default_flow_style=False),
+                    ),
                     flush=True,
                 )
                 try:

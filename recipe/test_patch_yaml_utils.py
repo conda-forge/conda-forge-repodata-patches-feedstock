@@ -3,7 +3,11 @@ from pathlib import Path
 import pytest
 import yaml
 from patch_yaml_model import PatchYaml, generate_schema
-from patch_yaml_utils import ALLOWED_TEMPLATE_KEYS, _apply_patch_yaml, _test_patch_yaml
+from patch_yaml_utils import (
+    ALLOWED_TEMPLATE_KEYS,
+    _apply_patch_yaml,
+    _test_patch_yaml,
+)
 
 
 def test_test_patch_yaml_record_key():
@@ -216,7 +220,12 @@ def test_apply_patch_yaml_add(key):
 @pytest.mark.parametrize("key", ["depends", "constrains"])
 def test_apply_patch_yaml_add_template(key, rkey):
     patch_yaml = {"then": [{"add_" + key: f"blah ${rkey}"}]}
-    record = {"version": "10", "name": "foo", "build_number": 2, "build": "pyhd8_0"}
+    record = {
+        "version": "10",
+        "name": "foo",
+        "build_number": 2,
+        "build": "pyhd8_0",
+    }
     patched_record = record.copy()
     _apply_patch_yaml(patch_yaml, patched_record, "linux-64", None)
     if rkey not in [
@@ -226,7 +235,9 @@ def test_apply_patch_yaml_add_template(key, rkey):
         "minor_version",
         "patch_version",
     ]:
-        assert patched_record == (record | {key: [f"blah {patched_record[rkey]}"]})
+        assert patched_record == (
+            record | {key: [f"blah {patched_record[rkey]}"]}
+        )
     else:
         if rkey == "subdir":
             nval = "linux-64"
@@ -401,7 +412,9 @@ def test_apply_patch_yaml_replace_glob(key, pre, post):
 @pytest.mark.parametrize("key", ["depends", "constrains"])
 def test_apply_patch_yaml_replace_glob_template(key, pre, post):
     patch_yaml = {
-        "then": [{"replace_" + key: {"old": "numpy 1.0*", "new": "${old},<2.0"}}]
+        "then": [
+            {"replace_" + key: {"old": "numpy 1.0*", "new": "${old},<2.0"}}
+        ]
     }
     record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
@@ -426,7 +439,10 @@ def test_apply_patch_yaml_replace_glob_template_next_version(
         "then": [
             {
                 "replace_"
-                + key: {"old": "numpy 1.0*", "new": "numpy $version,<$next_version"}
+                + key: {
+                    "old": "numpy 1.0*",
+                    "new": "numpy $version,<$next_version",
+                }
             }
         ]
     }
@@ -436,7 +452,10 @@ def test_apply_patch_yaml_replace_glob_template_next_version(
 
     patch_yaml = {
         "then": [
-            {"replace_" + key: {"old": "numpy 1.0*", "new": "numpy $major_version"}}
+            {
+                "replace_"
+                + key: {"old": "numpy 1.0*", "new": "numpy $major_version"}
+            }
         ]
     }
     record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post, "version": v}
@@ -445,7 +464,10 @@ def test_apply_patch_yaml_replace_glob_template_next_version(
 
     patch_yaml = {
         "then": [
-            {"replace_" + key: {"old": "numpy 1.0*", "new": "numpy $minor_version"}}
+            {
+                "replace_"
+                + key: {"old": "numpy 1.0*", "new": "numpy $minor_version"}
+            }
         ]
     }
     record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post, "version": v}
@@ -454,7 +476,10 @@ def test_apply_patch_yaml_replace_glob_template_next_version(
 
     patch_yaml = {
         "then": [
-            {"replace_" + key: {"old": "numpy 1.0*", "new": "numpy $patch_version"}}
+            {
+                "replace_"
+                + key: {"old": "numpy 1.0*", "new": "numpy $patch_version"}
+            }
         ]
     }
     record = {key: pre + ["numpy 1.0", "numpy 1.0.1"] + post, "version": v}
@@ -465,7 +490,9 @@ def test_apply_patch_yaml_replace_glob_template_next_version(
 @pytest.mark.parametrize("pre", [[], ["foo"]])
 @pytest.mark.parametrize("post", [[], ["bar"]])
 def test_apply_patch_yaml_rename(pre, post):
-    patch_yaml = {"then": [{"rename_depends": {"old": "numpy", "new": "numppy"}}]}
+    patch_yaml = {
+        "then": [{"rename_depends": {"old": "numpy", "new": "numppy"}}]
+    }
     record = {"depends": pre + ["numpy 1.0 blah"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"depends": pre + ["numppy 1.0 blah"] + post}
@@ -488,7 +515,9 @@ def test_apply_patch_yaml_relax_exact(pre, post):
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"depends": pre + ["numpy >=1.0.0"] + post}
 
-    patch_yaml = {"then": [{"relax_exact_depends": {"name": "numpy", "max_pin": "x"}}]}
+    patch_yaml = {
+        "then": [{"relax_exact_depends": {"name": "numpy", "max_pin": "x"}}]
+    }
     record = {"depends": pre + ["numpy 1.0.0 blah"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
@@ -497,13 +526,17 @@ def test_apply_patch_yaml_relax_exact(pre, post):
 @pytest.mark.parametrize("pre", [[], ["foo"]])
 @pytest.mark.parametrize("post", [[], ["bar"]])
 def test_apply_patch_yaml_tighten(pre, post):
-    patch_yaml = {"then": [{"tighten_depends": {"name": "numpy", "max_pin": "x.x"}}]}
+    patch_yaml = {
+        "then": [{"tighten_depends": {"name": "numpy", "max_pin": "x.x"}}]
+    }
     record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"depends": pre + ["numpy >=1.0.0,<1.1.0a0"] + post}
 
     patch_yaml = {
-        "then": [{"tighten_depends": {"name": "numpy", "upper_bound": "1.1.2"}}]
+        "then": [
+            {"tighten_depends": {"name": "numpy", "upper_bound": "1.1.2"}}
+        ]
     }
     record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
@@ -529,7 +562,9 @@ def test_apply_patch_yaml_tighten_upper_bound(pre, post):
     assert record == {"depends": pre + ["numpy <5.0a0"] + post}
 
     patch_yaml = {
-        "then": [{"tighten_depends": {"name": "numpy", "upper_bound": "1.1.2"}}]
+        "then": [
+            {"tighten_depends": {"name": "numpy", "upper_bound": "1.1.2"}}
+        ]
     }
     record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
@@ -539,7 +574,9 @@ def test_apply_patch_yaml_tighten_upper_bound(pre, post):
 @pytest.mark.parametrize("pre", [[], ["foo"]])
 @pytest.mark.parametrize("post", [[], ["bar"]])
 def test_apply_patch_yaml_loosen(pre, post):
-    patch_yaml = {"then": [{"loosen_depends": {"name": "numpy", "max_pin": "x"}}]}
+    patch_yaml = {
+        "then": [{"loosen_depends": {"name": "numpy", "max_pin": "x"}}]
+    }
     record = {"depends": pre + ["numpy >=1.0.0,<1.1.0a0"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
@@ -553,7 +590,9 @@ def test_apply_patch_yaml_loosen(pre, post):
 
 
 def test_schema_up_to_date():
-    schema_on_disk = (Path(__file__).parent / ("patch_yaml_model.json")).read_text()
+    schema_on_disk = (
+        Path(__file__).parent / ("patch_yaml_model.json")
+    ).read_text()
     schema_str = generate_schema(write=False)
     assert schema_str == schema_on_disk
 

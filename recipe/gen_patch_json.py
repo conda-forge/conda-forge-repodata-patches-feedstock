@@ -377,7 +377,12 @@ def _add_pybind11_abi_constraint(fn, record):
 def _fix_libgfortran(fn, record):
     depends = record.get("depends", ())
     dep_idx = next(
-        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == "libgfortran"), None
+        (
+            q
+            for q, dep in enumerate(depends)
+            if dep.split(" ")[0] == "libgfortran"
+        ),
+        None,
     )
     if (
         dep_idx is not None
@@ -410,7 +415,8 @@ def _fix_libgfortran(fn, record):
 def _set_osx_virt_min(fn, record, min_vers):
     rconst = record.get("constrains", ())
     dep_idx = next(
-        (q for q, dep in enumerate(rconst) if dep.split(" ")[0] == "__osx"), None
+        (q for q, dep in enumerate(rconst) if dep.split(" ")[0] == "__osx"),
+        None,
     )
     run_constrained = list(rconst)
     if dep_idx is None:
@@ -425,7 +431,8 @@ def _fix_libcxx(fn, record):
         return
     depends = record.get("depends", ())
     dep_idx = next(
-        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == "libcxx"), None
+        (q for q, dep in enumerate(depends) if dep.split(" ")[0] == "libcxx"),
+        None,
     )
     if dep_idx is not None:
         dep_parts = depends[dep_idx].split(" ")
@@ -488,7 +495,9 @@ def remove_python_abi(record):
     if not has_dep(record, "python_abi"):
         return
     depends = record.get("depends", [])
-    record["depends"] = [dep for dep in depends if dep.split(" ")[0] != "python_abi"]
+    record["depends"] = [
+        dep for dep in depends if dep.split(" ")[0] != "python_abi"
+    ]
 
 
 changes = set([])
@@ -532,8 +541,12 @@ def add_python_abi(record, subdir):
                     else:
                         lower = pad_list(m.group("lower").split("."), 2)[:2]
                         upper = pad_list(m.group("upper").split("."), 2)[:2]
-                        if lower[0] == upper[0] and int(lower[1]) + 1 == int(upper[1]):
-                            python_abi = get_python_abi(m.group("lower"), subdir, build)
+                        if lower[0] == upper[0] and int(lower[1]) + 1 == int(
+                            upper[1]
+                        ):
+                            python_abi = get_python_abi(
+                                m.group("lower"), subdir, build
+                            )
                         else:
                             python_abi = get_python_abi("", subdir, build)
                 else:
@@ -600,7 +613,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # Generally managed by conda-forge/core
         ########################################
 
-        if "license" in record and "license_family" not in record and record["license"]:
+        if (
+            "license" in record
+            and "license_family" not in record
+            and record["license"]
+        ):
             family = get_license_family(record["license"])
             if family:
                 record["license_family"] = family
@@ -649,7 +666,8 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             # this version has a constraint sometimes
             and (parse_version(record["version"]) <= parse_version("2.6.1"))
             and not any(
-                c.startswith("pybind11-abi ") for c in record.get("constrains", [])
+                c.startswith("pybind11-abi ")
+                for c in record.get("constrains", [])
             )
         ):
             _add_pybind11_abi_constraint(fn, record)
@@ -672,7 +690,10 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
         # fix only packages built before the run_exports was corrected.
         if (
-            any(dep == "libflang" or dep.startswith("libflang >=5.0.0") for dep in deps)
+            any(
+                dep == "libflang" or dep.startswith("libflang >=5.0.0")
+                for dep in deps
+            )
             and record.get("timestamp", 0) < 1611789153000
         ):
             record["depends"].append("libflang <6.0.0.a0")
@@ -719,12 +740,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         # for aarch64, ppc64le and s390x
         for __subdir in ["linux-s390x", "linux-aarch64", "linux-ppc64le"]:
             if (
-                record_name in ["kernel-headers_" + __subdir, "sysroot_" + __subdir]
+                record_name
+                in ["kernel-headers_" + __subdir, "sysroot_" + __subdir]
                 and record.get("timestamp", 0) < 1682273081000  # 2023-04-23
                 and record["version"] == "2.17"
             ):
                 new_depends = record.get("depends", [])
-                new_depends.append("_sysroot_" + __subdir + "_curr_repodata_hack 4.*")
+                new_depends.append(
+                    "_sysroot_" + __subdir + "_curr_repodata_hack 4.*"
+                )
                 record["depends"] = new_depends
 
         # make old binutils packages conflict with the new sysroot packages
@@ -745,7 +769,11 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if (
             subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
             and record_name
-            in ["gcc_impl_" + subdir, "gxx_impl_" + subdir, "gfortran_impl_" + subdir]
+            in [
+                "gcc_impl_" + subdir,
+                "gxx_impl_" + subdir,
+                "gfortran_impl_" + subdir,
+            ]
             and record["version"] in ["5.4.0", "7.2.0", "7.3.0", "8.2.0"]
         ):
             new_constrains = record.get("constrains", [])
@@ -765,9 +793,15 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         if (
             subdir in ["linux-64", "linux-aarch64", "linux-ppc64le"]
             and record_name
-            in ["gcc_impl_" + subdir, "gxx_impl_" + subdir, "gfortran_impl_" + subdir]
+            in [
+                "gcc_impl_" + subdir,
+                "gxx_impl_" + subdir,
+                "gfortran_impl_" + subdir,
+            ]
             and record["version"] not in ["5.4.0", "7.2.0", "7.3.0", "8.2.0"]
-            and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
+            and not any(
+                __r.startswith("sysroot_") for __r in record.get("depends", [])
+            )
             and record.get("timestamp", 0) < 1626220800000  # 2020-07-14
         ):
             new_constrains = record.get("constrains", [])
@@ -789,7 +823,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 "root_base",
                 "cling",
             ]
-            and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
+            and not any(
+                __r.startswith("sysroot_") for __r in record.get("depends", [])
+            )
             and record.get("timestamp", 0) < 1626220800000  # 2020-07-14
         ):
             new_constrains = record.get("constrains", [])
@@ -819,7 +855,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                 or record_name.endswith("-cos7-ppc64le")
             )
             and not record_name.startswith("sysroot-")
-            and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
+            and not any(
+                __r.startswith("sysroot_") for __r in record.get("depends", [])
+            )
         ):
             if record_name.endswith("x86_64"):
                 sys_subdir = "linux-64"
@@ -830,7 +868,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 
             new_constrains = record.get("constrains", [])
             if not any(__r.startswith("sysroot_") for __r in new_constrains):
-                new_constrains.append("sysroot_" + sys_subdir + " ==99999999999")
+                new_constrains.append(
+                    "sysroot_" + sys_subdir + " ==99999999999"
+                )
                 record["constrains"] = new_constrains
 
         llvm_pkgs = [
@@ -860,7 +900,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
             and record["version"] >= "0.8"
             and record.get("timestamp", 0) < 1667260800000  # 2022-11-01
         ):
-            record.setdefault("constrains", []).extend(("gxx_linux-64 !=9.5.0",))
+            record.setdefault("constrains", []).extend(
+                ("gxx_linux-64 !=9.5.0",)
+            )
 
         ############################################
         # Custom Patches that cannot be YAML-ized
@@ -888,7 +930,9 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
 def _gen_new_index(repodata, subdir):
     indexes = {}
     for index_key in ["packages", "packages.conda"]:
-        indexes[index_key] = _gen_new_index_per_key(repodata, subdir, index_key)
+        indexes[index_key] = _gen_new_index_per_key(
+            repodata, subdir, index_key
+        )
         patch_yaml_edit_index(indexes[index_key], subdir)
 
     return indexes
@@ -910,7 +954,11 @@ def _add_removals(instructions, subdir, package_removal_keeplist=None):
     for pkgs_section_key in ["packages", "packages.conda"]:
         for pkg_name in data.get(pkgs_section_key, []):
             if package_removal_keeplist:
-                nm = data.get(pkgs_section_key, {}).get(pkg_name, {}).get("name", None)
+                nm = (
+                    data.get(pkgs_section_key, {})
+                    .get(pkg_name, {})
+                    .get("name", None)
+                )
                 if nm in package_removal_keeplist:
                     continue
             currvals.append(pkg_name)
@@ -918,7 +966,9 @@ def _add_removals(instructions, subdir, package_removal_keeplist=None):
     instructions["remove"].extend(tuple(set(currvals)))
 
 
-def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=None):
+def _gen_patch_instructions(
+    index, new_index, subdir, package_removal_keeplist=None
+):
     instructions = {
         "patch_instructions_version": 1,
         "packages": defaultdict(dict),
@@ -963,7 +1013,9 @@ def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=N
 
 def _do_subdir(subdir):
     with tempfile.TemporaryDirectory() as tmpdir:
-        raw_repodata_path = os.path.join(tmpdir, "repodata_from_packages.json.zst")
+        raw_repodata_path = os.path.join(
+            tmpdir, "repodata_from_packages.json.zst"
+        )
         ref_repodata_path = os.path.join(tmpdir, "repodata.json.zst")
         raw_url = f"{BASE_URL}/{subdir}/repodata_from_packages.json.zst"
         urllib.request.urlretrieve(raw_url, raw_repodata_path)
@@ -987,10 +1039,16 @@ def _do_subdir(subdir):
         instructions = _gen_patch_instructions(repodata, new_index, subdir)
 
         # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
-        patch_instructions_path = join(prefix_subdir, "patch_instructions.json")
+        patch_instructions_path = join(
+            prefix_subdir, "patch_instructions.json"
+        )
         with open(patch_instructions_path, "w") as fh:
             json.dump(
-                instructions, fh, indent=2, sort_keys=True, separators=(",", ": ")
+                instructions,
+                fh,
+                indent=2,
+                sort_keys=True,
+                separators=(",", ": "),
             )
 
         # Step 3. Show the diff
@@ -1008,7 +1066,9 @@ def main():
         subdirs = SUBDIRS
 
     with ProcessPoolExecutor(
-        max_workers=int(os.environ["CPU_COUNT"]) if "CPU_COUNT" in os.environ else None
+        max_workers=(
+            int(os.environ["CPU_COUNT"]) if "CPU_COUNT" in os.environ else None
+        )
     ) as exc:
         futs = [exc.submit(_do_subdir, subdir) for subdir in subdirs]
         for fut in tqdm.tqdm(

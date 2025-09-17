@@ -10,7 +10,8 @@ import zstandard
 from conda_index.index import _apply_instructions
 
 CACHE_DIR = os.environ.get(
-    "CACHE_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
+    "CACHE_DIR",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache"),
 )
 BASE_URL = "https://conda.anaconda.org/conda-forge"
 
@@ -26,7 +27,9 @@ def sort_lists(obj):
     return obj
 
 
-def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs=True):
+def show_record_diffs(
+    subdir, ref_repodata, new_repodata, fail_fast, group_diffs=True
+):
     keep_pkgs = os.environ.get("CF_PKGS", None)
     if keep_pkgs is not None:
         keep_pkgs = set(keep_pkgs.split(";"))
@@ -44,7 +47,11 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
             ref_pkg = ref_repodata.get(index_key, {}).get(name, {})
             new_pkg = new_repodata.get(index_key, {}).get(name, {})
 
-            if keep_pkgs is not None and ref_pkg and ref_pkg["name"] not in keep_pkgs:
+            if (
+                keep_pkgs is not None
+                and ref_pkg
+                and ref_pkg["name"] not in keep_pkgs
+            ):
                 continue
 
             # license_family gets added for new packages, ignore it in the diff
@@ -71,7 +78,9 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
 
             if group_diffs:
                 _key = []
-                for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=""):
+                for ln in difflib.unified_diff(
+                    ref_lines, new_lines, n=0, lineterm=""
+                ):
                     if (
                         ln.startswith("+++")
                         or ln.startswith("---")
@@ -85,7 +94,9 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
                 final_lines[_key].add(f"{subdir}::{name}")
             else:
                 final_lines.append()
-                for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=""):
+                for ln in difflib.unified_diff(
+                    ref_lines, new_lines, n=0, lineterm=""
+                ):
                     if (
                         ln.startswith("+++")
                         or ln.startswith("---")
@@ -135,12 +146,18 @@ def download_subdir(subdir, raw_repodata_path, ref_repodata_path):
 
 
 def _process_subdir(
-    subdir, use_cache, fail_fast, group_diffs=True, package_removal_keeplist=None
+    subdir,
+    use_cache,
+    fail_fast,
+    group_diffs=True,
+    package_removal_keeplist=None,
 ):
     subdir_dir = os.path.join(CACHE_DIR, subdir)
     if not os.path.exists(subdir_dir):
         os.makedirs(subdir_dir)
-    raw_repodata_path = os.path.join(subdir_dir, "repodata_from_packages.json.zst")
+    raw_repodata_path = os.path.join(
+        subdir_dir, "repodata_from_packages.json.zst"
+    )
     ref_repodata_path = os.path.join(subdir_dir, "repodata.json.zst")
     if not use_cache:
         download_subdir(subdir, raw_repodata_path, ref_repodata_path)
@@ -162,7 +179,10 @@ if __name__ == "__main__":
         description="show repodata changes from the current gen_patch_json"
     )
     parser.add_argument(
-        "--subdirs", nargs="*", default=None, help="subdir(s) show, default is all"
+        "--subdirs",
+        nargs="*",
+        default=None,
+        help="subdir(s) show, default is all",
     )
     parser.add_argument(
         "--use-cache",
@@ -170,10 +190,14 @@ if __name__ == "__main__":
         help="use cached repodata files, rather than downloading them",
     )
     parser.add_argument(
-        "--fail-fast", action="store_true", help="error out on the first non-zero diff"
+        "--fail-fast",
+        action="store_true",
+        help="error out on the first non-zero diff",
     )
     parser.add_argument(
-        "--no-group-diffs", action="store_true", help="do not group diffs by content"
+        "--no-group-diffs",
+        action="store_true",
+        help="do not group diffs by content",
     )
     parser.add_argument(
         "--package-removal-keeplist",
@@ -202,7 +226,10 @@ if __name__ == "__main__":
                 args.fail_fast,
                 group_diffs=not args.no_group_diffs,
                 package_removal_keeplist=(
-                    [item.strip() for item in args.package_removal_keeplist.split(",")]
+                    [
+                        item.strip()
+                        for item in args.package_removal_keeplist.split(",")
+                    ]
                     if args.package_removal_keeplist
                     else None
                 ),
