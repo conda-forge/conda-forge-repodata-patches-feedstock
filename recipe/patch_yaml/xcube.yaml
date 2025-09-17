@@ -1,0 +1,9 @@
+if:
+  name: xcube
+  version_le: "1.7.1"
+  timestamp_lt: 1758125025000
+  has_depends: zarr?( *)
+then:
+  - tighten_depends:
+      name: zarr
+      upper_bound: "3"
