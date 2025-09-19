@@ -1,0 +1,9 @@
+if:
+  name: zappend
+  version_le: "0.8.0"
+  timestamp_lt: 1758125025000
+  has_depends: zarr?( *)
+then:
+  - tighten_depends:
+      name: zarr
+      upper_bound: "3"
