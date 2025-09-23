@@ -7,3 +7,16 @@ then:
   - replace_depends:
       old: click
       new: click <8.2
+
+---
+
+# https://github.com/conda-forge/openfe-feedstock/pull/100
+if:
+  name: openfe-base
+  timestamp_lt: 1758658703000
+  version_in: 1.6.0
+
+then:
+  - replace_depends:
+      old: openff-toolkit-base >=0.16.2,<0.18
+      new: openff-toolkit-base >=0.16.2,<0.17
