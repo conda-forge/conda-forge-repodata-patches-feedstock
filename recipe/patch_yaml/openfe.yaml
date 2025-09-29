@@ -13,7 +13,7 @@ then:
 # https://github.com/OpenFreeEnergy/openfe/issues/1543#event-19981663090
 if:
   name: openfe
-  timestampe_lt: 1759157831000
+  timestamp_lt: 1759157831000
 
 then:
   - replace_depends:
