@@ -7,3 +7,12 @@ then:
   - replace_depends:
       old: click
       new: click <8.2
+
+if:
+  name: openfe
+  timestampe_lt: 1759157831000
+
+then:
+  - replace_depends:
+      old: numpy
+      new: numpy <2.3
