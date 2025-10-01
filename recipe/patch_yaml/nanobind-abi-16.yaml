@@ -1,7 +1,7 @@
 # fix nanobind-abi constraint in nanobind 2.6-2.8
 if:
   name: nanobind
-  timestamp_lt: 1753243510000
+  timestamp_lt: 17593549740000
   version_ge: 2.6.0
 then:
   - replace_constrains:
@@ -11,7 +11,7 @@ then:
 # make nanobind-abi 15 incompatible with nanobind < 2.4 which lacks constraint on nanobind-abi
 if:
   name: nanobind-abi
-  timestamp_lt: 1753243510000
+  timestamp_lt: 17593549740000
 then:
   - add_constrains: "nanobind >=2.4"
 ---
@@ -19,7 +19,7 @@ then:
 # This isn't correct in principle,
 # but all packages that depend on nanobind-abi 15 happen to actually have been built with nanobind-abi 16
 if:
-  timestamp_lt: 1753243510000
+  timestamp_lt: 17593549740000
   has_depends: nanobind-abi ==15
 then:
   - replace_depends:
