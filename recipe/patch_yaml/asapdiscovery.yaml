@@ -10,4 +10,4 @@ then:
       # str of thing to be replaced
       old: openfe >0.14.0*
       # thing to replace `old` with
-      new: openfe =>1.1.0
+      new: openfe >=1.1.0

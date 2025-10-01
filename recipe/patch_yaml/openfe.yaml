@@ -7,3 +7,15 @@ then:
   - replace_depends:
       old: click
       new: click <8.2
+
+---
+
+# https://github.com/OpenFreeEnergy/openfe/issues/1543#event-19981663090
+if:
+  name: openfe
+  timestamp_lt: 1759157831000
+
+then:
+  - replace_depends:
+      old: numpy
+      new: numpy <2.3
