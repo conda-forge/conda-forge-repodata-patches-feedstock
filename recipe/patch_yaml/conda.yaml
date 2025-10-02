@@ -3,6 +3,6 @@ if:
   version_le: 25.9.0
   timestamp_lt: 1759388400000
 then:
-  - tighten_depends:
-      name: conda-libmamba-solver
-      lower_bound: 25.4.0
+  - replace_depends:
+      old: conda-libmamba-solver >=24.11.0
+      new: conda-libmamba-solver >=25.4.0
