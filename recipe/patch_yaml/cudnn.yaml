@@ -8,3 +8,23 @@ if:
   subdir_in: win-64
 then:
   - remove_depends: "libzlib-wapi *"
+---
+# As a consequence of https://github.com/conda-forge/cudnn-feedstock/issues/124 and
+# https://github.com/conda-forge/admin-requests/pull/1687, we need to loosen the
+# run-exports for cudnn-dependent builts (on CUDA 12.x) to avoid versions marked broken.
+if:
+  has_depends: cudnn*
+  timestamp_lt: 1759732869
+then:
+  - replace_depends:
+      old: cudnn >=9.11.0.98,<10.0a0
+      new: cudnn >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: cudnn >=9.12.0.46,<10.0a0
+      new: cudnn >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: cudnn >=9.13.0.50,<10.0a0
+      new: cudnn >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: cudnn >=9.13.1.26,<10.0a0
+      new: cudnn >=9.10.1.4,<10.0a0
