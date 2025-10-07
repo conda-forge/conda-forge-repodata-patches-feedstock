@@ -1,0 +1,6 @@
+if:
+  name: compiler-rt
+  version: "21.1.2"
+  build_number: 1
+then:
+  - add_constrains: clang 21.1.2
