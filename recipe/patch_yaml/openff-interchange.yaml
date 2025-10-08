@@ -1,0 +1,11 @@
+if:
+  name: openff-interchange-base
+  timestamp_lt: 1759944326000
+  version_ge: "0.4.0"
+
+then:
+  # pydantic 2.12 included a regression that broke all earlier versions of Interchange
+  # context
+  #   * https://github.com/conda-forge/openff-interchange-feedstock/pull/109
+  #   * https://github.com/openforcefield/openff-interchange/issues/1346
+  - add_constrains: "pydantic <2.12"
