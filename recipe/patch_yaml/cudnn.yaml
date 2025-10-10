@@ -13,8 +13,10 @@ then:
 # https://github.com/conda-forge/admin-requests/pull/1687, we need to loosen the
 # run-exports for cudnn-dependent builts (on CUDA 12.x) to avoid versions marked broken.
 if:
-  has_depends: cudnn*
-  timestamp_lt: 1759732869
+  has_depends: "*cudnn*"
+  not_has_depends: cuda-version >=13.0,<14
+  not_has_constrains: cuda-version >=13.0,<14
+  timestamp_lt: 1759943917000
 then:
   - replace_depends:
       old: cudnn >=9.11.0.98,<10.0a0
@@ -28,3 +30,94 @@ then:
   - replace_depends:
       old: cudnn >=9.13.1.26,<10.0a0
       new: cudnn >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: cudnn-jit >=9.11.0.98,<10.0a0
+      new: cudnn-jit >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: cudnn-jit >=9.12.0.46,<10.0a0
+      new: cudnn-jit >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: cudnn-jit >=9.13.0.50,<10.0a0
+      new: cudnn-jit >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: cudnn-jit >=9.13.1.26,<10.0a0
+      new: cudnn-jit >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: libcudnn >=9.11.0.98,<10.0a0
+      new: libcudnn >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: libcudnn >=9.12.0.46,<10.0a0
+      new: libcudnn >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: libcudnn >=9.13.0.50,<10.0a0
+      new: libcudnn >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: libcudnn >=9.13.1.26,<10.0a0
+      new: libcudnn >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: libcudnn-jit >=9.11.0.98,<10.0a0
+      new: libcudnn-jit >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: libcudnn-jit >=9.12.0.46,<10.0a0
+      new: libcudnn-jit >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: libcudnn-jit >=9.13.0.50,<10.0a0
+      new: libcudnn-jit >=9.10.1.4,<10.0a0
+  - replace_depends:
+      old: libcudnn-jit >=9.13.1.26,<10.0a0
+      new: libcudnn-jit >=9.10.1.4,<10.0a0
+---
+if:
+  has_constrains: "*cudnn*"
+  not_has_depends: cuda-version >=13.0,<14
+  not_has_constrains: cuda-version >=13.0,<14
+  timestamp_lt: 1759943917000
+then:
+  - replace_constrains:
+      old: cudnn >=9.11.0.98,<10.0a0
+      new: cudnn >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: cudnn >=9.12.0.46,<10.0a0
+      new: cudnn >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: cudnn >=9.13.0.50,<10.0a0
+      new: cudnn >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: cudnn >=9.13.1.26,<10.0a0
+      new: cudnn >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: cudnn-jit >=9.11.0.98,<10.0a0
+      new: cudnn-jit >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: cudnn-jit >=9.12.0.46,<10.0a0
+      new: cudnn-jit >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: cudnn-jit >=9.13.0.50,<10.0a0
+      new: cudnn-jit >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: cudnn-jit >=9.13.1.26,<10.0a0
+      new: cudnn-jit >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: libcudnn >=9.11.0.98,<10.0a0
+      new: libcudnn >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: libcudnn >=9.12.0.46,<10.0a0
+      new: libcudnn >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: libcudnn >=9.13.0.50,<10.0a0
+      new: libcudnn >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: libcudnn >=9.13.1.26,<10.0a0
+      new: libcudnn >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: libcudnn-jit >=9.11.0.98,<10.0a0
+      new: libcudnn-jit >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: libcudnn-jit >=9.12.0.46,<10.0a0
+      new: libcudnn-jit >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: libcudnn-jit >=9.13.0.50,<10.0a0
+      new: libcudnn-jit >=9.10.1.4,<10.0a0
+  - replace_constrains:
+      old: libcudnn-jit >=9.13.1.26,<10.0a0
+      new: libcudnn-jit >=9.10.1.4,<10.0a0
