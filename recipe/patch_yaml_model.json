@@ -1728,6 +1728,24 @@
           "description": "Spec or list of specs that should be present in the 'constrains' list.",
           "title": "Has Constrains"
         },
+        "has_track_features": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Feature or list of features that should be present in the 'track_features' field.",
+          "title": "Has Track Features"
+        },
         "artifact_in": {
           "anyOf": [
             {
@@ -1781,6 +1799,24 @@
           "default": null,
           "description": "Negated condition: Spec or list of specs that should be present in the 'constrains' list.",
           "title": "Not Has Constrains"
+        },
+        "not_has_track_features": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "Negated condition: feature or list of features that should be present in the 'track_features' field.",
+          "title": "Not Has Track Features"
         },
         "not_artifact_in": {
           "anyOf": [
