@@ -109,6 +109,10 @@ class _IfClause(_ForbidExtra):
         None,
         description="Spec or list of specs that should be present in the 'constrains' list.",  # noqa: E501
     )
+    has_track_features: _NonEmptyStr | list[_NonEmptyStr] = Field(
+        None,
+        description="Feature or list of features that should be present in the 'track_features' field.",  # noqa: E501
+    )
     subdir_in: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
         description="List of platforms to match against; e.g. `linux-64`",
@@ -124,6 +128,10 @@ class _IfClause(_ForbidExtra):
     not_has_constrains: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,
         description="Negated condition: Spec or list of specs that should be present in the 'constrains' list.",  # noqa: E501
+    )
+    not_has_track_features: _NonEmptyStr | list[_NonEmptyStr] = Field(
+        None,
+        description="Negated condition: feature or list of features that should be present in the 'track_features' field.",  # noqa: E501
     )
     not_subdir_in: _NonEmptyStr | list[_NonEmptyStr] = Field(
         None,

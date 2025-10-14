@@ -93,6 +93,8 @@ if:
   has_constrains: numpy*  # matches 'numpy', 'nump-blah', or 'numpy 5.6'
   has_constrains: numpy?( *)  # matches 'numpy' or 'numpy 5.6' but not 'numpy-blah'
   has_constrains: numpy  # matches "numpy" exactly (i.e., no pins)
+  has_track_features: nomkl  # has the 'nomkl' feature exactly
+  not_has_track_features: blas_*_2  # doesn't have any feature like 'blas_blis_2'
 
   # single value for a key that should match
   <repodata key>: <value>

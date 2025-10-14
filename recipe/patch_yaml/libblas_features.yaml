@@ -1,0 +1,14 @@
+# backport https://github.com/conda-forge/blas-feedstock/pull/149
+# add blas_{provider}_2 feature to all non-default blas
+# not an _exact_ backport so we can glob on blas_*_2
+# rather than adding separate patches for every blas_$variant_2 feature name
+# (mkl if windows else openblas)
+if:
+  name: libblas
+  timestamp_lt: 1760373185000
+  not_artifact_in: "*netlib*"
+  has_track_features: "blas_*"
+  not_has_track_features: "blas_*_2"
+then:
+  - add_track_features:
+      - blas_backport_2

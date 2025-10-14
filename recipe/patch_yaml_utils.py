@@ -204,7 +204,10 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             _keep = all(
                 any(fnmatch(dep, _v) for dep in record.get(subk, [])) for _v in v
             )
-
+        elif k == "has_track_features":
+            if not isinstance(v, list):
+                v = [v]
+            _keep = all(_has_track_feature(record, feature) for feature in v)
         elif k == "artifact_in":
             _keep = _fnmatch_str_or_list(fn, v)
 
@@ -220,6 +223,11 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             break
 
     return keep
+
+
+def _has_track_feature(record, feature_name):
+    features = record.get("track_features", "").split()
+    return bool(any(f for f in features if fnmatch(f, feature_name)))
 
 
 def _extract_track_feature(record, feature_name):
