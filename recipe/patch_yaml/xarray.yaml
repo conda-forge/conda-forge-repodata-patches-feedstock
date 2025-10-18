@@ -100,6 +100,7 @@ then:
 # https://github.com/conda-forge/xarray-feedstock/pull/97
 if:
   name: xarray
+  timestamp_lt: 1760818241000
   version: "2023.10.0"
   build_number: 0
 then:
