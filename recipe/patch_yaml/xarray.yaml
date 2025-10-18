@@ -94,10 +94,20 @@ then:
       old: pandas >=1.4
       new: pandas >=1.4,<2a0
 ---
-
 # 2024/01 - hmaarrfk
 # https://github.com/conda-forge/admin-requests/pull/917
 # https://github.com/conda-forge/xarray-feedstock/pull/97
+if:
+  name: xarray
+  version: "2023.10.0"
+  build_number: 0
+then:
+  - replace_depends:
+      old: numpy >=1.21
+      new: numpy >=1.22
+---
+# 2025/10 - julian-belina
+# https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/1072
 if:
   name: xarray
   timestamp_lt: 1760818241000
