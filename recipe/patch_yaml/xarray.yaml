@@ -104,8 +104,8 @@ if:
   build_number: 0
 then:
   - replace_depends:
-      old: numpy >=1.21
-      new: numpy >=1.22
+      old: numpy >=1.21,<2.0a0
+      new: numpy >=1.22,<2.0a0
 ---
 # xarray depends on seaborn-base not seaborn
 # Fixed in https://github.com/conda-forge/xarray-feedstock/pull/118
