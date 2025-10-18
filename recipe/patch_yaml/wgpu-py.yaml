@@ -1,0 +1,13 @@
+# Wrong wgpu-native dependency for wgpu-py 0.26.0 build 0
+# https://github.com/conda-forge/wgpu-py-feedstock/pull/50
+if:
+  name: wgpu-py
+  version: 0.26.0
+  timestamp_lt: 1760797367000
+  build_number: 0
+  has_depends: "wgpu-native 25.0.2.2.*"
+
+then:
+  - replace_depends:
+      old: "wgpu-native 25.0.2.2.*"
+      new: "wgpu-native 27.0.2.0.*"
