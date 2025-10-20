@@ -1,0 +1,34 @@
+# Missing upper limit to fiona leads to crashes when shape file is read
+# https://stackoverflow.com/questions/78949093/how-to-resolve-attributeerror-module-fiona-has-no-attribute-path
+# https://github.com/Toblerity/Fiona/releases/tag/1.10.0
+if:
+  name: geopandas
+  timestamp_lt: 1760977826000
+  version_le: 0.14.3
+  version_ge: 0.14.0
+then:
+  - replace_depends:
+      old: fiona >=1.8.21
+      new: fiona >=1.8.21,<=1.9.6
+---
+if:
+  name: geopandas
+  timestamp_lt: 1760977826000
+  version_le: 0.13.2
+  version_ge: 0.13.0
+then:
+  - replace_depends:
+      old: fiona >=1.8.19
+      new: fiona >=1.8.19,<=1.9.6
+---
+if:
+  name: geopandas
+  timestamp_lt: 1760977826000
+  version_le: 0.12.2
+  version_ge: 0.12.1
+then:
+  - replace_depends:
+      old: fiona 
+      new: fiona <=1.9.6
+
+
