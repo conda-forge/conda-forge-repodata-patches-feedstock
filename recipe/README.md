@@ -35,7 +35,7 @@ You can run it with the command:
 
 4. Commit your changes to a new branch in **your fork** of the `conda-forge-repodata-patches-feedstock` repository.
 5. Open a pull request, describing the changes you made and why they are necessary.
-6. Include the result of the `python show_diff.py > show_diff_result.txt` or `pixi run diff` command in the pull request description, which can be found in the `show_diff_result.txt`, so that reviewers can see the changes your patch would make to the repodata.
+6. Include the result of the `python show-diff.py > show_diff_result.txt` or `pixi run diff` command in the pull request description, which can be found in the `show_diff_result.txt`, so that reviewers can see the changes your patch would make to the repodata.
 
 
 ## Repodata patch YAML specification
