@@ -5,7 +5,7 @@ if:
   name: geopandas
   timestamp_lt: 1760977826000
   version_le: 0.14.3
-  version_gt: 0.1.1 
+  version_gt: 0.1.1
 then:
   - tighten_depends:
       name: fiona
