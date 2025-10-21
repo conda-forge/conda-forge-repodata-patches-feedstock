@@ -1,0 +1,10 @@
+if:
+  name: libholoscan-dev
+  timestamp_lt: 1761009475000
+  version_ge: 3.3.0.1
+  version_le: 3.7.0.1
+  has_depends: yaml-cpp
+then:
+  - replace_depends:
+      old: yaml-cpp
+      new: yaml-cpp-static
