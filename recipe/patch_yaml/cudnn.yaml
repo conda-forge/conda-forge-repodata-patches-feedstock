@@ -16,7 +16,7 @@ if:
   has_depends: "*cudnn*"
   not_has_depends: cuda-version >=13.0,<14
   not_has_constrains: cuda-version >=13.0,<14
-  timestamp_lt: 1759943917000
+  timestamp_lt: 1761236193526
 then:
   - replace_depends:
       old: cudnn >=9.11.0.98,<10.0a0
