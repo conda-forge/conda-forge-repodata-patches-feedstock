@@ -1,0 +1,17 @@
+# The `rmf` package exports classes wrapped by SWIG, which are then used by
+# other conda packages (e.g. `imp`) so we need to make sure that all such
+# packages use the same SWIG runtime by depending on the `swig-abi` package.
+# But this package was only introduced in Oct 2025, when the SWIG runtime
+# changed from 4 to 5:
+# https://github.com/conda-forge/swig-feedstock/issues/58
+# We therefore need to patch old versions of `rmf` to depend on SWIG runtime 4.
+
+if:
+  name: rmf
+  # The last `rmf` package using SWIG runtime 4 was in Aug 2025. Packages
+  # built after Oct 31 2025 use runtime 5. So don't touch packages built
+  # after Oct 24th to be safe:
+  timestamp_lt: 1761341824000
+  not_has_depends: swig-abi*
+then:
+  - add_depends: swig-abi ==4
