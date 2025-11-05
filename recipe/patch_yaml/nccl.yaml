@@ -26,4 +26,4 @@ if:
 then:
   - replace_depends:
       old: cuda-version >=12,<13.0a0
-      new: cuda-version >=12,<12.2
+      new: cuda-version >=12,<12.2a0
