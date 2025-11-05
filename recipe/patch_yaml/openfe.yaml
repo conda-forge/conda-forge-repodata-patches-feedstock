@@ -24,7 +24,7 @@ then:
 # https://github.com/conda-forge/openfe-feedstock/pull/107
 # https://github.com/openforcefield/openff-units/issues/140
 if:
-  name: openfe
+  name: openfe-base
   timestamp_lt: 1761773062000
   version_in: 1.7.0
 then:
