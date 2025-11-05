@@ -27,5 +27,6 @@ if:
   name: openfe-base
   timestamp_lt: 1761773062000
   version_in: 1.7.0
+  build_number: 0
 then:
   - add_constrains: dask >=2025
