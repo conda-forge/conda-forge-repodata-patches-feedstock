@@ -21,9 +21,19 @@ then:
 ---
 if:
   name: nccl
-  timestamp_lt: 1758819475000
-  version: "2.26.5.1"
+  timestamp_lt: 1762393727000
+  version_ge: "2.26.6.1"
+  version_lt: "2.27.7.1"
 then:
   - replace_depends:
       old: cuda-version >=12,<13.0a0
-      new: cuda-version >=12,<12.2a0
+      new: cuda-version >=12a0,<12.2a0
+---
+if:
+  name: nccl
+  timestamp_lt: 1762393727000
+  version: "2.28.7.1"
+then:
+  - replace_depends:
+      old: cuda-version >=12.2a.0,<13.0a0
+      new: cuda-version >=12a0,<13.0a0
