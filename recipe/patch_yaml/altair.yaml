@@ -51,3 +51,13 @@ then:
   - replace_depends:
       old: jsonschema >=3.0
       new: jsonschema >=3.0,!=4.18.1
+---
+# # Altair <=5.5 is incompatible with Python 3.14
+if:
+  name: altair
+  version_le: "5.5.0"
+  timestamp_lt: 1763123472000
+then:
+  - tighten_depends:
+      name: python
+      upper_bound: "3.14"
