@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# Use `libcurl<8.17` dependency for all ArcticDB builds until
+# the regression is understood and fixed. See: https://github.com/man-group/ArcticDB/pull/2746
+if:
+  name: arcticdb
+then:
+  - tighten_depends:
+      name: libcurl
+      upper_bound: "8.17"
