@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# Use `libcurl<8.17` dependency for all ArcticDB builds up to 6.3.1 (inclusive).
+# See: https://github.com/man-group/ArcticDB/pull/2746
+if:
+  name: arcticdb
+  timestamp_lt: 1763539708000  # 2025-11-19
+then:
+  - tighten_depends:
+      name: libcurl
+      upper_bound: "8.17"
