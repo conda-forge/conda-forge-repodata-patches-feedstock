@@ -1,0 +1,109 @@
+## Fix dependency on apache-airflow-core for apache-airflow-task-sdk
+# Each document targets a specific apache-airflow-task-sdk version and
+# adds a missing dependency on apache-airflow-core with the proper
+# version bounds. We keep other dependencies intact by using
+# add_depends rather than reset_depends.
+#
+# Note: This dependency has been missing in some builds due to a
+# circular dependency between apache-airflow-task-sdk and
+# apache-airflow-core. These patches ensure the proper dependency is
+# present and correctly versioned.
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.0.0
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.1.0,>=3.0.0
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.0.1
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.1.0,>=3.0.1
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.0.2
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.1.0,>=3.0.2
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.0.3
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.1.0,>=3.0.3
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.0.4
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.1.0,>=3.0.4
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.0.5
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.1.0,>=3.0.5
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.0.6
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.1.0,>=3.0.6
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.1.0
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.2.0,>=3.1.0
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.1.1
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.2.0,>=3.1.1
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.1.2
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.2.0,>=3.1.2
+
+---
+if:
+  name: apache-airflow-task-sdk
+  version: 1.1.3
+  not_has_depends: apache-airflow-core?( *)
+  timestamp_lt: 1763538129000
+then:
+  - add_depends: apache-airflow-core <3.2.0,>=3.1.3
