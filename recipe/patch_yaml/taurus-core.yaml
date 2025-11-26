@@ -21,3 +21,12 @@ then:
   - replace_depends:
       old: python >=3.6
       new: python >=3.6,<3.11
+---
+if:
+  name: taurus-core
+  version_le: 5.1.8
+  timestamp_lt: 1764160908000
+then:
+  - replace_depends:
+      old: numpy >=1.1
+      new: numpy >=1.1,<2.0a0
