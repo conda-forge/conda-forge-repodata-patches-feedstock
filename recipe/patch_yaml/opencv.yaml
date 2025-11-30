@@ -21,3 +21,18 @@ then:
   # in the older builds of libopencv
   # https://github.com/conda-forge/opencv-feedstock/issues/486
   - add_constrains: imath<3.2.0a0
+
+---
+
+# hmaarrfk - 2025/11/30
+# Remove the dependency on libgettextpo, and libglib
+# https://github.com/conda-forge/opencv-feedstock/pull/498
+# It is likely that we can backport this beyond 4.12.0
+# But i'm too worried of unforseen consequences
+if:
+  name: libopencv
+  version: 4.12.0
+  timestamp_lt: 1764535383000
+then:
+  - remove_depends: libgettextpo?( *)
+  - remove_depends: libglib?( *)
