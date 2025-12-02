@@ -223,7 +223,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--verbose",
         action="store_true",
-        help="Print out more verbose progress messages as the patches get generated"
+        help="Print out more verbose progress messages as the patches get generated",
     )
     args = parser.parse_args()
 
@@ -246,7 +246,7 @@ if __name__ == "__main__":
             args.fail_fast,
             group_diffs=not args.no_group_diffs,
             package_removal_keeplist=package_removal_keeplist,
-            verbose=args.verbose
+            verbose=args.verbose,
         )
         _show_result(
             subdir,
@@ -254,7 +254,6 @@ if __name__ == "__main__":
             fail_fast=args.fail_fast,
             no_group_diffs=args.no_group_diffs,
         )
-
 
     with ProcessPoolExecutor() as exc:
         futs = [
@@ -265,7 +264,7 @@ if __name__ == "__main__":
                 args.fail_fast,
                 group_diffs=not args.no_group_diffs,
                 package_removal_keeplist=package_removal_keeplist,
-                verbose=args.verbose
+                verbose=args.verbose,
             )
             for subdir in subdirs
         ]
@@ -277,4 +276,3 @@ if __name__ == "__main__":
                 fail_fast=args.fail_fast,
                 no_group_diffs=args.no_group_diffs,
             )
-

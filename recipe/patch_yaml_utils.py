@@ -612,6 +612,7 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
     if verbose:
         from tqdm import tqdm
         from functools import partial
+
         tqdm = partial(tqdm, desc="Iterating through yaml patches")
     else:
         tqdm = iter
