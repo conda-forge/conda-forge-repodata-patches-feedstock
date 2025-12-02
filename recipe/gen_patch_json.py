@@ -585,8 +585,6 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
                         record["depends"] = depends
 
     if verbose:
-        from tqdm import tqdm
-
         tqdm = partial(tqdm, desc=f"Processing {index_key}")
     else:
         tqdm = iter
@@ -930,10 +928,15 @@ def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=N
 
     # diff all items in the index and put any differences in the instructions
     for pkgs_section_key in ["packages", "packages.conda"]:
-        for fn in tqdm(
-            index.get(pkgs_section_key, {}),
-            f"doing work {pkgs_section_key}",
-        ):
+        if verbose:
+            tqdm = partial(
+                tqdm,
+                desc=f"Generating patch instructions {pkg_section_keys}",
+            )
+        else:
+            tqdm = iter
+
+        for fn in tqdm(index.get(pkgs_section_key, {})):
             assert fn in new_index[pkgs_section_key]
 
             # replace any old keys
