@@ -551,13 +551,8 @@ def add_python_abi(record, subdir):
         record["constrains"] = new_constrains
 
 
-def _gen_new_index_per_key(index, subdir, index_key, verbose):
-    """Mutates the index by adjusting the values directly.
-
-    This function returns the new index with the adjustments.
-    Finally, the new and old indices are then diff'ed to produce the repo
-    data patches.
-    """
+def _gen_new_index_per_key(index, subdir, verbose):
+    """Mutates the index by adjusting the values directly."""
     # deal with windows vc features
     if subdir.startswith("win-"):
         python_vc_deps = {
@@ -892,8 +887,8 @@ def _patch_indexes(repodata, subdir, verbose=False):
     indexes = {}
     for index_key in ["packages", "packages.conda"]:
         index = repodata[index_key]
-        _gen_new_index_per_key(index, subdir, index_key, verbose=verbose)
-        patch_yaml_edit_index(index, subdir)
+        _gen_new_index_per_key(index, subdir, verbose=verbose)
+        patch_yaml_edit_index(index, subdir, verbose=verbose)
 
 
 def _add_removals(instructions, subdir, package_removal_keeplist=None):
@@ -963,7 +958,7 @@ def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=N
     return instructions
 
 
-def _do_subdir(subdir):
+def _do_subdir(subdir, verbose=False):
     with tempfile.TemporaryDirectory() as tmpdir:
         raw_repodata_path = os.path.join(tmpdir, "repodata_from_packages.json.zst")
         ref_repodata_path = os.path.join(tmpdir, "repodata.json.zst")
@@ -983,7 +978,7 @@ def _do_subdir(subdir):
             os.makedirs(prefix_subdir)
 
         # Step 2a. Generate a new index.
-        new_index = _gen_new_index(repodata, subdir)
+        new_index = _gen_new_index(repodata, subdir, verbose=verbose)
 
         # Step 2b. Generate the instructions by diff'ing the indices.
         instructions = _gen_patch_instructions(repodata, new_index, subdir)

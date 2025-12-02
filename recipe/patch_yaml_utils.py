@@ -604,13 +604,18 @@ def shortlist_relevant_filenames(index, package_name_selector):
     return index.keys()
 
 
-def patch_yaml_edit_index(index, subdir):
+def patch_yaml_edit_index(index, subdir, verbose=False):
     keep_pkgs = os.environ.get("CF_PKGS", None)
     if keep_pkgs is not None:
         keep_pkgs = set(keep_pkgs.split(";"))
     fns = sorted(index)
-    from tqdm import tqdm
-    for patch_yaml, fname in tqdm(ALL_YAMLS, desc="Iterating through yamls"):
+    if verbose:
+        from tqdm import tqdm
+        from functools import partial
+        tqdm = partial(tqdm, desc="Iterating through yaml patches")
+    else:
+        tqdm = iter
+    for patch_yaml, fname in tqdm(ALL_YAMLS):
         if "name" in patch_yaml["if"]:
             pkg_name = patch_yaml["if"]["name"]
             fns_to_process = shortlist_relevant_filenames(index, pkg_name)
