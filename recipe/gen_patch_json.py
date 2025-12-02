@@ -937,7 +937,7 @@ def _gen_patch_instructions(
         if verbose:
             tqdm_progress = partial(
                 tqdm,
-                desc=f"Generating patch instructions {pkg_section_keys}",
+                desc=f"Generating patch instructions {pkg_section_key}",
             )
         else:
             tqdm_progress = iter
