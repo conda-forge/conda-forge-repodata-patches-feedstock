@@ -550,7 +550,7 @@ def add_python_abi(record, subdir):
         record["constrains"] = new_constrains
 
 
-def _gen_new_index_per_key(index, subdir, verbose):
+def _gen_new_index_per_key(index, subdir, index_key='', verbose=False):
     """Mutates the index by adjusting the values directly."""
     # deal with windows vc features
     if subdir.startswith("win-"):
@@ -587,7 +587,7 @@ def _gen_new_index_per_key(index, subdir, verbose):
     if verbose:
         from tqdm import tqdm
 
-        tqdm = partial(tqdm, desc="Processing {index}")
+        tqdm = partial(tqdm, desc=f"Processing {index_key}")
     else:
         tqdm = iter
 
@@ -887,7 +887,7 @@ def _gen_new_index_per_key(index, subdir, verbose):
 def _patch_indexes(repodata, subdir, verbose=False):
     for index_key in ["packages", "packages.conda"]:
         index = repodata[index_key]
-        _gen_new_index_per_key(index, subdir, verbose=verbose)
+        _gen_new_index_per_key(index, subdir, index_key=index_key, verbose=verbose)
         patch_yaml_edit_index(index, subdir, verbose=verbose)
 
 
