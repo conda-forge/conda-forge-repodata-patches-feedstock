@@ -975,13 +975,17 @@ def _do_subdir(subdir, verbose=False):
         with zstandard.open(ref_repodata_path) as fh:
             ref_repodata = json.load(fh)
 
+        # Copying large python dictionaries is slow, just reload the repodata
+        with zstandard.open(raw_repodata_path) as fh:
+            new_index = json.load(fh)
+
         prefix_dir = os.getenv("PREFIX", "tmp")
         prefix_subdir = join(prefix_dir, subdir)
         if not isdir(prefix_subdir):
             os.makedirs(prefix_subdir)
 
-        # Step 2a. Generate a new index.
-        new_index = _patch_indexes(repodata, subdir, verbose=verbose)
+        # Step 2a. Generate a new index -- in place operation
+        _patch_indexes(new_index, subdir, verbose=verbose)
 
         # Step 2b. Generate the instructions by diff'ing the indices.
         instructions = _gen_patch_instructions(repodata, new_index, subdir)
