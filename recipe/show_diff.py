@@ -5,7 +5,6 @@ import json
 import os
 import urllib
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from tqdm import tqdm
 
 import zstandard
 from conda_index.index import _apply_instructions

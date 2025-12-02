@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-import copy
 import json
 import os
 import re
@@ -884,7 +883,6 @@ def _gen_new_index_per_key(index, subdir, verbose):
 
 
 def _patch_indexes(repodata, subdir, verbose=False):
-    indexes = {}
     for index_key in ["packages", "packages.conda"]:
         index = repodata[index_key]
         _gen_new_index_per_key(index, subdir, verbose=verbose)
