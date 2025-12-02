@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-import copy
 import json
 import os
 import re
@@ -11,9 +10,11 @@ import urllib
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from os.path import isdir, join
+from tqdm import tqdm
+from functools import partial
+
 
 import requests
-import tqdm
 import zstandard
 from conda_index.index import _apply_instructions
 from get_license_family import get_license_family
@@ -549,15 +550,8 @@ def add_python_abi(record, subdir):
         record["constrains"] = new_constrains
 
 
-def _gen_new_index_per_key(repodata, subdir, index_key):
-    """Make any changes to the index by adjusting the values directly.
-
-    This function returns the new index with the adjustments.
-    Finally, the new and old indices are then diff'ed to produce the repo
-    data patches.
-    """
-    index = copy.deepcopy(repodata[index_key])
-
+def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
+    """Mutates the index by adjusting the values directly."""
     # deal with windows vc features
     if subdir.startswith("win-"):
         python_vc_deps = {
@@ -590,7 +584,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
                         depends.append("vc %d.*" % vc_version)
                         record["depends"] = depends
 
-    for fn, record in index.items():
+    if verbose:
+        tqdm_progress = partial(tqdm, desc=f"Processing {index_key}")
+    else:
+        tqdm_progress = iter
+
+    for fn, record in tqdm_progress(index.items()):
         record_name = record["name"]
         deps = record.get("depends", ())
 
@@ -882,16 +881,12 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
         #         depends.append("blas 1.* openblas")
         #         instructions["packages"][fn]["depends"] = depends
 
-    return index
 
-
-def _gen_new_index(repodata, subdir):
-    indexes = {}
+def _patch_indexes(repodata, subdir, verbose=False):
     for index_key in ["packages", "packages.conda"]:
-        indexes[index_key] = _gen_new_index_per_key(repodata, subdir, index_key)
-        patch_yaml_edit_index(indexes[index_key], subdir)
-
-    return indexes
+        index = repodata[index_key]
+        _gen_new_index_per_key(index, subdir, index_key=index_key, verbose=verbose)
+        patch_yaml_edit_index(index, subdir, verbose=verbose)
 
 
 def _add_removals(instructions, subdir, package_removal_keeplist=None):
@@ -918,7 +913,13 @@ def _add_removals(instructions, subdir, package_removal_keeplist=None):
     instructions["remove"].extend(tuple(set(currvals)))
 
 
-def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=None):
+def _gen_patch_instructions(
+    index,
+    new_index,
+    subdir,
+    package_removal_keeplist=None,
+    verbose=False,
+):
     instructions = {
         "patch_instructions_version": 1,
         "packages": defaultdict(dict),
@@ -933,7 +934,15 @@ def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=N
 
     # diff all items in the index and put any differences in the instructions
     for pkgs_section_key in ["packages", "packages.conda"]:
-        for fn in index.get(pkgs_section_key, {}):
+        if verbose:
+            tqdm_progress = partial(
+                tqdm,
+                desc=f"Generating patch instructions {pkgs_section_key}",
+            )
+        else:
+            tqdm_progress = iter
+
+        for fn in tqdm_progress(index.get(pkgs_section_key, {})):
             assert fn in new_index[pkgs_section_key]
 
             # replace any old keys
@@ -961,7 +970,7 @@ def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=N
     return instructions
 
 
-def _do_subdir(subdir):
+def _do_subdir(subdir, verbose=False):
     with tempfile.TemporaryDirectory() as tmpdir:
         raw_repodata_path = os.path.join(tmpdir, "repodata_from_packages.json.zst")
         ref_repodata_path = os.path.join(tmpdir, "repodata.json.zst")
@@ -975,16 +984,22 @@ def _do_subdir(subdir):
         with zstandard.open(ref_repodata_path) as fh:
             ref_repodata = json.load(fh)
 
+        # Copying large python dictionaries is slow, just reload the repodata
+        with zstandard.open(raw_repodata_path) as fh:
+            new_index = json.load(fh)
+
         prefix_dir = os.getenv("PREFIX", "tmp")
         prefix_subdir = join(prefix_dir, subdir)
         if not isdir(prefix_subdir):
             os.makedirs(prefix_subdir)
 
-        # Step 2a. Generate a new index.
-        new_index = _gen_new_index(repodata, subdir)
+        # Step 2a. Generate a new index -- in place operation
+        _patch_indexes(new_index, subdir, verbose=verbose)
 
         # Step 2b. Generate the instructions by diff'ing the indices.
-        instructions = _gen_patch_instructions(repodata, new_index, subdir)
+        instructions = _gen_patch_instructions(
+            repodata, new_index, subdir, verbose=verbose
+        )
 
         # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
         patch_instructions_path = join(prefix_subdir, "patch_instructions.json")
@@ -1011,7 +1026,7 @@ def main():
         max_workers=int(os.environ["CPU_COUNT"]) if "CPU_COUNT" in os.environ else None
     ) as exc:
         futs = [exc.submit(_do_subdir, subdir) for subdir in subdirs]
-        for fut in tqdm.tqdm(
+        for fut in tqdm(
             as_completed(futs), desc="patching repodata", total=len(subdirs)
         ):
             subdir, vals = fut.result()

@@ -107,14 +107,26 @@ def do_subdir(
     fail_fast,
     group_diffs=True,
     package_removal_keeplist=None,
+    verbose=False,
 ):
-    from gen_patch_json import _gen_new_index, _gen_patch_instructions
+    from gen_patch_json import _patch_indexes, _gen_patch_instructions
 
+    if verbose:
+        print(f"Decompressing raw repodata for {subdir}")
     with zstandard.open(raw_repodata_path) as fh:
         raw_repodata = json.load(fh)
+    if verbose:
+        print(f"Decompressing ref repodata for {subdir}")
     with zstandard.open(ref_repodata_path) as fh:
         ref_repodata = json.load(fh)
-    new_index = _gen_new_index(raw_repodata, subdir)
+
+    if verbose:
+        print(f"Decompressing new repodata for {subdir}")
+    # The repodata is so large, that copying a giant pyton dictionary
+    # is like way too slow, it is faster to read the repodata twice..
+    with zstandard.open(raw_repodata_path) as fh:
+        new_index = json.load(fh)
+    _patch_indexes(new_index, subdir, verbose=verbose)
     instructions = _gen_patch_instructions(
         raw_repodata,
         new_index,
@@ -135,7 +147,12 @@ def download_subdir(subdir, raw_repodata_path, ref_repodata_path):
 
 
 def _process_subdir(
-    subdir, use_cache, fail_fast, group_diffs=True, package_removal_keeplist=None
+    subdir,
+    use_cache,
+    fail_fast,
+    group_diffs=True,
+    package_removal_keeplist=None,
+    verbose=False,
 ):
     subdir_dir = os.path.join(CACHE_DIR, subdir)
     if not os.path.exists(subdir_dir):
@@ -143,6 +160,8 @@ def _process_subdir(
     raw_repodata_path = os.path.join(subdir_dir, "repodata_from_packages.json.zst")
     ref_repodata_path = os.path.join(subdir_dir, "repodata.json.zst")
     if not use_cache:
+        if verbose:
+            print(f"Downloading index for {subdir}")
         download_subdir(subdir, raw_repodata_path, ref_repodata_path)
     vals = do_subdir(
         subdir,
@@ -151,8 +170,29 @@ def _process_subdir(
         fail_fast,
         group_diffs=group_diffs,
         package_removal_keeplist=package_removal_keeplist,
+        verbose=verbose,
     )
     return subdir, vals
+
+
+def _show_result(subdir, vals, fail_fast, no_group_diffs):
+    print("=" * 80, flush=True)
+    print("=" * 80, flush=True)
+    if fail_fast and vals:
+        print(subdir + " has non-zero patch diff", flush=True)
+    else:
+        print(subdir, flush=True)
+    if no_group_diffs:
+        for val in vals:
+            print(val, flush=True)
+    else:
+        for key, val in vals.items():
+            # sort packages belonging to a given repodata diff
+            val = sorted(list(val))
+            for v in val:
+                print(v, flush=True)
+            for k in key:
+                print(k, flush=True)
 
 
 if __name__ == "__main__":
@@ -184,6 +224,11 @@ if __name__ == "__main__":
             "back to the repodata"
         ),
     )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Print out more verbose progress messages as the patches get generated",
+    )
     args = parser.parse_args()
 
     from gen_patch_json import SUBDIRS
@@ -193,38 +238,46 @@ if __name__ == "__main__":
     else:
         subdirs = args.subdirs
 
-    with ProcessPoolExecutor() as exc:
-        futs = [
-            exc.submit(
-                _process_subdir,
-                subdir,
-                args.use_cache,
-                args.fail_fast,
-                group_diffs=not args.no_group_diffs,
-                package_removal_keeplist=(
-                    [item.strip() for item in args.package_removal_keeplist.split(",")]
-                    if args.package_removal_keeplist
-                    else None
-                ),
-            )
-            for subdir in subdirs
-        ]
-        for fut in as_completed(futs):
-            subdir, vals = fut.result()
-            print("=" * 80, flush=True)
-            print("=" * 80, flush=True)
-            if args.fail_fast and vals:
-                print(subdir + " has non-zero patch diff", flush=True)
-            else:
-                print(subdir, flush=True)
-            if args.no_group_diffs:
-                for val in vals:
-                    print(val, flush=True)
-            else:
-                for key, val in vals.items():
-                    # sort packages belonging to a given repodata diff
-                    val = sorted(list(val))
-                    for v in val:
-                        print(v, flush=True)
-                    for k in key:
-                        print(k, flush=True)
+    package_removal_keeplist = (
+        [item.strip() for item in args.package_removal_keeplist.split(",")]
+        if args.package_removal_keeplist
+        else None
+    )
+    # Single threaded option to help with insertering breakpoints and debugging
+    if len(subdirs) <= 1:
+        subdir, vals = _process_subdir(
+            subdirs[0],
+            args.use_cache,
+            args.fail_fast,
+            group_diffs=not args.no_group_diffs,
+            package_removal_keeplist=package_removal_keeplist,
+            verbose=args.verbose,
+        )
+        _show_result(
+            subdir,
+            vals,
+            fail_fast=args.fail_fast,
+            no_group_diffs=args.no_group_diffs,
+        )
+    else:
+        with ProcessPoolExecutor() as exc:
+            futs = [
+                exc.submit(
+                    _process_subdir,
+                    subdir,
+                    args.use_cache,
+                    args.fail_fast,
+                    group_diffs=not args.no_group_diffs,
+                    package_removal_keeplist=package_removal_keeplist,
+                    verbose=args.verbose,
+                )
+                for subdir in subdirs
+            ]
+            for fut in as_completed(futs):
+                subdir, vals = fut.result()
+                _show_result(
+                    subdir,
+                    vals,
+                    fail_fast=args.fail_fast,
+                    no_group_diffs=args.no_group_diffs,
+                )
