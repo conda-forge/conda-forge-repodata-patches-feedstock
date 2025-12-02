@@ -550,7 +550,7 @@ def add_python_abi(record, subdir):
         record["constrains"] = new_constrains
 
 
-def _gen_new_index_per_key(index, subdir, index_key='', verbose=False):
+def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
     """Mutates the index by adjusting the values directly."""
     # deal with windows vc features
     if subdir.startswith("win-"):
