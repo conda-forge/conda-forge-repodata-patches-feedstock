@@ -978,7 +978,7 @@ def _do_subdir(subdir, verbose=False):
             os.makedirs(prefix_subdir)
 
         # Step 2a. Generate a new index.
-        new_index = _gen_new_index(repodata, subdir, verbose=verbose)
+        new_index = _patch_indexes(repodata, subdir, verbose=verbose)
 
         # Step 2b. Generate the instructions by diff'ing the indices.
         instructions = _gen_patch_instructions(repodata, new_index, subdir)
