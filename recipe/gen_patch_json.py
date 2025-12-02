@@ -585,11 +585,11 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
                         record["depends"] = depends
 
     if verbose:
-        tqdm = partial(tqdm, desc=f"Processing {index_key}")
+        tqdm_progress = partial(tqdm, desc=f"Processing {index_key}")
     else:
-        tqdm = iter
+        tqdm_progress = iter
 
-    for fn, record in tqdm(index.items()):
+    for fn, record in tqdm_progress(index.items()):
         record_name = record["name"]
         deps = record.get("depends", ())
 
@@ -935,14 +935,14 @@ def _gen_patch_instructions(
     # diff all items in the index and put any differences in the instructions
     for pkgs_section_key in ["packages", "packages.conda"]:
         if verbose:
-            tqdm = partial(
+            tqdm_progress = partial(
                 tqdm,
                 desc=f"Generating patch instructions {pkg_section_keys}",
             )
         else:
-            tqdm = iter
+            tqdm_progress = iter
 
-        for fn in tqdm(index.get(pkgs_section_key, {})):
+        for fn in tqdm_progress(index.get(pkgs_section_key, {})):
             assert fn in new_index[pkgs_section_key]
 
             # replace any old keys
