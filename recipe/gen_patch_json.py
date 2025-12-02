@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-import copy
 import json
 import os
 import re
+import pickle
 import sys
 import tempfile
 import urllib
@@ -556,7 +556,7 @@ def _gen_new_index_per_key(repodata, subdir, index_key):
     Finally, the new and old indices are then diff'ed to produce the repo
     data patches.
     """
-    index = copy.deepcopy(repodata[index_key])
+    index = pickle.loads(pickle.dumps(repodata[index_key]))
 
     # deal with windows vc features
     if subdir.startswith("win-"):
