@@ -913,7 +913,13 @@ def _add_removals(instructions, subdir, package_removal_keeplist=None):
     instructions["remove"].extend(tuple(set(currvals)))
 
 
-def _gen_patch_instructions(index, new_index, subdir, package_removal_keeplist=None):
+def _gen_patch_instructions(
+    index,
+    new_index,
+    subdir,
+    package_removal_keeplist=None,
+    verbose=False,
+):
     instructions = {
         "patch_instructions_version": 1,
         "packages": defaultdict(dict),
@@ -991,7 +997,9 @@ def _do_subdir(subdir, verbose=False):
         _patch_indexes(new_index, subdir, verbose=verbose)
 
         # Step 2b. Generate the instructions by diff'ing the indices.
-        instructions = _gen_patch_instructions(repodata, new_index, subdir)
+        instructions = _gen_patch_instructions(
+            repodata, new_index, subdir, verbose=verbose
+        )
 
         # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
         patch_instructions_path = join(prefix_subdir, "patch_instructions.json")
