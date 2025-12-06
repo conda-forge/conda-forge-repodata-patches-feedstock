@@ -1,10 +1,19 @@
+# see https://github.com/conda-forge/libhwloc-feedstock/issues/92
 if:
   name: libhwloc
   has_track_features: cudatoolkit
 then:
   - remove_track_features:
       - cudatoolkit
-      - rocm
   - add_track_features:
       - libhwloc_cudatoolkit
+---
+# see https://github.com/conda-forge/libhwloc-feedstock/issues/92
+if:
+  name: libhwloc
+  has_track_features: rocm
+then:
+  - remove_track_features:
+      - rocm
+  - add_track_features:
       - libhwloc_rocm
