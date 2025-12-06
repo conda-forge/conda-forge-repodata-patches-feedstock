@@ -16,7 +16,25 @@ if:
   build: external_*
   not_has_track_features: mpich_external_1
 then:
-  - reset_depends: []
+  # we remove extra depends instead of resetting so that we keep
+  # the mpi metapackage
+  - remove_depends:
+      - __glibc?( *)
+      - __osx*?( *)
+      - ucx?( *)
+      - libhwloc?( *)
+      - libfabric?( *)
+      - libfabric1?( *)
+      - libfabric2?( *)
+      - libgfortran?( *)
+      - libgfortran-ng?( *)
+      - libgfortran4?( *)
+      - libgfortran5?( *)
+      - libcxx?( *)
+      - libstdcxx?( *)
+      - libstdcxx-ng?( *)
+      - libgcc?( *)
+      - libgcc-ng?( *)
   - add_track_features: [mpich_external_1, mpich_external_2, mpich_external_3]
 # old patch no longer in use due to patch above
 # add back external package for v4.0.2 on linux per request here
