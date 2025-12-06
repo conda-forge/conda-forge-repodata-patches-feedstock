@@ -1,0 +1,10 @@
+if:
+  name: libhwloc
+  has_track_features: cudatoolkit
+then:
+  - remove_track_features:
+      - cudatoolkit
+      - rocm
+  - add_track_features:
+      - libhwloc_cudatoolkit
+      - libhwloc_rocm
