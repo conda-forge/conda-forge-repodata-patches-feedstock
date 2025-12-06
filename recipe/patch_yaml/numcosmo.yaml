@@ -1,0 +1,12 @@
+# see https://github.com/conda-forge/numcosmo-feedstock/issues/104
+if:
+  name: numcosmo
+  has_depends:
+    - libfabric?( *)
+    - libfabric1?( *)
+    - libfabric2?( *)
+then:
+  - remove_depends:
+      - libfabric?( *)
+      - libfabric1?( *)
+      - libfabric2?( *)
