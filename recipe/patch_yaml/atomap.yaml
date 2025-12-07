@@ -1,0 +1,19 @@
+# atomap <0.4.0 needs hyperspy <2.0.0
+if:
+  name: atomap
+  version_lt: "0.4.0"
+  timestamp_lt: 1765123739000
+then:
+  - tighten_depends:
+      name: hyperspy
+      upper_bound: "2.0.0"
+---
+# atomap <0.4.0 needs hyperspy-base <2.0.0
+if:
+  name: atomap
+  version_lt: "0.4.0"
+  timestamp_lt: 1765123739000
+then:
+  - tighten_depends:
+      name: hyperspy-base
+      upper_bound: "2.0.0"
