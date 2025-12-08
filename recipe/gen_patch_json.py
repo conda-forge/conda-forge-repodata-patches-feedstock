@@ -585,11 +585,9 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
                         record["depends"] = depends
 
     if verbose:
-        tqdm_progress = partial(tqdm, desc=f"Processing {index_key}")
-    else:
-        tqdm_progress = iter
+        print(f"processing {index_key}", flush=True)
 
-    for fn, record in tqdm_progress(index.items()):
+    for fn, record in index.items():
         record_name = record["name"]
         deps = record.get("depends", ())
 

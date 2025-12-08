@@ -484,7 +484,8 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 if depends:
                     record[subk] = depends
                 elif not depends and subk in record:
-                    del record[subk]
+                    # items set to None are removed
+                    record[subk] = None
 
             elif k.startswith("reset_") and k[len("reset_") :] in [
                 "depends",
@@ -613,7 +614,7 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
         from tqdm import tqdm
         from functools import partial
 
-        tqdm = partial(tqdm, desc="Iterating through yaml patches")
+        tqdm = partial(tqdm, desc="Applying yaml patches")
     else:
         tqdm = iter
     for patch_yaml, fname in tqdm(ALL_YAMLS):
