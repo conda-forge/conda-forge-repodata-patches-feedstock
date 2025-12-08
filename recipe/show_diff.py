@@ -3,6 +3,7 @@
 import difflib
 import json
 import os
+import sys
 import urllib
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
@@ -123,21 +124,21 @@ def do_subdir(
     from gen_patch_json import _patch_indexes, _gen_patch_instructions
 
     if verbose:
-        print(f"Decompressing raw repodata for {subdir}")
+        print(f"Decompressing raw repodata for {subdir}", file=sys.stderr, flush=True)
     with zstandard.open(raw_repodata_path) as fh:
         raw_repodata = json.load(fh)
     if debug_package_name is not None:
         raw_repodata = _cut_index_to_name(raw_repodata, debug_package_name)
 
     if verbose:
-        print(f"Decompressing ref repodata for {subdir}")
+        print(f"Decompressing ref repodata for {subdir}", file=sys.stderr, flush=True)
     with zstandard.open(ref_repodata_path) as fh:
         ref_repodata = json.load(fh)
     if debug_package_name is not None:
         ref_repodata = _cut_index_to_name(ref_repodata, debug_package_name)
 
     if verbose:
-        print(f"Decompressing new repodata for {subdir}")
+        print(f"Decompressing new repodata for {subdir}", file=sys.stderr, flush=True)
     # The repodata is so large, that copying a giant pyton dictionary
     # is like way too slow, it is faster to read the repodata twice..
     with zstandard.open(raw_repodata_path) as fh:
@@ -181,7 +182,7 @@ def _process_subdir(
     ref_repodata_path = os.path.join(subdir_dir, "repodata.json.zst")
     if not use_cache:
         if verbose:
-            print(f"Downloading index for {subdir}")
+            print(f"Downloading index for {subdir}", file=sys.stderr, flush=True)
         download_subdir(subdir, raw_repodata_path, ref_repodata_path)
     vals = do_subdir(
         subdir,

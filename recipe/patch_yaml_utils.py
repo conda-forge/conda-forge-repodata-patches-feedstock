@@ -3,6 +3,7 @@ import glob
 import os
 import re
 import string
+import sys
 from functools import lru_cache
 
 import yaml
@@ -613,7 +614,7 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
         from tqdm import tqdm
         from functools import partial
 
-        tqdm = partial(tqdm, desc="Applying yaml patches")
+        tqdm = partial(tqdm, desc="Applying yaml patches", file=sys.stderr)
     else:
         tqdm = iter
     for patch_yaml, fname in tqdm(ALL_YAMLS):
