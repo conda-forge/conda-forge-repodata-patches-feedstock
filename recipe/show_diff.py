@@ -253,7 +253,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--debug-package-name",
         type=str,
-        help="Limit the repodata to only packages with this name to enable faster debugging.",
+        help=(
+            "Limit the repodata to only packages with this "
+            "name to enable faster debugging."
+        ),
     )
     args = parser.parse_args()
 
