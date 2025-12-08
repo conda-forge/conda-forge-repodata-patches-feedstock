@@ -24,6 +24,8 @@ def sort_lists(obj):
         if k in ["depends", "constrains"]:
             if obj[k] is not None:
                 obj[k] = sorted(obj[k])
+            else:
+                obj[k] = []
 
     return obj
 
