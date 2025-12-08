@@ -294,7 +294,7 @@ def test_apply_patch_yaml_remove(key):
     patch_yaml = {"then": [{"remove_" + key: "blah"}]}
     record = {"version": 10, key: ["blah"]}
     _apply_patch_yaml(patch_yaml, record, None, None)
-    assert record == {"version": 10}
+    assert record == {"version": 10, key: None}
 
     patch_yaml = {"then": [{"remove_" + key: "blah"}]}
     record = {"version": 10, key: ["foo"]}
