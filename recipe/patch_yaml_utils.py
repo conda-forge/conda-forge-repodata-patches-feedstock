@@ -482,11 +482,8 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 for dep in deps_to_remove:
                     depends.remove(dep)
 
-                if depends:
+                if subk in record:
                     record[subk] = depends
-                elif not depends and subk in record:
-                    # null/None entries are removed
-                    record[subk] = None
 
             elif k.startswith("reset_") and k[len("reset_") :] in [
                 "depends",

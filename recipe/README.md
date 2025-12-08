@@ -262,7 +262,7 @@ instructions = {
 
 `remove` are lists of filenames that will not show up in the index but may still be downloadable with a direct URL to the file.
 
-`packages` is a dictionary, where keys are package filenames.  Values are dictionaries similar to the contents of each package in `repodata.json`.  Any values provided in ``packages`` here overwrite the values in `repodata.json`.  Any value set to None is removed.
+`packages` is a dictionary, where keys are package filenames.  Values are dictionaries similar to the contents of each package in `repodata.json`.  Any values provided in ``packages`` here overwrite the values in `repodata.json`.
 
 A tool downloads this package when it sees updates to it, and applies the `patch_instructions.json`
 to the repodata of the `conda-forge` channel on anaconda.org
