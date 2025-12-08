@@ -585,7 +585,7 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
                         record["depends"] = depends
 
     if verbose:
-        print(f"processing {index_key}", file=sys.stderr, flush=True)
+        print(f"Processing {index_key}", file=sys.stderr, flush=True)
 
     for fn, record in index.items():
         record_name = record["name"]
