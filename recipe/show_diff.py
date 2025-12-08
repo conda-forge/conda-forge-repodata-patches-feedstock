@@ -3,6 +3,7 @@
 import difflib
 import json
 import os
+import sys
 import urllib
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
@@ -21,7 +22,10 @@ def sort_lists(obj):
     """
     for k in obj:
         if k in ["depends", "constrains"]:
-            obj[k] = sorted(obj[k])
+            if obj[k] is not None:
+                obj[k] = sorted(obj[k])
+            else:
+                obj[k] = []
 
     return obj
 
@@ -100,6 +104,15 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
     return final_lines
 
 
+def _cut_index_to_name(repodata, name):
+    namedash = name + "-"
+    for index_key in ["packages", "packages.conda"]:
+        for fn in list(repodata[index_key]):
+            if not fn.startswith(namedash):
+                del repodata[index_key][fn]
+    return repodata
+
+
 def do_subdir(
     subdir,
     raw_repodata_path,
@@ -108,24 +121,33 @@ def do_subdir(
     group_diffs=True,
     package_removal_keeplist=None,
     verbose=False,
+    debug_package_name=None,
 ):
     from gen_patch_json import _patch_indexes, _gen_patch_instructions
 
     if verbose:
-        print(f"Decompressing raw repodata for {subdir}")
+        print(f"Decompressing raw repodata for {subdir}", file=sys.stderr, flush=True)
     with zstandard.open(raw_repodata_path) as fh:
         raw_repodata = json.load(fh)
-    if verbose:
-        print(f"Decompressing ref repodata for {subdir}")
-    with zstandard.open(ref_repodata_path) as fh:
-        ref_repodata = json.load(fh)
+    if debug_package_name is not None:
+        raw_repodata = _cut_index_to_name(raw_repodata, debug_package_name)
 
     if verbose:
-        print(f"Decompressing new repodata for {subdir}")
+        print(f"Decompressing ref repodata for {subdir}", file=sys.stderr, flush=True)
+    with zstandard.open(ref_repodata_path) as fh:
+        ref_repodata = json.load(fh)
+    if debug_package_name is not None:
+        ref_repodata = _cut_index_to_name(ref_repodata, debug_package_name)
+
+    if verbose:
+        print(f"Decompressing new repodata for {subdir}", file=sys.stderr, flush=True)
     # The repodata is so large, that copying a giant pyton dictionary
     # is like way too slow, it is faster to read the repodata twice..
     with zstandard.open(raw_repodata_path) as fh:
         new_index = json.load(fh)
+    if debug_package_name is not None:
+        new_index = _cut_index_to_name(new_index, debug_package_name)
+
     _patch_indexes(new_index, subdir, verbose=verbose)
     instructions = _gen_patch_instructions(
         raw_repodata,
@@ -153,6 +175,7 @@ def _process_subdir(
     group_diffs=True,
     package_removal_keeplist=None,
     verbose=False,
+    debug_package_name=None,
 ):
     subdir_dir = os.path.join(CACHE_DIR, subdir)
     if not os.path.exists(subdir_dir):
@@ -161,7 +184,7 @@ def _process_subdir(
     ref_repodata_path = os.path.join(subdir_dir, "repodata.json.zst")
     if not use_cache:
         if verbose:
-            print(f"Downloading index for {subdir}")
+            print(f"Downloading index for {subdir}", file=sys.stderr, flush=True)
         download_subdir(subdir, raw_repodata_path, ref_repodata_path)
     vals = do_subdir(
         subdir,
@@ -171,6 +194,7 @@ def _process_subdir(
         group_diffs=group_diffs,
         package_removal_keeplist=package_removal_keeplist,
         verbose=verbose,
+        debug_package_name=debug_package_name,
     )
     return subdir, vals
 
@@ -229,6 +253,14 @@ if __name__ == "__main__":
         action="store_true",
         help="Print out more verbose progress messages as the patches get generated",
     )
+    parser.add_argument(
+        "--debug-package-name",
+        type=str,
+        help=(
+            "Limit the repodata to only packages with this "
+            "name to enable faster debugging."
+        ),
+    )
     args = parser.parse_args()
 
     from gen_patch_json import SUBDIRS
@@ -252,6 +284,7 @@ if __name__ == "__main__":
             group_diffs=not args.no_group_diffs,
             package_removal_keeplist=package_removal_keeplist,
             verbose=args.verbose,
+            debug_package_name=args.debug_package_name,
         )
         _show_result(
             subdir,

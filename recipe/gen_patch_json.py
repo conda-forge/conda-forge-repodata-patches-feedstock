@@ -585,11 +585,9 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
                         record["depends"] = depends
 
     if verbose:
-        tqdm_progress = partial(tqdm, desc=f"Processing {index_key}")
-    else:
-        tqdm_progress = iter
+        print(f"Processing {index_key}", file=sys.stderr, flush=True)
 
-    for fn, record in tqdm_progress(index.items()):
+    for fn, record in index.items():
         record_name = record["name"]
         deps = record.get("depends", ())
 
@@ -938,6 +936,7 @@ def _gen_patch_instructions(
             tqdm_progress = partial(
                 tqdm,
                 desc=f"Generating patch instructions {pkgs_section_key}",
+                file=sys.stderr,
             )
         else:
             tqdm_progress = iter
