@@ -44,3 +44,17 @@ if:
   subdir_in: win-64
 then:
   - add_constrains: libstdcxx !=15.1.0
+---
+# PyTensor v2.35.0 started to require numpy >=2, thanks to
+# <https://github.com/pymc-devs/pytensor/pull/1253>, but I forgot to update
+# the recpie until v2.36.0. Affected versions: 2.35.0, 2.35.1.
+# Fixed in <https://github.com/conda-forge/pytensor-suite-feedstock/pull/186>.
+if:
+  name: pytensor-base
+  version_ge: 2.35.0
+  version_lt: 2.36.0
+  timestamp_lt: 1765874452000
+then:
+  - replace_depends:
+      old: numpy >=1.17.0
+      new: numpy >=2.0
