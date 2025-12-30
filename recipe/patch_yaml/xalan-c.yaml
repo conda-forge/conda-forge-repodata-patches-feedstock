@@ -1,0 +1,6 @@
+if:
+  name: xalan-c
+  version: "1.12"
+  build_number: "0"
+then:
+  - add_depends: "icu >=78,<79"
