@@ -4,3 +4,4 @@ if:
   build_number: "0"
 then:
   - add_depends: "icu >=78,<79"
+  
