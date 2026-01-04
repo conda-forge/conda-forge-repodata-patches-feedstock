@@ -8,4 +8,3 @@ then:
   - replace_depends:
       old: pyfabm >=2.1
       new: pyfabm >=3.0
-
