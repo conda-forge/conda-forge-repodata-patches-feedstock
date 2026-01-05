@@ -14,3 +14,40 @@ then:
   - tighten_depends:
       name: pytest
       upper_bound: '9.0.0'
+---
+# The conda-forge packages were missing the upper bounds that are
+# present in the source pyproject.toml and PyPI metadata. To ensure
+# monotonicity of upper bounds (preventing the solver from picking
+# older versions to satisfy newer pytest), we add stricter bounds
+# to older versions:
+#
+# | Version       | PyPI       | Conda-forge* | Patch adds |
+# |---------------|------------|--------------|------------|
+# | 0.1.5, 0.2.0  | (no bound) | <9           | <7         |
+# | 0.2.2 - 0.6.0 | >=5,<7     | <9           | <7         |
+# | 0.7.0 - 0.8.1 | >=5,<8     | <9           | <8         |
+# | 0.8.2         | >=5,<9     | <9           | (above)    |
+# | 0.10.0        | >=5,<9     | <9 (correct) | -          |
+#
+# * Conda-forge column is inclusive of the first patch above.
+
+# Versions up to 0.6.0: add <7.0.0 upper bound
+if:
+  name: pytest-split
+  version_le: 0.6.0
+  timestamp_lt: 1767604488000
+then:
+  - tighten_depends:
+      name: pytest
+      upper_bound: '7.0.0'
+---
+# Versions 0.7.0 - 0.8.1: add <8.0.0 upper bound
+if:
+  name: pytest-split
+  version_ge: 0.7.0
+  version_le: 0.8.1
+  timestamp_lt: 1767604488000
+then:
+  - tighten_depends:
+      name: pytest
+      upper_bound: '8.0.0'
