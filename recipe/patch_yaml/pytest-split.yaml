@@ -1,0 +1,16 @@
+# pytest-split version 0.10.0 added a <9.0.0 upper bound for pytest.
+# Now that pytest 9 has been released, the solver tries to downgrade
+# pytest-split to 0.8.2, often causing breakage.
+
+# Hopefully <https://github.com/jerry-git/pytest-split/issues/114>
+# gets merged soon, and modern pytest-split will officially support
+# pytest 9.
+
+if:
+  name: pytest-split
+  version_le: 0.8.2
+  timestamp_lt: 1767604488000
+then:
+  - tighten_depends:
+      name: pytest
+      upper_bound: '9.0.0'
