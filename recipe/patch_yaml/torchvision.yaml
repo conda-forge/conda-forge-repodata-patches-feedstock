@@ -52,3 +52,37 @@ then:
   - replace_depends:
       old: "pytorch >=2.0.0,<2.1.0a0"
       new: "pytorch 2.0.* cuda112*"
+---
+# Jan 7, 2026
+# torchvision 0.23 is only compatible with pytorch 2.8
+# Otherwise, it throws warning at runtime.
+if:
+  name: "torchvision"
+  version: "0.23.0"
+then:
+  - replace_depends:
+      old: "pytorch >=2.7.1,<2.8.0a0"
+      new: "pytorch >=2.8.0,<2.9.0a0"
+  - replace_depends:
+      old: "libtorch >=2.7.1,<2.8.0a0"
+      new: "libtorch >=2.8.0,<2.9.0a0"
+---
+# Jan 7, 2026
+# torchvision 0.24 is only compatible with pytorch 2.9.1
+# Otherwise, it throws warning at runtime.
+if:
+  name: "torchvision"
+  version: "0.24.0"
+then:
+  - replace_depends:
+      old: "pytorch >=2.7.1,<2.8.0a0"
+      new: "pytorch >=2.9.1,<2.10.0a0"
+  - replace_depends:
+      old: "libtorch >=2.7.1,<2.8.0a0"
+      new: "libtorch >=2.9.1,<2.10.0a0"
+  - replace_depends:
+      old: "pytorch >=2.8.0,<2.9.0a0"
+      new: "pytorch >=2.9.1,<2.10.0a0"
+  - replace_depends:
+      old: "libtorch >=2.8.0,<2.9.0a0"
+      new: "libtorch >=2.9.1,<2.10.0a0"
