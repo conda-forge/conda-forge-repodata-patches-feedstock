@@ -12,3 +12,22 @@ then:
   - tighten_depends:
       name: xarray
       upper_bound: "2024.10"
+---
+# spatialdata 0.5.0 introduced a minimum requirement of multiscale-spatial-image
+# 2.0.3. However, spatialdata is incompatible with multiscale-spatial-image
+# 2.1.0. Thus only 2.0.3 should be installed. This patch ensures spatialdata
+# versions 0.5.0, 0.6.0, and the first build of 0.6.1 install the correct
+# version.
+#
+# https://github.com/conda-forge/spatialdata-feedstock/pull/28
+# https://github.com/conda-forge/spatialdata-feedstock/pull/27#discussion_r2640534330
+# https://github.com/conda-forge/spatialdata-feedstock/pull/21
+if:
+  name: spatialdata
+  version_ge: "0.5.0"
+  version_le: "0.6.1"
+  timestamp_lt: 1767818308000
+then:
+  - replace_depends:
+      old: "multiscale-spatial-image >=2.0.3"
+      new: "multiscale-spatial-image 2.0.3"
