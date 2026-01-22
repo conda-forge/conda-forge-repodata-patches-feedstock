@@ -20,3 +20,17 @@ then:
   - replace_depends:
       old: astunparse
       new: astunparse <=1.6.2
+
+
+# Pandas 3.0 had broken a number of the mdtraj functionalities
+# This will pin in below <3 until we can do something about it.
+
+if:
+  name: mdtraj
+  version_le: 1.11.1
+  has_constrains: pandas
+  time_lt: 1769106266000
+then:
+  - replace_constrains:
+      old: pandas
+      new: pandas <3
