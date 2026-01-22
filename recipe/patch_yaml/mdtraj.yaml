@@ -24,10 +24,10 @@ then:
 ---
 
 
-# Pandas 3.0 had broken a number of the mdtraj functionalities
+# Pandas 3.0 had broken a number of mdtraj's functionalities.
 # This will pin all versions with a pandas dependency to
 # pandas <3 until we can do something about it in the future.
-# This includes all mdtraj v1.11.1 and below.
+# This includes mdtraj v1.11.1 (build 0) and below.
 if:
   name: mdtraj
   version_le: 1.11.1
