@@ -27,12 +27,13 @@ then:
 # Pandas 3.0 had broken a number of the mdtraj functionalities
 # This will pin all versions with a pandas dependency to
 # pandas <3 until we can do something about it in the future.
+# This includes all mdtraj v1.11.1 and below.
 if:
   name: mdtraj
   version_le: 1.11.1
-  has_constrains: pandas
-  time_lt: 1769106266000  # 2026-01-22
+  has_depends: pandas
+  timestamp_lt: 1769106266000  # 2026-01-22
 then:
-  - replace_constrains:
-      old: pandas
-      new: pandas <3
+  - tighten_depends:
+      name: pandas
+      upper_bound: "3"
