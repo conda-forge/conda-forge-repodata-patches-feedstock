@@ -136,7 +136,7 @@ then:
 if:
   name: conda-build
   version_eq: 26.1.0
-  build_lt: 2
+  build_number_in: [0, 1]
 then:
   - replace_depends:
       old: conda?( *)
