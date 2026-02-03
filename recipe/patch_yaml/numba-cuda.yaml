@@ -1,0 +1,6 @@
+if:
+  version: 0.25.0
+then:
+  - replace_depends:
+      old: cuda-core >=0.3.2,<1.0.0
+      new: cuda-core >=0.5.1,<1.0.0
