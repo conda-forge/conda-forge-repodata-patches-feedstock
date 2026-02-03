@@ -1,4 +1,5 @@
 if:
+  name: numba-cuda
   version: 0.25.0
 then:
   - replace_depends:
