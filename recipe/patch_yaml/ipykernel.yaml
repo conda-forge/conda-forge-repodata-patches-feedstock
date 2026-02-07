@@ -41,4 +41,3 @@ then:
   - replace_depends:
       old: tornado >=6.2
       new: tornado >=6.4.1
----
