@@ -1,0 +1,26 @@
+# ginput 1.6.1 did not specify pytz as an explicit dependency.
+# For previous versions, this was not an issue, as one of the
+# other dependencies must have required it, so it was pulled in
+# anyway. However, on 9 Feb 2025, installing ginput from conda-forge
+# did not install pytz, so importing failed. Reviewing the imports
+# with findimports, I saw that cftime was also being relied on
+# but not explicitly required, so I fixed that as well. Finally,
+# I noticed when testing these fixes that I was now getting
+# pandas 3.y.z, which I have not vetted works with ginput, so
+# I also pinned pandas' version to be <3.
+if:
+  name: ginput
+  version: 1.6.1
+  # Only affect builds before afternoon PST, 9 Feb 2025
+  timestamp_lt: 1770676768000 
+then:
+  # Missing dependencies that we relied on being required
+  # by other dependencies before.
+  - add_depends:
+      - pytz >=2023.3
+      - cftime >=1.5.1
+  # Do not allow ginput to work with pandas 3+, all testing
+  # to date has been with pandas versions 1 or 2.
+  - tighten_depends:
+      name: pandas
+      upper_bound: '3.0.0'
