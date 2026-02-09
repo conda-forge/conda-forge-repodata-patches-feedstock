@@ -1,0 +1,9 @@
+# ensure cuda builds don't get installed when __cuda isn't found, see
+# https://github.com/conda-forge/kaldi-feedstock/pull/66
+if:
+  name: kaldi
+  timestamp_lt: 1770619150000
+  # works for both CUDA 11&12 builds; CPU builds don't have this
+  has_depends: magma
+then:
+  - add_depends: __cuda
