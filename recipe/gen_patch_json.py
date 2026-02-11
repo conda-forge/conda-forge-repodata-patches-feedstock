@@ -849,7 +849,8 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
         if record_name == "flang":
             deps = record["depends"]
             if record["version"] == "5.0.0":
-                deps += ["clangdev * flang*"]
+                deps += ["clangdev"]
+                deps += ["flang"]
 
         # add as run_constrained for cling
         if (
