@@ -166,25 +166,56 @@ then:
 
   # make a dependency version constraint stricter
   - tighten_depends:
-      # package to pin stricter
+      # package to pin stricter. 
+      # Example `abc >=1.0,<2.0a0` with max_pin='x.x' becomes `abc >=1.0,<1.1.0a0`
       name: matplotlib  # this field can use the fnmatch glob syntax
       # you must give one of max_pin or upper_bound
       # optional way to specify the new maximum pin as 'x', 'x.x', etc.
       max_pin: 'x.x'
-      # optional way to specify upper bound explicitly
+      # [DEPRECATED] optional way to specify upper bound explicitly
       # do not use with `max_pin`
+      #
+      # DEPRECATION NOTE: use `max_pin` for a relative scheme, or use `change_depends` 
+      # instead of `tighten_depends` for an absolute scheme
       upper_bound: 2.0.1
 
   # make a dependency version constraint looser
   - loosen_depends:
       # package to pin looser
+      # Example `abc >=1.0,<1.1.0a0` with max_pin='x.x' becomes `abc >=1.0,<2.0a0`
       name: matplotlib  # this field can use the fnmatch glob syntax
       # you must give one of max_pin or upper_bound
       # optional pinning expression 'x', 'x.x', etc. to set how much looser to make the pin
       max_pin: 'x.x'
-      # optional way to specify upper bound explicitly
+      # [DEPRECATED] optional way to specify upper bound explicitly
       # do not use with `max_pin`
+      #
+      # DEPRECATION NOTE: use `max_pin` for a relative scheme, or use `change_depends` 
+      # instead of `loosen_depends` for an absolute scheme
       upper_bound: 2.0.1
+  - change_depends:
+      # package to change lower or upper bounds by specifying absolute values
+      name: matplotlib
+      # new lower bound. If not specified, the lower bound is not changed.
+      # Lower bound is always >=[value]
+      lower_bound: 1.0
+      # new upper bound. If not specified, the upper bound is not changed.
+      # Upper bound is always <[value]. If the bound does not end in 'a0', it will be added.
+      #     This is to avoid issues with pre-release versions technically being less than releases.
+      upper_bound: 2.0
+      # `other` is a list of strings that are passed in between the lower and upper bounds.
+      # If provided, this overrides any existing `other` constraints between the bounds.
+      # Example:
+      # - '==1.3.*'
+      # - '!=1.2.5'
+      #
+      # becomes: abc >=1.0,!=1.2.5,==1.3.*,<2.0a0  (including bounds; sorted conceptually for ease of reading)
+      other:
+      - '1.3.*'
+      - '1.2.5'
+      # To clear existing `other` constraints, set `other` to a list with a single empty string.
+      # other:
+      # - ''
 ---
 # more than one patch can be in the file by putting the next one here as a new YAML doc
 if:
