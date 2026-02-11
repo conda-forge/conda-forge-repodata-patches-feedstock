@@ -6,3 +6,13 @@ then:
   - replace_depends:
       old: pydantic <2.0a0
       new: pydantic
+
+# npe2 0.8.0 incorrectly claims pydantic<2 compatibility
+if:
+  name: npe2
+  version: "0.8.0"
+  timestamp_lt: 1770367260000  # 2026-02-06
+then:
+  - replace_depends:
+      old: pydantic >=1.0
+      new: pydantic >=2.12
