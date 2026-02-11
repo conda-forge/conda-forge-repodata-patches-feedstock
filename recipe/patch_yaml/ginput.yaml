@@ -12,7 +12,7 @@ if:
   name: ginput
   version: 1.6.1
   # Only affect builds before afternoon PST, 9 Feb 2025
-  timestamp_lt: 1770676768000 
+  timestamp_lt: 1770676768000
 then:
   # Missing dependencies that we relied on being required
   # by other dependencies before.
