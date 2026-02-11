@@ -8,7 +8,7 @@ then:
       new: pydantic
 
 ---
-# npe2 0.8.0 incorrectly claims pydantic<2 compatibility
+# npe2 0.8.0 incorrectly claims pydantic >=1.0 compatibility
 if:
   name: npe2
   version: "0.8.0"
