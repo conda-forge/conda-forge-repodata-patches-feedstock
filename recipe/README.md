@@ -80,6 +80,8 @@ if:
 
   # any key in the repodata entry (e.g., "version" or "build_number") and a list of values or single value
   <repodata key>_in: <list or single item>
+  # for example, to match on the build strings ending with the string "cuda"
+  build_in: ["*cuda"]
 
   # this means the build number is in the set {0, 1, 2}
   build_number_in: [0, 1, 2]
