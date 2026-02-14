@@ -1,3 +1,16 @@
+# __cuda got erroneously added in host rather than in run
+# see https://github.com/conda-forge/arrow-cpp-feedstock/pull/1925
+# starting https://github.com/conda-forge/arrow-cpp-feedstock/commit/0544e8701686 (+backports)
+# fixed in https://github.com/conda-forge/arrow-cpp-feedstock/commit/fccb336ffbef (+backports)
+if:
+  name: libarrow
+  build_in: ["*cuda"]
+  timestamp_le: 1770595200000  # 2026-02-09
+  timestamp_ge: 1686009600000  # 2023-06-06
+then:
+  - add_depends:
+      - __cuda
+---
 # need to tighten run-export from major to minor, see
 # https://github.com/conda-forge/arrow-cpp-feedstock/pull/1409
 if:
