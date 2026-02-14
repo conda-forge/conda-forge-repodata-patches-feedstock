@@ -2,6 +2,7 @@
 # https://github.com/conda-forge/arrow-cpp-feedstock/pull/1409
 if:
   has_depends: libarrow >=16.0.0,<17.0a0
+  timestamp_le: 1771074998821
 then:
   - tighten_depends:
       name: libarrow
