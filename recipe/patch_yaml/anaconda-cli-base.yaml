@@ -1,7 +1,8 @@
 if:
-  version_ge: 0.8.0
+  subdir_in: noarch
+  artifact_in:
+    - anaconda-cli-base-0.8.0-pyhcf101f3_0.conda
+    - anaconda-cli-base-0.8.1-pyhcf101f3_0.conda
   timestamp_lt: 1772477257000
 then:
-  - add_depends:
-      old: pydantic
-      new: pydantic >=2.12
+  - add_depends: pydantic >=2.12
