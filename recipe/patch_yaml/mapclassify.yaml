@@ -1,0 +1,11 @@
+# https://github.com/conda-forge/mapclassify-feedstock/pull/44 for 2.10.0
+# Also checked upstream and conda-forge 2.9.0 package also features same
+# (missed) constraint
+if:
+  name: mapclassify
+  timestamp_le: 1752300000000  # 2025-07-12
+  version_ge: 2.9.0
+then:
+  - replace_depends:
+      old: scipy >=1.8
+      new: scipy >=1.12
