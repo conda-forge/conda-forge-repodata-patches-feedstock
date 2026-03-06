@@ -2,7 +2,7 @@
 # To fix `AttributeError: type object 'Autosummary' has no attribute 'create_documenter'`
 if:
   name: sphinx-autosummary-accessors
-  version_lt: "2025.03.1"
+  version_le: "2025.03.1"
   timestamp_lt: 1772751283000
 then:
   - tighten_depends:
