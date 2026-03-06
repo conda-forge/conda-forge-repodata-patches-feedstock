@@ -7,4 +7,4 @@ if:
 then:
   - tighten_depends:
       name: sphinx
-      upper_bound: 9.0
+      upper_bound: "9.0"
