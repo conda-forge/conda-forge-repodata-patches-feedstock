@@ -1,0 +1,10 @@
+# https://github.com/xarray-contrib/sphinx-autosummary-accessors/issues/165
+# To fix `AttributeError: type object 'Autosummary' has no attribute 'create_documenter'`
+if:
+  name: sphinx-autosummary-accessors
+  version_lt: "2025.03.1"
+  timestamp_lt: 1772751283000
+then:
+  - tighten_depends:
+      name: sphinx
+      upper_bound: 9.0
