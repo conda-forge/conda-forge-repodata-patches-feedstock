@@ -59,3 +59,14 @@ if:
   timestamp_lt: 1736784424000
 then:
   - add_constrains: "zarr<3"
+---
+# anndata requires pandas<3. Runtime constraint added in 0.12.7
+# https://github.com/conda-forge/anndata-feedstock/pull/63/changes
+# https://github.com/scverse/anndata/releases/tag/0.12.7
+# https://github.com/scverse/anndata/pull/2250
+if:
+  name: anndata
+  version_lt: "0.12.7"
+  timestamp_lt: 1773672197000
+then:
+  - add_constrains: "pandas<3"
