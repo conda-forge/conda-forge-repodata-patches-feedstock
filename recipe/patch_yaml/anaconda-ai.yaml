@@ -1,0 +1,7 @@
+if:
+  name: anaconda-ai
+  artifact_in:
+    - anaconda-ai-0.5.0-pyhd8ed1ab_0.conda
+  timestamp_lt: 1773840893000
+then:
+  - remove_depends: ruamel_yaml
