@@ -23,3 +23,10 @@ then:
   - tighten_depends:
       name: ngmix
       upper_bound: "2.1.0"
+---
+if:
+  name: metadetect
+  timestamp_le: 1735105136000
+then:
+  add_depends:
+    - setuptools <82
