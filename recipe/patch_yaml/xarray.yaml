@@ -118,6 +118,44 @@ then:
       old: numpy >=1.21,<2.0a0
       new: numpy >=1.22,<2.0a0
 ---
+# xarray 0.14–0.19 uses pkg_resources at import time, which was removed in
+# setuptools 82. These versions don't declare setuptools as a dependency, so
+# the solver can install setuptools >=82 and break the import.
+# https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/XXXX
+if:
+  name: xarray
+  version_ge: "0.14"
+  version_lt: "0.20"
+  timestamp_lt: 1775238626000
+then:
+  - add_depends:
+      - setuptools <82
+---
+# xarray <=0.9 uses pandas.tslib which was removed in pandas 0.24.
+# The existing pandas <2.0a patch is too loose for these versions.
+if:
+  name: xarray
+  version_le: "0.9.6"
+  has_depends: pandas <2.0a
+  timestamp_lt: 1775238626000
+then:
+  - replace_depends:
+      old: pandas <2.0a
+      new: pandas >=0.15.0,<0.24
+---
+# xarray 0.10–0.11 uses pd.Panel which was removed in pandas 1.0.
+# The existing pandas <2.0a patch is too loose for these versions.
+if:
+  name: xarray
+  version_ge: "0.10"
+  version_lt: "0.12"
+  has_depends: pandas <2.0a
+  timestamp_lt: 1775238626000
+then:
+  - replace_depends:
+      old: pandas <2.0a
+      new: pandas >=0.15.0,<1.0
+---
 # xarray depends on seaborn-base not seaborn
 # Fixed in https://github.com/conda-forge/xarray-feedstock/pull/118
 if:
