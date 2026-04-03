@@ -122,10 +122,24 @@ then:
 # setuptools 82. These versions don't declare setuptools as a dependency, so
 # the solver can install setuptools >=82 and break the import.
 # https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/XXXX
+# Case 1: packages that already have setuptools — replace it with a capped version
 if:
   name: xarray
   version_ge: "0.14"
   version_lt: "0.20"
+  has_depends: setuptools
+  timestamp_lt: 1775238626000
+then:
+  - replace_depends:
+      old: setuptools
+      new: setuptools <82
+---
+# Case 2: packages that don't have setuptools — add it
+if:
+  name: xarray
+  version_ge: "0.14"
+  version_lt: "0.20"
+  not_has_depends: setuptools
   timestamp_lt: 1775238626000
 then:
   - add_depends:
