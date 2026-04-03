@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+if:
+  timestamp_lt: 1753975951000
+  name: llvm-openmp
+  subdir_in: win-64
+then:
+  - add_constrains:
+      - intel-openmp <0.0a0

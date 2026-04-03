@@ -1,0 +1,8 @@
+# Fix for https://github.com/conda-forge/glfw-feedstock/issues/26
+if:
+  has_depends: glfw >=3.5.0,<4.0a0
+  timestamp_lt: 1758799847000
+then:
+  - replace_depends:
+      old: glfw >=3.5.0,<4.0a0
+      new: glfw >=3.4.0,<4.0a0

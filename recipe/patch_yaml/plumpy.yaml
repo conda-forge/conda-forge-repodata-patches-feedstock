@@ -1,0 +1,13 @@
+# Fix plumpy 0.25.1 build 0 to require kiwipy >=0.9.0
+# The old build (pyhd8ed1ab_0) incorrectly allows kiwipy 0.8.x
+# which causes resolution issues with aiida-core
+
+if:
+  subdir_in: noarch
+  artifact_in: plumpy-0.25.1-pyhd8ed1ab_0.conda
+  timestamp_lt: 1761783096000
+
+then:
+  - replace_depends:
+      old: "kiwipy ~=0.8.3"
+      new: "kiwipy ~=0.9.0"

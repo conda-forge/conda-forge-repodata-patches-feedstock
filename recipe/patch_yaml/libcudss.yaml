@@ -1,0 +1,16 @@
+# The first conda runtime packages for libcudss were named libcudss0
+# but then the name ahs been changed to libcudss.
+# The changes below should fix potential clobbering.
+if:
+  name: libcudss0
+  timestamp_lt: 1758585645000
+then:
+  - add_constrains: libcudss <0.0.0a0
+
+---
+if:
+  name: libcudss
+  timestamp_lt: 1758585645000
+
+then:
+  - add_constrains: libcudss0 <0.0.0a0

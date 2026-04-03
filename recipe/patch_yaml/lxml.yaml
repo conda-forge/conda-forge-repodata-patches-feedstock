@@ -1,0 +1,8 @@
+if:
+  name: lxml
+  version_le: 4.9.1
+  timestamp_lt: 1758026124000
+then:
+  - replace_depends:
+      old: libxml2 !=2.9.11,!=2.9.12
+      new: libxml2 !=2.9.11,!=2.9.12,<2.14.0a0

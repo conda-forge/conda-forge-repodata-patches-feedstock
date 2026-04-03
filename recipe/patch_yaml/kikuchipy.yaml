@@ -1,0 +1,20 @@
+---
+# kikuchipy <0.11.0 needs hyperspy <2.0.0
+if:
+  name: kikuchipy
+  version_lt: 0.11.0
+  timestamp_lt: 1765123739000
+then:
+  - tighten_depends:
+      name: hyperspy
+      upper_bound: 2.0.0
+---
+# kikuchipy <0.11.0 needs hyperspy-base <2.0.0
+if:
+  name: kikuchipy
+  version_lt: 0.11.0
+  timestamp_lt: 1765123739000
+then:
+  - tighten_depends:
+      name: hyperspy-base
+      upper_bound: 2.0.0

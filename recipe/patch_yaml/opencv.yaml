@@ -8,3 +8,16 @@ then:
   - replace_depends:
       old: numpy >=2.0.0rc.2,<3.0a0
       new: numpy >=1.19.0,<3.0a0
+
+---
+
+if:
+  name: libopencv
+  version_le: 4.12.0
+  timestamp_lt: 1755656470000
+then:
+  # For some reason imath was not caught in the package inspector
+  # and thus missed as a run_export
+  # in the older builds of libopencv
+  # https://github.com/conda-forge/opencv-feedstock/issues/486
+  - add_constrains: imath<3.2.0a0

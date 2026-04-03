@@ -8,3 +8,19 @@ then:
   - loosen_depends:
       name: openmpi
       upper_bound: "5.0"
+---
+# use four features to down prioritize external builds
+# https://github.com/conda-forge/openmpi-feedstock/pull/211
+if:
+  name: openmpi
+  build: external_*
+  not_has_track_features: "openmpi-p-3"
+then:
+  - remove_track_features: openmpi_external
+  - add_track_features:
+      - "openmpi-p-0"
+      - "openmpi-p-1"
+      - "openmpi-p-2"
+      - "openmpi-p-3"
+  - remove_depends: "[!m][!p][!i]?( *)*"
+  - remove_constrains: "*"

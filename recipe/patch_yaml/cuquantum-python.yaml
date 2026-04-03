@@ -1,0 +1,10 @@
+# cudensitymat major version 0 releases do not guarantee ABI compatibility between minor versions
+# cuquantum-python needs to set a max_pin for cudensitymat to minor version instead of major version.
+if:
+  name: cuquantum-python
+  version_in: [24.11.0, 25.03.0]
+  timestamp_lt: 1752003611000
+then:
+  - tighten_depends:
+      name: cudensitymat
+      max_pin: 'x.x'

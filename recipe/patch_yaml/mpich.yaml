@@ -11,19 +11,45 @@ then:
       name: mpich
       upper_bound: "5.0"
 ---
+if:
+  name: mpich
+  build: external_*
+  not_has_track_features: mpich_external_1
+then:
+  # we remove extra depends instead of resetting so that we keep
+  # the mpi metapackage
+  - remove_depends:
+      - __glibc?( *)
+      - __osx*?( *)
+      - ucx?( *)
+      - libhwloc?( *)
+      - libfabric?( *)
+      - libfabric1?( *)
+      - libfabric2?( *)
+      - libgfortran?( *)
+      - libgfortran-ng?( *)
+      - libgfortran4?( *)
+      - libgfortran5?( *)
+      - libcxx?( *)
+      - libstdcxx?( *)
+      - libstdcxx-ng?( *)
+      - libgcc?( *)
+      - libgcc-ng?( *)
+  - add_track_features: [mpich_external_1, mpich_external_2, mpich_external_3]
+# old patch no longer in use due to patch above
 # add back external package for v4.0.2 on linux per request here
 # https://github.com/conda-forge/admin-requests/pull/1009#issuecomment-2245501214
 # we add the deps of the real package to fix the solver issues per the issue above
 # and links in it.
-if:
-  subdir_in: linux-64
-  name: mpich
-  version: 4.0.2
-  build: external_0
-then:
-  - add_depends:
-      - libgcc-ng >=10.3.0
-      - libgfortran-ng
-      - libgfortran5 >=10.3.0
-      - libstdcxx-ng >=10.3.0
-      - mpi 1.0 mpich
+# if:
+#   subdir_in: linux-64
+#   name: mpich
+#   version: 4.0.2
+#   build: external_0
+# then:
+#   - add_depends:
+#       - libgcc-ng >=10.3.0
+#       - libgfortran-ng
+#       - libgfortran5 >=10.3.0
+#       - libstdcxx-ng >=10.3.0
+#       - mpi 1.0 mpich

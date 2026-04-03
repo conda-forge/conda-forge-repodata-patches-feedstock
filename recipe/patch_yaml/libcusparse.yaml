@@ -1,0 +1,15 @@
+if:
+  name: libcusparse
+  timestamp_lt: 1751987921000
+then:
+  - loosen_depends:
+      name: libnvjitlink
+      max_pin: x
+---
+if:
+  name: libcusparse-dev
+  timestamp_lt: 1751987921000
+then:
+  - loosen_depends:
+      name: libnvjitlink
+      max_pin: x

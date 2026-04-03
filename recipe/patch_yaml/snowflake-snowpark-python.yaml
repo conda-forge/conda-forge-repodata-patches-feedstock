@@ -7,3 +7,16 @@ then:
   - replace_depends:
       old: cloudpickle >=1.6.0,<=2.2.1,!=2.1.0,!=2.2.0
       new: cloudpickle >=1.6.0,<=3.0.0,!=2.1.0,!=2.2.0
+---
+# snowflake-snowpark-python 1.38.0 lackes the correct dependency for snowflake-connector-python and cloudpickle
+if:
+  name: snowflake-snowpark-python
+  version_in: [1.38.0]
+  build_number: 0
+then:
+  - replace_depends:
+      old: cloudpickle >=1.6.0,<=3.0.0,!=2.1.0,!=2.2.0
+      new: cloudpickle >=1.6.0,<=3.1.1,!=2.1.0,!=2.2.0
+  - replace_depends:
+      old: snowflake-connector-python >=3.14.0,<4.0.0
+      new: snowflake-connector-python >=3.16.0,<4.0.0

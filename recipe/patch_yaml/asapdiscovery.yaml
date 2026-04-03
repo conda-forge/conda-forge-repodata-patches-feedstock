@@ -1,0 +1,13 @@
+# We need to pin to a newer version of openfe due to changes in openmm api
+# https://github.com/conda-forge/asapdiscovery-feedstock/issues/17
+if:
+  name: asapdiscovery
+  timestamp_lt: 1739481327000
+  version_in: 0.6.0
+  build_number_in: 0
+then:
+  - replace_depends:
+      # str of thing to be replaced
+      old: openfe >0.14.0*
+      # thing to replace `old` with
+      new: openfe >=1.1.0

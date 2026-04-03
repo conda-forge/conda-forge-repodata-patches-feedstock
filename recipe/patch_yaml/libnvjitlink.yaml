@@ -52,3 +52,20 @@ then:
   - replace_depends:
       old: cuda-version*
       new: cuda-version>=12.0.0,<12.6.0a0
+---
+# See https://github.com/conda-forge/libnvjitlink-feedstock/pull/34
+if:
+  name: libnvjitlink-dev
+  version_in: [13.1.115, 13.1.80]
+then:
+  - replace_depends:
+      old: cuda-version*
+      new: cuda-version>=13.0,<13.2.0a0
+---
+if:
+  name: libnvjitlink-static
+  version_in: [13.1.115, 13.1.80]
+then:
+  - replace_depends:
+      old: cuda-version*
+      new: cuda-version>=13.0,<13.2.0a0

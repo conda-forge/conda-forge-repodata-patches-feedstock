@@ -32,3 +32,12 @@ if:
   timestamp_lt: 1744218305000
 then:
   - add_depends: conda-libmamba-solver >=24.11.0
+---
+if:
+  name: conda
+  version_eq: 25.9.0
+  timestamp_lt: 1759388400000
+then:
+  - replace_depends:
+      old: conda-libmamba-solver >=24.11.0
+      new: conda-libmamba-solver >=25.4.0

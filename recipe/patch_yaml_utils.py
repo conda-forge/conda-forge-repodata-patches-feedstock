@@ -3,6 +3,7 @@ import glob
 import os
 import re
 import string
+import sys
 from functools import lru_cache
 
 import yaml
@@ -204,7 +205,10 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             _keep = all(
                 any(fnmatch(dep, _v) for dep in record.get(subk, [])) for _v in v
             )
-
+        elif k == "has_track_features":
+            if not isinstance(v, list):
+                v = [v]
+            _keep = all(_has_track_feature(record, feature) for feature in v)
         elif k == "artifact_in":
             _keep = _fnmatch_str_or_list(fn, v)
 
@@ -220,6 +224,11 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             break
 
     return keep
+
+
+def _has_track_feature(record, feature_name):
+    features = record.get("track_features", "").split()
+    return bool(any(f for f in features if fnmatch(f, feature_name)))
 
 
 def _extract_track_feature(record, feature_name):
@@ -473,10 +482,8 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 for dep in deps_to_remove:
                     depends.remove(dep)
 
-                if depends:
+                if subk in record:
                     record[subk] = depends
-                elif not depends and subk in record:
-                    del record[subk]
 
             elif k.startswith("reset_") and k[len("reset_") :] in [
                 "depends",
@@ -596,12 +603,19 @@ def shortlist_relevant_filenames(index, package_name_selector):
     return index.keys()
 
 
-def patch_yaml_edit_index(index, subdir):
+def patch_yaml_edit_index(index, subdir, verbose=False):
     keep_pkgs = os.environ.get("CF_PKGS", None)
     if keep_pkgs is not None:
         keep_pkgs = set(keep_pkgs.split(";"))
     fns = sorted(index)
-    for patch_yaml, fname in ALL_YAMLS:
+    if verbose:
+        from tqdm import tqdm
+        from functools import partial
+
+        tqdm = partial(tqdm, desc="Applying yaml patches", file=sys.stderr)
+    else:
+        tqdm = iter
+    for patch_yaml, fname in tqdm(ALL_YAMLS):
         if "name" in patch_yaml["if"]:
             pkg_name = patch_yaml["if"]["name"]
             fns_to_process = shortlist_relevant_filenames(index, pkg_name)

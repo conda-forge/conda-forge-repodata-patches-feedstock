@@ -1,0 +1,7 @@
+if:
+  name: swig
+  version_lt: 4.4.0
+  not_has_constrains: swig-abi
+then:
+  - add_constrains:
+      - swig-abi ==4

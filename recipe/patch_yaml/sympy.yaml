@@ -1,0 +1,10 @@
+# https://github.com/conda-forge/sympy-feedstock/issues/67
+if:
+  name: sympy
+  version_le: 1.14.0
+  version_ge: "1.9"
+  timestamp_lt: 1771947801000
+then:
+  - replace_depends:
+      old: mpmath >=0.19
+      new: mpmath >=0.19,<1.4

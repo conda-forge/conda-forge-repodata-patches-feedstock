@@ -1,0 +1,10 @@
+# pyfabm dependency was updated in environment.yml in source repo, but not in feedstock
+if:
+  name: pygetm
+  version: 0.9.19
+  build_number: 0
+  timestamp_lt: 1767522723000
+then:
+  - replace_depends:
+      old: pyfabm >=2.1
+      new: pyfabm >=3.0

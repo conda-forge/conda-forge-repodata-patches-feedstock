@@ -131,3 +131,15 @@ then:
   - tighten_depends:
       name: py-lief
       upper_bound: "0.15"
+---
+# https://github.com/conda-forge/conda-build-feedstock/pull/272
+if:
+  name: conda-build
+  version_eq: 26.1.0
+  build_number_in: [0, 1]
+then:
+  - replace_depends:
+      old: conda?( *)
+      new: conda >=25.11.0
+  - add_constrains:
+      - conda-libmamba-solver >=25.11.0

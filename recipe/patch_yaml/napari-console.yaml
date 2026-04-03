@@ -1,0 +1,10 @@
+---
+# ipykernel 7 breaks the event loop
+# https://github.com/napari/napari-console/pull/50
+if:
+  name: napari-console
+  timestamp_lt: 1760543716802  # 2025-10-15
+then:
+  - replace_depends:
+      old: "ipykernel >=5.2.0"
+      new: "ipykernel >=5.2.0,<7.0dev0"

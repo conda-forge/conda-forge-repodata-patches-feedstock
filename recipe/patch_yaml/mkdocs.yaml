@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# mkdocs serve --livereload is broken with click >=8.3.0 due to
+# a flag_value handling bug in Click.
+# See: https://github.com/mkdocs/mkdocs/issues/4032
+# See: https://github.com/pallets/click/issues/3084
+# mkdocs has not released a fix either.
+if:
+  name: mkdocs
+  version_ge: "1.4.2"
+  version_le: "1.6.1"
+  has_depends: click*
+then:
+  - tighten_depends:
+      name: click
+      upper_bound: "8.3.0"

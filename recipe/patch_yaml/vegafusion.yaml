@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+if:
+  name: vegafusion
+  version: 2.0.3
+  build_number: 0
+  timestamp_lt: 1759314748000
+then:
+  - replace_depends:
+      old: narwhals >=1.13.5
+      new: narwhals >=1.42

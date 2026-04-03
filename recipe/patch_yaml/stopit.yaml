@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# see https://github.com/conda-forge/stopit-feedstock/pull/5
+if:
+  name: stopit
+  timestamp_le: 1770680172000
+  version_le: 1.1.2
+then:
+  - add_depends: setuptools <82.0.0

@@ -1,0 +1,35 @@
+if:
+  name: pvlib
+  version: 0.9.2
+  timestamp_lt: 1762780956000
+then:
+  - replace_depends:
+      old: numpy >=1.16.0
+      new: numpy >=1.16.0,<=1.26.4
+  - replace_depends:
+      old: scipy >=1.2.0
+      new: scipy >=1.2.0,<=1.14.1
+---
+if:
+  name: pvlib
+  version: 0.9.3
+  timestamp_lt: 1762780956000
+then:
+  - replace_depends:
+      old: numpy >=1.16.0
+      new: numpy >=1.16.0,<=1.26.4
+  - replace_depends:
+      old: scipy >=1.2.0
+      new: scipy >=1.2.0,<=1.14.1
+---
+if:
+  name: pvlib
+  version: 0.9.4
+  timestamp_lt: 1762780956000
+then:
+  - replace_depends:
+      old: numpy >=1.16.0
+      new: numpy >=1.16.0,<=1.26.4
+  - replace_depends:
+      old: scipy >=1.4.0
+      new: scipy >=1.4.0,<=1.14.1
