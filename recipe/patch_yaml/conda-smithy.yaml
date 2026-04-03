@@ -68,3 +68,15 @@ then:
   - replace_depends:
       old: rattler-build-conda-compat >=1.2.0,<2.0.0a0
       new: rattler-build-conda-compat >=1.4.5,<2.0.0a0
+---
+# conda 26.3.0 dropped discovery of `conda-*` CLI executables as conda subcommands;
+# older conda-smithy relied on that for `conda smithy` until the plugin landed in
+# https://github.com/conda-forge/conda-smithy/pull/2506
+if:
+  name: conda-smithy
+  version_le: 3.58.1
+  timestamp_le: 1775227508000  # 2026-04-03 14:45 UTC
+then:
+  - tighten_depends:
+      name: conda
+      upper_bound: 26.3.0
