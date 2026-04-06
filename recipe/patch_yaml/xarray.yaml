@@ -121,7 +121,7 @@ then:
 # xarray 0.14–0.19 uses pkg_resources at import time, which was removed in
 # setuptools 82. These versions don't declare setuptools as a dependency, so
 # the solver can install setuptools >=82 and break the import.
-# https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/XXXX
+# https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/pull/1184
 # Case 1: packages that already have setuptools — replace it with a capped version
 if:
   name: xarray
