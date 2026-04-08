@@ -15,7 +15,7 @@ if:
   name: conda-lock
   # TODO add upper bound once conda-lock ships a patch
   # version_le:
-  # timestamp_le: 
+  # timestamp_le:
 then:
   - tighten_depends:
       name: conda
