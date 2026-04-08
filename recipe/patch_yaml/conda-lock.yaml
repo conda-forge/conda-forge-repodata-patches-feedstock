@@ -8,3 +8,15 @@ if:
   not_has_constrains: "*"
 then:
   - add_constrains: urllib3 <2
+---
+# conda 26.3.0 dropped discovery of `conda-*` CLI executables as conda subcommands;
+# conda-lock relies on this for `conda lock`
+if:
+  name: conda-lock
+  # TODO add upper bound once conda-lock ships a patch
+  # version_le:
+  # timestamp_le: 
+then:
+  - tighten_depends:
+      name: conda
+      upper_bound: 26.3.0
