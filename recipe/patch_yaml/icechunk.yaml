@@ -1,0 +1,12 @@
+# icechunk 2.0.x requires zarr >=3.1, not >=3
+if:
+  name: icechunk
+  version_in:
+    - 2.0.0
+    - 2.0.1
+  has_depends: zarr >=3
+  timestamp_lt: 1775749209000
+then:
+  - replace_depends:
+      old: zarr >=3
+      new: zarr >=3.1
