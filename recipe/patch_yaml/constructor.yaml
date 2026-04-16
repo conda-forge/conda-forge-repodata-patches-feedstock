@@ -41,6 +41,7 @@ then:
 ---
 if:
   name: constructor
+  timestamp_le: 1776351873000
   version_lt: "3.15.2"
 then:
   - replace_depends:
