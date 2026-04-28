@@ -5,7 +5,6 @@ if:
   name: nvmath-python-cpu
   subdir_in:
     - linux-64
-    - linux-aarch64
     - win-64
 then:
   - add_constrains: mkl <2026
