@@ -21,3 +21,13 @@ then:
   - replace_depends:
       old: jupyterlab >=4.0.2,<5
       new: jupyterlab >=4.0.2,<4.1.0a0
+---
+# https://github.com/conda-forge/notebook-feedstock/pull/225
+if:
+  name: notebook
+  version_eq: 7.5.6
+  timestamp_lt: 1777553440000
+then:
+  - replace_depends:
+      old: jupyterlab >=4.5.6,<4.6
+      new: jupyterlab >=4.5.7,<4.6
