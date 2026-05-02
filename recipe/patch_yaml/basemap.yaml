@@ -1,0 +1,11 @@
+# basemap 2.0.0 builds 0-4 are missing the numpy <2.4 upper bound.
+# The constraint was added in build 5 via the feedstock recipe.
+# See: https://github.com/conda-forge/basemap-feedstock/pull/156
+
+if:
+  name: basemap
+  version: 2.0.0
+  build_number_le: 4
+  timestamp_le: 1777669495000  # 2026-05-01
+then:
+  - add_depends: numpy <2.4
