@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# https://github.com/conda-forge/legend-lh5io-feedstock/pull/3
+if:
+  name: legend-lh5io
+  timestamp_le: 1778077522000
+  version_ge: 0.2.0
+then:
+  - replace_depends:
+      old: h5py >=3.10
+      new: h5py >=3.16
