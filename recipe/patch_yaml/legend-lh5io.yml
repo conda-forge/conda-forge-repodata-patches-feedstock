@@ -5,6 +5,5 @@ if:
   timestamp_le: 1778077522000
   version_ge: 0.2.0
 then:
-  - replace_depends:
-      old: h5py >=3.10
-      new: h5py >=3.16
+  - add_depends:
+      - h5py >=3.16
