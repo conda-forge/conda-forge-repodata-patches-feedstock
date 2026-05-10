@@ -25,3 +25,17 @@ then:
   - remove_depends:
       - gstreamer*
       - gst-plugins-base*
+
+---
+
+# We only aded the run_export to libxkbfile after qt6-webegine 6.10 was built the first time
+# https://github.com/conda-forge/libxkbfile-feedstock/pull/3
+# https://github.com/conda-forge/pyside2-feedstock/pull/297
+if:
+  timestamp_lt: 1778373415000
+  name: qt6-webengine
+  version: 6.10.2
+  build_number: 0
+  subdir_in: linux-64
+then:
+  - add_depends: libxkbfile >=1.1.0,<2
