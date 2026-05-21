@@ -1,0 +1,10 @@
+# pip2conda 0.10.0 didn't pin py-rattler
+if:
+  name: pip2conda
+  version: 0.10.0
+  build_number: 0
+  timestamp_le: 1779357594000
+then:
+  - tighten_depends:
+      name: py-rattler
+      upper_bound: "0.24"
