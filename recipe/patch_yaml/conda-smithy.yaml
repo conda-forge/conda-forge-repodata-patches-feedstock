@@ -80,3 +80,12 @@ then:
   - tighten_depends:
       name: conda
       upper_bound: 26.3.0
+---
+# conda-build 26.5 remove ns_cfg and now breaks smithy
+if:
+  name: conda-smithy
+  version_le: 3.61.2
+then:
+  - tighten_depends:
+      name: conda-build
+      upper_bound: 26.5.0
