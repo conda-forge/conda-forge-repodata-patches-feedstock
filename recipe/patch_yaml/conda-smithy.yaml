@@ -88,4 +88,4 @@ if:
 then:
   - tighten_depends:
       name: conda-build
-      upper_bound: 26.3.0
+      upper_bound: 26.5.0
