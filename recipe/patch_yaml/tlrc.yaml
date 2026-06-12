@@ -4,6 +4,6 @@ if:
   build_number_lt: 2
 then:
   - add_constrains:
-    - tealdeer <0.0a0
-    - tldr <0.0a0
-    - tldr-c-client <0.0a0
+      - tealdeer <0.0a0
+      - tldr <0.0a0
+      - tldr-c-client <0.0a0
