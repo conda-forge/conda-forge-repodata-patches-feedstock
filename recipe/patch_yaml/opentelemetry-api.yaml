@@ -6,4 +6,4 @@ if:
 then:
   - replace_depends:
       old: importlib-metadata >=6.0.0,<7.1.0
-      new: importlib-metadata >=6.0.0,<8.5.0
+      new: importlib-metadata >=6.0.0,<=8.5.0
