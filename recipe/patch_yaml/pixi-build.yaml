@@ -1,0 +1,11 @@
+# Fix <dep> requirement for pixi-build backends, v0.1.2 only
+# see <link>
+if:
+  # Pixi build release window of faulty requirement
+  timestamp_gt: 1781497259000 # 12-june-2026 morning
+  timestamp_lt: 1781540216000 # 12-june-2026 evening
+  name: pixi-build-*
+then:
+  - replace_depends:
+      old: pixi-build-api-version >=4,<5
+      new: pixi-build-api-version >=5,<6
