@@ -1,0 +1,9 @@
+if:
+  name: opentelemetry-api
+  version_ge: 1.28.0
+  version_lt: 1.29.0
+  timestamp_lt: 1781467777000
+then:
+  - replace_depends:
+      old: importlib-metadata >=6.0.0,<7.1.0
+      new: importlib-metadata >=6.0.0,<=8.5.0
