@@ -4,7 +4,7 @@ import difflib
 import json
 import os
 import sys
-import urllib.request
+import urllib
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 import zstandard
