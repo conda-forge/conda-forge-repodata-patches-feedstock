@@ -82,3 +82,20 @@ if:
   timestamp_le: 1741961643000
 then:
   - add_depends: pillow >=8.2
+---
+# anaconda-client < 1.14.0 imports the (now removed) ``pkg_resources`` package at the top
+# of ``binstar_client/__init__.py`` (``from pkg_resources import parse_version as pv``).
+# setuptools 82.0.0 removed the bundled ``pkg_resources``, so these versions raise
+# ``ModuleNotFoundError: No module named 'pkg_resources'`` under setuptools >=82.
+# setuptools 81 still ships ``pkg_resources`` (with a deprecation warning), so <82 is the
+# correct cap. The ``pkg_resources`` import was dropped in 1.14.0, so only the older
+# versions need the cap. This keeps anaconda-client 1.13.x usable (e.g. for the headless
+# login behavior some users rely on, https://github.com/anaconda/anaconda-client/issues/861).
+if:
+  name: anaconda-client
+  version_lt: 1.14.0
+  timestamp_le: 1780139987000
+then:
+  - tighten_depends:
+      name: setuptools
+      upper_bound: "82"
