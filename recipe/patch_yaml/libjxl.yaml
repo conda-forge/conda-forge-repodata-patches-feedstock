@@ -1,10 +1,7 @@
-# libjxl ABI is not stable across minor (0.x) releases; tighten its
-# consumers to a minor-version pin ('x.x').
-# See: https://github.com/conda-forge/libjxl-split-feedstock/issues/52
+# https://github.com/conda-forge/libjxl-split-feedstock/issues/52
 if:
-  # has_depends: libjxl >=*
   has_depends: libjxl?( *)
-  timestamp_lt: 1783089386000
+  timestamp_lt: 1783167774000
 then:
   - tighten_depends:
       name: libjxl
