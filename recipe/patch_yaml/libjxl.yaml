@@ -1,0 +1,8 @@
+# https://github.com/conda-forge/libjxl-split-feedstock/issues/52
+if:
+  has_depends: libjxl?( *)
+  timestamp_lt: 1783167774000
+then:
+  - tighten_depends:
+      name: libjxl
+      max_pin: 'x.x'
