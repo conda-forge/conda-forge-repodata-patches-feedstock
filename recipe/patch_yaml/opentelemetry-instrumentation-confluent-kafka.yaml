@@ -1,0 +1,9 @@
+if:
+  name: opentelemetry-instrumentation-confluent-kafka
+  version_ge: 0.64b0
+  version_le: 0.64b0
+  timestamp_lt: 1783357843000
+then:
+  - replace_depends:
+      old: python-confluent-kafka >=1.8.2,<=2.11.0
+      new: python-confluent-kafka >=1.8.2,<3.0.0
