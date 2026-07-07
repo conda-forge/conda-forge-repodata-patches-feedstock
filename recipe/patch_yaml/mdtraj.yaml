@@ -37,3 +37,20 @@ then:
   - tighten_depends:
       name: pandas
       upper_bound: "3"
+
+---
+
+
+# Numpy >=2.5 had broken a number of mdtraj's functionalities.
+# This will pin all versions with a numpy dependency to
+# numpy <2.5 until we can do something about it in the future.
+# This includes mdtraj v1.11.1 (build 1) and below.
+if:
+  name: mdtraj
+  version_le: 1.11.1
+  has_depends: numpy >=1.25.0
+  timestamp_lt: 1783383120000  # 2026-07-06
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.5"
