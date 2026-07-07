@@ -48,7 +48,7 @@ then:
 if:
   name: mdtraj
   version_le: 1.11.1
-  has_depends: numpy >=1.25.0
+  has_depends: numpy*
   timestamp_lt: 1783383120000  # 2026-07-06
 then:
   - tighten_depends:
