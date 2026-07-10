@@ -12,7 +12,6 @@
 if:
   name: pynacl
   version_ge: 1.6.0
-  build_number_in: [0, 1, 2]
   has_depends: "cffi >=1.4.1"
   timestamp_lt: 1783612461000  # 2026-07-09
 then:
