@@ -1,0 +1,20 @@
+# pynacl recipes were pinning `cffi >=1.4.1` for all python versions, but
+# the actual pynacl wheel metadata requires `cffi >=2.0.0` for python >=3.9
+# starting with pynacl 1.6.0 (see
+# https://github.com/pyca/pynacl/compare/1.5.0...1.6.0). This was fixed for
+# new builds of 1.6.2 (build 3 onward) in
+# https://github.com/conda-forge/pynacl-feedstock/pull/43, but 1.6.0, 1.6.1,
+# and 1.6.2 builds 0-2 are already published with the looser pin, which lets
+# the solver combine them with old cffi releases and breaks `pip check`
+# downstream. All of these already-published builds happen to only target
+# python >=3.10 (1.6.0 and 1.6.1 never shipped a py39 build), so no
+# python <3.9 builds need to be excluded here.
+if:
+  name: pynacl
+  version_ge: 1.6.0
+  has_depends: "cffi >=1.4.1"
+  timestamp_lt: 1783612461000  # 2026-07-09
+then:
+  - replace_depends:
+      old: cffi >=1.4.1
+      new: cffi >=2.0.0
