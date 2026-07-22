@@ -1,0 +1,11 @@
+# libnvfatbin-dev's run_constrained has a typo: "liblibnvfatbin-static" should
+# be "libnvfatbin-static" (extra "lib" prefix). Present in every build since
+# the feedstock's first commit.
+# See https://github.com/conda-forge/libnvfatbin-feedstock/issues/27
+if:
+  name: libnvfatbin-dev
+  timestamp_lt: 1782857295000
+then:
+  - rename_constrains:
+      old: liblibnvfatbin-static
+      new: libnvfatbin-static

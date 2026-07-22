@@ -1,0 +1,14 @@
+# osqp-eigen switched its run_exports from `max_pin='x.x.x'` to `max_pin='x.x'`
+# starting with version 0.11.0 (conda-forge/osqp-eigen-feedstock#24). However,
+# osqp-eigen sets its library SOVERSION down to the patch version, so its ABI
+# actually breaks at the patch level (see gbionics/osqp-eigen#230). Any package
+# built against osqp-eigen >=0.11.0 therefore needs to be pinned down to the
+# patch version, not just the minor version.
+if:
+  timestamp_lt: 1784532755000
+  has_depends:
+    - osqp-eigen >=0.11*
+then:
+  - tighten_depends:
+      name: osqp-eigen
+      max_pin: x.x.x
