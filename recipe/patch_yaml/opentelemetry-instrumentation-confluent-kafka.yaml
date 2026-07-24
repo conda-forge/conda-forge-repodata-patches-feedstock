@@ -1,31 +1,9 @@
 if:
   name: opentelemetry-instrumentation-confluent-kafka
-  version_ge: 0.63b1
-  version_lt: 0.63b2
-  timestamp_lt: 1781549111675
-then:
-  - replace_depends:
-      old: wrapt >=1.0.0,<2.0.0
-      new: wrapt >=1.0.0,<3.0.0
-
----
-
-if:
-  name: opentelemetry-instrumentation-confluent-kafka
-  version_ge: 0.63b1
-  version_lt: 0.63b2
-  timestamp_lt: 1781549111675
+  version_ge: 0.64b0
+  version_le: 0.64b0
+  timestamp_lt: 1783357843000
 then:
   - replace_depends:
       old: python-confluent-kafka >=1.8.2,<=2.11.0
       new: python-confluent-kafka >=1.8.2,<3.0.0
-
----
-
-if:
-  name: opentelemetry-instrumentation-confluent-kafka
-  version_ge: 0.63b1
-  version_lt: 0.63b2
-  timestamp_lt: 1781549111675
-then:
-  - add_depends: opentelemetry-semantic-conventions==0.63b1
