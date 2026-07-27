@@ -75,3 +75,21 @@ then:
   - replace_depends:
       old: sysroot_linux-ppc64le
       new: sysroot_linux-ppc64le 2.17.*
+---
+# root_cxx_standard is a noarch marker package whose version selects the C++
+# standard variant of root_base (cxx20/cxx23 build variants, introduced in
+# root_base 6.36.08). root_base builds older than 6.36.08 predate the variant
+# split: they carry no root_cxx_standard dependency, so they trivially satisfy
+# any root_cxx_standard pin. Because the non-default variants (currently cxx23)
+# are down-prioritized with a track_feature, solvers prefer those ancient
+# pre-variant builds over the current ones, e.g.
+# `conda install root_base root_cxx_standard=23` yields root_base 6.32.x.
+# Constraining the marker to variant-aware root_base versions makes such
+# solves pick the intended variant instead.
+# See https://github.com/prefix-dev/pixi/issues/6647 for a full analysis.
+if:
+  name: root_cxx_standard
+  subdir_in: noarch
+  timestamp_lt: 1784800000000
+then:
+  - add_constrains: root_base >=6.36.8

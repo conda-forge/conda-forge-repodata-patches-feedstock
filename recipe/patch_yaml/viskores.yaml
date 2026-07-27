@@ -1,0 +1,9 @@
+# Fix viskores runtime dependency on mesalib for existing builds.
+# Ref: https://github.com/conda-forge/viskores-feedstock/issues/31
+if:
+  name: viskores
+  timestamp_lt: 1785053120931
+  has_depends: mesalib*
+then:
+  - remove_depends:
+      - mesalib?( *)
