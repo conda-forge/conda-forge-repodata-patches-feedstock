@@ -21,7 +21,7 @@ ALLOWED_TEMPLATE_KEYS = [
     "patch_version",
 ]
 
-from patch_yaml_model import PatchYaml  # noqa
+from patch_yaml_model import PatchYaml
 
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
@@ -317,10 +317,7 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
                 upper_bound += ["0"]
             upper_bound = ".".join(upper_bound)
 
-            depends[dep_idx] = "{} <{}a0".format(
-                dep_parts[0],
-                upper_bound,
-            )
+            depends[dep_idx] = f"{dep_parts[0]} <{upper_bound}a0"
             record["depends"] = depends
             continue
 
@@ -344,12 +341,10 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
                 new_upper = ".".join(new_upper)
 
                 if len(dep_parts) == 2:
-                    depends[dep_idx] = "{} {},<{}a0".format(
-                        dep_parts[0], dep_parts[1], new_upper
-                    )
+                    depends[dep_idx] = f"{dep_parts[0]} {dep_parts[1]},<{new_upper}a0"
                 elif len(dep_parts) == 3:
-                    depends[dep_idx] = "{} {},<{}a0 {}".format(
-                        dep_parts[0], dep_parts[1], new_upper, dep_parts[2]
+                    depends[dep_idx] = (
+                        f"{dep_parts[0]} {dep_parts[1]},<{new_upper}a0 {dep_parts[2]}"
                     )
                 else:
                     raise RuntimeError(f"Weird dep length in item '{depends[dep_idx]}'")
@@ -375,7 +370,7 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
                     dep_parts[0], lower, ".".join(new_upper)
                 )
                 if len(dep_parts) == 3:
-                    depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
+                    depends[dep_idx] = f"{depends[dep_idx]} {dep_parts[2]}"
                 record["depends"] = depends
 
             continue
@@ -400,10 +395,7 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
             else:
                 cond = parse_version(old_upper) > parse_version(upper_bound)
             if cond:
-                depends[dep_idx] = "{} <{}a0".format(
-                    dep_parts[0],
-                    upper_bound,
-                )
+                depends[dep_idx] = f"{dep_parts[0]} <{upper_bound}a0"
                 record["depends"] = depends
             continue
 
@@ -443,7 +435,7 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
                 dep_parts[0], lower, ".".join(new_upper)
             )
             if len(dep_parts) == 3:
-                depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
+                depends[dep_idx] = f"{depends[dep_idx]} {dep_parts[2]}"
             record["depends"] = depends
 
 
@@ -609,8 +601,9 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
         keep_pkgs = set(keep_pkgs.split(";"))
     fns = sorted(index)
     if verbose:
-        from tqdm import tqdm
         from functools import partial
+
+        from tqdm import tqdm
 
         tqdm = partial(tqdm, desc="Applying yaml patches", file=sys.stderr)
     else:
