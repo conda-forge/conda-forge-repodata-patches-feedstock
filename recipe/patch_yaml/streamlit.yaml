@@ -1,0 +1,12 @@
+# https://protobuf.dev/news/2022-05-06/
+if:
+  name: streamlit
+  version_le: 1.9.0
+  timestamp_lt: 1730393273000  # 2024/10/31 17:47GMT+1
+then:
+  - replace_constrains:
+      old: "protobuf >=3.6.0,!=3.11"
+      new: "protobuf >=3.6.0,!=3.11,<3.20"
+  - replace_constrains:
+      old: "protobuf >=3.6.0"
+      new: "protobuf >=3.6.0,!=3.11,<3.20"
