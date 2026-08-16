@@ -1,8 +1,11 @@
 # https://github.com/conda-forge/libpython-feedstock/issues/20
 if:
-  has_depends: libpython
+  has_depends: libpython?( *)
   timestamp_lt: 1786694728000
 then:
   - replace_depends:
       old: libpython
+      new: distutils-activate-mingw
+  - replace_depends:
+      old: libpython *
       new: distutils-activate-mingw
