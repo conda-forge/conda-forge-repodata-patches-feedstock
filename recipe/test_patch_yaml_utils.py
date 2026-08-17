@@ -232,9 +232,7 @@ def test_apply_patch_yaml_add_template(key, rkey):
             nval = "linux-64"
         elif rkey == "major_version":
             nval = "10"
-        elif rkey == "minor_version":
-            nval = "0"
-        elif rkey == "patch_version":
+        elif rkey == "minor_version" or rkey == "patch_version":
             nval = "0"
         else:
             nval = "11"
@@ -269,9 +267,7 @@ def test_apply_patch_yaml_add_template(key, rkey):
             nval = "linux-64"
         elif rkey == "major_version":
             nval = "10"
-        elif rkey == "minor_version":
-            nval = "0"
-        elif rkey == "patch_version":
+        elif rkey == "minor_version" or rkey == "patch_version":
             nval = "0"
         else:
             nval = "11"

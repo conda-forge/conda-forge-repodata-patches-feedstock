@@ -123,7 +123,7 @@ def do_subdir(
     verbose=False,
     debug_package_name=None,
 ):
-    from gen_patch_json import _patch_indexes, _gen_patch_instructions
+    from gen_patch_json import _gen_patch_instructions, _patch_indexes
 
     if verbose:
         print(f"Decompressing raw repodata for {subdir}", file=sys.stderr, flush=True)

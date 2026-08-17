@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import json
 import os
 import re
@@ -9,10 +6,8 @@ import tempfile
 import urllib
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from os.path import isdir, join
-from tqdm import tqdm
 from functools import partial
-
+from os.path import isdir, join
 
 import requests
 import zstandard
@@ -26,6 +21,7 @@ from patch_yaml_utils import (
     patch_yaml_edit_index,
 )
 from show_diff import show_record_diffs
+from tqdm import tqdm
 
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda.anaconda.org"
@@ -393,10 +389,7 @@ def _fix_libgfortran(fn, record):
         # 'libgfortran >=3.0.1' -> >=3.0.1,<4.0.0.a0
         if ("==" in depends[dep_idx]) or ("<" in depends[dep_idx]):
             pass
-        elif depends[dep_idx] == "libgfortran":
-            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
-            record["depends"] = depends
-        elif ">=3.0.1" in depends[dep_idx]:
+        elif depends[dep_idx] == "libgfortran" or ">=3.0.1" in depends[dep_idx]:
             depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
             record["depends"] = depends
         elif ">=3.0" in depends[dep_idx]:
@@ -640,7 +633,7 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
 
         # make sure pybind11 and pybind11-global have run constraints on
         # the abi metapackage
-        # see https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/104  # noqa
+        # see https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/104
         if (
             record_name in ["pybind11", "pybind11-global"]
             # this version has a constraint sometimes
@@ -692,8 +685,8 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
                     new_constrains.append(f"{pkg} {version}.*")
                 record["constrains"] = new_constrains
 
-        if record_name == "gcc_impl_{}".format(subdir):
-            _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
+        if record_name == f"gcc_impl_{subdir}":
+            _relax_exact(fn, record, f"binutils_impl_{subdir}")
 
         # some symlinks changed in gfortran, so we need to adjust things
         # plus we missed a key version constraint
@@ -747,9 +740,7 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
         ):
             new_constrains = record.get("constrains", [])
             for pkg in ["libgcc-ng", "libstdcxx-ng", "libgfortran", "libgomp"]:
-                new_constrains.append(
-                    "{} 5.4.*|7.2.*|7.3.*|8.2.*|9.1.*|9.2.*".format(pkg)
-                )
+                new_constrains.append(f"{pkg} 5.4.*|7.2.*|7.3.*|8.2.*|9.1.*|9.2.*")
             new_constrains.append("binutils_impl_" + subdir + " <2.34")
             new_constrains.append("ld_impl_" + subdir + " <2.34")
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
@@ -794,7 +785,7 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
             record["constrains"] = new_constrains
 
         if (
-            record_name == "gcc_impl_{}".format(subdir)
+            record_name == f"gcc_impl_{subdir}"
             and record["version"]
             in ["5.4.0", "7.2.0", "7.3.0", "8.2.0", "8.4.0", "9.3.0"]
             and record.get("timestamp", 0) < 1627530043000  # 2021-07-29
