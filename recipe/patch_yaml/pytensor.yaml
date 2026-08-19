@@ -58,3 +58,31 @@ then:
   - replace_depends:
       old: numpy >=1.17.0
       new: numpy >=2.0
+---
+# PyTensor v2.38.3 tightened its numba upper bound to <=0.65.1 in
+# <https://github.com/conda-forge/pytensor-suite-feedstock/pull/209>, but the
+# already-published 2.36.0-2.38.2 records still advertise numba >0.57,<1.
+# That makes the numba constraint non-monotone across PyTensor releases and
+# creates a bogus solver downgrade path once numba 0.65.1 is no longer latest.
+# Keep the historical lower bound unchanged here; the solver issue is caused by
+# the vacuous <1 upper bound becoming non-vacuous after a future numba release.
+if:
+  name: pytensor-base
+  version_ge: 2.36.0
+  version_lt: 2.38.3
+  has_depends: numba >0.57,<1
+  timestamp_lt: 1777370150000
+then:
+  - replace_depends:
+      old: numba >0.57,<1
+      new: numba >0.57,<=0.65.1
+---
+# PyTensor started to require numba in v2.36.0. Older records did not mention
+# numba at all, so add a run constraint to keep the solver from downgrading to
+# those versions in order to accept future numba releases beyond 0.65.1.
+if:
+  name: pytensor-base
+  version_lt: 2.36.0
+  timestamp_lt: 1777370150000
+then:
+  - add_constrains: numba <=0.65.1
