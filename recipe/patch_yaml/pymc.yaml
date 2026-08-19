@@ -48,3 +48,18 @@ then:
   - replace_depends:
       old: pytensor-base >=2.31.2,<2.32
       new: pytensor-base >=2.31.7,<2.32
+
+---
+
+# ArviZ 1 removed APIs used by PyMC releases before PyMC 6. Some older
+# pymc-base packages declare only a lower bound on ArviZ, allowing solvers to
+# select an incompatible PyMC 5 / ArviZ 1 combination.
+if:
+  name: pymc-base
+  version_lt: '6'
+  timestamp_lt: 1784320883000
+  has_depends: arviz*
+then:
+  - tighten_depends:
+      name: arviz
+      upper_bound: '1.0'
