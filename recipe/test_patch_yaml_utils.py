@@ -552,6 +552,71 @@ def test_apply_patch_yaml_loosen(pre, post):
     assert record == {"depends": pre + ["numpy >=1.0.0,<3.1.2.0a0"] + post}
 
 
+@pytest.mark.parametrize("pre", [[], ["foo"]])
+@pytest.mark.parametrize("post", [[], ["bar"]])
+def test_apply_patch_yaml_change_depends(pre, post):
+    patch_yaml = {
+        "then": [
+            {
+                "change_depends": {
+                    "name": "numpy",
+                    "lower_bound": "1.1.0",
+                    "upper_bound": "1.1.2",
+                    "other": ["!=1.1.1", "~=1.1.1.0"],
+                }
+            }
+        ]
+    }
+    # change lower, one exclusion, and an upper bound (clobber everything)
+    record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {
+        "depends": pre + ["numpy >=1.1.0,!=1.1.1,~=1.1.1.0,<1.1.2a0"] + post
+    }
+
+    # Test behavior with partial update
+    patch_yaml = {
+        "then": [{"change_depends": {"name": "numpy", "upper_bound": "1.1.2"}}]
+    }
+    record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"depends": pre + ["numpy >=1.0.0,<1.1.2a0"] + post}
+
+    # Add a new exclusion
+    patch_yaml = {"then": [{"change_depends": {"name": "numpy", "other": ["!=1.1.2"]}}]}
+    record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"depends": pre + ["numpy >=1.0.0,!=1.1.2,<2.0.0a0"] + post}
+
+    # Add a new exclusion as a string instead of a list
+    patch_yaml = {"then": [{"change_depends": {"name": "numpy", "other": "~=1.1.2"}}]}
+    record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"depends": pre + ["numpy >=1.0.0,~=1.1.2,<2.0.0a0"] + post}
+
+    # changing bounds while preserving other constraints
+    patch_yaml = {
+        "then": [
+            {
+                "change_depends": {
+                    "name": "numpy",
+                    "lower_bound": "1.1.0",
+                    "upper_bound": "1.2.0",
+                }
+            }
+        ]
+    }
+    record = {"depends": pre + ["numpy >=1.0.0,!=1.1.2,<2.0.0a0"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"depends": pre + ["numpy >=1.1.0,!=1.1.2,<1.2.0a0"] + post}
+
+    # clear other constraints
+    patch_yaml = {"then": [{"change_depends": {"name": "numpy", "other": [""]}}]}
+    record = {"depends": pre + ["numpy >=1.0.0,!=1.1.2,<2.0.0a0"] + post}
+    _apply_patch_yaml(patch_yaml, record, None, None)
+    assert record == {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
+
+
 def test_schema_up_to_date():
     schema_on_disk = (Path(__file__).parent / ("patch_yaml_model.json")).read_text()
     schema_str = generate_schema(write=False)

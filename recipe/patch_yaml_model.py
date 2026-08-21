@@ -70,6 +70,22 @@ class _Name_MaxPin_UpperBound(_ForbidExtra):
     )
 
 
+class _Name_LowerBound_UpperBound_Other(_ForbidExtra):
+    name: _NonEmptyStr = ...
+    lower_bound: str | None = Field(
+        None,
+        description="Explicit lower bound version to apply to the package (e.g. `1.0`). Will be >=[value] if provided.",  # noqa: E501
+    )
+    upper_bound: str | None = Field(
+        None,
+        description="Explicit upper bound version to apply to the package (e.g. `2.0`). Will be <[value] if provided.",  # noqa: E501
+    )
+    other: list[str] = Field(
+        None,
+        description="List of additional constraints to apply to the package (e.g. `['~=1.2.5', '!=1.3.*']`). Overrides any existing 'other' constraints. To clear existing 'other' constraints, set 'other' to an empty string.",  # noqa: E501
+    )
+
+
 class _IfClause(_ForbidExtra):
     """
     Condition(s) that a PackageRecord must satisfy to be patched.
@@ -204,9 +220,14 @@ class _ThenClauseItem(_ForbidExtra):
         None,
         description="Make a dependency version constraint looser",
     )
+    change_depends: _Name_LowerBound_UpperBound_Other = Field(
+        None,
+        description="Change a dependency version constraint",
+    )
 
 
 class PatchYaml(_ForbidExtra):
+    model_config = ConfigDict(coerce_numbers_to_str=True)
     if_: _IfClause = Field(..., alias="if")
     then: Annotated[list[_ThenClauseItem], MinLen(1)] = Field(
         ...,
