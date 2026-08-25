@@ -23,3 +23,21 @@ if:
   not_has_depends: ipython_genutils?( *)
 then:
   - add_depends: ipython_genutils >=0.2.0
+---
+# yaml-language-server: $schema=../patch_yaml_model.json
+# see https://github.com/conda-forge/ipykernel-feedstock/pull/204
+if:
+  name: ipykernel
+  timestamp_le: 1770429623000
+  version_eq: "7.2.0"
+  build_number_eq: 0
+then:
+  - replace_depends:
+      old: jupyter_client >=8.0.0
+      new: jupyter_client >=8.8.0
+  - replace_depends:
+      old: jupyter_core >=4.12,!=5.0.*
+      new: jupyter_core >=5.1,!=6.0.*
+  - replace_depends:
+      old: tornado >=6.2
+      new: tornado >=6.4.1

@@ -8,3 +8,14 @@ then:
   - tighten_depends:
       name: libcurl
       upper_bound: "8.17"
+
+---
+
+# Use `pandas<3` dependency for all ArcticDB builds up to 6.7.0 (inclusive).
+if:
+  name: arcticdb
+  timestamp_lt: 1769069595000  # 2026-01-22
+then:
+  - tighten_depends:
+      name: pandas
+      upper_bound: "3"

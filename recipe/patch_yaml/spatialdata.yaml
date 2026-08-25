@@ -31,3 +31,17 @@ then:
   - replace_depends:
       old: "multiscale-spatial-image >=2.0.3"
       new: "multiscale-spatial-image 2.0.3"
+---
+# spatialdata 0.7.2 and earlier releases are not compatible with ome-zarr 0.14.0
+#
+# https://github.com/conda-forge/spatialdata-feedstock/pull/33
+# https://github.com/scverse/spatialdata/issues/1090
+# https://github.com/scverse/spatialdata/issues/1091
+if:
+  name: spatialdata
+  version_le: "0.7.2"
+  timestamp_lt: 1774021511000
+then:
+  - tighten_depends:
+      name: ome-zarr
+      upper_bound: "0.14.0"

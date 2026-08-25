@@ -33,3 +33,63 @@ then:
   - replace_depends:
       old: vector-classes >=1.4.1,<1.5.0a0
       new: vector-classes >=1.4.1,<1.4.2a0
+---
+# root_base 6.36.06 build 4 (from conda-forge/root-feedstock#333) dropped the
+# sysroot version pin. ROOT's cling JIT compiler uses the conda sysroot headers
+# at runtime, so the sysroot version must match what ROOT was built against.
+# Without this constraint, the solver picks sysroot 2.28, causing
+# "redefinition of 'timespec'" errors when cling tries to #include <Python.h>.
+# See https://github.com/scikit-hep/awkward/actions/runs/22073349438
+if:
+  name: root_base
+  version: "6.36.06"
+  build_number_in: [4]
+  subdir_in: linux-64
+  has_depends: "sysroot_linux-64"
+  timestamp_lt: 1771323458000
+then:
+  - replace_depends:
+      old: sysroot_linux-64
+      new: sysroot_linux-64 2.17.*
+---
+if:
+  name: root_base
+  version: "6.36.06"
+  build_number_in: [4]
+  subdir_in: linux-aarch64
+  has_depends: "sysroot_linux-aarch64"
+  timestamp_lt: 1771323458000
+then:
+  - replace_depends:
+      old: sysroot_linux-aarch64
+      new: sysroot_linux-aarch64 2.17.*
+---
+if:
+  name: root_base
+  version: "6.36.06"
+  build_number_in: [4]
+  subdir_in: linux-ppc64le
+  has_depends: "sysroot_linux-ppc64le"
+  timestamp_lt: 1771323458000
+then:
+  - replace_depends:
+      old: sysroot_linux-ppc64le
+      new: sysroot_linux-ppc64le 2.17.*
+---
+# root_cxx_standard is a noarch marker package whose version selects the C++
+# standard variant of root_base (cxx20/cxx23 build variants, introduced in
+# root_base 6.36.08). root_base builds older than 6.36.08 predate the variant
+# split: they carry no root_cxx_standard dependency, so they trivially satisfy
+# any root_cxx_standard pin. Because the non-default variants (currently cxx23)
+# are down-prioritized with a track_feature, solvers prefer those ancient
+# pre-variant builds over the current ones, e.g.
+# `conda install root_base root_cxx_standard=23` yields root_base 6.32.x.
+# Constraining the marker to variant-aware root_base versions makes such
+# solves pick the intended variant instead.
+# See https://github.com/prefix-dev/pixi/issues/6647 for a full analysis.
+if:
+  name: root_cxx_standard
+  subdir_in: noarch
+  timestamp_lt: 1784800000000
+then:
+  - add_constrains: root_base >=6.36.8

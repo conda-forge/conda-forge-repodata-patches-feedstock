@@ -3,6 +3,7 @@
 #     _pin_looser(fn, record, "libarchive", upper_bound="3.6.0")
 if:
   has_depends: libarchive >=3.3*
+  timestamp_le: 1771074998821
 then:
   - loosen_depends:
       name: libarchive

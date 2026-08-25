@@ -1,0 +1,11 @@
+# dask-image 2026.5.0 requires tifffile >=2020.10.1
+# https://github.com/conda-forge/dask-image-feedstock/pull/39
+if:
+  name: dask-image
+  version: "2026.5.0"
+  build_number: 0
+  timestamp_lt: 1780674704000
+then:
+  - replace_depends:
+      old: tifffile >=2018.10.18
+      new: tifffile >=2020.10.1

@@ -1,0 +1,6 @@
+if:
+  name: astropy-healpix
+  version: 2.0.0
+  build_number_in: [0]
+then:
+  - add_depends: "numpy >=2"

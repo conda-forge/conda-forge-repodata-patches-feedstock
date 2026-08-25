@@ -30,3 +30,12 @@ then:
   - replace_depends:
       old: numpy >=1.1
       new: numpy >=1.1,<2.0a0
+---
+if:
+  name: taurus-core
+  version_le: 5.2.4
+  timestamp_lt: 1771237314000
+then:
+  - replace_depends:
+      old: setuptools
+      new: setuptools <82.0.0

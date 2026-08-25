@@ -1,0 +1,10 @@
+# https://github.com/conda/rattler/issues/2023
+if:
+  name: conda-smithy
+  version: "3.54.2"
+  build_number: 0
+  timestamp_lt: 1769815887000
+then:
+  - tighten_depends:
+      name: py-rattler
+      upper_bound: "0.22"

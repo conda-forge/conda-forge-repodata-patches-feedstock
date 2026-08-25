@@ -1,0 +1,16 @@
+# add the missing eigen-abi runtime pin added by https://github.com/conda-forge/pcl-feedstock/pull/92
+# as pcl never constrained the eigen version, we can add
+# the pin for eigen-abi 3.4.0.* for all pcl builds after the
+# release of eigen 3.4.0
+# (https://conda-metadata-app.streamlit.app/?q=conda-forge%2Flinux-64%2Feigen-3.4.0-h4bd325d_0.tar.bz2)
+# that has a 1630134388298 (we add a 1 day buffer to be safe) and
+# before the timestamp of the first eigen 5.0.1
+# (https://conda-metadata-app.streamlit.app/?q=conda-forge%2Flinux-64%2Feigen-5.0.1-hc65338a_0.conda)
+# that was built with timestamp 1773744756289
+if:
+  name: pcl
+  not_has_depends: eigen-abi*
+  timestamp_ge: 1630220788298
+  timestamp_lt: 1773744756289
+then:
+  - add_depends: eigen-abi >=3.4.0.100,<3.4.0.101.0a0

@@ -1,0 +1,8 @@
+if:
+  name: taurus_pyqtgraph
+  version_le: 0.9.7
+  timestamp_le: 1770992370000
+then:
+  - replace_depends:
+      old: pyqtgraph >=0.11
+      new: pyqtgraph >=0.11,<0.14

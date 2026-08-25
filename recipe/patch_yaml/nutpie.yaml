@@ -1,0 +1,12 @@
+# nutpie <=0.16.6 is incompatible with arviz >=1.0 (and therefore pymc >=6).
+# The upper bound was added upstream starting with nutpie 0.16.7
+# (arviz >=0.20.0,<1.0). Without this patch, solvers picking an older nutpie
+# alongside `pymc>=6` would resolve arviz >=1.0 and produce a broken environment.
+if:
+  name: nutpie
+  version_le: "0.16.6"
+  timestamp_lt: 1778703359000
+then:
+  - tighten_depends:
+      name: arviz
+      upper_bound: "1.0"

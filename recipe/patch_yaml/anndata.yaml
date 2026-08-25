@@ -59,3 +59,28 @@ if:
   timestamp_lt: 1736784424000
 then:
   - add_constrains: "zarr<3"
+---
+# anndata requires pandas<3. Runtime constraint added in 0.12.7
+# https://github.com/conda-forge/anndata-feedstock/pull/63/changes
+# https://github.com/scverse/anndata/releases/tag/0.12.7
+# https://github.com/scverse/anndata/pull/2250
+if:
+  name: anndata
+  version_lt: "0.12.7"
+  timestamp_lt: 1773672197000
+then:
+  - add_constrains: "pandas<3"
+---
+# anndata removed the constraint pyarrow<21 in version 0.12.6, but the feedstock
+# recipe was not updated until version 0.12.9 build 1.
+#
+# https://github.com/conda-forge/anndata-feedstock/issues/66
+# https://github.com/conda-forge/anndata-feedstock/pull/67
+# https://github.com/scverse/anndata/pull/2190
+if:
+  name: anndata
+  version_ge: "0.12.6"
+  version_le: "0.12.9"
+  timestamp_lt: 1774982595000
+then:
+  - remove_constrains: "pyarrow <21"

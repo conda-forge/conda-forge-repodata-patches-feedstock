@@ -7,3 +7,20 @@ then:
   - replace_depends:
       old: regex ~=2022.4
       new: regex >=2022.4
+---
+# mkdocs 2.x is incompatible with mkdocs-material
+if:
+  name: mkdocs-material
+  timestamp_lt: 1774604475000
+  has_depends: "mkdocs?( *)"
+then:
+  - tighten_depends:
+      name: mkdocs
+      upper_bound: "2"
+---
+if:
+  name: mkdocs-material
+  timestamp_lt: 1774604475000
+  not_has_depends: "mkdocs?( *)"
+then:
+  - add_depends: "mkdocs <2"

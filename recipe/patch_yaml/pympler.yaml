@@ -1,0 +1,15 @@
+# pympler 1.1 added a pywin32 requirement upstream in
+# https://github.com/pympler/pympler/commit/8019a883eec547d91ecda6ba12669d4f4504c625
+# but the conda-forge feedstock did not declare it until
+# https://github.com/conda-forge/pympler-feedstock/pull/16, which produced
+# build 2. Older builds of 1.1 are already published without the dependency,
+# so they need it added here. `pywin32-on-windows` is used instead of a
+# subdir-conditional `pywin32` because it is a platform-aware metapackage
+# that resolves to `pywin32` on Windows and is a no-op elsewhere.
+if:
+  name: pympler
+  version_eq: "1.1"
+  timestamp_lt: 1784151420000  # 2026-07-15T21:37:00Z
+
+then:
+  - add_depends: pywin32-on-windows

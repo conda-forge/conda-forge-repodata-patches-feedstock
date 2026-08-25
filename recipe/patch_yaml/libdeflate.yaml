@@ -1,0 +1,18 @@
+# The libdeflate ABI is very stable. Loosen upper bound to reflect this.
+#
+# https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/pull/982
+#
+# Once a new libdeflate minor release is determined to be ABI compatible, the
+# upper bound in all the `new:` fields below need to be updated to this latest
+# minor release.
+#
+# This is the strategy used by the bioconda channel
+# https://github.com/bioconda/bioconda-recipes/blob/2b170ae75dcc4b2a17c53fd4b77554e75178c2d3/recipes/bioconda-repodata-patches/gen_patch_json.py#L174
+#
+if:
+  has_depends: libdeflate*
+  timestamp_lt: 1774894617000
+then:
+  - loosen_depends:
+      name: libdeflate
+      upper_bound: "1.26"

@@ -20,3 +20,20 @@ then:
   - replace_depends:
       old: astunparse
       new: astunparse <=1.6.2
+
+---
+
+
+# Pandas 3.0 had broken a number of mdtraj's functionalities.
+# This will pin all versions with a pandas dependency to
+# pandas <3 until we can do something about it in the future.
+# This includes mdtraj v1.11.1 (build 0) and below.
+if:
+  name: mdtraj
+  version_le: 1.11.1
+  has_depends: pandas
+  timestamp_lt: 1769106266000  # 2026-01-22
+then:
+  - tighten_depends:
+      name: pandas
+      upper_bound: "3"

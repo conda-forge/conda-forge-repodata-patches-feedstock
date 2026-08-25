@@ -1,8 +1,11 @@
 # older vsts-python-api needs constrained msrest dep
 if:
   name: vsts-python-api
-  timestamp_lt: 1733163793000
+  timestamp_lt: 1770720208000
 then:
   - tighten_depends:
       name: msrest
       upper_bound: "0.6"
+  - tighten_depends:
+      name: setuptools
+      upper_bound: "82"

@@ -59,3 +59,19 @@ then:
   - replace_depends:
       old: numpy >=1.24
       new: ${old},<2.3.0a0
+---
+# numba 0.55.x uses `from pkg_resources import iter_entry_points` in
+# numba/core/entrypoints.py. pkg_resources was removed from setuptools
+# in version 82.0.0, so numba 0.55.x fails to import with setuptools >=82.
+# Numba 0.56+ switched to importlib.metadata and is not affected.
+# Numba 0.54 and below did not have the entrypoints mechanism.
+if:
+  name: numba
+  timestamp_le: 1775229485000
+  version_ge: "0.55.0"
+  version_lt: "0.56"
+  has_depends: setuptools
+then:
+  - tighten_depends:
+      name: setuptools
+      upper_bound: "82"

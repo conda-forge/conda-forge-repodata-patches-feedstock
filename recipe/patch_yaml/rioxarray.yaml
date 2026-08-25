@@ -20,3 +20,15 @@ then:
   - replace_depends:
       old: rasterio >=1.1.1
       new: rasterio >=1.2
+
+---
+
+if:
+  name: rioxarray
+  version: "0.21.0"
+  build_number_in: [0]
+  timestamp_lt: 1772120515000
+then:
+  - replace_depends:
+      old: xarray >=2024.7.0
+      new: xarray >=2024.7.0,<2025.12

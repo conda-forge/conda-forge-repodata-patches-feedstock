@@ -1,0 +1,15 @@
+# Backport the missing run_constraints introduced in
+# https://github.com/conda-forge/eigen-feedstock/pull/53
+# to eigen-abi 3.4.0.70, 3.4.0.80 and 3.4.0.100 build 1.
+#
+# Use a timestamp guard set to the first build-2 eigen-abi artifact timestamp
+# (linux-64, 3.4.0.100 build 2: 1771922274215),
+# so the patch only affects already-published build-1 records.
+if:
+  name: eigen-abi
+  version_in: [3.4.0.70, 3.4.0.80, 3.4.0.100]
+  build_number: 1
+  not_has_constrains: eigen >=3.4.0,<3.4.1.0a0
+  timestamp_lt: 1771922274215
+then:
+  - add_constrains: eigen >=3.4.0,<3.4.1.0a0

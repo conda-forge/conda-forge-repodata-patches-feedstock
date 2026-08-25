@@ -1,0 +1,26 @@
+if:
+    subdir_in:
+        - linux-64
+        - linux-aarch64
+    artifact_in:
+        - cuda-command-line-tools-12.5.0-h8af1aa0_0.conda
+        - cuda-command-line-tools-12.5.0-ha770c72_0.conda
+        - cuda-command-line-tools-12.5.1-h8af1aa0_0.conda
+        - cuda-command-line-tools-12.5.1-ha770c72_0.conda
+        - cuda-command-line-tools-12.6.0-h8af1aa0_0.conda
+        - cuda-command-line-tools-12.6.0-ha770c72_0.conda
+        - cuda-command-line-tools-12.6.1-h8af1aa0_0.conda
+        - cuda-command-line-tools-12.6.1-ha770c72_0.conda
+        - cuda-command-line-tools-12.6.2-h8af1aa0_0.conda
+        - cuda-command-line-tools-12.6.2-ha770c72_0.conda
+        - cuda-command-line-tools-12.6.3-h8af1aa0_0.conda
+        - cuda-command-line-tools-12.6.3-ha770c72_0.conda
+        - cuda-command-line-tools-12.8.0-h8af1aa0_0.conda
+        - cuda-command-line-tools-12.8.0-ha770c72_0.conda
+        - cuda-command-line-tools-12.8.1-h8af1aa0_0.conda
+        - cuda-command-line-tools-12.8.1-ha770c72_0.conda
+        - cuda-command-line-tools-12.9.0-h8af1aa0_0.conda
+        - cuda-command-line-tools-12.9.0-ha770c72_0.conda
+    timestamp_lt: 1774914395000
+then:
+    - remove_depends: cuda-gdb?( *)

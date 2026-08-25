@@ -1,0 +1,23 @@
+# xarray-schema <= 0.0.3 requires setuptools<82 at runtime
+# https://github.com/xarray-contrib/xarray-schema/issues/193
+# https://github.com/xarray-contrib/xarray-schema/pull/194
+# https://github.com/conda-forge/xarray-schema-feedstock/pull/2
+if:
+  name: xarray-schema
+  version_le: "0.0.3"
+  timestamp_lt: 1770750491000
+then:
+  - add_depends: "setuptools <82"
+---
+# Unclear why numpy >=1.20 was ever used. The first version on conda-forge was
+# 0.0.3, and it required >=1.21
+# https://anaconda.org/channels/conda-forge/packages/xarray-schema/files
+# https://github.com/xarray-contrib/xarray-schema/blob/0.0.3/requirements.txt#L2
+if:
+  name: xarray-schema
+  version: "0.0.3"
+  timestamp_lt: 1770750491000
+then:
+  - replace_depends:
+      old: "numpy >=1.20"
+      new: "numpy >=1.21"
