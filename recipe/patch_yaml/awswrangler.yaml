@@ -7,3 +7,20 @@ then:
   - rename_constrains:
       old: "ray[default,data]"
       new: ray
+---
+# awswrangler 3.16.0 constrains `pyiceberg[pyarrow]`, which is PEP 508 extras
+# syntax and not a valid conda package name. conda tolerates it, but stricter
+# matchspec parsers (e.g. rattler) reject the whole record, which makes the
+# artifact uninstallable with rattler based tooling. The feedstock itself
+# switched to plain `pyiceberg >=0.7.0,<1` in 3.16.1.
+#
+# https://github.com/conda-forge/admin-requests/pull/2321
+if:
+  name: awswrangler
+  subdir_in: noarch
+  version: "3.16.0"
+  timestamp_lt: 1788449634000
+then:
+  - rename_constrains:
+      old: "pyiceberg[pyarrow]"
+      new: pyiceberg

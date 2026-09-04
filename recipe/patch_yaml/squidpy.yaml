@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# squidpy 1.4.1 and 1.5.0 constrain `napari[pyqt5]`, which is PEP 508 extras
+# syntax and not a valid conda package name. conda tolerates it, but stricter
+# matchspec parsers (e.g. rattler) reject the whole record, which makes the
+# artifacts uninstallable with rattler based tooling. The extra cannot be
+# expressed as a matchspec, so it is dropped: conda-forge ships napari 0.4.15
+# with both a pyqt and a pyside2 build, and choosing the Qt binding is up to
+# the environment anyway. Upstream dropped the constraint again in 1.6.3.
+#
+# https://github.com/conda-forge/admin-requests/pull/2321
+if:
+  name: squidpy
+  subdir_in: noarch
+  version_in:
+    - "1.4.1"
+    - "1.5.0"
+  timestamp_lt: 1788449634000
+then:
+  - rename_constrains:
+      old: "napari[pyqt5]"
+      new: napari

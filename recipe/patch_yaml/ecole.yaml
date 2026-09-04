@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# ecole and libecole 0.8.0/0.8.1 leaked unrendered jinja into their
+# run_constrained section, so the records carry literal constraints like
+# `pin_compatible('xtensor-python')`, `pin_compatible('xtensor')` and
+# `pin_compatible('xsimd')`. Those are not valid matchspecs: conda tolerates
+# them, but stricter matchspec parsers (e.g. rattler) reject the whole record,
+# which makes the artifacts uninstallable with rattler based tooling.
+#
+# The constraints are dropped rather than turned into real pins: an unrendered
+# `pin_compatible(...)` never constrained anything, so removing it is what these
+# records already effectively mean. The feedstock fixed the recipe in build 4 of
+# 0.8.1, which constrains `xtensor-python >=0.26.1,<1.0a0` /
+# `xsimd >=8.1.0,<9.0a0` / `xtensor >=0.24.6,<1.0a0`.
+#
+# https://github.com/conda-forge/admin-requests/pull/2321
+if:
+  name_in:
+    - ecole
+    - libecole
+  has_constrains: "pin_compatible(*"
+  timestamp_lt: 1788468686000
+then:
+  - remove_constrains: "pin_compatible(*"

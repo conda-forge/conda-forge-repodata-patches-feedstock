@@ -84,3 +84,25 @@ if:
   timestamp_lt: 1774982595000
 then:
   - remove_constrains: "pyarrow <21"
+---
+# anndata 0.12.1 and 0.12.2 build 0 constrain `dask[array]`, which is the PEP 508
+# extras syntax and not a valid conda package name. conda tolerates it, but
+# stricter matchspec parsers (e.g. rattler) reject the whole record, so the
+# artifacts are not installable with rattler based tooling (pixi, mamba >= 2).
+# The conda-forge `dask` package already pulls in numpy, which is all that the
+# `[array]` extra adds, so renaming to plain `dask` matches what the feedstock
+# itself did in 0.12.2 build 1.
+#
+# https://github.com/conda-forge/admin-requests/pull/2321
+# https://github.com/conda-forge/anndata-feedstock/pull/58
+if:
+  name: anndata
+  subdir_in: noarch
+  version_in:
+    - "0.12.1"
+    - "0.12.2"
+  timestamp_lt: 1788449634000
+then:
+  - rename_constrains:
+      old: "dask[array]"
+      new: dask
