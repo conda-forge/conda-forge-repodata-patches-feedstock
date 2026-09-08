@@ -436,6 +436,17 @@ def _fix_libcxx(fn, record):
             record["depends"] = depends
 
 
+def _fix_openmp_mutex(fn, record):
+    if record["name"] != "_openmp_mutex":
+        return
+    build_num = str(record["build_number"])
+    build_str = record["build"]
+    if build_str.startswith(f"{build_num}_"):
+        return
+    fixed_build_num = int(build_str.split("_")[0])
+    record["build_number"] = fixed_build_num
+
+
 def _extract_and_remove_vc_feature(record):
     features = record.get("features", "").split()
     vc_features = tuple(f for f in features if f.startswith("vc"))
@@ -701,6 +712,9 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
             for i, dep in enumerate(record["depends"]):
                 if dep == f"gfortran_{subdir}":
                     record["depends"][i] = dep + " ==" + record["version"]
+
+        # fix build number and string divergence
+        _fix_openmp_mutex(fn, record)
 
         # make sure the libgfortran version is bound from 3 to 4 for osx
         if subdir == "osx-64":
