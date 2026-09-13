@@ -1,0 +1,8 @@
+# simpeg is not compatible with numpy 2.0 yet;
+if:
+  name: simpeg
+  timestamp_lt: 1730156189047
+then:
+  - tighten_depends:
+      name: numpy
+      upper_bound: "2.0"
