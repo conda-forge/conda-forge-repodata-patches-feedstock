@@ -1,0 +1,9 @@
+# Past builds for nvim <=0.12.5 (build 0) incompatible with unibilium >=2.1.4,
+# due to a fix in malformed SONAME;
+# see https://github.com/conda-forge/nvim-feedstock/pull/56
+if:
+  name: nvim
+  has_depends: "unibilium?( *)"
+  timestamp_lt: 1787544213485
+then:
+  - add_depends: "unibilium <2.1.4"
