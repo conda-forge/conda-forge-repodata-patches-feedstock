@@ -18,3 +18,13 @@ if:
   build_number: 0
 then:
   - remove_depends: "cuda-version >=12.8,<13"
+---
+# Fixes broken pip check:
+# https://github.com/conda-forge/cuda-python-feedstock/issues/205
+if:
+  name: cuda-python
+  version: 13.3.0
+  not_has_depends: cuda-core
+  timestamp_lt: 1780272000000
+then:
+  - add_depends: cuda-core >=1.0.0,<1.1.0
