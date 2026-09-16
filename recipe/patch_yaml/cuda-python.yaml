@@ -19,7 +19,7 @@ if:
 then:
   - remove_depends: "cuda-version >=12.8,<13"
 ---
-# Fixes broken pip check:
+# Fixes incorrect constraints
 # https://github.com/conda-forge/cuda-python-feedstock/issues/205
 if:
   name: cuda-python
@@ -28,3 +28,14 @@ if:
   timestamp_lt: 1780272000000
 then:
   - add_depends: cuda-core >=1.0.0,<1.1.0
+---
+# Fixes incorrect constraints
+# https://github.com/conda-forge/cuda-python-feedstock/issues/205
+if:
+  name: cuda-python
+  version: 13.4.1
+  timestamp_lt: 1789584138000
+then:
+  - replace_depends:
+      old: cuda-core >=1.0.0,<1.1.0
+      new: cuda-core >=1.2.0,<1.3.0
