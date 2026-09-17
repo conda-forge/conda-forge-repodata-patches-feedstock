@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# GPy 1.13.1 build 0 was published without an upper bound on matplotlib-base.
+# matplotlib 3.9 removed `matplotlib.cm.get_cmap`, which GPy calls at import time in
+# GPy/plotting/matplot_dep/defaults.py:47, so `import GPy` raises AttributeError rather
+# than ImportError -- packages that guard the import with `except ImportError` still break.
+# The gpy feedstock already added this bound when it rebuilt 1.13.1 as build 1, and it is
+# present in 1.13.2; this applies the same bound retroactively to the build 0 artifacts.
+# GPy 1.14.2 fixed the call upstream and is deliberately not patched.
+if:
+  name: gpy
+  version: "1.13.1"
+  has_depends: matplotlib-base
+  timestamp_lt: 1789632048000
+then:
+  - tighten_depends:
+      name: matplotlib-base
+      upper_bound: "3.9"
+---
+# GPy 1.10.0 predates two removals in its own dependencies, and has no bound on either:
+#   * numpy 1.25 removed `numpy.testing.Tester`, imported by GPy/__init__.py:32
+#   * matplotlib 3.9 removed the `matplotlib.numpy` re-export, used by
+#     GPy/plotting/matplot_dep/variational_plots.py:1
+# Both raise ImportError on `import GPy`. Verified importable with numpy 1.24 +
+# matplotlib 3.8, and broken at numpy 1.25 and matplotlib 3.9 respectively.
+# Without this, patching 1.13.1 above just moves the solver down onto 1.10.0.
+if:
+  name: gpy
+  version: "1.10.0"
+  timestamp_lt: 1789632048000
+then:
+  - tighten_depends:
+      name: matplotlib-base
+      upper_bound: "3.9"
+  - tighten_depends:
+      name: numpy
+      upper_bound: "1.25"
