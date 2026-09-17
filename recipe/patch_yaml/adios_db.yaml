@@ -1,0 +1,11 @@
+if:
+  name: adios_db
+  version: 1.2.4
+  timestamp_lt: 1724885983000
+  build_number: 0
+  subdir_in:
+    - noarch
+then:
+  - replace_depends:
+      old: numpy >=2
+      new: numpy >=1.24
