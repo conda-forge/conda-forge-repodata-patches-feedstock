@@ -1,0 +1,20 @@
+# Starting with moab 5.6.0 build 7, the feedstock builds with rattler-build
+# and uses `down_prioritize_variant` to prefer the nompi + notempest variant,
+# which adds the track feature `moab-p-0` to every other variant. Older builds
+# of those variants carry no track feature, and because solvers rank track
+# features ahead of version and build number, the old builds win the solve
+# over the current ones (e.g. `moab * mpi_mpich_notempest_*` resolves to
+# 5.6.0 build 6 instead of build 9). Add the same track feature to the older
+# builds of the de-prioritized variants so ordering falls back to version and
+# build number.
+# c.f. https://github.com/conda-forge/admin-requests/pull/2345#issuecomment-5687428500
+if:
+  name: moab
+  build_in:
+    - mpi_*
+    - nompi_tempest_*
+  not_has_track_features: moab-p-0
+  timestamp_le: 1789509680000
+then:
+  - add_track_features:
+      - moab-p-0
