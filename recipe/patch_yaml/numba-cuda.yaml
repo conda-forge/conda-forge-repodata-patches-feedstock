@@ -1,0 +1,9 @@
+# numba-cuda is incompatible with numpy>=2.5 and this will not be fixed
+# because numba-cuda is in maintenance mode.
+# ref: https://github.com/NVIDIA/numba-cuda/issues/907
+# ref: https://github.com/conda-forge/numba-cuda-feedstock/issues/93
+if:
+  name: numba-cuda
+  timestamp_lt: 1789665061000
+then:
+  - add_constrains: numpy <2.5.0a0
