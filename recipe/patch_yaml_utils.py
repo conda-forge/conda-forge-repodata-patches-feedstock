@@ -1,10 +1,11 @@
-import fnmatch as _fnmatch
 import glob
+import logging
 import os
 import re
 import string
 import sys
 from functools import lru_cache
+import fnmatch as _fnmatch
 
 import yaml
 from packaging.version import parse as parse_version
@@ -447,6 +448,46 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
             record["depends"] = depends
 
 
+def _change_depends(record, pat, spec_lower_bound, spec_upper_bound, spec_other):
+    new_depends = []
+    for dep in record.get("depends", []):
+        dep_parts = dep.split(" ")
+        dep_name = dep_parts[0]
+        dep_lower_bound = None
+        dep_upper_bound = None
+        dep_other = []
+        if len(dep_parts) > 1:
+            for constraint in dep_parts[1].split(","):
+                if constraint.startswith(">="):
+                    dep_lower_bound = constraint[2:]
+                elif constraint.startswith("<"):
+                    dep_upper_bound = constraint[1:]
+                else:
+                    dep_other.append(constraint)
+
+        if fnmatch(dep_name, pat):
+            lower_bound = spec_lower_bound if spec_lower_bound else dep_lower_bound
+            parts = []
+            if lower_bound:
+                parts.append(f">={lower_bound}")
+
+            other = spec_other if spec_other else dep_other
+            # Remove empty strings from other
+            other = [other for other in other if other]
+            if other:
+                parts.extend(other)
+
+            upper_bound = spec_upper_bound if spec_upper_bound else dep_upper_bound
+            if upper_bound:
+                if not upper_bound.endswith("a0"):
+                    upper_bound += "a0"
+                parts.append(f"<{upper_bound}")
+            new_depends.append(f"{dep_name} {','.join(parts)}")
+        else:
+            new_depends.append(dep)
+    record["depends"] = new_depends
+
+
 def _apply_patch_yaml(patch_yaml, record, subdir, fn):
     for inst in patch_yaml["then"]:
         for k, v in inst.items():
@@ -555,6 +596,10 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                     upper_bound = _maybe_process_template(
                         str(upper_bound), record, subdir
                     )
+                    logging.warning(
+                        "upper_bound is deprecated in the tighten_depends clause; "
+                        "use change_depends clause instead."
+                    )
                 for dep in record.get("depends", []):
                     dep_name = dep.split(" ")[0]
                     if fnmatch(dep_name, pat):
@@ -574,6 +619,10 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                     upper_bound = _maybe_process_template(
                         str(upper_bound), record, subdir
                     )
+                    logging.warning(
+                        "upper_bound is deprecated in the loosen_depends clause; "
+                        "use change_depends clause instead."
+                    )
                 for dep in record.get("depends", []):
                     dep_name = dep.split(" ")[0]
                     if fnmatch(dep_name, pat):
@@ -584,6 +633,28 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                             max_pin=max_pin,
                             upper_bound=upper_bound,
                         )
+            elif k == "change_depends":
+                pat = _maybe_process_template(v["name"], record, subdir)
+                spec_lower_bound = v.get("lower_bound", None)
+                spec_upper_bound = v.get("upper_bound", None)
+                spec_other = v.get("other", None)
+                if spec_other is not None and not isinstance(spec_other, list):
+                    spec_other = [spec_other]
+                if spec_lower_bound:
+                    spec_lower_bound = _maybe_process_template(
+                        spec_lower_bound, record, subdir
+                    )
+                if spec_upper_bound:
+                    spec_upper_bound = _maybe_process_template(
+                        spec_upper_bound, record, subdir
+                    )
+                if spec_other:
+                    spec_other = [
+                        _maybe_process_template(_v, record, subdir) for _v in spec_other
+                    ]
+                _change_depends(
+                    record, pat, spec_lower_bound, spec_upper_bound, spec_other
+                )
 
             else:
                 raise KeyError("Unrecognized 'then' key '%s'!" % k)
