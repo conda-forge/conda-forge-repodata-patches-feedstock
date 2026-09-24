@@ -1,0 +1,22 @@
+# libsrtp2's shared library name embeds the full version (libsrtp2.so.2.8.0,
+# @rpath/libsrtp2.2.8.0.dylib), but its run_export was max_pin='x.x', so
+# packages built against 2.8.0 accepted 2.8.1 and failed to load it.
+# Narrow the existing records to the patch release they were built against.
+# https://github.com/conda-forge/libsrtp2-feedstock/pull/7
+if:
+  name: "*"
+  has_depends: libsrtp2 >=2.8.0,<2.9.0a0
+  timestamp_lt: 1790222088049
+then:
+  - replace_depends:
+      old: libsrtp2 >=2.8.0,<2.9.0a0
+      new: libsrtp2 >=2.8.0,<2.8.1.0a0
+---
+if:
+  name: "*"
+  has_depends: libsrtp2 >=2.7.0,<2.8.0a0
+  timestamp_lt: 1790222088049
+then:
+  - replace_depends:
+      old: libsrtp2 >=2.7.0,<2.8.0a0
+      new: libsrtp2 >=2.7.0,<2.7.1.0a0
