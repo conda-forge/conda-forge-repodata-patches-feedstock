@@ -1,0 +1,661 @@
+# pin existing noarch Perl packages to *nix because they won't work on Windows
+# until rebuilt for 5.44. Necessary because the 5.44 and later builds removed
+# the platform-specific _strawberry build suffix on Windows builds, but the
+# current noarch packages contain colons in the manpage file paths which
+# cause errors when attempting to install on Windows
+---
+if:
+  name: perl-algorithm-diff
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-apache-test
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-app-cpanminus
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-base
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-business-isbn
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-business-isbn-data
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-business-issn
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-carp
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-carp-assert
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-carp-clan
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-class-trigger
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-clone-choose
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-common-sense
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-compress-bgzf
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-config-simple
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-config-tiny
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-constant
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-cpan-meta-yaml
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-digest-crc32
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-email-date-format
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-env
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-env-path
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-exporter
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-exporter-tidy
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-exporter-tiny
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-extutils-makemaker
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-file-chdir
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-file-homedir
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-file-path
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-file-tee
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-file-temp
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-file-which
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-hash-merge
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-if
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-importer
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-io-socket-ssl
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-json-maybexs
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-json-pp
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-lib
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-log-log4perl
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-memoize
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-mime-charset
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-module-pluggable
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-number-compare
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-number-format
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-parent
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-path-tiny
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-perl-ostype
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-proc-fork
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-regexp-common
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-scope-guard
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-set-scalar
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-sub-info
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-sub-install
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-svg
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-test
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-test-deep
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-test-exception
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-test-harness
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-test-needs
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-test-requires
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-test-simple
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-test-warn
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-test-without-module
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-text-abbrev
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-text-csv
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-text-diff
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-text-levenshtein
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-text-parsewords
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-text-soundex
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-tie-cache
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-tie-cacher
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-tie-refhash
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-type-tiny
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-xml-filter-buffertext
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-xml-namespacesupport
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-xml-sax
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-xml-sax-base
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-xml-sax-expat
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-xml-xpath
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-xsloader
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
+---
+if:
+  name: perl-yaml-tiny
+  subdir_in: noarch
+  timestamp_lt: 1790308062000
+then:
+  - add_depends:
+      - __unix
