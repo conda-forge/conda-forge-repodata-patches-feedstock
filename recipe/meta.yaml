@@ -9,7 +9,7 @@ source:
 
 build:
   noarch: generic
-  number: 1
+  number: 2
   script:
     - pytest -vv test_patch_yaml_utils.py
     - pytest -vv test_gen_patch_json.py
