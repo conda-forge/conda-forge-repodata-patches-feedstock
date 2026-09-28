@@ -1,0 +1,12 @@
+# pin existing noarch Perl packages to *nix because they won't work on Windows
+# until rebuilt for 5.44. Necessary because the 5.44 and later builds removed
+# the platform-specific _strawberry build suffix on Windows builds, but the
+# current noarch packages contain colons in the manpage file paths which
+# cause errors when attempting to install on Windows
+if:
+  subdir_in: noarch
+  name: perl-*
+  timestamp_lt: 1790308062000
+  has_depends: perl >=5.32.1,<6.0a0 *_perl5
+then:
+  - add_depends: __unix
