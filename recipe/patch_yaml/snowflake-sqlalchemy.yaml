@@ -59,3 +59,14 @@ then:
   - replace_depends:
       old: sqlalchemy <2.0.0
       new: sqlalchemy <1.4.42
+---
+# snowflake-sqlalchemy is incompatible with sqlalchemy>=2.1, see
+# https://github.com/snowflakedb/snowflake-sqlalchemy/issues/652
+# https://github.com/conda-forge/snowflake-sqlalchemy-feedstock/pull/46
+if:
+  name: snowflake-sqlalchemy
+  has_depends: sqlalchemy >=1.4.19
+then:
+  - replace_depends:
+      old: sqlalchemy >=1.4.19
+      new: sqlalchemy >=1.4.19,<2.1
