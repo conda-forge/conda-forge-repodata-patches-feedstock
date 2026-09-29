@@ -1,0 +1,9 @@
+# Old version of napari-3d-counter do not work with modern version of napari
+if:
+  name: napari-3d-counter
+  version_le: "0.1.9"
+  timestamp_lt: 1787686737000
+then:
+  - tighten_depends:
+      name: napari
+      upper_bound: "0.4.1"
