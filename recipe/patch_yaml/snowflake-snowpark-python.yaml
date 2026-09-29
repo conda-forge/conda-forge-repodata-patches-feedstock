@@ -20,3 +20,22 @@ then:
   - replace_depends:
       old: snowflake-connector-python >=3.14.0,<4.0.0
       new: snowflake-connector-python >=3.16.0,<4.0.0
+---
+# snowflake-snowpark-python 1.52.0 py314 build 1 was rebuilt against protobuf 7 /
+# libprotobuf 7.35.1, but the installed wheel still requires protobuf>=3.20,<6.34.
+# conda can therefore install this build next to protobuf 7.35.1, after which
+# `pip check` fails. Build 2 already uses protobuf 6.x; patch build 1 to match.
+# https://github.com/conda-forge/snowflake-snowpark-python-feedstock
+if:
+  name: snowflake-snowpark-python
+  version: 1.52.0
+  build_number: 1
+  has_depends: protobuf >=7.35
+  timestamp_lt: 1790705170000
+then:
+  - replace_depends:
+      old: protobuf >=7.35
+      new: protobuf >=6.31,<7
+  - replace_depends:
+      old: libprotobuf >=7.35.1,<7.35.2.0a0
+      new: libprotobuf >=6.33.5,<6.33.6.0a0
