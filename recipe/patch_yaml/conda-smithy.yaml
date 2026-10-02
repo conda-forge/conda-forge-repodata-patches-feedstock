@@ -89,3 +89,11 @@ then:
   - tighten_depends:
       name: conda-build
       upper_bound: 26.5.0
+---
+# need older conda-forge-tick for linting
+if:
+  name: conda-smithy
+  version_le: 2026.9.1
+  version_ge: 3.44.7
+then:
+  - add_constrains: conda-forge-tick <=2026.9.42

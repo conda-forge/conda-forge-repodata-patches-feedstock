@@ -36,10 +36,12 @@ SUBDIRS = (
     "linux-armv7l",
     "linux-aarch64",
     "linux-ppc64le",
+    "linux-riscv64",
     "osx-64",
     "osx-arm64",
     "win-32",
     "win-64",
+    "win-arm64",
 )
 
 REMOVALS = {

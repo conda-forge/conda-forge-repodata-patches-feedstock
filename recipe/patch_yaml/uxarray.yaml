@@ -9,3 +9,16 @@ then:
   - replace_depends:
       old: python >=3.9
       new: python >=3.10
+---
+# this patch adds the matplotlib-base <3.11 constraint to older uxarray builds
+# that were released without it
+# https://github.com/conda-forge/uxarray-feedstock/issues/140
+# https://github.com/UXARRAY/uxarray/issues/1542
+if:
+  name: uxarray
+  version_le: "2026.08.0"
+  timestamp_lt: 1789725166000
+then:
+  - replace_depends:
+      old: matplotlib-base
+      new: matplotlib-base <3.11

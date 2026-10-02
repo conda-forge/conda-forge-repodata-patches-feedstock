@@ -1,0 +1,17 @@
+# Starting with dagmc 3.2.4 build 4, the feedstock builds with rattler-build
+# and uses `down_prioritize_variant` to prefer the nompi variant, which adds
+# the track feature `dagmc-p-0` to every MPI build. Older MPI builds carry no
+# track feature, and because solvers rank track features ahead of version
+# and build number, those old builds win the solve over the current ones
+# (e.g. `dagmc * mpi_mpich_*` resolves to 3.2.4 build 3 instead of build 7).
+# Add the same track feature to the older MPI builds so ordering falls back
+# to version and build number.
+# c.f. https://github.com/conda-forge/admin-requests/pull/2345#issuecomment-5687428500
+if:
+  name: dagmc
+  build: mpi_*
+  not_has_track_features: dagmc-p-0
+  timestamp_le: 1789509680000
+then:
+  - add_track_features:
+      - dagmc-p-0
