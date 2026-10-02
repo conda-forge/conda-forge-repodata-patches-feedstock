@@ -1,0 +1,20 @@
+# rivet-build compiles analyses against Rivet's installed headers, which include fastjet/ headers;
+# from fastjet-cxx 3.5.1 build 6 on those are only in fastjet-cxx-devel (conda-forge/fastjet-cxx-feedstock#27).
+if:
+  name: rivet
+  has_depends: fastjet-cxx >=3.5.?,<3.6.0a0
+  not_has_depends: fastjet-cxx-devel*
+  timestamp_lt: 1790946868000
+then:
+  - add_depends: fastjet-cxx-devel
+---
+# Rivet's FastJets.hh includes fastjet/contrib/ headers; from fastjet-contrib 1.105 build 1 on those are
+# only in fastjet-contrib-devel (conda-forge/fastjet-contrib-feedstock#25). Older contrib pins resolve
+# builds that still ship the headers.
+if:
+  name: rivet
+  has_depends: fastjet-contrib >=1.104,<2.0a0
+  not_has_depends: fastjet-contrib-devel*
+  timestamp_lt: 1790946868000
+then:
+  - add_depends: fastjet-contrib-devel
