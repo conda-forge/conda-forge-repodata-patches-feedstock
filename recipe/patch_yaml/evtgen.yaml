@@ -1,0 +1,14 @@
+# evtgen builds made against hepmc3 3.2.x link libHepMC3.so.3, but the
+# recipe's `pin_compatible('hepmc3')` in run: only capped hepmc3 below 4.
+# hepmc3 3.3.0 changed the soname to libHepMC3.so.4, so these builds resolve
+# next to hepmc3 3.3.x and then fail to load libEvtGen. Cap them below 3.3.
+# The builds made against hepmc3 3.3.0 (depends `hepmc3 >=3.3.0,<4.0a0`)
+# link libHepMC3.so.4 and are left alone.
+if:
+  name: evtgen
+  has_depends: hepmc3 >=3.2.*,<4.0a0
+  timestamp_lt: 1760000000000
+then:
+  - tighten_depends:
+      name: hepmc3
+      upper_bound: 3.3.0
