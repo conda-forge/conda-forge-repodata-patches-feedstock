@@ -1,7 +1,7 @@
 if:
   name: jupyter-collaboration
   version: 3.*
-  timestamp_lt: 1744114015000
+  timestamp_lt: 2025-04-08T12:06:55Z
 then:
   - tighten_depends:
       name: jupyter-collaboration

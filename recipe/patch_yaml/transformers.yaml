@@ -12,7 +12,7 @@ if:
   name: transformers
   version_lt: "4.23"
   version_ge: "4.18"
-  timestamp_lt: 1685092335000
+  timestamp_lt: 2023-05-26T09:12:15Z
 then:
   - replace_depends:
       old: "tokenizers >=0.11.1,!=0.11.3"
@@ -22,7 +22,7 @@ if:
   name: transformers
   version_lt: 4.34.0
   version_ge: 4.23.0
-  timestamp_lt: 1696965205000
+  timestamp_lt: 2023-10-10T19:13:25Z
 then:
   - tighten_depends:
       name: tokenizers

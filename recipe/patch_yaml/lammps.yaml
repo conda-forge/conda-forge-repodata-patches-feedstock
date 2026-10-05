@@ -3,7 +3,7 @@ if:
   subdir_in: linux-64
   version_le: 2023.08.02
   has_depends: mlip
-  timestamp_lt: 1694757696000
+  timestamp_lt: 2023-09-15T06:01:36Z
 then:
   - replace_depends:
       old: mlip
@@ -18,7 +18,7 @@ if:
   build_number_in: [7, 8]
   # nompi is not affected
   has_depends: "*mpi*"
-  timestamp_lt: 1719814219000
+  timestamp_lt: 2024-07-01T06:10:19Z
 then:
   - add_depends: libpnetcdf ==1.12.3
 ---
@@ -26,7 +26,7 @@ if:
   name: lammps
   version: 2023.11.21
   has_depends: "*mpi*"
-  timestamp_lt: 1719814219000
+  timestamp_lt: 2024-07-01T06:10:19Z
 then:
   - add_depends: libpnetcdf ==1.12.3
 ---
@@ -35,7 +35,7 @@ if:
   version: 2023.08.02
   build_number_in: [0, 1]
   has_depends: "*mpi*"
-  timestamp_lt: 1719814219000
+  timestamp_lt: 2024-07-01T06:10:19Z
 then:
   - add_depends: libpnetcdf ==1.12.3
 ---
@@ -46,6 +46,6 @@ if:
   version: 2024.02.07
   build_number_in: [2]
   has_depends: "*mpi*"
-  timestamp_lt: 1719814219000
+  timestamp_lt: 2024-07-01T06:10:19Z
 then:
   - add_depends: libpnetcdf ==1.13.0

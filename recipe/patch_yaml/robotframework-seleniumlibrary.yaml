@@ -17,7 +17,7 @@
 #             record["depends"][i] = " ".join(parts)
 if:
   name: robotframework-seleniumlibrary
-  timestamp_le: 1686323537000
+  timestamp_le: 2023-06-09T15:12:17Z
   version_le: "6.1.0"
   # logic is not the same as code but patch is the same
   not_has_depends: selenium >*,<*

@@ -1,7 +1,7 @@
 if:
   name: pytensor-base
   version_le: '2.16.1'
-  timestamp_lt: 1695061975000
+  timestamp_lt: 2023-09-18T18:32:55Z
   has_depends: numpy*
 then:
   - tighten_depends:
@@ -15,7 +15,7 @@ if:
   name: pytensor-base
   version_ge: '2.24'
   version_le: '2.25'
-  timestamp_lt: 1720687870000
+  timestamp_lt: 2024-07-11T08:51:10Z
 then:
   - replace_depends:
       old: setuptools >=48.0.0
@@ -26,7 +26,7 @@ then:
 # Fixed in <https://github.com/conda-forge/pytensor-suite-feedstock/pull/114>
 if:
   name: pytensor-base
-  timestamp_lt: 1720687870000
+  timestamp_lt: 2024-07-11T08:51:10Z
   version_eq: '2.25.1'
   build_number_eq: 0
 then:
@@ -39,7 +39,7 @@ then:
 # Fixed in <https://github.com/conda-forge/pytensor-suite-feedstock/pull/158>
 if:
   name: pytensor
-  timestamp_lt: 1747065846000
+  timestamp_lt: 2025-05-12T16:04:06Z
   version_le: '2.30.3'
   subdir_in: win-64
 then:
@@ -53,7 +53,7 @@ if:
   name: pytensor-base
   version_ge: 2.35.0
   version_lt: 2.36.0
-  timestamp_lt: 1765874452000
+  timestamp_lt: 2025-12-16T08:40:52Z
 then:
   - replace_depends:
       old: numpy >=1.17.0

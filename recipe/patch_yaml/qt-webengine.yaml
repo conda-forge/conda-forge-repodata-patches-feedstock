@@ -32,7 +32,7 @@ then:
 # https://github.com/conda-forge/libxkbfile-feedstock/pull/3
 # https://github.com/conda-forge/pyside2-feedstock/pull/297
 if:
-  timestamp_lt: 1778373415000
+  timestamp_lt: 2026-05-10T00:36:55Z
   name: qt6-webengine
   version: 6.10.2
   build_number: 0

@@ -1,7 +1,7 @@
 if:
   name: pyasn1
   version: "0.6.1"
-  timestamp_lt: 1726901207000
+  timestamp_lt: 2024-09-21T06:46:47Z
 then:
   - replace_depends:
       old: "python !=3.0,!=3.1,!=3.2,!=3.3,!=3.4,!=3.5"

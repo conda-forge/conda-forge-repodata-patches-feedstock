@@ -10,7 +10,7 @@
 #     _pin_stricter(fn, record, "imath", "x", upper_bound="3.1.7")
 if:
   has_depends: imath?( *)
-  timestamp_lt: 1678196668497
+  timestamp_lt: 2023-03-07T13:44:28.497Z
 then:
   - tighten_depends:
       name: imath

@@ -1,7 +1,7 @@
 # wheel 0.43.0 requires Python 3.8 and does not run on older versions
 if:
   name: wheel
-  timestamp_le: 1711548041000  # 2024-3-27
+  timestamp_le: 2024-03-27T14:00:41Z  # 2024-3-27
   version: 0.43.0
   build_number_in: [0]
 then:

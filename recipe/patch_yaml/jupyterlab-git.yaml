@@ -5,7 +5,7 @@
 if:
   name: jupyterlab-git
   has_depends: jupyterlab >=4.0
-  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+  timestamp_lt: 2024-02-07T09:54:22Z  # 2024/02/07 10:54GMT+1
 then:
   - remove_depends: jupyterlab >=4.0
   - add_constrains: jupyterlab >=4,<5
@@ -13,7 +13,7 @@ then:
 if:
   name: jupyterlab-git
   has_depends: jupyterlab <4.0
-  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+  timestamp_lt: 2024-02-07T09:54:22Z  # 2024/02/07 10:54GMT+1
 then:
   - remove_depends: jupyterlab <4.0
   - add_constrains: jupyterlab >=3,<4
@@ -22,7 +22,7 @@ if:
   name: jupyterlab-git
   version_ge: "0.30.1"
   version_le: "0.36.0"
-  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+  timestamp_lt: 2024-02-07T09:54:22Z  # 2024/02/07 10:54GMT+1
 then:
   - remove_depends: jupyterlab*
   - add_constrains: jupyterlab >=3,<4
@@ -30,7 +30,7 @@ then:
 if:
   name: jupyterlab-git
   has_depends: jupyterlab >=2.0.0,<3.0.0
-  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+  timestamp_lt: 2024-02-07T09:54:22Z  # 2024/02/07 10:54GMT+1
 then:
   - remove_depends: jupyterlab >=2.0.0,<3.0.0
   - add_constrains: jupyterlab >=2.0.0,<3.0.0
@@ -38,7 +38,7 @@ then:
 if:
   name: jupyterlab-git
   has_depends: jupyterlab >=2.0.0
-  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+  timestamp_lt: 2024-02-07T09:54:22Z  # 2024/02/07 10:54GMT+1
 then:
   - remove_depends: jupyterlab >=2.0.0
   - add_constrains: jupyterlab >=2,<3
@@ -46,7 +46,7 @@ then:
 if:
   name: jupyterlab-git
   has_depends: jupyterlab >=1.1.0
-  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+  timestamp_lt: 2024-02-07T09:54:22Z  # 2024/02/07 10:54GMT+1
 then:
   - remove_depends: jupyterlab >=1.1.0
   - add_constrains: jupyterlab >=1.1,<2
@@ -54,7 +54,7 @@ then:
 if:
   name: jupyterlab-git
   has_depends: jupyterlab
-  timestamp_lt: 1707299662000  # 2024/02/07 10:54GMT+1
+  timestamp_lt: 2024-02-07T09:54:22Z  # 2024/02/07 10:54GMT+1
 then:
   - remove_depends: jupyterlab
   - add_constrains: jupyterlab <1

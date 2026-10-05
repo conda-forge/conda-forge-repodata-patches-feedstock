@@ -2,7 +2,7 @@
 if:
   name: mapbox_earcut
   version: 1.0.1
-  timestamp_lt: 1720808421000
+  timestamp_lt: 2024-07-12T18:20:21Z
   build_number: 0
 then:
   - replace_depends:

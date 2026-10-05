@@ -1,6 +1,6 @@
 if:
   name: mypy-protobuf
-  timestamp_lt: 1770046859000
+  timestamp_lt: 2026-02-02T15:40:59Z
   version: 3.7.0
 then:
   - replace_depends:
@@ -12,7 +12,7 @@ then:
 ---
 if:
   name: mypy-protobuf
-  timestamp_lt: 1770046859000
+  timestamp_lt: 2026-02-02T15:40:59Z
   version: 4.0.0
 then:
   - replace_depends:

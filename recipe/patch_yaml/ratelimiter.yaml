@@ -8,7 +8,7 @@
 #             _replace_pin(pinning, 'python >=3,<3.11', record['depends'], record)
 if:
   name: 'ratelimiter'
-  timestamp_lt: 1667804400000
+  timestamp_lt: 2022-11-07T07:00:00Z
   subdir_in: noarch
 then:
   - replace_depends:

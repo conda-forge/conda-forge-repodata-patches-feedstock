@@ -25,7 +25,7 @@ then:
 #     depends[depends.index("sqlalchemy >=1.4.0,<2.0.0")] = "sqlalchemy >=1.4.0,<1.4.42"
 if:
   name: snowflake-sqlalchemy
-  timestamp_lt: 1666005807652
+  timestamp_lt: 2022-10-17T11:23:27.652Z
   has_depends: sqlalchemy >=1.4.0,<2.0.0
 then:
   - replace_depends:
@@ -39,7 +39,7 @@ then:
 #     depends[depends.index("sqlalchemy <2")] = "sqlalchemy <1.4.42"
 if:
   name: snowflake-sqlalchemy
-  timestamp_lt: 1666005807652
+  timestamp_lt: 2022-10-17T11:23:27.652Z
   has_depends: sqlalchemy <2
 then:
   - replace_depends:
@@ -53,7 +53,7 @@ then:
 #     depends[depends.index("sqlalchemy <2.0.0")] = "sqlalchemy <1.4.42"
 if:
   name: snowflake-sqlalchemy
-  timestamp_lt: 1666005807652
+  timestamp_lt: 2022-10-17T11:23:27.652Z
   has_depends: sqlalchemy <2.0.0
 then:
   - replace_depends:

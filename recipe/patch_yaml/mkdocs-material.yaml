@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../patch_yaml_model.json
 if:
   name: mkdocs-material
-  timestamp_le: 1704730011000
+  timestamp_le: 2024-01-08T16:06:51Z
   version_ge: "9.4.2"
 then:
   - replace_depends:
@@ -11,7 +11,7 @@ then:
 # mkdocs 2.x is incompatible with mkdocs-material
 if:
   name: mkdocs-material
-  timestamp_lt: 1774604475000
+  timestamp_lt: 2026-03-27T09:41:15Z
   has_depends: "mkdocs?( *)"
 then:
   - tighten_depends:
@@ -20,7 +20,7 @@ then:
 ---
 if:
   name: mkdocs-material
-  timestamp_lt: 1774604475000
+  timestamp_lt: 2026-03-27T09:41:15Z
   not_has_depends: "mkdocs?( *)"
 then:
   - add_depends: "mkdocs <2"

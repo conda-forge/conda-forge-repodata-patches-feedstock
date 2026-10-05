@@ -18,6 +18,6 @@ if:
     - ecole
     - libecole
   has_constrains: "pin_compatible(*"
-  timestamp_lt: 1788468686000
+  timestamp_lt: 2026-09-03T20:51:26Z
 then:
   - remove_constrains: "pin_compatible(*"

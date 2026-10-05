@@ -11,7 +11,7 @@
 if:
   name: flax
   version_lt: "0.6.9"
-  timestamp_lt: 1692133728000
+  timestamp_lt: 2023-08-15T21:08:48Z
 then:
   - replace_depends:
       old: jax >=0.3.2

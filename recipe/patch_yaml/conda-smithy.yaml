@@ -37,7 +37,7 @@ then:
 # https://github.com/conda-forge/conda-forge.github.io/issues/2117
 if:
   name: conda-smithy
-  timestamp_lt: 1710847759000
+  timestamp_lt: 2024-03-19T11:29:19Z
 then:
   - tighten_depends:
       name: conda-build
@@ -54,7 +54,7 @@ then:
 if:
   name: conda-smithy
   has_depends: rattler-build-conda-compat?( *)
-  timestamp_lt: 1722516295000
+  timestamp_lt: 2024-08-01T12:44:55Z
 then:
   - tighten_depends:
       name: rattler-build-conda-compat
@@ -75,7 +75,7 @@ then:
 if:
   name: conda-smithy
   version_le: 3.58.1
-  timestamp_le: 1775227508000  # 2026-04-03 14:45 UTC
+  timestamp_le: 2026-04-03T14:45:08Z  # 2026-04-03 14:45 UTC
 then:
   - tighten_depends:
       name: conda

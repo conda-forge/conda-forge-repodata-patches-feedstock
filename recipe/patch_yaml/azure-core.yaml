@@ -5,7 +5,7 @@ if:
   name: azure-core
   subdir_in: noarch
   artifact_in: azure-core-1.31.0-pyhd8ed1ab_0.conda
-  timestamp_lt: 1731940921000  # 2024/11/18
+  timestamp_lt: 2024-11-18T14:42:01Z  # 2024/11/18
 then:
   - replace_depends:
       old: python >=3.7

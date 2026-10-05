@@ -14,7 +14,7 @@ if:
   name: anndata
   version: "0.9.0"
   build_number: 0
-  timestamp_lt: 1681324213000
+  timestamp_lt: 2023-04-12T18:30:13Z
 then:
   - replace_depends:
       old: "python >=3.6"
@@ -27,7 +27,7 @@ if:
   name: anndata
   version: "0.11.0"
   build_number: 0
-  timestamp_lt: 1731005774000
+  timestamp_lt: 2024-11-07T18:56:14Z
 then:
   - replace_depends:
       old: "python >=3.9"
@@ -43,7 +43,7 @@ then:
 if:
   name: anndata
   version_lt: "0.11.2"
-  timestamp_lt: 1736438107000
+  timestamp_lt: 2025-01-09T15:55:07Z
 then:
   - tighten_depends:
       name: scipy
@@ -56,7 +56,7 @@ then:
 if:
   name: anndata
   version_lt: "0.11.3"
-  timestamp_lt: 1736784424000
+  timestamp_lt: 2025-01-13T16:07:04Z
 then:
   - add_constrains: "zarr<3"
 ---
@@ -67,7 +67,7 @@ then:
 if:
   name: anndata
   version_lt: "0.12.7"
-  timestamp_lt: 1773672197000
+  timestamp_lt: 2026-03-16T14:43:17Z
 then:
   - add_constrains: "pandas<3"
 ---
@@ -81,7 +81,7 @@ if:
   name: anndata
   version_ge: "0.12.6"
   version_le: "0.12.9"
-  timestamp_lt: 1774982595000
+  timestamp_lt: 2026-03-31T18:43:15Z
 then:
   - remove_constrains: "pyarrow <21"
 ---
@@ -101,7 +101,7 @@ if:
   version_in:
     - "0.12.1"
     - "0.12.2"
-  timestamp_lt: 1788449634000
+  timestamp_lt: 2026-09-03T15:33:54Z
 then:
   - rename_constrains:
       old: "dask[array]"

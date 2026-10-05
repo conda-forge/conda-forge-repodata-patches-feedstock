@@ -1,6 +1,6 @@
 if:
   name: libcusolver
-  timestamp_lt: 1751987921000
+  timestamp_lt: 2025-07-08T15:18:41Z
 then:
   - loosen_depends:
       name: libnvjitlink

@@ -26,7 +26,7 @@ then:
 if:
   name: zarr
   version_lt: 3.0.0
-  timestamp_lt: 1735718400000
+  timestamp_lt: 2025-01-01T08:00:00Z
 then:
   - tighten_depends:
       name: numcodecs

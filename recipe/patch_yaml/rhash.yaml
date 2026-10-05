@@ -1,6 +1,6 @@
 if:
   has_depends: rhash
-  timestamp_lt: 1693428857000
+  timestamp_lt: 2023-08-30T20:54:17Z
 then:
   - replace_depends:
       old: rhash
@@ -11,7 +11,7 @@ then:
 ---
 if:
   has_depends: rhash?( *)
-  timestamp_lt: 1747216048000
+  timestamp_lt: 2025-05-14T09:47:28Z
   subdir_in:
     - osx-64
     - osx-arm64

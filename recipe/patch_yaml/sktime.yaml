@@ -1,6 +1,6 @@
 if:
   name: sktime
-  timestamp_lt: 1713265776000
+  timestamp_lt: 2024-04-16T11:09:36Z
   version_in: "0.28.0"
 then:
   - replace_constrains:

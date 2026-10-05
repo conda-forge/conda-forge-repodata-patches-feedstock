@@ -6,7 +6,7 @@
 if:
   name: "*"
   has_depends: libsrtp2 >=2.8.0,<2.9.0a0
-  timestamp_lt: 1790222088049
+  timestamp_lt: 2026-09-24T03:54:48.049Z
 then:
   - replace_depends:
       old: libsrtp2 >=2.8.0,<2.9.0a0
@@ -15,7 +15,7 @@ then:
 if:
   name: "*"
   has_depends: libsrtp2 >=2.7.0,<2.8.0a0
-  timestamp_lt: 1790222088049
+  timestamp_lt: 2026-09-24T03:54:48.049Z
 then:
   - replace_depends:
       old: libsrtp2 >=2.7.0,<2.8.0a0

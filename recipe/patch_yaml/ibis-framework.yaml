@@ -1,7 +1,7 @@
 # Make ibis-framework-core pin exact
 if:
   name: ibis-framework
-  timestamp_lt: 1719511671000
+  timestamp_lt: 2024-06-27T18:07:51Z
   not_has_depends: param*
 then:
   - tighten_depends:

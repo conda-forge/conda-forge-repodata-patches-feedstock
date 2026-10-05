@@ -16,13 +16,13 @@
 if:
   name: go-nocgo
   not_has_depends: go?( *)
-  timestamp_lt: 1788960288000
+  timestamp_lt: 2026-09-09T13:24:48Z
 then:
   - add_depends: "_go_select * nocgo"
 ---
 if:
   name: go-cgo
   not_has_depends: go?( *)
-  timestamp_lt: 1788960288000
+  timestamp_lt: 2026-09-09T13:24:48Z
 then:
   - add_depends: "_go_select * cgo"

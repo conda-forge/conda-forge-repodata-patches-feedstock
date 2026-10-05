@@ -2,7 +2,7 @@
 # https://github.com/conda-forge/asapdiscovery-feedstock/issues/17
 if:
   name: asapdiscovery
-  timestamp_lt: 1739481327000
+  timestamp_lt: 2025-02-13T21:15:27Z
   version_in: 0.6.0
   build_number_in: 0
 then:

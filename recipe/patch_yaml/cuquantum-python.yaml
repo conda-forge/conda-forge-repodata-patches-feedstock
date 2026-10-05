@@ -3,7 +3,7 @@
 if:
   name: cuquantum-python
   version_in: [24.11.0, 25.03.0]
-  timestamp_lt: 1752003611000
+  timestamp_lt: 2025-07-08T19:40:11Z
 then:
   - tighten_depends:
       name: cudensitymat

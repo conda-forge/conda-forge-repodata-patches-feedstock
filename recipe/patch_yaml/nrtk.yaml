@@ -2,7 +2,7 @@
 ---
 if:
   name: nrtk
-  timestamp_lt: 1727977324000  # 2024-10-03
+  timestamp_lt: 2024-10-03T17:42:04Z  # 2024-10-03
   version: 0.12.0
   build_number: 0
 then:

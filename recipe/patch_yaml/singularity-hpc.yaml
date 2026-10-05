@@ -8,7 +8,7 @@
 #     record["depends"].append("spython >=0.2.0")
 if:
   name: singularity-hpc
-  timestamp_lt: 1652410323526
+  timestamp_lt: 2022-05-13T02:52:03.526Z
 then:
   - add_depends: jinja2
   - add_depends: jsonschema

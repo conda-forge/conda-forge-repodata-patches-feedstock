@@ -5,7 +5,7 @@ if:
   subdir_in: noarch
   name: openff-bespokefit
   has_constrains: "starlette =0.20"
-  timestamp_lt: 1694139596000
+  timestamp_lt: 2023-09-08T02:19:56Z
 then:
   - add_constrains: "anyio <4.0.0a0"
 
@@ -15,7 +15,7 @@ then:
 if:
   subdir_in: noarch
   name: openff-bespokefit
-  timestamp_lt: 1707768684000
+  timestamp_lt: 2024-02-12T20:11:24Z
   has_depends: qcportal*
 then:
   - tighten_depends:

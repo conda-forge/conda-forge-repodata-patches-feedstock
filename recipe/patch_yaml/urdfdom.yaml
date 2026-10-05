@@ -1,6 +1,6 @@
 if:
   name: urdfdom
   version_lt: "5.0.0"
-  timestamp_lt: 1771236462000
+  timestamp_lt: 2026-02-16T10:07:42Z
 then:
   - add_constrains: urdfdom_headers <2

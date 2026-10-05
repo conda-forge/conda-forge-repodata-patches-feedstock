@@ -3,7 +3,7 @@
 if:
   subdir_in: noarch
   name: gufe
-  timestamp_lt: 1706657189000
+  timestamp_lt: 2024-01-30T23:26:29Z
   version_lt: 0.10.0
 then:
   - replace_depends:

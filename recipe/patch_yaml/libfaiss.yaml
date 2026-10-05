@@ -1,7 +1,7 @@
 # https://github.com/conda-forge/faiss-split-feedstock/issues/107
 if:
   has_depends: libfaiss >=*,<*
-  timestamp_lt: 1786069424000
+  timestamp_lt: 2026-08-07T02:23:44Z
 then:
   # - tighten_depends:
   #     name: libfaiss

@@ -3,14 +3,14 @@
 # The changes below should fix potential clobbering.
 if:
   name: libcudss0
-  timestamp_lt: 1758585645000
+  timestamp_lt: 2025-09-23T00:00:45Z
 then:
   - add_constrains: libcudss <0.0.0a0
 
 ---
 if:
   name: libcudss
-  timestamp_lt: 1758585645000
+  timestamp_lt: 2025-09-23T00:00:45Z
 
 then:
   - add_constrains: libcudss0 <0.0.0a0

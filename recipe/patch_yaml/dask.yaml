@@ -32,7 +32,7 @@
 #             )
 if:
   name: dask
-  timestamp_lt: 1667000131632
+  timestamp_lt: 2022-10-28T23:35:31.632Z
 then:
   - tighten_depends:
       name: bokeh
@@ -41,7 +41,7 @@ then:
 # from the same code snippet as above
 if:
   name: dask
-  timestamp_lt: 1676063992630
+  timestamp_lt: 2023-02-10T21:19:52.630Z
 then:
   - tighten_depends:
       name: pandas

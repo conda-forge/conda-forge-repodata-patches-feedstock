@@ -36,7 +36,7 @@
 #         )
 if:
   name: conda-libmamba-solver
-  timestamp_le: 1669391735453  # 2022-11-25
+  timestamp_le: 2022-11-25T15:55:35.453Z  # 2022-11-25
 then:
   - replace_depends:
       old: libmambapy >=0.22
@@ -50,8 +50,8 @@ then:
 ---
 if:
   name: conda-libmamba-solver
-  timestamp_le: 1674230331000  # 2023-01-20
-  timestamp_gt: 1669391735453  # 2022-11-25
+  timestamp_le: 2023-01-20T15:58:51Z  # 2023-01-20
+  timestamp_gt: 2022-11-25T15:55:35.453Z  # 2022-11-25
 then:
   - replace_depends:
       old: conda >=22.11.0
@@ -59,8 +59,8 @@ then:
 ---
 if:
   name: conda-libmamba-solver
-  timestamp_le: 1678721528000  # 2023-03-13
-  timestamp_gt: 1674230331000  # 2023-01-20
+  timestamp_le: 2023-03-13T15:32:08Z  # 2023-03-13
+  timestamp_gt: 2023-01-20T15:58:51Z  # 2023-01-20
 then:
   - replace_depends:
       old: conda >=22.11.0
@@ -69,7 +69,7 @@ then:
 # https://github.com/conda/conda-libmamba-solver/pull/492
 if:
   name: conda-libmamba-solver
-  timestamp_le: 1721137085269  # 2024-07-16
+  timestamp_le: 2024-07-16T13:38:05.269Z  # 2024-07-16
 then:
   - tighten_depends:
       name: libmambapy

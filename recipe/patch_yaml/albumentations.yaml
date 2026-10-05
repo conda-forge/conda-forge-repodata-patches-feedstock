@@ -2,7 +2,7 @@
 # Upper bound set for albumnetations 1.4.15 and above
 # https://github.com/conda-forge/albumentations-feedstock/pull/38
 if:
-  timestamp_lt: 1727025727000
+  timestamp_lt: 2024-09-22T17:22:07Z
   name: albumentations
   version_lt: "1.4.15"
   has_depends: albucore*

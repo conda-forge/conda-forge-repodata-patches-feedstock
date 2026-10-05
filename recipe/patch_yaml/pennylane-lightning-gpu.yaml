@@ -12,7 +12,7 @@ if:
   name: pennylane-lightning-gpu
   version: 0.29.0
   build_number: 0
-  timestamp_lt: 1680553268000
+  timestamp_lt: 2023-04-03T20:21:08Z
 then:
   - replace_depends:
       old: pennylane
