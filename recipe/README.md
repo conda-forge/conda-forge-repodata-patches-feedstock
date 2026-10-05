@@ -74,8 +74,11 @@ if:
   # this means version > 1.0.0
   version_gt: 1.0.0
   # keeps any record with timestamp < value
+  # the value is an RFC 3339 date and time with a UTC offset (`Z` or e.g. `-04:00`)
   # you can generate the current time via
-  #  python -c "import time; print(f'{time.time():.0f}000')"
+  #  python -c "import datetime; print(datetime.datetime.now().astimezone().isoformat(timespec='seconds'))"
+  timestamp_lt: 2021-10-05T17:52:01-04:00
+  # milliseconds since the Unix epoch are accepted too
   timestamp_lt: 1633470721000
 
   # any key in the repodata entry (e.g., "version" or "build_number") and a list of values or single value
@@ -203,7 +206,7 @@ then:
 > [!WARNING]
 > The condition `timestamp_lt` is required to prevent your patch from modifying
 > any packages built in the future. Don't forget to calculate it with:
-> `python -c "import time; print(f'{time.time():.0f}000')"`
+> `python -c "import datetime; print(datetime.datetime.now().astimezone().isoformat(timespec='seconds'))"`
 > or run `pixi run timestamp` to get the current timestamp in the required format.
 > and include it in the `if:` section of your patch.
 
