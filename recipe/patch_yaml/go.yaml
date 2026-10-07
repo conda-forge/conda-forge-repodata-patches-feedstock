@@ -1,0 +1,28 @@
+# The go feedstock uses the `_go_select` package as a mutex so that the cgo and
+# nocgo variants of go cannot be installed at the same time. Newer `go-cgo` /
+# `go-nocgo` packages inherit that mutex transitively, because they pin an exact
+# build of `go`, which in turn depends on `_go_select * cgo` or `_go_select * nocgo`.
+#
+# The old go-cgo/go-nocgo packages (up to and including 1.13.5) predate that scheme
+# and carry no dependency on `go` at all, so nothing ties them to a `_go_select`
+# variant. As a result the mutex can be bypassed, e.g.
+#
+#   $ rattler solve --platform linux-64 '_go_select * cgo' go-nocgo
+#   _go_select  2.3.0    cgo
+#   go-nocgo    1.13.5   h8b2e17f_0
+#
+# resolves instead of failing. Add the missing `_go_select` dependency to those
+# records so the variant is honoured for every go-cgo/go-nocgo package.
+if:
+  name: go-nocgo
+  not_has_depends: go?( *)
+  timestamp_lt: 1788960288000
+then:
+  - add_depends: "_go_select * nocgo"
+---
+if:
+  name: go-cgo
+  not_has_depends: go?( *)
+  timestamp_lt: 1788960288000
+then:
+  - add_depends: "_go_select * cgo"

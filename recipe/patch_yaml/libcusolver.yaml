@@ -5,3 +5,12 @@ then:
   - loosen_depends:
       name: libnvjitlink
       max_pin: x
+---
+# libcusolver 12.3.4.7 was marked as broken because it was ABI breaking
+if:
+  has_depends: libcusolver >=12.3.4.7,<13.0a0
+  timestamp_lt: 1791417600000
+then:
+  - replace_depends:
+      old: libcusolver >=12.3.4.7,<13.0a0
+      new: libcusolver >=12.3.2.15,<13.0a0

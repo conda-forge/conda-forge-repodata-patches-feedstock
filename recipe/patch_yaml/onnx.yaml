@@ -6,3 +6,21 @@ then:
   - replace_depends:
       old: protobuf
       new: protobuf >=3.12.2,<=3.20.1
+---
+# The onnx python package registers the protobuf descriptors that are compiled
+# into libonnx, so the two only work together when they come from the same
+# build of the onnx-feedstock. onnx already depends on the exact libonnx build,
+# but nothing stopped an older onnx from being kept in place while libonnx was
+# updated, or from being co-installed with a libonnx that something else (e.g.
+# onnxruntime) pulled in. This is the missing direction of that pairing, and it
+# also rules out onnx 1.22.0 builds 0 and 1, which still carried their own copy
+# of the descriptors.
+# The build string is matched by build number only because onnx is built once
+# per python version while libonnx is not python specific.
+# Added to the recipe in conda-forge/onnx-feedstock#165.
+if:
+  name: libonnx
+  not_has_constrains: "onnx?( *)"
+  timestamp_lt: 1789953289000
+then:
+  - add_constrains: onnx ==${version} *_${build_number}

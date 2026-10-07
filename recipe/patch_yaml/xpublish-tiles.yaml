@@ -1,0 +1,17 @@
+if:
+  name: "xpublish-tiles"
+  version: "0.6.0"
+  build: "pyhc364b38_0"
+  build_number: 0
+then:
+  - add_depends: "__win"
+
+---
+
+if:
+  name: "xpublish-tiles"
+  version: "0.6.0"
+  build: "pyh0f90c79_0"
+  build_number: 0
+then:
+  - add_depends: "__osx"

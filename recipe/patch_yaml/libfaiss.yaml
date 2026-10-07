@@ -1,0 +1,17 @@
+# https://github.com/conda-forge/faiss-split-feedstock/issues/107
+if:
+  has_depends: libfaiss >=*,<*
+  timestamp_lt: 1786069424000
+then:
+  # - tighten_depends:
+  #     name: libfaiss
+  #     max_pin: 'x.x'
+  - replace_depends:
+      old: libfaiss >=1.8.0,<2
+      new: libfaiss >=1.8.0,<1.9.0a0
+  - replace_depends:
+      old: libfaiss >=1.9.0,<2
+      new: libfaiss >=1.9.0,<1.10.0a0
+  - replace_depends:
+      old: libfaiss >=1.10.0,<2
+      new: libfaiss >=1.10.0,<1.11.0a0
