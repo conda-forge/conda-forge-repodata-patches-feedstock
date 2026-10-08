@@ -5,7 +5,7 @@
 # * https://github.com/conda-forge/metis-feedstock/pull/38
 if:
   has_depends: metis >=5.1.*
-  timestamp_lt: 1693402455000
+  timestamp_lt: 2023-08-30T13:34:15Z
 then:
   - tighten_depends:
       name: metis

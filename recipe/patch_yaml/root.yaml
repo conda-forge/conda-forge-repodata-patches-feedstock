@@ -46,7 +46,7 @@ if:
   build_number_in: [4]
   subdir_in: linux-64
   has_depends: "sysroot_linux-64"
-  timestamp_lt: 1771323458000
+  timestamp_lt: 2026-02-17T10:17:38Z
 then:
   - replace_depends:
       old: sysroot_linux-64
@@ -58,7 +58,7 @@ if:
   build_number_in: [4]
   subdir_in: linux-aarch64
   has_depends: "sysroot_linux-aarch64"
-  timestamp_lt: 1771323458000
+  timestamp_lt: 2026-02-17T10:17:38Z
 then:
   - replace_depends:
       old: sysroot_linux-aarch64
@@ -70,7 +70,7 @@ if:
   build_number_in: [4]
   subdir_in: linux-ppc64le
   has_depends: "sysroot_linux-ppc64le"
-  timestamp_lt: 1771323458000
+  timestamp_lt: 2026-02-17T10:17:38Z
 then:
   - replace_depends:
       old: sysroot_linux-ppc64le
@@ -90,6 +90,6 @@ then:
 if:
   name: root_cxx_standard
   subdir_in: noarch
-  timestamp_lt: 1784800000000
+  timestamp_lt: 2026-07-23T09:46:40Z
 then:
   - add_constrains: root_base >=6.36.8

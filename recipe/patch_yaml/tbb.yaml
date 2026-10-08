@@ -8,36 +8,36 @@
 #             break
 if:
   has_depends: tbb
-  timestamp_lt: 1614809400000
+  timestamp_lt: 2021-03-03T22:10:00Z
 then:
   - add_depends: tbb <2021.0.0a0
 ---
 if:
   has_depends: tbb >=2017*
-  timestamp_lt: 1614809400000
+  timestamp_lt: 2021-03-03T22:10:00Z
 then:
   - add_depends: tbb <2021.0.0a0
 ---
 if:
   has_depends: tbb >=2018*
-  timestamp_lt: 1614809400000
+  timestamp_lt: 2021-03-03T22:10:00Z
 then:
   - add_depends: tbb <2021.0.0a0
 ---
 if:
   has_depends: tbb >=2019*
-  timestamp_lt: 1614809400000
+  timestamp_lt: 2021-03-03T22:10:00Z
 then:
   - add_depends: tbb <2021.0.0a0
 ---
 if:
   has_depends: tbb >=2020*
-  timestamp_lt: 1614809400000
+  timestamp_lt: 2021-03-03T22:10:00Z
 then:
   - add_depends: tbb <2021.0.0a0
 ---
 if:
   has_depends: tbb >=4.4*
-  timestamp_lt: 1614809400000
+  timestamp_lt: 2021-03-03T22:10:00Z
 then:
   - add_depends: tbb <2021.0.0a0

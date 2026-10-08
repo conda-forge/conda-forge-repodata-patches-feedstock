@@ -5,7 +5,7 @@
 #     i = record["depends"].index("flatbuffers >=2")
 #     record["depends"][i] = "flatbuffers >=2,<3.0.0.0a0"
 if:
-  timestamp_lt: 1670685160000
+  timestamp_lt: 2022-12-10T15:12:40Z
   has_depends: flatbuffers >=2
 then:
   - replace_depends:
@@ -34,7 +34,7 @@ then:
 #         new_dep = dep
 #     record['depends'][idx] = new_dep
 if:
-  timestamp_lt: 1685293591000
+  timestamp_lt: 2023-05-28T17:06:31Z
   has_depends: flatbuffers >=23*
 then:
   - tighten_depends:

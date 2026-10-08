@@ -2,27 +2,27 @@
 if:
   name: conda-rattler-solver
   version_in: ["0.0.1", "0.0.2"]
-  timestamp_le: 1747862049611  # 2025-05-21
+  timestamp_le: 2025-05-21T21:14:09.611Z  # 2025-05-21
 then:
   - add_depends: py-rattler <0.13.0a0
 ---
 if:
   name: conda-rattler-solver
   version: "0.0.3"
-  timestamp_le: 1748201285908  # 2025-05-25
+  timestamp_le: 2025-05-25T19:28:05.908Z  # 2025-05-25
 then:
   - add_depends: py-rattler <0.14.0a0
 ---
 if:
   name: conda-rattler-solver
   version: "0.0.4"
-  timestamp_le: 1768997336281  # 2026-01-21
+  timestamp_le: 2026-01-21T12:08:56.281Z  # 2026-01-21
 then:
   - add_depends: py-rattler <0.21.0a0
 ---
 if:
   name: conda-rattler-solver
   version: "0.0.5"
-  timestamp_le: 1769531891263  # 2026-01-27
+  timestamp_le: 2026-01-27T16:38:11.263Z  # 2026-01-27
 then:
   - add_depends: py-rattler <0.23.0a0

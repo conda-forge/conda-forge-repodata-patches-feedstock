@@ -4,7 +4,7 @@ if:
   version_in:
     - 2.0.0
   has_depends: zarr >=3
-  timestamp_lt: 1775749209000
+  timestamp_lt: 2026-04-09T15:40:09Z
 then:
   - replace_depends:
       old: zarr >=3

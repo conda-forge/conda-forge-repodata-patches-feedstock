@@ -11,7 +11,7 @@
 if:
   name: attrs
   version: "22.2.0"
-  timestamp_lt: 1683636279000
+  timestamp_lt: 2023-05-09T12:44:39Z
 then:
   - replace_depends:
       old: python >=3.5
@@ -28,7 +28,7 @@ if:
   name: attrs
   version: "23.1.0"
   build_number: 0
-  timestamp_lt: 1683636279000
+  timestamp_lt: 2023-05-09T12:44:39Z
 then:
   - replace_depends:
       old: python >=3.5

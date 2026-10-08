@@ -45,7 +45,7 @@ then:
 ---
 if:
   name: conda-build
-  timestamp_le: 1674131439051  # 2023-01-19
+  timestamp_le: 2023-01-19T12:30:39.051Z  # 2023-01-19
 then:
   - tighten_depends:
       name: setuptools
@@ -64,7 +64,7 @@ then:
 if:
   name: conda-build
   version_in: [3.26.0, 3.26.1]
-  timestamp_le: 16935094895456
+  timestamp_le: 2506-08-27T01:01:35.456Z
 then:
   - replace_depends:
       old: conda >=4.13
@@ -86,7 +86,7 @@ if:
   name: conda-build
   version_gt: 3.21.8
   version_lt: 24.3.0
-  timestamp_le: 1710834612324  # 2024-03-19
+  timestamp_le: 2024-03-19T07:50:12.324Z  # 2024-03-19
 then:
   - tighten_depends:
       name: conda
@@ -96,7 +96,7 @@ then:
 if:
   name: conda-build
   version_lt: 24.3.0
-  timestamp_le: 1711365884254  # 2024-03-25
+  timestamp_le: 2024-03-25T11:24:44.254Z  # 2024-03-25
 then:
   - tighten_depends:
       name: py-lief
@@ -106,7 +106,7 @@ then:
 if:
   name: conda-build
   version_lt: 24.11.3
-  timestamp_le: 1733914099000  # 2024-12-11
+  timestamp_le: 2024-12-11T10:48:19Z  # 2024-12-11
 then:
   - tighten_depends:
       name: py-lief
@@ -116,7 +116,7 @@ then:
 if:
   name: conda-build
   version_le: 25.1.1
-  timestamp_le: 1737101618000  # 2025-01-17
+  timestamp_le: 2025-01-17T08:13:38Z  # 2025-01-17
 then:
   - tighten_depends:
       name: py-lief
@@ -126,7 +126,7 @@ then:
 if:
   name: conda-build
   version_le: 25.1.2
-  timestamp_le: 1740306410000  # 2025-02-23
+  timestamp_le: 2025-02-23T10:26:50Z  # 2025-02-23
 then:
   - tighten_depends:
       name: py-lief

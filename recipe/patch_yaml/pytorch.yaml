@@ -9,7 +9,7 @@
 #             record['depends'] = ["typing_extensions"]
 if:
   name: pytorch
-  timestamp_lt: 1610297816658
+  timestamp_lt: 2021-01-10T16:56:56.658Z
   not_has_depends: "typing_extensions?( *)"
 then:
   - add_depends: "typing_extensions"
@@ -24,7 +24,7 @@ if:
   name: pytorch
   version: "1.13.1"
   build_number: 0
-  timestamp_lt: 1675431752816
+  timestamp_lt: 2023-02-03T13:42:32.816Z
 then:
   - remove_depends: ninja
 ---
@@ -230,6 +230,6 @@ then:
 if:
   name: "pytorch-cpu"
   # 23-Jun-2025
-  timestamp_lt: 1750671297000
+  timestamp_lt: 2025-06-23T09:34:57Z
 then:
   - remove_track_features: pytorch-cpu

@@ -7,7 +7,7 @@
 #         _replace_pin("pillow", "pillow !=7.1.0,!=7.1.1", record.get("depends", []), record)
 if:
   name: napari
-  timestamp_lt: 1642529454000  # 2022-01-18
+  timestamp_lt: 2022-01-18T18:10:54Z  # 2022-01-18
 then:
   - replace_depends:
       old: pillow
@@ -21,7 +21,7 @@ then:
 #         _replace_pin("vispy >=0.6.4", "vispy >=0.6.4,<0.10", record.get("depends", []), record)
 if:
   name: napari
-  timestamp_lt: 1661793597230  # 2022-08-29
+  timestamp_lt: 2022-08-29T17:19:57.230Z  # 2022-08-29
 then:
   - replace_depends:
       old: vispy >=0.9.4
@@ -40,7 +40,7 @@ then:
 #         _replace_pin("python >=3.8", "python >=3.8,<3.11.0a0", record.get("depends", []), record)
 if:
   name: napari
-  timestamp_lt: 1682243307685  # 2023-04-23
+  timestamp_lt: 2023-04-23T09:48:27.685Z  # 2023-04-23
 then:
   - replace_depends:
       old: python >=3.6
@@ -62,7 +62,7 @@ then:
 #         _replace_pin("pydantic >=1.9.0", "pydantic >=1.9.0,<2.0a0", record.get("depends", []), record)
 if:
   name: napari
-  timestamp_lt: 1688456426773  # 2023-07-04
+  timestamp_lt: 2023-07-04T07:40:26.773Z  # 2023-07-04
 then:
   - replace_depends:
       old: pydantic >=1.7.3
@@ -77,7 +77,7 @@ then:
 # https://github.com/conda-forge/napari-feedstock/pull/65
 if:
   name: napari
-  timestamp_lt: 1721096299000  # 2024-07-16
+  timestamp_lt: 2024-07-16T02:18:19Z  # 2024-07-16
   version: 0.5.0
   build_number: 0
 then:

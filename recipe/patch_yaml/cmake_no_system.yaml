@@ -1,6 +1,6 @@
 if:
   name: cmake-no-system
   version_le: "4.0.0"
-  timestamp_lt: 1743436041000
+  timestamp_lt: 2025-03-31T15:47:21Z
 then:
   - add_constrains: cmake ==dev

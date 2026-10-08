@@ -13,7 +13,7 @@ if:
   name: fsspec
   version: "2023.3.0"
   build_number: 0
-  timestamp_lt: 1678285727000
+  timestamp_lt: 2023-03-08T14:28:47Z
 then:
   - replace_depends:
       old: python >=3.6

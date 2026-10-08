@@ -22,7 +22,7 @@
 # patch logic is different but results are the same
 if:
   name_in: [slepc, petsc4py, slepc4py]
-  timestamp_lt: 1657407373000
+  timestamp_lt: 2022-07-09T22:56:13Z
   version: 3.17.*
 then:
   - replace_depends:

@@ -2,7 +2,7 @@
 # https://github.com/conda-forge/statsmodels-feedstock/pull/73
 if:
   name: statsmodels
-  timestamp_le: 1751302301000  # 2025-06-30
+  timestamp_le: 2025-06-30T16:51:41Z  # 2025-06-30
   version_ge: 0.13.3
 then:
   - tighten_depends:
@@ -13,7 +13,7 @@ then:
 # c.f. https://github.com/conda-forge/conda-smithy/issues/2343
 if:
   name: statsmodels
-  timestamp_le: 1751302301000  # 2025-06-30
+  timestamp_le: 2025-06-30T16:51:41Z  # 2025-06-30
   version_ge: 0.13.3
 then:
   - replace_depends:

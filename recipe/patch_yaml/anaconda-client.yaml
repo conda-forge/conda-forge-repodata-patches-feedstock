@@ -50,7 +50,7 @@ then:
 ---
 if:
   name: anaconda-client
-  timestamp_le: 1684878992896
+  timestamp_le: 2023-05-23T21:56:32.896Z
   has_depends: urllib3*
 then:
   - replace_depends:
@@ -59,7 +59,7 @@ then:
 ---
 if:
   name: anaconda-client
-  timestamp_le: 1684878992896
+  timestamp_le: 2023-05-23T21:56:32.896Z
   not_has_depends: urllib3*
 then:
   - replace_depends:
@@ -79,7 +79,7 @@ if:
   name: anaconda-client
   version: 1.13.0
   build_number: 0
-  timestamp_le: 1741961643000
+  timestamp_le: 2025-03-14T14:14:03Z
 then:
   - add_depends: pillow >=8.2
 ---
@@ -94,7 +94,7 @@ then:
 if:
   name: anaconda-client
   version_lt: 1.14.0
-  timestamp_le: 1780139987000
+  timestamp_le: 2026-05-30T11:19:47Z
 then:
   - tighten_depends:
       name: setuptools

@@ -18,7 +18,7 @@
 #                 record["depends"][i] = record["depends"][i] + ",<2.1.0a0"
 if:
   name: metadetect
-  timestamp_le: 1651593228024
+  timestamp_le: 2022-05-03T15:53:48.024Z
 then:
   - tighten_depends:
       name: ngmix
@@ -26,7 +26,7 @@ then:
 ---
 if:
   name: metadetect
-  timestamp_le: 1735105136000
+  timestamp_le: 2024-12-25T05:38:56Z
 then:
   - add_depends:
       - setuptools <82

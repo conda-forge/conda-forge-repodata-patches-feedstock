@@ -21,7 +21,7 @@
 #             break
 if:
   name: numba
-  timestamp_le: 1671537177000
+  timestamp_le: 2022-12-20T11:52:57Z
   version_lt: "0.54"
   has_depends: numpy
 then:
@@ -31,7 +31,7 @@ then:
 ---
 if:
   name: numba
-  timestamp_le: 1671537177000
+  timestamp_le: 2022-12-20T11:52:57Z
   version_lt: "0.54"
   has_depends: numpy >=*,<*
 then:
@@ -41,7 +41,7 @@ then:
 ---
 if:
   name: numba
-  timestamp_le: 1671537177000
+  timestamp_le: 2022-12-20T11:52:57Z
   version_lt: "0.54"
   has_depends: numpy >=*
   not_has_depends: numpy >=*,<*
@@ -52,7 +52,7 @@ then:
 ---
 if:
   name: numba
-  timestamp_le: 1749486739000
+  timestamp_le: 2025-06-09T16:32:19Z
   version: "0.61.2"
   has_depends: numpy >=1.24
 then:
@@ -67,7 +67,7 @@ then:
 # Numba 0.54 and below did not have the entrypoints mechanism.
 if:
   name: numba
-  timestamp_le: 1775229485000
+  timestamp_le: 2026-04-03T15:18:05Z
   version_ge: "0.55.0"
   version_lt: "0.56"
   has_depends: setuptools

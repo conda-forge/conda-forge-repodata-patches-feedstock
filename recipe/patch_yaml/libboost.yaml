@@ -1,7 +1,7 @@
 # see https://github.com/conda-forge/boost-feedstock/pull/228
 if:
   name: libboost
-  timestamp_lt: 1742094791000
+  timestamp_lt: 2025-03-16T03:13:11Z
   version: "1.87.0"
   subdir_in: win-64
 then:

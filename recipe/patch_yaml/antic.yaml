@@ -8,7 +8,7 @@
 if:
   name_in: ["libeantic", "e-antic"]
   subdir: osx-*
-  timestamp_le: 1653062891029
+  timestamp_le: 2022-05-20T16:08:11.029Z
 then:
   - tighten_depends:
       name: antic

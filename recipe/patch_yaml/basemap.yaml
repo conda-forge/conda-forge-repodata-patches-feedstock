@@ -6,6 +6,6 @@ if:
   name: basemap
   version: 2.0.0
   build_number_le: 4
-  timestamp_le: 1777669495000  # 2026-05-01
+  timestamp_le: 2026-05-01T21:04:55Z  # 2026-05-01
 then:
   - add_depends: numpy <2.4

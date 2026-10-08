@@ -5,7 +5,7 @@ if:
     - fenics-ufl
     - fenics-ufl-legacy
     - fenics
-  timestamp_lt: 1771275738000
+  timestamp_lt: 2026-02-16T21:02:18Z
   version_lt: "2023.2.0a0"
 then:
   - tighten_depends:

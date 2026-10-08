@@ -4,7 +4,7 @@ if:
   name: azure-storage-blob
   version: 12.20.0
   build_number_in: [0]
-  timestamp_lt: 1719583158000  # 2024/06/28 GMT
+  timestamp_lt: 2024-06-28T13:59:18Z  # 2024/06/28 GMT
 then:
   - replace_depends:
       old: python >=3.7

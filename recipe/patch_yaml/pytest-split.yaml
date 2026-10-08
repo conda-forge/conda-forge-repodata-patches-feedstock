@@ -9,7 +9,7 @@
 if:
   name: pytest-split
   version_le: 0.8.2
-  timestamp_lt: 1767604488000
+  timestamp_lt: 2026-01-05T09:14:48Z
 then:
   - tighten_depends:
       name: pytest
@@ -35,7 +35,7 @@ then:
 if:
   name: pytest-split
   version_le: 0.6.0
-  timestamp_lt: 1767604488000
+  timestamp_lt: 2026-01-05T09:14:48Z
 then:
   - tighten_depends:
       name: pytest
@@ -46,7 +46,7 @@ if:
   name: pytest-split
   version_ge: 0.7.0
   version_le: 0.8.1
-  timestamp_lt: 1767604488000
+  timestamp_lt: 2026-01-05T09:14:48Z
 then:
   - tighten_depends:
       name: pytest

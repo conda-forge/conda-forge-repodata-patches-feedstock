@@ -16,8 +16,8 @@ cmd = "pre-commit run --all-files"
 description = "Run pre-commit hooks to lint the code."
 
 [tasks.timestamp]
-cmd = "python -c \"import time; print(f'{time.time():.0f}000')\""
-description = "Generate a UTC timestamp in milliseconds since epoch."
+cmd = "python -c \"import datetime; print(datetime.datetime.now().astimezone().isoformat(timespec='seconds'))\""
+description = "Generate the current local time as an RFC 3339 timestamp."
 
 [dependencies]
 conda-build = "*"

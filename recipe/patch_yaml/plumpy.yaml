@@ -5,7 +5,7 @@
 if:
   subdir_in: noarch
   artifact_in: plumpy-0.25.1-pyhd8ed1ab_0.conda
-  timestamp_lt: 1761783096000
+  timestamp_lt: 2025-10-30T00:11:36Z
 
 then:
   - replace_depends:

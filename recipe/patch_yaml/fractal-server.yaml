@@ -2,7 +2,7 @@
 # https://github.com/conda-forge/fractal-server-feedstock/issues/9
 if:
   name: fractal-server
-  timestamp_lt: 1698663374000  # 2023-10-30
+  timestamp_lt: 2023-10-30T10:56:14Z  # 2023-10-30
 then:
   - replace_constrains:
       old: cloudpickle >=2.2.1<2.3.0

@@ -12,7 +12,7 @@
 if:
   name: rioxarray
   version: "0.14.0"
-  timestamp_lt: 1679524270000
+  timestamp_lt: 2023-03-22T22:31:10Z
 then:
   - replace_depends:
       old: python >=3.8
@@ -27,7 +27,7 @@ if:
   name: rioxarray
   version: "0.21.0"
   build_number_in: [0]
-  timestamp_lt: 1772120515000
+  timestamp_lt: 2026-02-26T15:41:55Z
 then:
   - replace_depends:
       old: xarray >=2024.7.0

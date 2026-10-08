@@ -2,7 +2,7 @@ if:
   name: cuda-python
   version_ge: 12.0.0
   version_lt: 13.0.0
-  timestamp_lt: 1706947200000
+  timestamp_lt: 2024-02-03T08:00:00Z
 then:
   - remove_depends:
       - cuda-cudart*
@@ -25,7 +25,7 @@ if:
   name: cuda-python
   version: 13.3.0
   not_has_depends: cuda-core
-  timestamp_lt: 1780272000000
+  timestamp_lt: 2026-06-01T00:00:00Z
 then:
   - add_depends: cuda-core >=1.0.0,<1.1.0
 ---
@@ -34,7 +34,7 @@ then:
 if:
   name: cuda-python
   version: 13.4.1
-  timestamp_lt: 1789584138000
+  timestamp_lt: 2026-09-16T18:42:18Z
 then:
   - replace_depends:
       old: cuda-core >=1.0.0,<1.1.0

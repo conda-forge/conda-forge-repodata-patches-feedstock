@@ -8,7 +8,7 @@ if:
   name: mudata
   version: "0.3.0"
   build_number: 0
-  timestamp_lt: 1724770940000
+  timestamp_lt: 2024-08-27T15:02:20Z
 then:
   - replace_depends:
       old: "python >=3.9"
@@ -17,7 +17,7 @@ then:
 if:
   name: mudata
   version_lt: "0.3.1"
-  timestamp_lt: 1725468863000
+  timestamp_lt: 2024-09-04T16:54:23Z
 then:
   - tighten_depends:
       name: anndata

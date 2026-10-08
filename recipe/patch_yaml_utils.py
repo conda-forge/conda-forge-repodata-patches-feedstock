@@ -4,6 +4,7 @@ import os
 import re
 import string
 import sys
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 
 import yaml
@@ -140,6 +141,30 @@ def _maybe_process_template(value, record, subdir, old=None):
         return value
 
 
+_EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
+
+
+def _timestamp_to_ms(value):
+    """Convert a ``timestamp_*`` condition to milliseconds since the Unix epoch.
+
+    Accepts either a number of milliseconds since the epoch (``1633470721000``)
+    or an RFC 3339 date and time with an explicit UTC offset
+    (``2021-10-05T21:52:01Z``, ``2021-10-05T17:52:01-04:00``), which YAML loads
+    as a datetime unless it is quoted.
+    """
+    if isinstance(value, int):
+        return value
+    if not isinstance(value, datetime):
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            value = datetime.fromisoformat(str(value))
+    if value.tzinfo is None:
+        # would otherwise be read in the local timezone of whoever builds the patches
+        raise ValueError(f"timestamp {value!r} must include a UTC offset")
+    return (value - _EPOCH) // timedelta(milliseconds=1)
+
+
 def _test_patch_yaml(patch_yaml, record, subdir, fn):
     keep = True
     for k, v in patch_yaml["if"].items():
@@ -176,7 +201,10 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             if subk == "version":
                 rv = parse_version(rv)
                 v = parse_version(v)
-            elif subk in ["build_number", "timestamp"]:
+            elif subk == "timestamp":
+                rv = int(rv)
+                v = _timestamp_to_ms(v)
+            elif subk == "build_number":
                 rv = int(rv)
                 v = int(v)
 

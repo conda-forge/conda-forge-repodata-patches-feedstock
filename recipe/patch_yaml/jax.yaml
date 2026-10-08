@@ -16,7 +16,7 @@ if:
   name: jax
   version: 0.4.16
   build: pyhd8ed1ab_0
-  timestamp_lt: 1695136590139
+  timestamp_lt: 2023-09-19T15:16:30.139Z
 then:
   - replace_depends:
       old: jaxlib >=0.4.11
@@ -156,7 +156,7 @@ then:
 if:
   name: jax
   version: 0.4.31
-  timestamp_lt: 1728645860000
+  timestamp_lt: 2024-10-11T11:24:20Z
 then:
   - replace_depends:
       old: python >=3.9

@@ -16,7 +16,7 @@ if:
   name: scikit-image
   version: "0.20.0"
   build_number: 0
-  timestamp_lt: 1681732616000
+  timestamp_lt: 2023-04-17T11:56:56Z
   has_depends: python >=3.8,<3.9.0a0
 then:
   - replace_depends:
@@ -27,7 +27,7 @@ if:
   name: scikit-image
   version: "0.20.0"
   build_number: 0
-  timestamp_lt: 1681732616000
+  timestamp_lt: 2023-04-17T11:56:56Z
   has_depends: python >=3.9,<3.10.0a0
 then:
   - replace_depends:

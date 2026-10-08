@@ -1,6 +1,6 @@
 ---
 if:
-  timestamp_lt: 1705581898000
+  timestamp_lt: 2024-01-18T12:44:58Z
   has_depends:
     - elfutils >=0.18*
 then:

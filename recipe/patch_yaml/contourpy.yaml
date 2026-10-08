@@ -2,7 +2,7 @@ if:
   name: contourpy
   version: 1.3.3
   build_number: 0
-  timestamp_lt: 1755068536000
+  timestamp_lt: 2025-08-13T07:02:16Z
 then:
   - replace_depends:
       old: numpy >=1.23

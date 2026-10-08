@@ -3,7 +3,7 @@
 # https://github.com/napari/napari-console/pull/50
 if:
   name: napari-console
-  timestamp_lt: 1760543716802  # 2025-10-15
+  timestamp_lt: 2025-10-15T15:55:16.802Z  # 2025-10-15
 then:
   - replace_depends:
       old: "ipykernel >=5.2.0"

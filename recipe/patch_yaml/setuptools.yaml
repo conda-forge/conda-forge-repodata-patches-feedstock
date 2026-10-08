@@ -15,7 +15,7 @@
 #     record["depends"] = new_depends
 if:
   name_in: [pandas, distributed, dask-core]
-  timestamp_lt: 1640101398654  # 2021-12-21
+  timestamp_lt: 2021-12-21T15:43:18.654Z  # 2021-12-21
 then:
   - replace_depends:
       old: setuptools

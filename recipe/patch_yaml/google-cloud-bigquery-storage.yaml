@@ -1,7 +1,7 @@
 # Fix google-cloud-bigquery-storage-core protobuf pin
 if:
   name: google-cloud-bigquery-storage-core
-  timestamp_lt: 1738005502000
+  timestamp_lt: 2025-01-27T19:18:22Z
   version_ge: 2.26.0
 then:
   - replace_depends:

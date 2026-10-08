@@ -3,7 +3,7 @@ if:
   subdir_in: noarch
   name: openff-toolkit-examples
   has_depends: "qcportal"
-  timestamp_lt: 1694139596000
+  timestamp_lt: 2023-09-08T02:19:56Z
 then:
   - replace_depends:
       # str of thing to be replaced
@@ -34,7 +34,7 @@ then:
 if:
   subdir_in: noarch
   name: openff-toolkit-base
-  timestamp_lt: 1739572714000
+  timestamp_lt: 2025-02-14T22:38:34Z
   version_le: 0.16.7
 then:
   - add_constrains: "openff-units<0.3.0a0"

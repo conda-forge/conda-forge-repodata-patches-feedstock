@@ -3,7 +3,7 @@
 if:
   name: kikuchipy
   version_lt: 0.11.0
-  timestamp_lt: 1765123739000
+  timestamp_lt: 2025-12-07T16:08:59Z
 then:
   - tighten_depends:
       name: hyperspy
@@ -13,7 +13,7 @@ then:
 if:
   name: kikuchipy
   version_lt: 0.11.0
-  timestamp_lt: 1765123739000
+  timestamp_lt: 2025-12-07T16:08:59Z
 then:
   - tighten_depends:
       name: hyperspy-base

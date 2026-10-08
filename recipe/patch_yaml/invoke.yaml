@@ -3,7 +3,7 @@
 if:
   name: invoke
   version_lt: 2.0.0
-  timestamp_lt: 1686854880000  # 2023/06/15 18:48Z
+  timestamp_lt: 2023-06-15T18:48:00Z  # 2023/06/15 18:48Z
 then:
   - replace_depends:
       old: python

@@ -70,7 +70,7 @@ then:
 if:
   name_in: [nbconvert, nbconvert-core]
   version_lt: "5.5.0"
-  timestamp_le: 1680046165000
+  timestamp_le: 2023-03-28T23:29:25Z
 then:
   - replace_depends:
       old: pandoc?( *)
@@ -83,7 +83,7 @@ if:
   name_in: [nbconvert, nbconvert-core]
   version_ge: "5.5.0"
   version_lt: "7.2.1"
-  timestamp_le: 1680046165000
+  timestamp_le: 2023-03-28T23:29:25Z
 then:
   - replace_depends:
       old: pandoc?( *)
@@ -96,7 +96,7 @@ if:
   name_in: [nbconvert, nbconvert-core]
   version: "7.2.1"
   build_number: 0
-  timestamp_le: 1680046165000
+  timestamp_le: 2023-03-28T23:29:25Z
 then:
   - replace_depends:
       old: pandoc?( *)
@@ -109,7 +109,7 @@ if:
   name_in: [nbconvert, nbconvert-core]
   version_lt: "7.1.0"
   version_ge: "7.0.0"
-  timestamp_le: 1680046165000
+  timestamp_le: 2023-03-28T23:29:25Z
 then:
   - add_depends: lxml <5.2.0a0
 ---
@@ -117,7 +117,7 @@ then:
 if:
   name: nbconvert-core
   version_lt: "7.16.5"
-  timestamp_le: 1735668549000
+  timestamp_le: 2024-12-31T18:09:09Z
 then:
   - replace_depends:
       old: mistune >=2.0.3,<4

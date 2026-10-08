@@ -4,7 +4,7 @@ if:
   name: scvi-tools
   version: "1.1.6"
   build_number: 1
-  timestamp_lt: 1726156541000
+  timestamp_lt: 2024-09-12T15:55:41Z
 then:
   - tighten_depends:
       name: lightning
@@ -17,7 +17,7 @@ if:
   name: scvi-tools
   version: "1.1.6.post2"
   build_number: 0
-  timestamp_lt: 1726588981000
+  timestamp_lt: 2024-09-17T16:03:01Z
 then:
   - tighten_depends:
       name: anndata

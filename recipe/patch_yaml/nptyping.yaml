@@ -1,6 +1,6 @@
 if:
   name: nptyping
-  timestamp_lt: 1726607615000
+  timestamp_lt: 2024-09-17T21:13:35Z
   has_depends: numpy
 then:
   - replace_depends:

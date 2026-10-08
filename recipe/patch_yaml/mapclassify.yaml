@@ -3,7 +3,7 @@
 # (missed) constraint
 if:
   name: mapclassify
-  timestamp_le: 1752300000000  # 2025-07-12
+  timestamp_le: 2025-07-12T06:00:00Z  # 2025-07-12
   version_ge: 2.9.0
 then:
   - replace_depends:

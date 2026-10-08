@@ -18,7 +18,7 @@
 #         if any(dep_name == dep.split(" ")[0] for dep in record["depends"]):
 #             _pin_stricter(fn, record, dep_name, "x.x.x")
 if:
-  timestamp_lt: 1691761503000
+  timestamp_lt: 2023-08-11T13:45:03Z
   name_in:
     - "jsonschema-with-format"
     - "jsonschema-with-format-nongpl"

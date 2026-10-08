@@ -4,7 +4,7 @@ if:
   name: dash-extensions
   version_ge: "1.0.2"
   version_lt: "1.0.8"
-  timestamp_lt: 1706605350000
+  timestamp_lt: 2024-01-30T09:02:30Z
 then:
   - add_depends: "dataclass-wizard >=0.22.0,<0.23.0"
 ---
@@ -12,6 +12,6 @@ if:
   name: dash-extensions
   version: "1.0.8"
   build: "*_0"
-  timestamp_lt: 1706605350000
+  timestamp_lt: 2024-01-30T09:02:30Z
 then:
   - add_depends: "dataclass-wizard >=0.22.0,<0.23.0"

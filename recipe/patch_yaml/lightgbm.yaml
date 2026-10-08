@@ -2,6 +2,6 @@ if:
   name: lightgbm
   version: 4.4.0
   build: cuda*
-  timestamp_lt: 1720034169000
+  timestamp_lt: 2024-07-03T19:16:09Z
 then:
   - add_depends: __cuda

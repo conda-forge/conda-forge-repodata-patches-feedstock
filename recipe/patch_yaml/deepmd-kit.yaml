@@ -2,7 +2,7 @@
 if:
   name: deepmd-kit
   version_le: "2.2.4"
-  timestamp_lt: 1695668542000
+  timestamp_lt: 2023-09-25T19:02:22Z
 then:
   - tighten_depends:
       name: numpy

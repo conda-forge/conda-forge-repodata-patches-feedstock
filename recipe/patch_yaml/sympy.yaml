@@ -3,7 +3,7 @@ if:
   name: sympy
   version_le: 1.14.0
   version_ge: "1.9"
-  timestamp_lt: 1771947801000
+  timestamp_lt: 2026-02-24T15:43:21Z
 then:
   - replace_depends:
       old: mpmath >=0.19

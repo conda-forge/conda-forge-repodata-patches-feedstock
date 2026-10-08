@@ -9,7 +9,7 @@
 if:
   name: pympler
   version_eq: "1.1"
-  timestamp_lt: 1784151420000  # 2026-07-15T21:37:00Z
+  timestamp_lt: 2026-07-15T21:37:00Z  # 2026-07-15T21:37:00Z
 
 then:
   - add_depends: pywin32-on-windows

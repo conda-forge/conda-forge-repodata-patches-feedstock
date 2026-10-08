@@ -5,8 +5,8 @@
 if:
   name: libarrow
   build_in: ["*cuda"]
-  timestamp_le: 1770595200000  # 2026-02-09
-  timestamp_ge: 1686009600000  # 2023-06-06
+  timestamp_le: 2026-02-09T00:00:00Z  # 2026-02-09
+  timestamp_ge: 2023-06-06T00:00:00Z  # 2023-06-06
 then:
   - add_depends:
       - __cuda
@@ -15,7 +15,7 @@ then:
 # https://github.com/conda-forge/arrow-cpp-feedstock/pull/1409
 if:
   has_depends: libarrow >=16.0.0,<17.0a0
-  timestamp_le: 1771074998821
+  timestamp_le: 2026-02-14T13:16:38.821Z
 then:
   - tighten_depends:
       name: libarrow

@@ -32,7 +32,7 @@ then:
 ---
 if:
   name: libgdal
-  timestamp_lt: 1720805984000
+  timestamp_lt: 2024-07-12T17:39:44Z
   version: "3.9.1"
 
 then:

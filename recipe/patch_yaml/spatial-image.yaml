@@ -4,7 +4,7 @@ if:
   name: spatial-image
   version: "1.2.3"
   build_number: 0
-  timestamp_lt: 1755797300000
+  timestamp_lt: 2025-08-21T17:28:20Z
 then:
   - replace_depends:
       old: xarray

@@ -1,7 +1,7 @@
 if:
   name: astropy
   version: 6.1.1
-  timestamp_lt: 1721656550000
+  timestamp_lt: 2024-07-22T13:55:50Z
   build_number: 0
   subdir_in:
     - win-64

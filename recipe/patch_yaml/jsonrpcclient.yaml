@@ -3,7 +3,7 @@
 if:
   name: jsonrpcclient
   version_ge: 4.0.0
-  timestamp_lt: 1732100712000
+  timestamp_lt: 2024-11-20T11:05:12Z
   has_depends: click <7
 then:
   - remove_depends: click <7
@@ -13,7 +13,7 @@ then:
 if:
   name: jsonrpcclient
   version_ge: 4.0.1
-  timestamp_lt: 1732100712000
+  timestamp_lt: 2024-11-20T11:05:12Z
   has_depends: apply_defaults <1
 then:
   - remove_depends: apply_defaults <1
@@ -23,7 +23,7 @@ then:
 if:
   name: jsonrpcclient
   version_ge: 4.0.1
-  timestamp_lt: 1732100712000
+  timestamp_lt: 2024-11-20T11:05:12Z
   has_depends: jsonschema <4
 then:
   - remove_depends: jsonschema <4

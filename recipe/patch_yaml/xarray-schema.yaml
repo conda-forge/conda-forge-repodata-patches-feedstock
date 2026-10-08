@@ -5,7 +5,7 @@
 if:
   name: xarray-schema
   version_le: "0.0.3"
-  timestamp_lt: 1770750491000
+  timestamp_lt: 2026-02-10T19:08:11Z
 then:
   - add_depends: "setuptools <82"
 ---
@@ -16,7 +16,7 @@ then:
 if:
   name: xarray-schema
   version: "0.0.3"
-  timestamp_lt: 1770750491000
+  timestamp_lt: 2026-02-10T19:08:11Z
 then:
   - replace_depends:
       old: "numpy >=1.20"
