@@ -1,0 +1,6 @@
+# Since go 1.27.2, we don't use the `_go_select` package anymore.
+if:
+  name: _go_select
+  timestamp_lt: 1791710823000
+then:
+  - add_constrains: go <1.27.2
