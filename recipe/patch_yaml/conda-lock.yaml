@@ -8,3 +8,13 @@ if:
   not_has_constrains: "*"
 then:
   - add_constrains: urllib3 <2
+---
+# change in output of json from mamba
+# https://github.com/conda/conda-lock/pull/935
+if:
+  name: conda-lock
+  version_le: "4.0.2"
+then:
+  - add_constrains:
+      - mamba <2.9.0a0
+      - micromamba <2.9.0a0
