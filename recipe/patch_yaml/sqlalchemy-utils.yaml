@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+if:
+  name: sqlalchemy-utils
+  version_eq: 0.43.0
+  timestamp_lt: 1791677724000
+then:
+  - add_depends: sqlalchemy >=2.0
