@@ -1,0 +1,22 @@
+# The upper bounds on the dependencies are not needed and the ruamel.yaml <0.19
+# bound keeps solvers from picking up releases >=1.4.19 build 1 alongside conda-smithy.
+# Upstream removed the bounds from pyproject.toml.
+# https://github.com/conda-forge/rattler-build-conda-compat/issues/143
+# https://github.com/conda-forge/rattler-build-conda-compat/pull/144
+if:
+  name: rattler-build-conda-compat
+  version_ge: 1.0.0
+  timestamp_lt: 1792100040000
+then:
+  - replace_depends:
+      old: jinja2 >=3.0.2,<4
+      new: jinja2 >=3.0.2
+  - replace_depends:
+      old: typing-extensions >=4.12.2,<5
+      new: typing-extensions >=4.12.2
+  - replace_depends:
+      old: ruamel.yaml >=0.18.6,<0.19
+      new: ruamel.yaml >=0.18.6
+  - replace_depends:
+      old: types-pyyaml >=6.0.12.20240311,<6.0.13
+      new: types-pyyaml >=6.0.12.20240311
