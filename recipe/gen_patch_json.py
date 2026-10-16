@@ -43,6 +43,9 @@ SUBDIRS = (
     "win-64",
     "win-arm64",
 )
+# Each worker peaks at ~4.6 GiB of memory for linux-64 (as of 2026-10), so running
+# one worker per CPU on the 4 CPU / 16 GB GitHub Actions runner gets OOM killed.
+MAX_WORKERS = 2
 
 REMOVALS = {
     "noarch": (
@@ -982,8 +985,6 @@ def _do_subdir(subdir, verbose=False):
 
         with zstandard.open(raw_repodata_path) as fh:
             repodata = json.load(fh)
-        with zstandard.open(ref_repodata_path) as fh:
-            ref_repodata = json.load(fh)
 
         # Copying large python dictionaries is slow, just reload the repodata
         with zstandard.open(raw_repodata_path) as fh:
@@ -1001,6 +1002,9 @@ def _do_subdir(subdir, verbose=False):
         instructions = _gen_patch_instructions(
             repodata, new_index, subdir, verbose=verbose
         )
+        # Free new_index before ref_repodata is loaded so that at most two parsed
+        # copies of the repodata are held in memory at once.
+        del new_index
 
         # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
         patch_instructions_path = join(prefix_subdir, "patch_instructions.json")
@@ -1011,6 +1015,8 @@ def _do_subdir(subdir, verbose=False):
 
         # Step 3. Show the diff
         new_repodata = _apply_instructions(subdir, repodata, instructions)
+        with zstandard.open(ref_repodata_path) as fh:
+            ref_repodata = json.load(fh)
         return subdir, show_record_diffs(
             subdir, ref_repodata, new_repodata, False, group_diffs=True
         )
@@ -1023,9 +1029,8 @@ def main():
     else:
         subdirs = SUBDIRS
 
-    with ProcessPoolExecutor(
-        max_workers=int(os.environ["CPU_COUNT"]) if "CPU_COUNT" in os.environ else None
-    ) as exc:
+    cpu_count = int(os.environ.get("CPU_COUNT", os.cpu_count()))
+    with ProcessPoolExecutor(max_workers=min(cpu_count, MAX_WORKERS)) as exc:
         futs = [exc.submit(_do_subdir, subdir) for subdir in subdirs]
         for fut in tqdm(
             as_completed(futs), desc="patching repodata", total=len(subdirs)
