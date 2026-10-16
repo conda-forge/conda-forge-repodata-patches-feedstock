@@ -1,0 +1,7 @@
+if:
+  name: botorch
+  version: "0.18.*"
+  timestamp_lt: 1787837642000
+then:
+  - remove_depends:
+      - ninja-python
