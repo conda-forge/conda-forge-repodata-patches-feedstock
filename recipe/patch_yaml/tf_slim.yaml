@@ -2,7 +2,7 @@
 # https://github.com/conda-forge/tf-slim-feedstock/pull/6
 if:
   name: tf_slim
-  timestamp_lt: 1701179521000
+  timestamp_lt: 2023-11-28T13:52:01Z
 then:
   - tighten_depends:
       name: tensorflow
@@ -15,6 +15,6 @@ then:
 # https://github.com/conda-forge/tf-slim-feedstock/pull/8
 if:
   name: tf_slim
-  timestamp_lt: 1725414290000
+  timestamp_lt: 2024-09-04T01:44:50Z
 then:
   - add_constrains: keras <3.0a

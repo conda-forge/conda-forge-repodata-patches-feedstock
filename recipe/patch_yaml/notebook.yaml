@@ -1,7 +1,7 @@
 if:
   name: notebook
   version_lt: 6.5.6
-  timestamp_lt: 1695942954000
+  timestamp_lt: 2023-09-28T23:15:54Z
 then:
   - tighten_depends:
       name: traitlets
@@ -13,7 +13,7 @@ then:
 # - https://github.com/conda-forge/notebook-feedstock/pull/144
 if:
   name: notebook
-  timestamp_lt: 1707513052000
+  timestamp_lt: 2024-02-09T21:10:52Z
 then:
   - replace_depends:
       old: jupyterlab >=4.0.7,<5
@@ -26,7 +26,7 @@ then:
 if:
   name: notebook
   version_eq: 7.5.6
-  timestamp_lt: 1777553440000
+  timestamp_lt: 2026-04-30T12:50:40Z
 then:
   - replace_depends:
       old: jupyterlab >=4.5.6,<4.6

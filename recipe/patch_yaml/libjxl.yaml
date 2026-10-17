@@ -1,7 +1,7 @@
 # https://github.com/conda-forge/libjxl-split-feedstock/issues/52
 if:
   has_depends: libjxl?( *)
-  timestamp_lt: 1783167774000
+  timestamp_lt: 2026-07-04T12:22:54Z
 then:
   - tighten_depends:
       name: libjxl

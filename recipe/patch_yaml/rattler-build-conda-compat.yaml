@@ -6,7 +6,7 @@
 if:
   name: rattler-build-conda-compat
   version_ge: 1.0.0
-  timestamp_lt: 1792100040000
+  timestamp_lt: 2026-10-15T21:34:00Z
 then:
   - replace_depends:
       old: jinja2 >=3.0.2,<4

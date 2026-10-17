@@ -14,7 +14,7 @@ if:
   version_in:
     - "1.4.1"
     - "1.5.0"
-  timestamp_lt: 1788449634000
+  timestamp_lt: 2026-09-03T15:33:54Z
 then:
   - rename_constrains:
       old: "napari[pyqt5]"

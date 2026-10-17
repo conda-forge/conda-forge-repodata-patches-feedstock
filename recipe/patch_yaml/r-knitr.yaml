@@ -13,7 +13,7 @@
 if:
   name: r-knitr
   version_in: ["1.29", "1.30"]
-  timestamp_lt: 1709048999000
+  timestamp_lt: 2024-02-27T15:49:59Z
 then:
   - replace_depends:
       old: r-xfun*
@@ -24,7 +24,7 @@ then:
 if:
   name: r-knitr
   version_in: ["1.31"]
-  timestamp_lt: 1709048999000
+  timestamp_lt: 2024-02-27T15:49:59Z
 then:
   - replace_depends:
       old: r-xfun*
@@ -39,7 +39,7 @@ then:
 if:
   name: r-knitr
   version_in: ["1.32", "1.33", "1.34", "1.35", "1.36"]
-  timestamp_lt: 1709048999000
+  timestamp_lt: 2024-02-27T15:49:59Z
 then:
   - replace_depends:
       old: r-xfun*
@@ -50,7 +50,7 @@ then:
 if:
   name: r-knitr
   version_in: ["1.37"]
-  timestamp_lt: 1709048999000
+  timestamp_lt: 2024-02-27T15:49:59Z
 then:
   - replace_depends:
       old: r-xfun*
@@ -63,7 +63,7 @@ then:
 if:
   name: r-knitr
   version_in: ["1.38", "1.39", "1.40"]
-  timestamp_lt: 1709048999000
+  timestamp_lt: 2024-02-27T15:49:59Z
 then:
   - replace_depends:
       old: r-xfun*
@@ -75,7 +75,7 @@ then:
 if:
   name: r-knitr
   version_in: ["1.41", "1.42"]
-  timestamp_lt: 1709048999000
+  timestamp_lt: 2024-02-27T15:49:59Z
 then:
   - replace_depends:
       old: r-xfun*
@@ -88,7 +88,7 @@ then:
 if:
   name: r-knitr
   version_in: ["1.43", "1.44", "1.45"]
-  timestamp_lt: 1709048999000
+  timestamp_lt: 2024-02-27T15:49:59Z
 then:
   - replace_depends:
       old: r-xfun*

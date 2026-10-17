@@ -4,7 +4,7 @@
 # multiuserfilelock 0.0.9 removed code that specifically supported 3.13.0
 if:
   name: multiuserfilelock
-  timestamp_lt: 1698755629000
+  timestamp_lt: 2023-10-31T12:33:49Z
   version_lt: 0.0.8
 
 then:
@@ -16,7 +16,7 @@ then:
 
 if:
   name: multiuserfilelock
-  timestamp_lt: 1698755629000
+  timestamp_lt: 2023-10-31T12:33:49Z
   version_eq: 0.0.9
 
 then:

@@ -3,7 +3,12 @@ from pathlib import Path
 import pytest
 import yaml
 from patch_yaml_model import PatchYaml, generate_schema
-from patch_yaml_utils import ALLOWED_TEMPLATE_KEYS, _apply_patch_yaml, _test_patch_yaml
+from patch_yaml_utils import (
+    ALLOWED_TEMPLATE_KEYS,
+    _apply_patch_yaml,
+    _test_patch_yaml,
+    _timestamp_to_ms,
+)
 
 
 def test_test_patch_yaml_record_key():
@@ -550,6 +555,62 @@ def test_apply_patch_yaml_loosen(pre, post):
     record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"depends": pre + ["numpy >=1.0.0,<3.1.2.0a0"] + post}
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "1790912420000",
+        "2026-10-02T03:40:20Z",
+        "2026-10-02T03:40:20+00:00",
+        "2026-10-01T23:40:20-04:00",
+        "2026-10-02 03:40:20Z",
+        '"2026-10-02T03:40:20Z"',
+        '"1790912420000"',
+    ],
+)
+def test_timestamp_to_ms(value):
+    loaded = yaml.safe_load(f"timestamp_lt: {value}")
+    assert _timestamp_to_ms(loaded["timestamp_lt"]) == 1790912420000
+    PatchYaml(**{"if": loaded, "then": [{"add_depends": "foo"}]})
+
+
+def test_timestamp_to_ms_milliseconds():
+    loaded = yaml.safe_load("timestamp_lt: 2022-08-31T16:21:13.884Z")
+    assert _timestamp_to_ms(loaded["timestamp_lt"]) == 1661962873884
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        # no UTC offset: which instant this is depends on who reads it
+        "2026-10-02T03:40:20",
+        "2026-10-02",
+        '"2026-10-02T03:40:20"',
+        "not a timestamp",
+    ],
+)
+def test_timestamp_to_ms_invalid(value):
+    loaded = yaml.safe_load(f"timestamp_lt: {value}")
+    with pytest.raises(ValueError):
+        _timestamp_to_ms(loaded["timestamp_lt"])
+    with pytest.raises(ValueError):
+        PatchYaml(**{"if": loaded, "then": [{"add_depends": "foo"}]})
+
+
+@pytest.mark.parametrize("op", ["lt", "le", "gt", "ge", "eq", "ne"])
+def test_test_patch_yaml_timestamp_formats(op):
+    # a condition matches the same records whichever way it is written
+    as_ms = {"if": {f"timestamp_{op}": 1790912420000}}
+    as_rfc3339 = {"if": yaml.safe_load(f"timestamp_{op}: 2026-10-02T03:40:20Z")}
+    for timestamp in [1790912419999, 1790912420000, 1790912420001]:
+        record = {"timestamp": timestamp}
+        assert _test_patch_yaml(as_rfc3339, record, None, None) == _test_patch_yaml(
+            as_ms, record, None, None
+        )
+    assert _test_patch_yaml(as_rfc3339, {}, None, None) == _test_patch_yaml(
+        as_ms, {}, None, None
+    )
 
 
 def test_schema_up_to_date():

@@ -2,7 +2,7 @@
 if:
   name: pytest-asyncio
   version_lt: 0.23.4
-  timestamp_le: 1706889375000
+  timestamp_le: 2024-02-02T15:56:15Z
 then:
   - tighten_depends:
       name: pytest

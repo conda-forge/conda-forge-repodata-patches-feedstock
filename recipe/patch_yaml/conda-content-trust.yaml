@@ -4,7 +4,7 @@
 #     _replace_pin("cryptography", "cryptography <41.0.0a0", record["depends"], record)
 if:
   name: conda-content-trust
-  timestamp_lt: 1685589411000
+  timestamp_lt: 2023-06-01T03:16:51Z
 then:
   - replace_depends:
       old: cryptography

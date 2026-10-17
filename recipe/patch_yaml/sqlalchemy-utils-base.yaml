@@ -2,6 +2,6 @@
 if:
   name: sqlalchemy-utils-base
   version_eq: 0.43.0
-  timestamp_lt: 1791677724000
+  timestamp_lt: 2026-10-11T00:15:24Z
 then:
   - add_depends: sqlalchemy >=2.0

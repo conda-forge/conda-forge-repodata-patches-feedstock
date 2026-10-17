@@ -2,6 +2,6 @@ if:
   name: pytango
   version: 9.3.6
   build_number_in: [1, 2, 3]
-  timestamp_lt: 1728409721000
+  timestamp_lt: 2024-10-08T17:48:41Z
 then:
   - add_depends: omniorb-libs >=4.2.5,<4.3.0a0

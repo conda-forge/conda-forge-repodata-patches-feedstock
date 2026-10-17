@@ -11,6 +11,6 @@ if:
   name: libtensorlight
   version: "3.0.1"
   build_number: 0
-  timestamp_le: 1682609291000
+  timestamp_le: 2023-04-27T15:28:11Z
 then:
   - add_depends: "libblas * *mkl"

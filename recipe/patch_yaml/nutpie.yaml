@@ -5,7 +5,7 @@
 if:
   name: nutpie
   version_le: "0.16.6"
-  timestamp_lt: 1778703359000
+  timestamp_lt: 2026-05-13T20:15:59Z
 then:
   - tighten_depends:
       name: arviz

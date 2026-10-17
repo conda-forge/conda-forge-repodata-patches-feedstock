@@ -1,7 +1,7 @@
 if:
   name: itango
   version_lt: 0.2.0
-  timestamp_lt: 1744182930000
+  timestamp_lt: 2025-04-09T07:15:30Z
 then:
   - replace_depends:
       old: ipython >=1.0
@@ -10,7 +10,7 @@ then:
 if:
   name: itango
   version: 0.2.0
-  timestamp_lt: 1744182930000
+  timestamp_lt: 2025-04-09T07:15:30Z
 then:
   - replace_depends:
       old: ipython >=4.0

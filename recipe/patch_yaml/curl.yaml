@@ -7,7 +7,7 @@
 #         _pin_looser(fn, record, "curl", upper_bound="9.0")
 #         _pin_looser(fn, record, "libcurl", upper_bound="9.0")
 if:
-  timestamp_lt: 1681344601000
+  timestamp_lt: 2023-04-13T00:10:01Z
   has_depends: libcurl *<8.0a0
 then:
   - loosen_depends:
@@ -15,7 +15,7 @@ then:
       upper_bound: "9.0"
 ---
 if:
-  timestamp_lt: 1681344601000
+  timestamp_lt: 2023-04-13T00:10:01Z
   has_depends: curl *<8.0a0
 then:
   - loosen_depends:

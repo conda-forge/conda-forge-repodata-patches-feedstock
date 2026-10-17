@@ -28,7 +28,7 @@ if:
   name: zipp
   version: 3.16.0
   build: pyhd8ed1ab_0
-  timestamp_le: 1689035633000
+  timestamp_le: 2023-07-11T00:33:53Z
 then:
   - replace_depends:
       old: python >=3.7

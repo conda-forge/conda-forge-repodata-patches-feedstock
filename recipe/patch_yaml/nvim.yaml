@@ -4,6 +4,6 @@
 if:
   name: nvim
   has_depends: "unibilium?( *)"
-  timestamp_lt: 1787544213485
+  timestamp_lt: 2026-08-24T04:03:33.485Z
 then:
   - add_depends: "unibilium <2.1.4"

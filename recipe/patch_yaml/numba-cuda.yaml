@@ -4,6 +4,6 @@
 # ref: https://github.com/conda-forge/numba-cuda-feedstock/issues/93
 if:
   name: numba-cuda
-  timestamp_lt: 1789665061000
+  timestamp_lt: 2026-09-17T17:11:01Z
 then:
   - add_constrains: numpy <2.5.0a0

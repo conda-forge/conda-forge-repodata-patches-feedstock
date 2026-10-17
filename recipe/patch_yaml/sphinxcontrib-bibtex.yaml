@@ -7,7 +7,7 @@ if:
   version_in:
     - "2.6.0"
     - "2.6.1"
-  timestamp_lt: 1693156161000
+  timestamp_lt: 2023-08-27T17:09:21Z
   has_depends: "python >=3.6"
 then:
   - replace_depends:

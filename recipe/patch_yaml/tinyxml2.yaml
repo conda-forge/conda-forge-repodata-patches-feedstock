@@ -1,5 +1,5 @@
 if:
-  timestamp_lt: 1741621209000
+  timestamp_lt: 2025-03-10T15:40:09Z
   has_depends: tinyxml2 >=10.0.*
 then:
   - tighten_depends:

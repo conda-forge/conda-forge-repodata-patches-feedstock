@@ -2,7 +2,7 @@ if:
   name: dask-ms
   version_ge: "0.2.6"
   version_le: "0.2.22"
-  timestamp_lt: 1776416806000
+  timestamp_lt: 2026-04-17T09:06:46Z
 then:
   - tighten_depends:
       name: dask
