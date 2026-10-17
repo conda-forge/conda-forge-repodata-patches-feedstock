@@ -5,7 +5,7 @@
 # it or pinning <2.
 if:
   name: geoviews
-  timestamp_lt: 1696575733000
+  timestamp_lt: 2023-10-06T07:02:13Z
   has_depends: param*
 then:
   - tighten_depends:

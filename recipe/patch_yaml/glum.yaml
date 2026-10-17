@@ -2,7 +2,7 @@
 #  do not interfere with older versions of glum
 if:
   name: glum
-  timestamp_lt: 1713800640000
+  timestamp_lt: 2024-04-22T15:44:00Z
   version_lt: 2.6.0
   has_depends: tabmat >=*
   not_has_depends: tabmat >=*,<*
@@ -15,7 +15,7 @@ then:
 #  do not break older versions of glum
 if:
   name: glum
-  timestamp_lt: 1716389793000
+  timestamp_lt: 2024-05-22T14:56:33Z
   version_le: 3.0.0
   has_depends: scikit-learn >=*
   not_has_depends: scikit-learn >=*,<*

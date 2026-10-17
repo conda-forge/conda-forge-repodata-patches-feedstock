@@ -6,7 +6,7 @@
 # Which was released in 2023/08/25 on conda-forge (seems far back enough)
 if:
   has_depends: harfbuzz >=10.*
-  timestamp_lt: 1750018445000
+  timestamp_lt: 2025-06-15T20:14:05Z
 then:
   - loosen_depends:
       name: harfbuzz
@@ -16,7 +16,7 @@ then:
 
 if:
   has_depends: harfbuzz >=9.*
-  timestamp_lt: 1750018445000
+  timestamp_lt: 2025-06-15T20:14:05Z
 then:
   - loosen_depends:
       name: harfbuzz
@@ -26,7 +26,7 @@ then:
 
 if:
   has_depends: harfbuzz >=8.*
-  timestamp_lt: 1750018445000
+  timestamp_lt: 2025-06-15T20:14:05Z
 then:
   - loosen_depends:
       name: harfbuzz

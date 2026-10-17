@@ -5,7 +5,7 @@
 # this was not always specified
 if:
   name: hvplot
-  timestamp_lt: 1696575733000
+  timestamp_lt: 2023-10-06T07:02:13Z
   version_gt: 0.7.2
   not_has_depends: param*
 then:
@@ -14,7 +14,7 @@ then:
 # Versions that depended on Param didn't specify any upper pin
 if:
   name: hvplot
-  timestamp_lt: 1696575733000
+  timestamp_lt: 2023-10-06T07:02:13Z
   has_depends: param*
 then:
   - tighten_depends:

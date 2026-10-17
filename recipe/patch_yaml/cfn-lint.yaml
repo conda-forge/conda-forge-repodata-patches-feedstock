@@ -66,7 +66,7 @@
 #     print(template.replace("__PIN__", pin).replace("__VERSIONS__", str(versions)).replace("'", '"').strip())
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.20.1", "0.20.2", "0.21.2"]
 then:
   - replace_depends:
@@ -75,7 +75,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.22.0"]
 then:
   - replace_depends:
@@ -84,7 +84,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.23.1", "0.23.2"]
 then:
   - replace_depends:
@@ -93,7 +93,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.56.0", "0.56.1", "0.56.2"]
 then:
   - replace_depends:
@@ -102,7 +102,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.56.3", "0.56.4", "0.57.0", "0.58.0", "0.58.1", "0.58.2", "0.58.3", "0.58.4"]
 then:
   - replace_depends:
@@ -111,7 +111,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.59.0", "0.59.1", "0.60.0", "0.60.1", "0.61.0"]
 then:
   - replace_depends:
@@ -120,7 +120,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.61.1", "0.61.2"]
 then:
   - replace_depends:
@@ -129,7 +129,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.61.3"]
 then:
   - replace_depends:
@@ -138,7 +138,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.61.4"]
 then:
   - replace_depends:
@@ -147,7 +147,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.61.5"]
 then:
   - replace_depends:
@@ -156,7 +156,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.62.0", "0.63.0", "0.63.1", "0.63.2", "0.64.0", "0.64.1", "0.65.0"]
 then:
   - replace_depends:
@@ -165,7 +165,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.65.1", "0.66.0", "0.66.1"]
 then:
   - replace_depends:
@@ -174,7 +174,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.67.0"]
 then:
   - replace_depends:
@@ -183,7 +183,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.68.0", "0.68.1", "0.69.0", "0.69.1", "0.70.1", "0.71.0"]
 then:
   - replace_depends:
@@ -192,7 +192,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.71.1", "0.72.0", "0.72.1"]
 then:
   - replace_depends:
@@ -201,7 +201,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.72.2", "0.72.3", "0.72.4", "0.72.5", "0.72.6"]
 then:
   - replace_depends:
@@ -210,7 +210,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.72.7", "0.72.8"]
 then:
   - replace_depends:
@@ -219,7 +219,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.72.10"]
 then:
   - replace_depends:
@@ -228,7 +228,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.73.0", "0.73.1", "0.73.2"]
 then:
   - replace_depends:
@@ -237,7 +237,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.74.1", "0.74.3", "0.75.0", "0.75.1"]
 then:
   - replace_depends:
@@ -246,7 +246,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.76.1", "0.76.2"]
 then:
   - replace_depends:
@@ -255,7 +255,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.77.0", "0.77.1", "0.77.2", "0.77.3"]
 then:
   - replace_depends:
@@ -264,7 +264,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.77.4", "0.77.5"]
 then:
   - replace_depends:
@@ -273,7 +273,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.77.6", "0.77.7", "0.77.8", "0.77.9", "0.77.10"]
 then:
   - replace_depends:
@@ -282,7 +282,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.78.1"]
 then:
   - replace_depends:
@@ -291,7 +291,7 @@ then:
 ---
 if:
   name: cfn-lint
-  timestamp_lt: 1692540625000
+  timestamp_lt: 2023-08-20T14:10:25Z
   version_in: ["0.78.2", "0.79.1", "0.79.4", "0.79.5", "0.79.6", "0.79.7"]
 then:
   - replace_depends:

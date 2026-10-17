@@ -10,7 +10,7 @@ if:
     - blas
     - lapack
   build: "*netlib*"
-  timestamp_lt: 1727167107000
+  timestamp_lt: 2024-09-24T08:38:27Z
 then:
   # no reset_track_features, so remove & add to avoid duplicating
   - remove_track_features:

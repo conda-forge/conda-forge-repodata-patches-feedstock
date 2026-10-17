@@ -6,7 +6,7 @@ if:
   name: fenics-ffc
   version: "2019.1.0"
   build_number_lt: 40
-  timestamp_lt: 1733402352000
+  timestamp_lt: 2024-12-05T12:39:12Z
 then:
   - tighten_depends:
       # don't support numpy 2

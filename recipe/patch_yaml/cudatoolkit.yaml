@@ -34,7 +34,7 @@ then:
 if:
   name: cuda-version
   build_number_lt: 2
-  timestamp_lt: 1683211961000
+  timestamp_lt: 2023-05-04T14:52:41Z
 then:
   - replace_constrains:
       old: cudatoolkit*

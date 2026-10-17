@@ -6,7 +6,7 @@
 # https://github.com/conda-forge/azure-identity-cpp-feedstock/pull/6
 if:
   has_depends: azure-identity-cpp*
-  timestamp_lt: 1709048999000
+  timestamp_lt: 2024-02-27T15:49:59Z
 then:
   - tighten_depends:
       name: azure-identity-cpp

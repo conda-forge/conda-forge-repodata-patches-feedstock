@@ -47,7 +47,7 @@ then:
 #             record["depends"] += ["referencing"]
 if:
   name: jupyter_events
-  timestamp_lt: 1691759541000
+  timestamp_lt: 2023-08-11T13:12:21Z
   version: 0.7.0
 then:
   - replace_depends:
@@ -57,7 +57,7 @@ then:
 # from the same bit of code as the one above
 if:
   name: jupyter_events
-  timestamp_lt: 1691759541000
+  timestamp_lt: 2023-08-11T13:12:21Z
   version: 0.7.0
   not_has_depends: referencing
 then:

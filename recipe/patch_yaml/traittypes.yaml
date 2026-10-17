@@ -1,6 +1,6 @@
 if:
   name: traittypes
-  timestamp_lt: 1694720296000
+  timestamp_lt: 2023-09-14T19:38:16Z
 then:
   - replace_depends:
       old: traitlets?( *)

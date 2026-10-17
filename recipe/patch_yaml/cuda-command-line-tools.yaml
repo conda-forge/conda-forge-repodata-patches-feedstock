@@ -21,6 +21,6 @@ if:
         - cuda-command-line-tools-12.8.1-ha770c72_0.conda
         - cuda-command-line-tools-12.9.0-h8af1aa0_0.conda
         - cuda-command-line-tools-12.9.0-ha770c72_0.conda
-    timestamp_lt: 1774914395000
+    timestamp_lt: 2026-03-30T23:46:35Z
 then:
     - remove_depends: cuda-gdb?( *)

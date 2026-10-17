@@ -21,7 +21,7 @@ then:
 ---
 if:
   name: pandas
-  timestamp_lt: 1753977379000
+  timestamp_lt: 2025-07-31T15:56:19Z
   version: 2.2.2
 then:
   - replace_depends:

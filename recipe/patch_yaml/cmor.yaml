@@ -16,7 +16,7 @@
 #         _pin_stricter(fn, record, "numpy", "x", upper_bound="1.24")
 if:
   name: cmor
-  timestamp_lt: 1679388583000
+  timestamp_lt: 2023-03-21T08:49:43Z
   version_lt: "3.7.1"
 then:
   - tighten_depends:
@@ -26,7 +26,7 @@ then:
 ---
 if:
   name: cmor
-  timestamp_lt: 1679388583000
+  timestamp_lt: 2023-03-21T08:49:43Z
   version: "3.7.1"
   build_number_lt: 4
 then:

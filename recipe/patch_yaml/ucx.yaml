@@ -9,7 +9,7 @@
 #     record["constrains"] = constrains
 if:
   name: ucx
-  timestamp_lt: 1682924400000
+  timestamp_lt: 2023-05-01T07:00:00Z
 then:
   - replace_constrains:
       old: "cudatoolkit 11.1"

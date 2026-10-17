@@ -4,6 +4,6 @@ if:
   name: fastjet-cxx-devel
   has_depends: siscone
   not_has_depends: siscone-devel*
-  timestamp_lt: 1790946868000
+  timestamp_lt: 2026-10-02T13:14:28Z
 then:
   - add_depends: siscone-devel

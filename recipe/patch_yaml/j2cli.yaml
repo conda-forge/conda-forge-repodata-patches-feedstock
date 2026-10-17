@@ -3,7 +3,7 @@
 # https://github.com/conda-forge/j2cli-feedstock/pull/2
 if:
   name: j2cli
-  timestamp_lt: 1711413151000
+  timestamp_lt: 2024-03-26T00:32:31Z
 
 then:
   - tighten_depends:

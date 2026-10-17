@@ -4,7 +4,7 @@ if:
   name: rivet
   has_depends: fastjet-cxx >=3.5.?,<3.6.0a0
   not_has_depends: fastjet-cxx-devel*
-  timestamp_lt: 1790946868000
+  timestamp_lt: 2026-10-02T13:14:28Z
 then:
   - add_depends: fastjet-cxx-devel
 ---
@@ -15,6 +15,6 @@ if:
   name: rivet
   has_depends: fastjet-contrib >=1.104,<2.0a0
   not_has_depends: fastjet-contrib-devel*
-  timestamp_lt: 1790946868000
+  timestamp_lt: 2026-10-02T13:14:28Z
 then:
   - add_depends: fastjet-contrib-devel

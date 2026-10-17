@@ -4,7 +4,7 @@
 #  - https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/pull/984/
 #  - https://github.com/conda-forge/admin-requests/pull/1468#issuecomment-2769312616
 if:
-  timestamp_lt: 1743030622336
+  timestamp_lt: 2025-03-26T23:10:22.336Z
   has_depends: fmt >=11.0*
 then:
   - replace_depends:

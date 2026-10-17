@@ -6,7 +6,7 @@
 #             _replace_pin(old_pin, f"{old_pin},<2", deps, record)
 if:
   name: copier
-  timestamp_lt: 1688310318000
+  timestamp_lt: 2023-07-02T15:05:18Z
 then:
   - replace_depends:
       old: pydantic >=1.10.2
