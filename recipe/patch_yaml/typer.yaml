@@ -5,7 +5,7 @@
 #         record['depends'].append('click <8')
 if:
   name: typer
-  timestamp_lt: 1609873200000
+  timestamp_lt: 2021-01-05T19:00:00Z
   has_depends: "click?( *)"
 then:
   - add_depends: "click <8"

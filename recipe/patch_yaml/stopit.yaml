@@ -2,7 +2,7 @@
 # see https://github.com/conda-forge/stopit-feedstock/pull/5
 if:
   name: stopit
-  timestamp_le: 1770680172000
+  timestamp_le: 2026-02-09T23:36:12Z
   version_le: 1.1.2
 then:
   - add_depends: setuptools <82.0.0

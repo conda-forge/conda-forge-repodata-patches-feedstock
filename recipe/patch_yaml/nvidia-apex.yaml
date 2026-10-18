@@ -10,7 +10,7 @@
 #     record["constrains"] = ["pytorch =*=cuda*", "nvidia-apex-proc =*=cuda"]
 if:
   name: nvidia-apex
-  timestamp_lt: 1678454014000
+  timestamp_lt: 2023-03-10T13:13:34Z
   has_constrains: "*=[*]=cuda|=[*]=gpu*"
 then:
   - reset_constrains:

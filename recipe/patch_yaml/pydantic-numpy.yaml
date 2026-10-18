@@ -1,7 +1,7 @@
 if:
   name: pydantic-numpy
   version: "8.0.1"
-  timestamp_lt: 1786417134000
+  timestamp_lt: 2026-08-11T02:58:54Z
 then:
   - replace_depends:
       old: python 3.10.*

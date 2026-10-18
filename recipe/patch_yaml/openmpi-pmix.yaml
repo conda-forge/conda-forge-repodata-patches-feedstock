@@ -1,7 +1,7 @@
 # openmpi prior to
 if:
   name: openmpi
-  timestamp_lt: 1734349656000
+  timestamp_lt: 2024-12-16T11:47:36Z
 then:
   - add_constrains: libpmix ==0.0.0
   - add_constrains: libprrte ==0.0.0

@@ -5,7 +5,7 @@
 #     if any(dep.startswith("libxml2 >=2.9") for dep in deps):
 #         _pin_looser(fn, record, "libxml2", upper_bound="2.11.0")
 if:
-  timestamp_lt: 1666320182000
+  timestamp_lt: 2022-10-21T02:43:02Z
   has_depends:
     - libxml2 >=2.9*
 then:
@@ -14,7 +14,7 @@ then:
       upper_bound: 2.14.0
 ---
 if:
-  timestamp_lt: 1744044827000
+  timestamp_lt: 2025-04-07T16:53:47Z
   has_depends:
     - libxml2 >=2.10*
 then:
@@ -23,7 +23,7 @@ then:
       upper_bound: 2.14.0
 ---
 if:
-  timestamp_lt: 1744044827000
+  timestamp_lt: 2025-04-07T16:53:47Z
   has_depends:
     - libxml2 >=2.11*
 then:
@@ -32,7 +32,7 @@ then:
       upper_bound: 2.14.0
 ---
 if:
-  timestamp_lt: 1744044827000
+  timestamp_lt: 2025-04-07T16:53:47Z
   has_depends:
     - libxml2 >=2.12*
 then:
@@ -42,7 +42,7 @@ then:
       upper_bound: 2.14.0
 ---
 if:
-  timestamp_lt: 1744044827000
+  timestamp_lt: 2025-04-07T16:53:47Z
   has_depends:
     - libxml2 >=2.12*
 then:
@@ -52,7 +52,7 @@ then:
       upper_bound: 2.14.0
 ---
 if:
-  timestamp_lt: 1744044827000
+  timestamp_lt: 2025-04-07T16:53:47Z
   has_depends:
     - libxml2 >=2.13*
 then:

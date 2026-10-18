@@ -10,7 +10,7 @@ if:
   name: gpy
   version: "1.13.1"
   has_depends: matplotlib-base
-  timestamp_lt: 1789632048000
+  timestamp_lt: 2026-09-17T08:00:48Z
 then:
   - tighten_depends:
       name: matplotlib-base
@@ -26,7 +26,7 @@ then:
 if:
   name: gpy
   version: "1.10.0"
-  timestamp_lt: 1789632048000
+  timestamp_lt: 2026-09-17T08:00:48Z
 then:
   - tighten_depends:
       name: matplotlib-base

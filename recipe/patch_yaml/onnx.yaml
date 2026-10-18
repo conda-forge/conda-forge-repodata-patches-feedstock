@@ -21,6 +21,6 @@ then:
 if:
   name: libonnx
   not_has_constrains: "onnx?( *)"
-  timestamp_lt: 1789953289000
+  timestamp_lt: 2026-09-21T01:14:49Z
 then:
   - add_constrains: onnx ==${version} *_${build_number}

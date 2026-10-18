@@ -1,6 +1,6 @@
 if:
   name: libcusolver
-  timestamp_lt: 1751987921000
+  timestamp_lt: 2025-07-08T15:18:41Z
 then:
   - loosen_depends:
       name: libnvjitlink
@@ -9,7 +9,7 @@ then:
 # libcusolver 12.3.4.7 was marked as broken because it was ABI breaking
 if:
   has_depends: libcusolver >=12.3.4.7,<13.0a0
-  timestamp_lt: 1791417600000
+  timestamp_lt: 2026-10-08T00:00:00Z
 then:
   - replace_depends:
       old: libcusolver >=12.3.4.7,<13.0a0

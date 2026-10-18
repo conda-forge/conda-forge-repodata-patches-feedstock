@@ -3,6 +3,6 @@ if:
     - liblzma
     - xz-tools
     - xz-gpl-tools
-  timestamp_lt: 1746558949000
+  timestamp_lt: 2025-05-06T19:15:49Z
 then:
   - add_constrains: xz ==${version}=*_${build_number}

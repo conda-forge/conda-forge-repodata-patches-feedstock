@@ -3,7 +3,7 @@
 # See https://github.com/conda-forge/qt-main-feedstock/issues/271
 # For all the extra packages to also migrate
 if:
-  timestamp_lt: 1737890346000
+  timestamp_lt: 2025-01-26T11:19:06Z
   has_depends: qt6-main >=6.7*
 then:
   - loosen_depends:
@@ -12,7 +12,7 @@ then:
 
 ---
 if:
-  timestamp_lt: 1737890346000
+  timestamp_lt: 2025-01-26T11:19:06Z
   has_depends: qt6-quick3d >=6.7*
 then:
   - loosen_depends:
@@ -21,7 +21,7 @@ then:
 
 ---
 if:
-  timestamp_lt: 1737890346000
+  timestamp_lt: 2025-01-26T11:19:06Z
   has_depends: qt6-charts >=6.7*
 then:
   - loosen_depends:
@@ -30,7 +30,7 @@ then:
 
 ---
 if:
-  timestamp_lt: 1737890346000
+  timestamp_lt: 2025-01-26T11:19:06Z
   has_depends: qt6-graphs >=6.7*
 then:
   - loosen_depends:
@@ -39,7 +39,7 @@ then:
 
 ---
 if:
-  timestamp_lt: 1737890346000
+  timestamp_lt: 2025-01-26T11:19:06Z
   has_depends: qt6-multimedia >=6.7*
 then:
   - loosen_depends:
@@ -48,7 +48,7 @@ then:
 
 ---
 if:
-  timestamp_lt: 1737890346000
+  timestamp_lt: 2025-01-26T11:19:06Z
   has_depends: qt6-wayland >=6.7*
 then:
   - loosen_depends:
@@ -57,7 +57,7 @@ then:
 
 ---
 if:
-  timestamp_lt: 1737890346000
+  timestamp_lt: 2025-01-26T11:19:06Z
   has_depends: qt6-gtk-platformtheme >=6.7*
 then:
   - loosen_depends:
@@ -66,7 +66,7 @@ then:
 
 ---
 if:
-  timestamp_lt: 1737890346000
+  timestamp_lt: 2025-01-26T11:19:06Z
   has_depends: qt6-networkauth >=6.7*
 then:
   - loosen_depends:
@@ -75,7 +75,7 @@ then:
 
 ---
 if:
-  timestamp_lt: 1737890346000
+  timestamp_lt: 2025-01-26T11:19:06Z
   has_depends: qt6-3d >=6.7*
 then:
   - loosen_depends:
@@ -84,7 +84,7 @@ then:
 
 ---
 if:
-  timestamp_lt: 1737890346000
+  timestamp_lt: 2025-01-26T11:19:06Z
   has_depends: qt6-datavis3d >=6.7*
 then:
   - loosen_depends:

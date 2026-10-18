@@ -6,6 +6,6 @@
 if:
   name: pyqt6
   version: 6.11.0
-  timestamp_lt: 1791600000000
+  timestamp_lt: 2026-10-10T02:40:00Z
 then:
   - add_depends: qt6-main <6.11.2

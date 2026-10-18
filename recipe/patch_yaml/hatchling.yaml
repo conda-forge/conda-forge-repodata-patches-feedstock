@@ -30,7 +30,7 @@ if:
     - 1.24.1
     - 1.24.2
     - 1.25.0
-  timestamp_lt: 1731056098000
+  timestamp_lt: 2024-11-08T08:54:58Z
 then:
   - replace_depends:
       old: python >=3.7

@@ -61,7 +61,7 @@ if:
   name: iris
   version_ge: 3.2.0
   version_lt: 3.6.0
-  timestamp_lt: 1684507640000
+  timestamp_lt: 2023-05-19T14:47:20Z
 then:
   - replace_depends:
       old: numpy >=1.19

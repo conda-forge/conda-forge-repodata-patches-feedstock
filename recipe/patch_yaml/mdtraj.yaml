@@ -32,7 +32,7 @@ if:
   name: mdtraj
   version_le: 1.11.1
   has_depends: pandas
-  timestamp_lt: 1769106266000  # 2026-01-22
+  timestamp_lt: 2026-01-22T18:24:26Z
 then:
   - tighten_depends:
       name: pandas
@@ -49,7 +49,7 @@ if:
   name: mdtraj
   version_le: 1.11.1
   has_depends: numpy*
-  timestamp_lt: 1783383120000  # 2026-07-06
+  timestamp_lt: 2026-07-07T00:12:00Z
 then:
   - tighten_depends:
       name: numpy

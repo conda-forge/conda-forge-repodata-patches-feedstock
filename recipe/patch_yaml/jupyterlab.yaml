@@ -1,6 +1,6 @@
 if:
   name: jupyterlab
-  timestamp_lt: 1715435708000
+  timestamp_lt: 2024-05-11T13:55:08Z
   version_eq: 4.2.0
 then:
   - replace_depends:

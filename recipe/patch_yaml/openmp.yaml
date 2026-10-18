@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../patch_yaml_model.json
 if:
-  timestamp_lt: 1753975951000
+  timestamp_lt: 2025-07-31T15:32:31Z
   name: llvm-openmp
   subdir_in: win-64
 then:

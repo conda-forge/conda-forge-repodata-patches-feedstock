@@ -4,7 +4,7 @@
 #     record["constrains"] = ["urllib3 <2"]
 if:
   name: conda-lock
-  timestamp_lt: 1685186303000
+  timestamp_lt: 2023-05-27T11:18:23Z
   not_has_constrains: "*"
 then:
   - add_constrains: urllib3 <2
