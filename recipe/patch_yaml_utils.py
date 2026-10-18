@@ -1,3 +1,4 @@
+import bisect
 import fnmatch as _fnmatch
 import glob
 import os
@@ -617,25 +618,164 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 raise KeyError("Unrecognized 'then' key '%s'!" % k)
 
 
-CONDA_PKG_NAME_RE = re.compile(r"^[a-z0-9_.-]+$")
+def _literal_prefix(pat):
+    """Return the part of an fnmatch pattern before its first wildcard."""
+    for i, c in enumerate(pat):
+        if c in "*?[":
+            return pat[:i]
+    return pat
 
 
-def shortlist_relevant_filenames(index, package_name_selector):
-    if CONDA_PKG_NAME_RE.match(package_name_selector) is not None:
-        # package name does not contain wildcards
-        return [
-            fn
-            for fn, record in index.items()
-            if record["name"] == package_name_selector
-        ]
-    return index.keys()
+def _as_list(v):
+    return v if isinstance(v, list) else [v]
+
+
+def _prefix_range(sorted_strs, prefix):
+    """Return the slice of ``sorted_strs`` that starts with ``prefix``."""
+    start = bisect.bisect_left(sorted_strs, prefix)
+    stop = start
+    while stop < len(sorted_strs) and sorted_strs[stop].startswith(prefix):
+        stop += 1
+    return start, stop
+
+
+class _CandidateIndex:
+    """Lookup tables to find the records a patch can possibly change.
+
+    ``candidates`` only narrows the records down; each candidate is still
+    checked with ``_test_patch_yaml``. The tables must therefore return a
+    superset of the matching records, which is why the dependency table is
+    extended whenever a patch adds dependencies to a record.
+    """
+
+    def __init__(self, index):
+        self.fns = sorted(index)
+        # sorted by the normalized name so that it can be bisected
+        artifacts = sorted((os.path.normcase(fn), fn) for fn in self.fns)
+        self.artifacts_normcase = [nc for nc, _ in artifacts]
+        self.artifacts = [fn for _, fn in artifacts]
+        self.by_name = {}
+        self.by_dep_name = {"depends": {}, "constrains": {}}
+        self._sorted_dep_names = {}
+        for fn in self.fns:
+            record = index[fn]
+            name = os.path.normcase(record["name"])
+            self.by_name.setdefault(name, []).append(fn)
+            self.add_deps(fn, record)
+        self.names = sorted(self.by_name)
+
+    def add_deps(self, fn, record):
+        for subk, by_dep_name in self.by_dep_name.items():
+            for dep in record.get(subk) or ():
+                dep_name = os.path.normcase(dep).split(" ", 1)[0]
+                if dep_name not in by_dep_name:
+                    by_dep_name[dep_name] = set()
+                    self._sorted_dep_names.pop(subk, None)
+                by_dep_name[dep_name].add(fn)
+
+    def _names(self, pats):
+        fns = set()
+        for pat in pats:
+            pat = os.path.normcase(str(pat))
+            prefix = _literal_prefix(pat)
+            if prefix == pat:
+                fns.update(self.by_name.get(pat, ()))
+            elif not prefix:
+                return None
+            else:
+                start, stop = _prefix_range(self.names, prefix)
+                for name in self.names[start:stop]:
+                    if fnmatch(name, pat):
+                        fns.update(self.by_name[name])
+        return fns
+
+    def _artifacts(self, pats):
+        fns = set()
+        for pat in pats:
+            prefix = _literal_prefix(os.path.normcase(str(pat)))
+            if not prefix:
+                return None
+            start, stop = _prefix_range(self.artifacts_normcase, prefix)
+            fns.update(self.artifacts[start:stop])
+        return fns
+
+    def _deps(self, subk, pat):
+        # every dependency that matches must start with this prefix, so its
+        # name (up to the first space) does too, or equals it if it has a space
+        pat = os.path.normcase(str(pat))
+        prefix = _literal_prefix(pat)
+        if not prefix:
+            return None
+        by_dep_name = self.by_dep_name[subk]
+        if " " in prefix or prefix == pat:
+            return set(by_dep_name.get(prefix.split(" ", 1)[0], ()))
+        if subk not in self._sorted_dep_names:
+            self._sorted_dep_names[subk] = sorted(by_dep_name)
+        dep_names = self._sorted_dep_names[subk]
+        start, stop = _prefix_range(dep_names, prefix)
+        fns = set()
+        for dep_name in dep_names[start:stop]:
+            fns.update(by_dep_name[dep_name])
+        return fns
+
+    def candidates(self, patch_yaml, subdir):
+        """Return the sorted filenames ``patch_yaml`` can possibly change."""
+        narrowed = []
+        for k, v in patch_yaml["if"].items():
+            if k == "name":
+                narrowed.append(self._names([v]))
+            elif k == "name_in":
+                narrowed.append(self._names(_as_list(v)))
+            elif k == "artifact_in":
+                narrowed.append(self._artifacts(_as_list(v)))
+            elif k == "subdir_in":
+                if not _fnmatch_str_or_list(subdir, v):
+                    return []
+            elif k in ("has_depends", "has_constrains"):
+                for _v in _as_list(v):
+                    narrowed.append(self._deps(k[len("has_") :], _v))
+        narrowed = [s for s in narrowed if s is not None]
+        if not narrowed:
+            # building this set is slow, so only when the ``if`` block did not help
+            narrowed = [self._changed_by(patch_yaml["then"])]
+            if narrowed[0] is None:
+                return self.fns
+        narrowed.sort(key=len)
+        return sorted(narrowed[0].intersection(*narrowed[1:]))
+
+    def _changed_by(self, then):
+        """Return the records ``then`` can change, or None if any record."""
+        fns = set()
+        for inst in then:
+            for k, v in inst.items():
+                if k in (
+                    "replace_depends",
+                    "replace_constrains",
+                    "remove_depends",
+                    "remove_constrains",
+                ):
+                    subk = k.split("_", 1)[1]
+                    pats = [v["old"]] if k.startswith("replace_") else _as_list(v)
+                elif k in ("tighten_depends", "loosen_depends"):
+                    subk = "depends"
+                    pats = [v["name"]]
+                else:
+                    return None
+                for pat in pats:
+                    if "$" in str(pat):
+                        return None
+                    dep_fns = self._deps(subk, pat)
+                    if dep_fns is None:
+                        return None
+                    fns |= dep_fns
+        return fns
 
 
 def patch_yaml_edit_index(index, subdir, verbose=False):
     keep_pkgs = os.environ.get("CF_PKGS", None)
     if keep_pkgs is not None:
         keep_pkgs = set(keep_pkgs.split(";"))
-    fns = sorted(index)
+    candidate_index = _CandidateIndex(index)
     if verbose:
         from tqdm import tqdm
         from functools import partial
@@ -644,11 +784,7 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
     else:
         tqdm = iter
     for patch_yaml, fname in tqdm(ALL_YAMLS):
-        if "name" in patch_yaml["if"]:
-            pkg_name = patch_yaml["if"]["name"]
-            fns_to_process = shortlist_relevant_filenames(index, pkg_name)
-        else:
-            fns_to_process = fns
+        fns_to_process = candidate_index.candidates(patch_yaml, subdir)
 
         for fn in fns_to_process:
             record = index[fn]
@@ -657,6 +793,7 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
             try:
                 if _test_patch_yaml(patch_yaml, record, subdir, fn):
                     _apply_patch_yaml(patch_yaml, record, subdir, fn)
+                    candidate_index.add_deps(fn, record)
             except Exception as e:
                 import traceback
 

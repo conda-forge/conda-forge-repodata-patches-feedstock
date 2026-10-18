@@ -1,3 +1,5 @@
+from functools import cache
+
 import license_expression
 
 mapping = {
@@ -31,6 +33,7 @@ precedence = {
 }
 
 
+@cache
 def get_license_family(license):
     licensing = license_expression.Licensing()
     family = None
