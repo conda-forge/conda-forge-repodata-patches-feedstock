@@ -11,3 +11,16 @@ then:
       old: openff-toolkit >=0.13,<0.14
       # thing to replace `old` with
       new: openff-toolkit >=0.13,<0.15
+
+---
+
+# https://github.com/OpenFreeEnergy/gufe/issues/664
+if:
+  name: gufe
+  timestamp_lt: 1761251692000
+  version: 1.7.0
+
+then:
+  - replace_depends:
+      old: rdkit !=2024.03.06
+      new: rdkit >=2024.09.1
