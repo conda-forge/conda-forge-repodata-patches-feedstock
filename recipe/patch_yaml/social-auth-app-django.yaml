@@ -1,6 +1,6 @@
 # social-auth-app-django 5.4.0-5.4.2 declare social-auth-core >=4.1.0 with no
 # upper bound, so the solver can pair them with social-auth-core 6.x. Those
-# releases can cause issues with social-auth-app-django so I added 
+# releases can cause issues with social-auth-app-django so I added
 # the cap in 5.4.3 (social-auth-core~=4.4), which is not on conda-forge.
 if:
   name: social-auth-app-django
