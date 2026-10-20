@@ -133,13 +133,6 @@ def do_subdir(
         raw_repodata = _cut_index_to_name(raw_repodata, debug_package_name)
 
     if verbose:
-        print(f"Decompressing ref repodata for {subdir}", file=sys.stderr, flush=True)
-    with zstandard.open(ref_repodata_path) as fh:
-        ref_repodata = json.load(fh)
-    if debug_package_name is not None:
-        ref_repodata = _cut_index_to_name(ref_repodata, debug_package_name)
-
-    if verbose:
         print(f"Decompressing new repodata for {subdir}", file=sys.stderr, flush=True)
     # The repodata is so large, that copying a giant pyton dictionary
     # is like way too slow, it is faster to read the repodata twice..
@@ -155,7 +148,18 @@ def do_subdir(
         subdir,
         package_removal_keeplist=package_removal_keeplist,
     )
+    # Free new_index before ref_repodata is loaded so that at most two parsed
+    # copies of the repodata are held in memory at once.
+    del new_index
     new_repodata = _apply_instructions(subdir, raw_repodata, instructions)
+
+    if verbose:
+        print(f"Decompressing ref repodata for {subdir}", file=sys.stderr, flush=True)
+    with zstandard.open(ref_repodata_path) as fh:
+        ref_repodata = json.load(fh)
+    if debug_package_name is not None:
+        ref_repodata = _cut_index_to_name(ref_repodata, debug_package_name)
+
     return show_record_diffs(
         subdir, ref_repodata, new_repodata, fail_fast, group_diffs=group_diffs
     )

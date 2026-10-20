@@ -1,7 +1,7 @@
 # The lazy_loader package got renamed to lazy-loader
 # https://github.com/conda-forge/lazy_loader-feedstock/pull/11
 if:
-  timestamp_le: 1722783338000
+  timestamp_le: 2024-08-04T14:55:38Z
   name: lazy_loader
 
 then:

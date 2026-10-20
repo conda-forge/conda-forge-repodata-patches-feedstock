@@ -3,7 +3,7 @@ if:
   name: pip2conda
   version: 0.10.0
   build_number: 0
-  timestamp_le: 1779357594000
+  timestamp_le: 2026-05-21T09:59:54Z
 then:
   - tighten_depends:
       name: py-rattler

@@ -2,7 +2,7 @@ if:
   name: pyparsing
   version_ge: 3.2.0
   has_depends: python >=3.6
-  timestamp_lt: 1728924419000
+  timestamp_lt: 2024-10-14T16:46:59Z
 then:
   - replace_depends:
       old: python >=3.6

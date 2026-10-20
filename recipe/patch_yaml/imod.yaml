@@ -3,7 +3,7 @@
 if:
   name: imod
   version_le: "0.15.0"
-  timestamp_le: 1701707420000
+  timestamp_le: 2023-12-04T16:30:20Z
   has_depends: pandas
 then:
   - replace_depends:
@@ -13,7 +13,7 @@ then:
 # Set python upper limit to Python 3.11 for versions prior to 0.15.0
 if:
   name: imod
-  timestamp_le: 1701707420000
+  timestamp_le: 2023-12-04T16:30:20Z
   version_le: "0.12.0"
   has_depends: python >=3.7
 then:
@@ -23,7 +23,7 @@ then:
 ---
 if:
   name: imod
-  timestamp_le: 1701707420000
+  timestamp_le: 2023-12-04T16:30:20Z
   version_le: "0.10.1"
   has_depends: python >=3.6
 then:
@@ -34,7 +34,7 @@ then:
 # 0.15.0 works for 3.11, but not for 3.8 and 3.9
 if:
   name: imod
-  timestamp_le: 1701707420000
+  timestamp_le: 2023-12-04T16:30:20Z
   version: "0.15.0"
 then:
   - replace_depends:
@@ -45,7 +45,7 @@ then:
 # with regrid_like
 if:
   name: imod
-  timestamp_le: 1701707420000
+  timestamp_le: 2023-12-04T16:30:20Z
   version_ge: "0.14.0"
   has_depends: xugrid >=0.3.0
 then:
@@ -57,7 +57,7 @@ then:
 # v2023.08.0
 if:
   name: imod
-  timestamp_le: 1710864962000
+  timestamp_le: 2024-03-19T16:16:02Z
   version_ge: "0.15.2"
   version_le: "0.15.3"
   has_depends: xarray >=2023.04.0
@@ -69,7 +69,7 @@ then:
 # iMOD Python <= 0.17.1 doesn't support numpy 2.0
 if:
   name: imod
-  timestamp_le: 1731329388000
+  timestamp_le: 2024-11-11T12:49:48Z
   version_le: "0.17.1"
   has_depends: numpy
 then:
@@ -80,7 +80,7 @@ then:
 # iMOD Python <= 0.18.1 doesn't support Python 3.13
 if:
   name: imod
-  timestamp_le: 1733911551000
+  timestamp_le: 2024-12-11T10:05:51Z
   version_le: "0.18.1"
 then:
   - tighten_depends:
@@ -91,7 +91,7 @@ then:
 # xarray < 2024.10.0
 if:
   name: imod
-  timestamp_le: 1733911551000
+  timestamp_le: 2024-12-11T10:05:51Z
   version_le: "0.18.1"
 then:
   - tighten_depends:
@@ -101,7 +101,7 @@ then:
 # fastcore removed typedispatching, pin versions before migration to plum.
 if:
   name: imod
-  timestamp_le: 1744722730000
+  timestamp_le: 2025-04-15T13:12:10Z
   version_le: "1.0.0rc2"
 then:
   - tighten_depends:

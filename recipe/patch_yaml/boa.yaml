@@ -9,7 +9,7 @@
 #     record["depends"] = depends
 if:
   name: boa
-  timestamp_le: 1619005998286
+  timestamp_le: 2021-04-21T11:53:18.286Z
 then:
   - tighten_depends:
       name: mamba
@@ -18,7 +18,7 @@ then:
 # https://github.com/mamba-org/boa/issues/392
 if:
   name: boa
-  timestamp_le: 1707432932930
+  timestamp_le: 2024-02-08T22:55:32.930Z
   version_in: ["0.15.0", "0.15.1", "0.16.0"]
 then:
   - tighten_depends:
@@ -28,7 +28,7 @@ then:
 # https://github.com/conda-forge/boa-feedstock/issues/81
 if:
   name: boa
-  timestamp_le: 1711876073301
+  timestamp_le: 2024-03-31T09:07:53.301Z
   version: "0.17.0"
 then:
   - add_depends: boltons

@@ -1,7 +1,7 @@
 if:
   name: zappend
   version_le: "0.8.0"
-  timestamp_lt: 1758125025000
+  timestamp_lt: 2025-09-17T16:03:45Z
   has_depends: zarr?( *)
 then:
   - tighten_depends:

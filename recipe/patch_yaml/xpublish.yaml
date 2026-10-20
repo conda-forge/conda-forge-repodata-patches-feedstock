@@ -10,6 +10,6 @@
 if:
   name: xpublish
   version: 0.3.0
-  timestamp_lt: 1689955085000
+  timestamp_lt: 2023-07-21T15:58:05Z
 then:
   - add_depends: pydantic<2

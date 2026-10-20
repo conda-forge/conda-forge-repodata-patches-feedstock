@@ -21,7 +21,7 @@
 #         record["depends"][pind] = record["depends"][pind] + ",<3.10"
 if:
   name: depfinder
-  timestamp_lt: 1659704295850
+  timestamp_lt: 2022-08-05T12:58:15.850Z
   subdir: noarch
   # this logic does not match above code but patch is the same
   has_depends: python >=*

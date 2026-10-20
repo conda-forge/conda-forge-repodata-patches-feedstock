@@ -5,7 +5,7 @@
 # built against osqp-eigen >=0.11.0 therefore needs to be pinned down to the
 # patch version, not just the minor version.
 if:
-  timestamp_lt: 1784532755000
+  timestamp_lt: 2026-07-20T07:32:35Z
   has_depends:
     - osqp-eigen >=0.11*
 then:

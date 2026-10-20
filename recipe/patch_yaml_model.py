@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Annotated
 
 from annotated_types import Ge, MinLen
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
 
 class _ForbidExtra(BaseModel):
@@ -19,6 +19,8 @@ class _ForbidExtra(BaseModel):
 
 _NonEmptyStr = Annotated[str, MinLen(1)]
 _PosInt = Annotated[int, Ge(0)]
+# milliseconds since the Unix epoch, or an RFC 3339 date and time with a UTC offset
+_Timestamp = _PosInt | AwareDatetime
 scalar_repodata_keys = (
     ("arch", "_NonEmptyStr"),
     ("build", "_NonEmptyStr"),
@@ -89,7 +91,10 @@ class _IfClause(_ForbidExtra):
             and key != "version"
         ):
             continue  # no point in comparing non-version strings with gt, ge, lt, le
-        if op in ("", "eq", "ne", "in") and type_hint == "_PosInt":  # accept globs too
+        if key == "timestamp" and op in ("lt", "le", "gt", "ge", "eq", "ne"):
+            type_hint = "_Timestamp"
+        if op in ("", "eq", "ne", "in") and type_hint in ("_PosInt", "_Timestamp"):
+            # accept globs too
             type_hint += " | _NonEmptyStr"
         if op == "in":
             descr = f"List of '{key}' values to match against. A single scalar value is also allowed."  # noqa: E501

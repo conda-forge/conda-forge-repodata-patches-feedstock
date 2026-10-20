@@ -2,7 +2,7 @@ if:
   name: typeguard
   # https://github.com/agronholm/typeguard/blob/4.0.1/pyproject.toml#L30C27-L30C32
   version_ge: 4.0.1
-  timestamp_lt: 1702067733000
+  timestamp_lt: 2023-12-08T20:35:33Z
 then:
   - replace_depends:
       old: typing_extensions >=4.4.0

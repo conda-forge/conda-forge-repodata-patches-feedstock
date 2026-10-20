@@ -2,7 +2,7 @@ if:
   name: opentelemetry-instrumentation-asyncio
   version_ge: 0.63b1
   version_le: 0.63b1
-  timestamp_lt: 1781962814704
+  timestamp_lt: 2026-06-20T13:40:14.704Z
 then:
   - replace_depends:
       old: wrapt >=1.0.0,<2.0.0

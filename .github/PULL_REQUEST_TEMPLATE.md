@@ -4,12 +4,12 @@ Checklist
 * [ ] Only wrote code directly into `recipe/generate_patch_json.py` if absolutely necessary.
 * [ ] Ran `pre-commit run -a` (or `cd recipe && pixi run pre-commit`) and ensured all files pass the linting checks.
 * [ ] Ran `python recipe/show_diff.py` (or `cd recipe && pixi run diff`) and posted the output as part of the PR.
+* [ ] The issue which requires patching has been addressed in related feedstocks.
 * [ ] Modifications won't affect packages built in the future.
   <!-- Make sure to add a condition `timestamp_le: NOW` so your changes only affect packages built in the past. Replace NOW with the result of one of these:
   - cd recipe && pixi run timestamp
-  - python -c "import time; print(f'{time.time():.0f}000')"
-  - date +%s000
-  - The number displayed on https://currentmillis.com
+  - python -c "import datetime; print(datetime.datetime.now().astimezone().isoformat(timespec='seconds'))"
+  Milliseconds since the Unix epoch (date +%s000) are accepted too.
   -->
 
 <!-- Put any other comments or information here -->

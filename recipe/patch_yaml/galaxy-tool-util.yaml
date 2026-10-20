@@ -1,0 +1,10 @@
+# galaxy-tool-util 26.1.0 added jsonschema to install_requires, but the 26.1.1
+# build shipped without it, so `pip check` fails in any environment containing it.
+if:
+  name: galaxy-tool-util
+  version: "26.1.1"
+  build_number: 1
+  not_has_depends: jsonschema
+then:
+  - add_depends:
+      - jsonschema
