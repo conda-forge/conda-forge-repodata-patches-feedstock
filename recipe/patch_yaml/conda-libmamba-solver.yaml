@@ -74,3 +74,21 @@ then:
   - tighten_depends:
       name: libmambapy
       upper_bound: '2.0'
+---
+# Require refreshed CA bundles without replacing existing requirements.
+if:
+  name: conda-libmamba-solver
+  timestamp_le: 2026-10-15T09:43:22.332Z
+  not_has_depends: certifi?( *)
+  not_has_constrains: certifi?( *)
+then:
+  - add_constrains: certifi >=2026.10.19
+---
+# Require refreshed CA bundles without replacing existing requirements.
+if:
+  name: conda-libmamba-solver
+  timestamp_le: 2026-10-15T09:43:22.332Z
+  not_has_depends: ca-certificates?( *)
+  not_has_constrains: ca-certificates?( *)
+then:
+  - add_constrains: ca-certificates >=2026.10.19
