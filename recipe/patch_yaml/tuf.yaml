@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# TUF 7.0.1 requires urllib3 2.x.
+# https://github.com/theupdateframework/python-tuf/pull/2990
+if:
+  name: tuf
+  version: "7.0.1"
+  build_number: 0
+  timestamp_lt: 2026-10-22T16:15:13Z
+  has_depends: urllib3 <3,>=1.21.1
+then:
+  - replace_depends:
+      old: urllib3 <3,>=1.21.1
+      new: urllib3 >=2,<3
