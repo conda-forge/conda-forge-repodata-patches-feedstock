@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# https://github.com/p2p-ld/numpydantic/compare/v1.8.1...v1.9.0#diff-50c86b7ed8ac2cf95bd48334961bf0530cdc77b5a56f852c5c61b89d735fd711R10
+if:
+  name: numpydantic
+  version_ge: 1.9.0
+  timestamp_lt: 2026-10-23T00:00:00Z
+then:
+  - replace_depends:
+      old: numpy >=1.24.0
+      new: numpy >=2.0.0
+---
+# yaml-language-server: $schema=../patch_yaml_model.json
+# https://github.com/p2p-ld/numpydantic/compare/v1.6.4...v1.6.5#diff-50c86b7ed8ac2cf95bd48334961bf0530cdc77b5a56f852c5c61b89d735fd711R9
+if:
+  name: numpydantic
+  version_ge: 1.6.5
+  timestamp_lt: 2026-10-23T00:00:00Z
+then:
+  - replace_depends:
+      old: pydantic >=2.3.0
+      new: pydantic >=2.7.0
