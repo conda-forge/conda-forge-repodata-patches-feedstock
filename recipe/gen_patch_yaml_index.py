@@ -93,7 +93,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="show repodata changes from the current gen_patch_json"
+        description="generate patch yaml indexing files to make patching faster"
     )
     parser.add_argument(
         "--subdirs", nargs="*", default=None, help="subdir(s) show, default is all"
