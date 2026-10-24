@@ -26,7 +26,7 @@ dependencies:
   - license-expression
   - packaging
   - pyyaml
-  - pydantic!=2.9.*
+  - pydantic !=2.9.*
   - pytest
   - conda-build
   - zstandard
