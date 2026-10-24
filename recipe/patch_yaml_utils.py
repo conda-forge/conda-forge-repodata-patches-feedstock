@@ -726,26 +726,25 @@ def patch_yaml_edit_index(
         tqdm_iter = iter
 
     all_fns_in_index = set(patch_yaml_index["all_fns"])
+    new_fns = set(fns) - all_fns_in_index
+
     for patch_yaml, fname in tqdm_iter(ALL_YAMLS):
         patch_yaml_hash = _sha1_hash_patch_yaml(patch_yaml, fname)
         if patch_yaml_hash in patch_yaml_index["apply"]:
             apply_fns = set(patch_yaml_index["apply"][patch_yaml_hash])
-        else:
-            apply_fns = set()
 
-        if "name" in patch_yaml["if"]:
-            pkg_name = patch_yaml["if"]["name"]
-            fns_to_process = shortlist_relevant_filenames(index, pkg_name, fns)
-        else:
-            fns_to_process = fns
+            for fn in apply_fns:
+                if fn not in index:
+                    continue
 
-        for fn in fns_to_process:
-            record = index[fn]
+                record = index[fn]
 
-            if debug_package_name is not None and record["name"] != debug_package_name:
-                continue
+                if (
+                    debug_package_name is not None
+                    and record["name"] != debug_package_name
+                ):
+                    continue
 
-            if fn in apply_fns:
                 _process_record_apply(
                     record,
                     patch_yaml,
@@ -754,9 +753,16 @@ def patch_yaml_edit_index(
                     fn,
                     debug_package_name=debug_package_name,
                 )
-            elif fn in all_fns_in_index:
-                continue
-            else:
+
+            for fn in new_fns:
+                record = index[fn]
+
+                if (
+                    debug_package_name is not None
+                    and record["name"] != debug_package_name
+                ):
+                    continue
+
                 _process_record_test_and_apply(
                     record,
                     patch_yaml,
@@ -765,6 +771,58 @@ def patch_yaml_edit_index(
                     fn,
                     debug_package_name=debug_package_name,
                 )
+
+        else:
+            if "name" in patch_yaml["if"]:
+                pkg_name = patch_yaml["if"]["name"]
+                fns_to_process = shortlist_relevant_filenames(index, pkg_name, fns)
+            else:
+                fns_to_process = fns
+
+            for fn in fns_to_process:
+                record = index[fn]
+
+                if (
+                    debug_package_name is not None
+                    and record["name"] != debug_package_name
+                ):
+                    continue
+
+                _process_record_test_and_apply(
+                    record,
+                    patch_yaml,
+                    fname,
+                    subdir,
+                    fn,
+                    debug_package_name=debug_package_name,
+                )
+
+        # for fn in fns_to_process:
+        #     record = index[fn]
+
+        #     if debug_package_name is not None and record["name"] != debug_package_name:
+        #         continue
+
+        #     if fn in apply_fns:
+        #         _process_record_apply(
+        #             record,
+        #             patch_yaml,
+        #             fname,
+        #             subdir,
+        #             fn,
+        #             debug_package_name=debug_package_name,
+        #         )
+        #     elif fn in all_fns_in_index:
+        #         continue
+        #     else:
+        #         _process_record_test_and_apply(
+        #             record,
+        #             patch_yaml,
+        #             fname,
+        #             subdir,
+        #             fn,
+        #             debug_package_name=debug_package_name,
+        #         )
 
     return index
 
