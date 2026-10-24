@@ -878,7 +878,8 @@ def _patch_indexes(repodata, subdir, verbose=False, debug_package_name=None):
 
     index_fname = f"patch_yaml_index_{subdir}.json.zst"
     if os.path.exists(index_fname):
-        tqdm.write(f"[{subdir:>13}] using patch yaml index", file=sys.stderr)
+        if verbose:
+            tqdm.write(f"[{subdir:>13}] using patch yaml index", file=sys.stderr)
         with zstandard.open(f"patch_yaml_index_{subdir}.json.zst") as fp:
             patch_yaml_index = json.load(fp)
     else:
