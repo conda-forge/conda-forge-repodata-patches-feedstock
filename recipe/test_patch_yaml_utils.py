@@ -1,3 +1,4 @@
+import copy
 from pathlib import Path
 
 import pytest
@@ -6,6 +7,7 @@ from patch_yaml_model import PatchYaml, generate_schema
 from patch_yaml_utils import (
     ALLOWED_TEMPLATE_KEYS,
     _apply_patch_yaml,
+    _CandidateIndex,
     _test_patch_yaml,
     _timestamp_to_ms,
 )
@@ -555,6 +557,75 @@ def test_apply_patch_yaml_loosen(pre, post):
     record = {"depends": pre + ["numpy >=1.0.0,<2.0.0a0"] + post}
     _apply_patch_yaml(patch_yaml, record, None, None)
     assert record == {"depends": pre + ["numpy >=1.0.0,<3.1.2.0a0"] + post}
+
+
+CANDIDATE_INDEX = {
+    "foo-1.0-0.conda": {
+        "name": "foo",
+        "version": "1.0",
+        "depends": ["bar >=1", "libbaz 2.*"],
+        "constrains": ["qux <2"],
+    },
+    "foo-cpp-1.0-0.conda": {"name": "foo-cpp", "version": "1.0", "depends": []},
+    "bar-1.0-0.conda": {"name": "bar", "version": "1.0", "depends": ["libbaz"]},
+    "Bar-up-1.0-0.conda": {"name": "bar-up", "version": "1.0", "depends": []},
+    "barbaz-1.0-0.conda": {"name": "barbaz", "version": "1.0"},
+}
+
+
+@pytest.mark.parametrize(
+    "patch_yaml",
+    [
+        {"if": {"name": "foo"}, "then": [{"add_depends": "x"}]},
+        {"if": {"name": "foo*"}, "then": [{"add_depends": "x"}]},
+        {"if": {"name": "bar?( *)"}, "then": [{"add_depends": "x"}]},
+        {"if": {"name": "*"}, "then": [{"add_depends": "x"}]},
+        {"if": {"name_in": ["bar", "foo-*"]}, "then": [{"add_depends": "x"}]},
+        {"if": {"artifact_in": "bar-1.0*"}, "then": [{"add_depends": "x"}]},
+        {"if": {"artifact_in": ["*cpp*", "barbaz*"]}, "then": [{"add_depends": "x"}]},
+        {"if": {"subdir_in": "osx-*"}, "then": [{"add_depends": "x"}]},
+        {"if": {"subdir_in": "linux-*"}, "then": [{"add_depends": "x"}]},
+        {"if": {"has_depends": "libbaz"}, "then": [{"add_depends": "x"}]},
+        {"if": {"has_depends": "libbaz*"}, "then": [{"add_depends": "x"}]},
+        {"if": {"has_depends": "bar >=1*"}, "then": [{"add_depends": "x"}]},
+        {"if": {"has_depends": "ba*"}, "then": [{"add_depends": "x"}]},
+        {"if": {"has_depends": ["bar*", "lib*"]}, "then": [{"add_depends": "x"}]},
+        {"if": {"has_constrains": "qux*"}, "then": [{"add_depends": "x"}]},
+        {"if": {"not_has_depends": "bar*"}, "then": [{"add_depends": "x"}]},
+        {
+            "if": {"name": "*"},
+            "then": [{"replace_depends": {"old": "libbaz", "new": "y"}}],
+        },
+        {"if": {"name": "*"}, "then": [{"remove_depends": ["bar*", "libbaz 2*"]}]},
+        {
+            "if": {"name": "*"},
+            "then": [{"tighten_depends": {"name": "bar", "max_pin": "x"}}],
+        },
+        {"if": {"name": "*"}, "then": [{"remove_constrains": "qux*"}]},
+        {
+            "if": {"name": "*"},
+            "then": [{"replace_depends": {"old": "$name", "new": "y"}}],
+        },
+    ],
+)
+def test_candidate_index_superset(patch_yaml):
+    candidates = _CandidateIndex(CANDIDATE_INDEX).candidates(patch_yaml, "linux-64")
+    for fn, record in CANDIDATE_INDEX.items():
+        new = copy.deepcopy(record)
+        if _test_patch_yaml(patch_yaml, new, "linux-64", fn):
+            _apply_patch_yaml(patch_yaml, new, "linux-64", fn)
+            if new != record:
+                assert fn in candidates
+
+
+def test_candidate_index_add_deps():
+    index = copy.deepcopy(CANDIDATE_INDEX)
+    candidate_index = _CandidateIndex(index)
+    patch_yaml = {"if": {"has_depends": "newdep*"}, "then": [{"add_depends": "x"}]}
+    assert candidate_index.candidates(patch_yaml, "linux-64") == []
+    index["barbaz-1.0-0.conda"]["depends"] = ["newdep 1.*"]
+    candidate_index.add_deps("barbaz-1.0-0.conda", index["barbaz-1.0-0.conda"])
+    assert candidate_index.candidates(patch_yaml, "linux-64") == ["barbaz-1.0-0.conda"]
 
 
 @pytest.mark.parametrize(

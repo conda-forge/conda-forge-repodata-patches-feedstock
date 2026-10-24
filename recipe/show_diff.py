@@ -55,6 +55,9 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
             ref_pkg.pop("license_family", None)
             new_pkg.pop("license_family", None)
 
+            if ref_pkg == new_pkg:
+                continue
+
             # list order is not significant for depends and constrains
             ref_pkg = sort_lists(ref_pkg)
             new_pkg = sort_lists(new_pkg)
