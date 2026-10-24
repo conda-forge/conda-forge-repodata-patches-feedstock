@@ -142,7 +142,7 @@ if __name__ == "__main__":
         ) as fp:
             json.dump(vals, fp, sort_keys=True, indent=2)
     else:
-        with ProcessPoolExecutor() as exc:
+        with ProcessPoolExecutor(max_workers=os.cpu_count()) as exc:
             futs = [
                 exc.submit(
                     _process_subdir,

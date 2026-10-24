@@ -797,33 +797,6 @@ def patch_yaml_edit_index(
                     debug_package_name=debug_package_name,
                 )
 
-        # for fn in fns_to_process:
-        #     record = index[fn]
-
-        #     if debug_package_name is not None and record["name"] != debug_package_name:
-        #         continue
-
-        #     if fn in apply_fns:
-        #         _process_record_apply(
-        #             record,
-        #             patch_yaml,
-        #             fname,
-        #             subdir,
-        #             fn,
-        #             debug_package_name=debug_package_name,
-        #         )
-        #     elif fn in all_fns_in_index:
-        #         continue
-        #     else:
-        #         _process_record_test_and_apply(
-        #             record,
-        #             patch_yaml,
-        #             fname,
-        #             subdir,
-        #             fn,
-        #             debug_package_name=debug_package_name,
-        #         )
-
     return index
 
 

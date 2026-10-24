@@ -286,7 +286,7 @@ if __name__ == "__main__":
             no_group_diffs=args.no_group_diffs,
         )
     else:
-        with ProcessPoolExecutor() as exc:
+        with ProcessPoolExecutor(max_workers=os.cpu_count()) as exc:
             futs = [
                 exc.submit(
                     _process_subdir,
