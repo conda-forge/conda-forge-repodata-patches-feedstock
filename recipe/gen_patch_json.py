@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 import json
 import os
 import re
@@ -9,10 +6,9 @@ import tempfile
 import urllib
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from os.path import isdir, join
-from tqdm import tqdm
 from functools import partial
-
+from multiprocessing import RLock, freeze_support
+from os.path import isdir, join
 
 import requests
 import zstandard
@@ -26,6 +22,7 @@ from patch_yaml_utils import (
     patch_yaml_edit_index,
 )
 from show_diff import show_record_diffs
+from tqdm import tqdm
 
 CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda.anaconda.org"
@@ -363,7 +360,7 @@ def _add_pybind11_abi_constraint(fn, record):
     else:
         # past this we should have a constrains there already
         raise RuntimeError(
-            "pybind11 version %s out of range for abi" % record["version"]
+            "pybind11 version {} out of range for abi".format(record["version"])
         )
 
     constrains = record.get("constrains", [])
@@ -398,10 +395,7 @@ def _fix_libgfortran(fn, record):
         # 'libgfortran >=3.0.1' -> >=3.0.1,<4.0.0.a0
         if ("==" in depends[dep_idx]) or ("<" in depends[dep_idx]):
             pass
-        elif depends[dep_idx] == "libgfortran":
-            depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
-            record["depends"] = depends
-        elif ">=3.0.1" in depends[dep_idx]:
+        elif depends[dep_idx] == "libgfortran" or ">=3.0.1" in depends[dep_idx]:
             depends[dep_idx] = "libgfortran >=3.0.1,<4.0.0.a0"
             record["depends"] = depends
         elif ">=3.0" in depends[dep_idx]:
@@ -420,7 +414,7 @@ def _set_osx_virt_min(fn, record, min_vers):
     )
     run_constrained = list(rconst)
     if dep_idx is None:
-        run_constrained.append("__osx >=%s" % min_vers)
+        run_constrained.append(f"__osx >={min_vers}")
     if run_constrained:
         record["constrains"] = run_constrained
 
@@ -497,7 +491,7 @@ def remove_python_abi(record):
     record["depends"] = [dep for dep in depends if dep.split(" ")[0] != "python_abi"]
 
 
-changes = set([])
+changes = set()
 
 
 def add_python_abi(record, subdir):
@@ -555,7 +549,7 @@ def add_python_abi(record, subdir):
         record["constrains"] = new_constrains
 
 
-def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
+def _gen_new_index_per_key(index, subdir, index_key=""):
     """Mutates the index by adjusting the values directly."""
     # deal with windows vc features
     if subdir.startswith("win-"):
@@ -582,15 +576,13 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
             elif "vc" in record.get("features", ""):
                 # remove vc from the features key
                 vc_version = _extract_and_remove_vc_feature(record)
-                if vc_version:
-                    # add a vc dependency
-                    if not any(d.startswith("vc") for d in record["depends"]):
-                        depends = record["depends"]
-                        depends.append("vc %d.*" % vc_version)
-                        record["depends"] = depends
-
-    if verbose:
-        print(f"Processing {index_key}", file=sys.stderr, flush=True)
+                # add a vc dependency
+                if vc_version and not any(
+                    d.startswith("vc") for d in record["depends"]
+                ):
+                    depends = record["depends"]
+                    depends.append(f"vc {vc_version:d}.*")
+                    record["depends"] = depends
 
     for fn, record in index.items():
         record_name = record["name"]
@@ -645,7 +637,7 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
 
         # make sure pybind11 and pybind11-global have run constraints on
         # the abi metapackage
-        # see https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/104  # noqa
+        # see https://github.com/conda-forge/conda-forge-repodata-patches-feedstock/issues/104
         if (
             record_name in ["pybind11", "pybind11-global"]
             # this version has a constraint sometimes
@@ -697,8 +689,8 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
                     new_constrains.append(f"{pkg} {version}.*")
                 record["constrains"] = new_constrains
 
-        if record_name == "gcc_impl_{}".format(subdir):
-            _relax_exact(fn, record, "binutils_impl_{}".format(subdir))
+        if record_name == f"gcc_impl_{subdir}":
+            _relax_exact(fn, record, f"binutils_impl_{subdir}")
 
         # some symlinks changed in gfortran, so we need to adjust things
         # plus we missed a key version constraint
@@ -752,9 +744,7 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
         ):
             new_constrains = record.get("constrains", [])
             for pkg in ["libgcc-ng", "libstdcxx-ng", "libgfortran", "libgomp"]:
-                new_constrains.append(
-                    "{} 5.4.*|7.2.*|7.3.*|8.2.*|9.1.*|9.2.*".format(pkg)
-                )
+                new_constrains.append(f"{pkg} 5.4.*|7.2.*|7.3.*|8.2.*|9.1.*|9.2.*")
             new_constrains.append("binutils_impl_" + subdir + " <2.34")
             new_constrains.append("ld_impl_" + subdir + " <2.34")
             new_constrains.append("sysroot_" + subdir + " ==99999999999")
@@ -799,7 +789,7 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
             record["constrains"] = new_constrains
 
         if (
-            record_name == "gcc_impl_{}".format(subdir)
+            record_name == f"gcc_impl_{subdir}"
             and record["version"]
             in ["5.4.0", "7.2.0", "7.3.0", "8.2.0", "8.4.0", "9.3.0"]
             and record.get("timestamp", 0) < 1627530043000  # 2021-07-29
@@ -815,10 +805,9 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
         if (
             subdir == "noarch"
             and (
-                record_name.endswith("-cos6-x86_64")
-                or record_name.endswith("-cos7-x86_64")
-                or record_name.endswith("-cos7-aarch64")
-                or record_name.endswith("-cos7-ppc64le")
+                record_name.endswith(
+                    ("-cos6-x86_64", "-cos7-x86_64", "-cos7-aarch64", "-cos7-ppc64le")
+                )
             )
             and not record_name.startswith("sysroot-")
             and not any(__r.startswith("sysroot_") for __r in record.get("depends", []))
@@ -885,17 +874,44 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
         #         instructions["packages"][fn]["depends"] = depends
 
 
-def _patch_indexes(repodata, subdir, verbose=False):
+def _patch_indexes(repodata, subdir, verbose=False, debug_package_name=None):
+    import json
+
+    index_fname = f"patch_yaml_index_{subdir}.json.zst"
+    if os.path.exists(index_fname):
+        if verbose:
+            tqdm.write(f"[{subdir:>13}] using patch yaml index", file=sys.stderr)
+        with zstandard.open(f"patch_yaml_index_{subdir}.json.zst") as fp:
+            patch_yaml_index = json.load(fp)
+    else:
+        patch_yaml_index = {
+            "packages": {
+                "apply": {},
+                "all_fns": [],
+            },
+            "packages.conda": {
+                "apply": {},
+                "all_fns": [],
+            },
+        }
+
     for index_key in ["packages", "packages.conda"]:
         index = repodata[index_key]
-        _gen_new_index_per_key(index, subdir, index_key=index_key, verbose=verbose)
-        patch_yaml_edit_index(index, subdir, verbose=verbose)
+        if verbose:
+            tqdm.write(f"[{subdir:>13}] processing {index_key}", file=sys.stderr)
+        _gen_new_index_per_key(index, subdir, index_key=index_key)
+        patch_yaml_edit_index(
+            index,
+            subdir,
+            patch_yaml_index[index_key],
+            verbose=verbose,
+            debug_package_name=debug_package_name,
+        )
 
 
 def _add_removals(instructions, subdir, package_removal_keeplist=None):
     r = requests.get(
-        "https://conda.anaconda.org/conda-forge/"
-        "label/broken/%s/repodata.json" % subdir
+        f"https://conda.anaconda.org/conda-forge/label/broken/{subdir}/repodata.json"
     )
 
     if r.status_code != 200:
@@ -940,8 +956,9 @@ def _gen_patch_instructions(
         if verbose:
             tqdm_progress = partial(
                 tqdm,
-                desc=f"Generating patch instructions {pkgs_section_key}",
+                desc=f"[{subdir:>13}] making patches {pkgs_section_key}",
                 file=sys.stderr,
+                ncols=80,
             )
         else:
             tqdm_progress = iter
@@ -1022,30 +1039,69 @@ def _do_subdir(subdir, verbose=False):
         )
 
 
-def main():
-    if "CF_SUBDIR" in os.environ:
-        # For local debugging
-        subdirs = os.environ["CF_SUBDIR"].split(";")
-    else:
-        subdirs = SUBDIRS
+def _show_result(subdir, vals):
+    msg = [
+        "=" * 80,
+        "=" * 80,
+    ]
+    msg.append(subdir)
+    for key, val in vals.items():
+        # sort packages belonging to a given repodata diff
+        val = sorted(val)
+        msg += val
+        msg += key
 
-    cpu_count = int(os.environ.get("CPU_COUNT", os.cpu_count()))
-    with ProcessPoolExecutor(max_workers=min(cpu_count, MAX_WORKERS)) as exc:
-        futs = [exc.submit(_do_subdir, subdir) for subdir in subdirs]
-        for fut in tqdm(
-            as_completed(futs), desc="patching repodata", total=len(subdirs)
-        ):
-            subdir, vals = fut.result()
-            print("\n", flush=True, end="")
-            print("=" * 80, flush=True)
-            print("=" * 80, flush=True)
-            print(subdir, flush=True)
-            for key, val in vals.items():
-                for v in val:
-                    print(v, flush=True)
-                for k in key:
-                    print(k, flush=True)
-            print("\n", flush=True, end="")
+    tqdm.write("\n".join(msg), file=sys.stdout)
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description="generate repodata patches")
+    parser.add_argument(
+        "--subdirs", nargs="*", default=None, help="subdir(s) show, default is all"
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Print out more verbose progress messages as the patches get generated",
+    )
+
+    args = parser.parse_args()
+
+    if args.subdirs is None:
+        subdirs = SUBDIRS
+    else:
+        subdirs = args.subdirs
+
+    if len(subdirs) <= 1:
+        for in_subdir in subdirs:
+            subdir, vals = _do_subdir(in_subdir, verbose=args.verbose)
+            _show_result(subdir, vals)
+    else:
+        freeze_support()
+        tqdm.set_lock(RLock())
+        cpu_count = int(os.environ.get("CPU_COUNT", os.cpu_count()))
+        if "GITHUB_ACTIONS" in os.environ:
+            cpu_count = min(cpu_count, MAX_WORKERS)
+        with ProcessPoolExecutor(
+            max_workers=cpu_count,
+            initializer=tqdm.set_lock,
+            initargs=(tqdm.get_lock(),),
+        ) as exc:
+            futs = [
+                exc.submit(_do_subdir, subdir, verbose=args.verbose)
+                for subdir in subdirs
+            ]
+            for fut in tqdm(
+                as_completed(futs),
+                desc="patching repodata",
+                total=len(subdirs),
+                ncols=80,
+                file=sys.stderr,
+            ):
+                subdir, vals = fut.result()
+                _show_result(subdir, vals)
 
 
 if __name__ == "__main__":

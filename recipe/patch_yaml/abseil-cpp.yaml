@@ -1,7 +1,7 @@
 # from this snippet
 # _replace_pin('abseil-cpp', 'abseil-cpp ==20190808.*', deps, record)
 if:
-  name: "*"
+  has_depends: abseil-cpp
 then:
   - replace_depends:
       old: abseil-cpp

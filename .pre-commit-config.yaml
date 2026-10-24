@@ -1,19 +1,11 @@
 repos:
-- repo: https://github.com/pycqa/flake8
-  rev: 7.3.0
-  hooks:
-    - id: flake8
-      files: recipe\/.*\.py
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.15.20
   hooks:
     - id: ruff-check
-      args: [--fix, --exit-non-zero-on-fix]
+      args: [--fix]
       files: recipe\/.*\.py
-- repo: https://github.com/psf/black-pre-commit-mirror
-  rev: 26.5.1
-  hooks:
-    - id: black
+    - id: ruff-format
       files: recipe\/.*\.py
 - repo: https://github.com/adrienverge/yamllint.git
   rev: v1.38.0

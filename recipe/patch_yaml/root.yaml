@@ -29,6 +29,7 @@ then:
 #     _replace_pin('vector-classes >=1.4.1,<1.5.0a0', 'vector-classes >=1.4.1,<1.4.2a0', deps, record)
 if:
   name: root_base
+  has_depends: vector-classes >=1.4.1,<1.5.0a0
 then:
   - replace_depends:
       old: vector-classes >=1.4.1,<1.5.0a0

@@ -8,7 +8,14 @@
 #     ])
 if:
   name: python-slugify
+  not_has_constrains: "slugify <0"
 then:
   - add_constrains:
       - "slugify <0"
+---
+if:
+  name: python-slugify
+  not_has_constrains: "awesome-slugify <0"
+then:
+  - add_constrains:
       - "awesome-slugify <0"

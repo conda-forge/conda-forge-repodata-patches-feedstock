@@ -6,9 +6,11 @@ import os
 import sys
 import urllib.request
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from multiprocessing import RLock, freeze_support
 
 import zstandard
 from conda_index.index import _apply_instructions
+from tqdm import tqdm
 
 CACHE_DIR = os.environ.get(
     "CACHE_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
@@ -31,10 +33,6 @@ def sort_lists(obj):
 
 
 def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs=True):
-    keep_pkgs = os.environ.get("CF_PKGS", None)
-    if keep_pkgs is not None:
-        keep_pkgs = set(keep_pkgs.split(";"))
-
     if group_diffs:
         final_lines = {}
     else:
@@ -47,9 +45,6 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
         for name in all_names:
             ref_pkg = ref_repodata.get(index_key, {}).get(name, {})
             new_pkg = new_repodata.get(index_key, {}).get(name, {})
-
-            if keep_pkgs is not None and ref_pkg and ref_pkg["name"] not in keep_pkgs:
-                continue
 
             # license_family gets added for new packages, ignore it in the diff
             ref_pkg.pop("license_family", None)
@@ -76,11 +71,7 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
             if group_diffs:
                 _key = []
                 for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=""):
-                    if (
-                        ln.startswith("+++")
-                        or ln.startswith("---")
-                        or ln.startswith("@@")
-                    ):
+                    if ln.startswith(("+++", "---", "@@")):
                         continue
                     _key.append(ln)
                 _key = tuple(_key)
@@ -90,11 +81,7 @@ def show_record_diffs(subdir, ref_repodata, new_repodata, fail_fast, group_diffs
             else:
                 final_lines.append()
                 for ln in difflib.unified_diff(ref_lines, new_lines, n=0, lineterm=""):
-                    if (
-                        ln.startswith("+++")
-                        or ln.startswith("---")
-                        or ln.startswith("@@")
-                    ):
+                    if ln.startswith(("+++", "---", "@@")):
                         continue
                     final_lines.append(ln)
 
@@ -123,17 +110,17 @@ def do_subdir(
     verbose=False,
     debug_package_name=None,
 ):
-    from gen_patch_json import _patch_indexes, _gen_patch_instructions
+    from gen_patch_json import _gen_patch_instructions, _patch_indexes
 
     if verbose:
-        print(f"Decompressing raw repodata for {subdir}", file=sys.stderr, flush=True)
+        tqdm.write(f"[{subdir:>13}] decompressing raw repodata", file=sys.stderr)
     with zstandard.open(raw_repodata_path) as fh:
         raw_repodata = json.load(fh)
     if debug_package_name is not None:
         raw_repodata = _cut_index_to_name(raw_repodata, debug_package_name)
 
     if verbose:
-        print(f"Decompressing new repodata for {subdir}", file=sys.stderr, flush=True)
+        tqdm.write(f"[{subdir:>13}] decompressing new repodata", file=sys.stderr)
     # The repodata is so large, that copying a giant pyton dictionary
     # is like way too slow, it is faster to read the repodata twice..
     with zstandard.open(raw_repodata_path) as fh:
@@ -141,7 +128,9 @@ def do_subdir(
     if debug_package_name is not None:
         new_index = _cut_index_to_name(new_index, debug_package_name)
 
-    _patch_indexes(new_index, subdir, verbose=verbose)
+    _patch_indexes(
+        new_index, subdir, verbose=verbose, debug_package_name=debug_package_name
+    )
     instructions = _gen_patch_instructions(
         raw_repodata,
         new_index,
@@ -154,7 +143,7 @@ def do_subdir(
     new_repodata = _apply_instructions(subdir, raw_repodata, instructions)
 
     if verbose:
-        print(f"Decompressing ref repodata for {subdir}", file=sys.stderr, flush=True)
+        tqdm.write(f"[{subdir:>13}] decompressing ref repodata", file=sys.stderr)
     with zstandard.open(ref_repodata_path) as fh:
         ref_repodata = json.load(fh)
     if debug_package_name is not None:
@@ -188,7 +177,7 @@ def _process_subdir(
     ref_repodata_path = os.path.join(subdir_dir, "repodata.json.zst")
     if not use_cache:
         if verbose:
-            print(f"Downloading index for {subdir}", file=sys.stderr, flush=True)
+            tqdm.write(f"[{subdir:>13}] downloading index", file=sys.stderr)
         download_subdir(subdir, raw_repodata_path, ref_repodata_path)
     vals = do_subdir(
         subdir,
@@ -204,23 +193,24 @@ def _process_subdir(
 
 
 def _show_result(subdir, vals, fail_fast, no_group_diffs):
-    print("=" * 80, flush=True)
-    print("=" * 80, flush=True)
+    msg = [
+        "=" * 80,
+        "=" * 80,
+    ]
     if fail_fast and vals:
-        print(subdir + " has non-zero patch diff", flush=True)
+        msg.append(subdir + " has non-zero patch diff")
     else:
-        print(subdir, flush=True)
+        msg.append(subdir)
     if no_group_diffs:
-        for val in vals:
-            print(val, flush=True)
+        msg += vals
     else:
         for key, val in vals.items():
             # sort packages belonging to a given repodata diff
-            val = sorted(list(val))
-            for v in val:
-                print(v, flush=True)
-            for k in key:
-                print(k, flush=True)
+            val = sorted(val)
+            msg += val
+            msg += key
+
+    tqdm.write("\n".join(msg), file=sys.stdout)
 
 
 if __name__ == "__main__":
@@ -297,7 +287,14 @@ if __name__ == "__main__":
             no_group_diffs=args.no_group_diffs,
         )
     else:
-        with ProcessPoolExecutor() as exc:
+        freeze_support()
+        tqdm.set_lock(RLock())
+
+        with ProcessPoolExecutor(
+            max_workers=os.cpu_count(),
+            initializer=tqdm.set_lock,
+            initargs=(tqdm.get_lock(),),
+        ) as exc:
             futs = [
                 exc.submit(
                     _process_subdir,

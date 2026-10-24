@@ -20,9 +20,14 @@ channels:
   - conda-forge
   - nodefaults
 dependencies:
-  - annotated-types
-  - conda-build
+  - python >=3.14
+  - requests
+  - tqdm
   - license-expression
+  - packaging
+  - pyyaml
+  - pydantic !=2.9.*
+  - pytest
+  - conda-build
+  - zstandard
   - pre-commit
-  - pydantic
-  - python
