@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# pydantic-core 2.50.1 requires typing-extensions >=4.16.0 and imports Sentinel.
+# https://github.com/pydantic/pydantic/blob/v2.14.1/pydantic-core/pyproject.toml#L41
+if:
+  name: pydantic-core
+  version: "2.50.1"
+  build_number: 0
+  timestamp_lt: 2026-10-22T16:15:13Z
+  has_depends: typing-extensions >=4.6.0,!=4.7.0
+then:
+  - replace_depends:
+      old: typing-extensions >=4.6.0,!=4.7.0
+      new: typing-extensions >=4.16.0
