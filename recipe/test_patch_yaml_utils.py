@@ -628,3 +628,47 @@ def test_schema_validation():
                 print(f"\nSchema error in {document.name}: {e}")
                 passed = False
     assert passed, "schema validation failed!"
+
+
+def test_patch_yaml_is_specific():
+    specific_keys = [
+        "has_depends",
+        "has_constrains",
+        "has_track_features",
+        "not_has_depends",
+        "not_has_constrains",
+        "not_has_track_features",
+        "timestamp_lt",
+        "timestamp_le",
+        "version",
+        "version_in",
+        "version_le",
+        "version_lt",
+        "version_eq",
+        "name_in",
+        "artifact_in",
+    ]
+    ok = True
+    data = Path(__file__).parent / "patch_yaml"
+    for document in sorted(data.glob("*.yaml")):
+        for patch in yaml.safe_load_all(document.read_text()):
+            has_specific_keys = any(k in patch["if"] for k in specific_keys)
+
+            not_specific = False
+
+            if not has_specific_keys:
+                if "name" in patch["if"] and patch["if"]["name"] == "*":
+                    not_specific = True
+                for thn in patch["then"]:
+                    for k in thn:
+                        if k not in ["tighten_depends", "loosen_depends"]:
+                            not_specific = True
+
+            if not_specific:
+                ok = False
+                print(
+                    f"patch is not specific enough (needs a name or other clause):"
+                    f"\n{yaml.safe_dump(patch)}\nfrom {document.name}"
+                )
+
+    assert ok, "Non-specific patches found: run tests with pytest -vvs to see errors!"

@@ -3,6 +3,7 @@
 #     _rename_dependency(fn, record, "evenlet", "eventlet")
 if:
   name: airflow-with-async
+  has_depends: evenlet
 then:
   - rename_depends:
       old: evenlet

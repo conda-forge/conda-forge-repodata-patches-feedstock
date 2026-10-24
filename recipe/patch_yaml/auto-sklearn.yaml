@@ -5,6 +5,7 @@
 #     _rename_dependency(fn, record, "dask-core", "dask")
 if:
   name: "auto-sklearn"
+  has_depends: dask-core
 then:
   - rename_depends:
       old: dask-core

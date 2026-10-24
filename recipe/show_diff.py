@@ -6,6 +6,7 @@ import os
 import sys
 import urllib.request
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from multiprocessing import RLock, freeze_support
 
 import zstandard
 from conda_index.index import _apply_instructions
@@ -286,7 +287,14 @@ if __name__ == "__main__":
             no_group_diffs=args.no_group_diffs,
         )
     else:
-        with ProcessPoolExecutor(max_workers=os.cpu_count()) as exc:
+        freeze_support()
+        tqdm.set_lock(RLock())
+
+        with ProcessPoolExecutor(
+            max_workers=os.cpu_count(),
+            initializer=tqdm.set_lock,
+            initargs=(tqdm.get_lock(),),
+        ) as exc:
             futs = [
                 exc.submit(
                     _process_subdir,

@@ -6,6 +6,7 @@
 #     _rename_dependency(fn, record, "nc_time_axis", "nc-time-axis")
 if:
   name: iris
+  has_depends: nc_time_axis
 then:
   - rename_depends:
       old: nc_time_axis

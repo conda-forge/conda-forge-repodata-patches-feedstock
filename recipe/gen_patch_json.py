@@ -7,6 +7,7 @@ import urllib
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
+from multiprocessing import RLock, freeze_support
 from os.path import isdir, join
 
 import requests
@@ -1078,8 +1079,16 @@ def main():
             subdir, vals = _do_subdir(in_subdir, verbose=args.verbose)
             _show_result(subdir, vals)
     else:
+        freeze_support()
+        tqdm.set_lock(RLock())
         cpu_count = int(os.environ.get("CPU_COUNT", os.cpu_count()))
-        with ProcessPoolExecutor(max_workers=min(cpu_count, MAX_WORKERS)) as exc:
+        if "GITHUB_ACTIONS" in os.environ:
+            cpu_count = min(cpu_count, MAX_WORKERS)
+        with ProcessPoolExecutor(
+            max_workers=cpu_count,
+            initializer=tqdm.set_lock,
+            initargs=(tqdm.get_lock(),),
+        ) as exc:
             futs = [
                 exc.submit(_do_subdir, subdir, verbose=args.verbose)
                 for subdir in subdirs
