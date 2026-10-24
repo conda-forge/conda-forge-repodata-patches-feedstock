@@ -1,14 +1,18 @@
 import fnmatch as _fnmatch
 import glob
+import hashlib
 import os
 import re
 import string
 import sys
-from datetime import datetime, timedelta, timezone
-from functools import lru_cache
+import textwrap
+from datetime import UTC, datetime, timedelta
+from functools import lru_cache, partial
 
 import yaml
 from packaging.version import parse as parse_version
+from patch_yaml_model import PatchYaml
+from tqdm import tqdm
 
 ALLOWED_TEMPLATE_KEYS = [
     "name",
@@ -21,8 +25,6 @@ ALLOWED_TEMPLATE_KEYS = [
     "minor_version",
     "patch_version",
 ]
-
-from patch_yaml_model import PatchYaml  # noqa
 
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
@@ -141,7 +143,7 @@ def _maybe_process_template(value, record, subdir, old=None):
         return value
 
 
-_EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
+_EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
 
 
 def _timestamp_to_ms(value):
@@ -165,7 +167,7 @@ def _timestamp_to_ms(value):
     return (value - _EPOCH) // timedelta(milliseconds=1)
 
 
-def _test_patch_yaml(patch_yaml, record, subdir, fn):
+def _test_patch_yaml(patch_yaml, record, subdir, fn, debug_package_name=None):
     keep = True
     for k, v in patch_yaml["if"].items():
         if k.startswith("not_"):
@@ -241,7 +243,7 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
             _keep = _fnmatch_str_or_list(fn, v)
 
         else:
-            raise KeyError("Unrecognized 'if' key '%s'!" % k)
+            raise KeyError(f"Unrecognized 'if' key '{k}'!")
 
         if neg:
             keep = keep and (not _keep)
@@ -251,16 +253,27 @@ def _test_patch_yaml(patch_yaml, record, subdir, fn):
         if not keep:
             break
 
+    if keep and debug_package_name is not None and record["name"] == debug_package_name:
+        tqdm.write("~=" * 40, file=sys.stderr)
+        tqdm.write(
+            "applying patch:\n" + textwrap.indent(yaml.safe_dump(patch_yaml), "  "),
+            file=sys.stderr,
+        )
+        tqdm.write(
+            "orig record:\n" + textwrap.indent(yaml.safe_dump(record), "  "),
+            file=sys.stderr,
+        )
+
     return keep
 
 
 def _has_track_feature(record, feature_name):
-    features = record.get("track_features", "").split()
+    features = (record.get("track_features", "") or "").split()
     return bool(any(f for f in features if fnmatch(f, feature_name)))
 
 
 def _extract_track_feature(record, feature_name):
-    features = record.get("track_features", "").split()
+    features = (record.get("track_features", "") or "").split()
     features = [f for f in features if not fnmatch(f, feature_name)]
     return " ".join(features) or None
 
@@ -345,10 +358,7 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
                 upper_bound += ["0"]
             upper_bound = ".".join(upper_bound)
 
-            depends[dep_idx] = "{} <{}a0".format(
-                dep_parts[0],
-                upper_bound,
-            )
+            depends[dep_idx] = f"{dep_parts[0]} <{upper_bound}a0"
             record["depends"] = depends
             continue
 
@@ -372,12 +382,10 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
                 new_upper = ".".join(new_upper)
 
                 if len(dep_parts) == 2:
-                    depends[dep_idx] = "{} {},<{}a0".format(
-                        dep_parts[0], dep_parts[1], new_upper
-                    )
+                    depends[dep_idx] = f"{dep_parts[0]} {dep_parts[1]},<{new_upper}a0"
                 elif len(dep_parts) == 3:
-                    depends[dep_idx] = "{} {},<{}a0 {}".format(
-                        dep_parts[0], dep_parts[1], new_upper, dep_parts[2]
+                    depends[dep_idx] = (
+                        f"{dep_parts[0]} {dep_parts[1]},<{new_upper}a0 {dep_parts[2]}"
                     )
                 else:
                     raise RuntimeError(f"Weird dep length in item '{depends[dep_idx]}'")
@@ -403,7 +411,7 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
                     dep_parts[0], lower, ".".join(new_upper)
                 )
                 if len(dep_parts) == 3:
-                    depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
+                    depends[dep_idx] = f"{depends[dep_idx]} {dep_parts[2]}"
                 record["depends"] = depends
 
             continue
@@ -428,10 +436,7 @@ def _pin_stricter(fn, record, fix_dep, max_pin, upper_bound=None):
             else:
                 cond = parse_version(old_upper) > parse_version(upper_bound)
             if cond:
-                depends[dep_idx] = "{} <{}a0".format(
-                    dep_parts[0],
-                    upper_bound,
-                )
+                depends[dep_idx] = f"{dep_parts[0]} <{upper_bound}a0"
                 record["depends"] = depends
             continue
 
@@ -471,11 +476,22 @@ def _pin_looser(fn, record, fix_dep, max_pin=None, upper_bound=None):
                 dep_parts[0], lower, ".".join(new_upper)
             )
             if len(dep_parts) == 3:
-                depends[dep_idx] = "{} {}".format(depends[dep_idx], dep_parts[2])
+                depends[dep_idx] = f"{depends[dep_idx]} {dep_parts[2]}"
             record["depends"] = depends
 
 
-def _apply_patch_yaml(patch_yaml, record, subdir, fn):
+def _apply_patch_yaml(patch_yaml, record, subdir, fn, debug_package_name=None):
+    if debug_package_name is not None and record["name"] == debug_package_name:
+        tqdm.write("~=" * 40, file=sys.stderr)
+        tqdm.write(
+            "applying patch:\n" + textwrap.indent(yaml.safe_dump(patch_yaml), "  "),
+            file=sys.stderr,
+        )
+        tqdm.write(
+            "orig record:\n" + textwrap.indent(yaml.safe_dump(record), "  "),
+            file=sys.stderr,
+        )
+
     for inst in patch_yaml["then"]:
         for k, v in inst.items():
             if k.startswith("add_") and k[len("add_") :] in ["depends", "constrains"]:
@@ -614,63 +630,208 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                         )
 
             else:
-                raise KeyError("Unrecognized 'then' key '%s'!" % k)
+                raise KeyError(f"Unrecognized 'then' key '{k}'!")
+
+    if debug_package_name is not None and record["name"] == debug_package_name:
+        tqdm.write(
+            "final record:\n" + textwrap.indent(yaml.safe_dump(record), "  "),
+            file=sys.stderr,
+        )
 
 
 CONDA_PKG_NAME_RE = re.compile(r"^[a-z0-9_.-]+$")
 
 
-def shortlist_relevant_filenames(index, package_name_selector):
+def shortlist_relevant_filenames(index, package_name_selector, sorted_fns):
     if CONDA_PKG_NAME_RE.match(package_name_selector) is not None:
         # package name does not contain wildcards
-        return [
-            fn
-            for fn, record in index.items()
-            if record["name"] == package_name_selector
-        ]
-    return index.keys()
+        return [fn for fn in sorted_fns if index[fn]["name"] == package_name_selector]
+    return sorted_fns
 
 
-def patch_yaml_edit_index(index, subdir, verbose=False):
-    keep_pkgs = os.environ.get("CF_PKGS", None)
-    if keep_pkgs is not None:
-        keep_pkgs = set(keep_pkgs.split(";"))
+def _process_record_test_and_apply(
+    record, patch_yaml, fname, subdir, fn, debug_package_name=None
+):
+    try:
+        if _test_patch_yaml(patch_yaml, record, subdir, fn):
+            _apply_patch_yaml(
+                patch_yaml, record, subdir, fn, debug_package_name=debug_package_name
+            )
+    except Exception:
+        import traceback
+
+        print(
+            "=" * 80
+            + "\n"
+            + "=" * 80
+            + f"\nError in testing/applying patch yaml from '{fname}': \n\n{yaml.safe_dump(patch_yaml, default_flow_style=False)}",
+            flush=True,
+        )
+        try:
+            PatchYaml(**patch_yaml)
+        except Exception as se:  # noqa: BLE001
+            print(
+                f"Schema error in '{os.path.basename(fname)}': {se}",
+                flush=True,
+            )
+        print(
+            "=" * 80 + "\n" + "=" * 80,
+            flush=True,
+        )
+        traceback.print_exc()
+        raise
+
+
+def _process_record_apply(
+    record, patch_yaml, fname, subdir, fn, debug_package_name=None
+):
+    try:
+        _apply_patch_yaml(
+            patch_yaml, record, subdir, fn, debug_package_name=debug_package_name
+        )
+    except Exception:
+        import traceback
+
+        print(
+            "=" * 80
+            + "\n"
+            + "=" * 80
+            + f"\nError in testing/applying patch yaml from '{fname}': \n\n{yaml.safe_dump(patch_yaml, default_flow_style=False)}",
+            flush=True,
+        )
+        try:
+            PatchYaml(**patch_yaml)
+        except Exception as se:  # noqa: BLE001
+            print(
+                f"Schema error in '{os.path.basename(fname)}': {se}",
+                flush=True,
+            )
+        print(
+            "=" * 80 + "\n" + "=" * 80,
+            flush=True,
+        )
+        traceback.print_exc()
+        raise
+
+
+def patch_yaml_edit_index(
+    index, subdir, patch_yaml_index, verbose=False, debug_package_name=None
+):
     fns = sorted(index)
     if verbose:
-        from tqdm import tqdm
-        from functools import partial
-
-        tqdm = partial(tqdm, desc="Applying yaml patches", file=sys.stderr)
+        tqdm_iter = partial(
+            tqdm, desc=f"[{subdir:>13}] applying patches", file=sys.stderr, ncols=80
+        )
     else:
-        tqdm = iter
-    for patch_yaml, fname in tqdm(ALL_YAMLS):
+        tqdm_iter = iter
+
+    all_fns_in_index = set(patch_yaml_index["all_fns"])
+    for patch_yaml, fname in tqdm_iter(ALL_YAMLS):
+        patch_yaml_hash = _sha1_hash_patch_yaml(patch_yaml, fname)
+        if patch_yaml_hash in patch_yaml_index["apply"]:
+            apply_fns = set(patch_yaml_index["apply"][patch_yaml_hash])
+        else:
+            apply_fns = set()
+
         if "name" in patch_yaml["if"]:
             pkg_name = patch_yaml["if"]["name"]
-            fns_to_process = shortlist_relevant_filenames(index, pkg_name)
+            fns_to_process = shortlist_relevant_filenames(index, pkg_name, fns)
         else:
             fns_to_process = fns
 
         for fn in fns_to_process:
             record = index[fn]
-            if keep_pkgs is not None and record["name"] not in keep_pkgs:
+
+            if debug_package_name is not None and record["name"] != debug_package_name:
                 continue
+
+            if fn in apply_fns:
+                _process_record_apply(
+                    record,
+                    patch_yaml,
+                    fname,
+                    subdir,
+                    fn,
+                    debug_package_name=debug_package_name,
+                )
+            elif fn in all_fns_in_index:
+                continue
+            else:
+                _process_record_test_and_apply(
+                    record,
+                    patch_yaml,
+                    fname,
+                    subdir,
+                    fn,
+                    debug_package_name=debug_package_name,
+                )
+
+    return index
+
+
+def _sha1_hash_patch_yaml(patch_yaml, fname):
+    str_to_hash = yaml.safe_dump(patch_yaml) + "\n" + fname
+    return hashlib.sha1(str_to_hash.encode("utf-8")).hexdigest()
+
+
+def patch_yaml_gen_hashmap_for_index(
+    index, subdir, verbose=False, debug_package_name=None
+):
+    import copy
+
+    patch_yaml_hash_to_fns_apply = {}
+    for patch_yaml, fname in ALL_YAMLS:
+        patch_yaml_hash = _sha1_hash_patch_yaml(patch_yaml, fname)
+        patch_yaml_hash_to_fns_apply[patch_yaml_hash] = []
+
+    fns = sorted(index)
+    if verbose:
+        tqdm_iter = partial(
+            tqdm, desc=f"[{subdir:>13}] generating index", file=sys.stderr, ncols=80
+        )
+    else:
+        tqdm_iter = iter
+    for patch_yaml, fname in tqdm_iter(ALL_YAMLS):
+        patch_yaml_hash = _sha1_hash_patch_yaml(patch_yaml, fname)
+        if "name" in patch_yaml["if"]:
+            pkg_name = patch_yaml["if"]["name"]
+            fns_to_process = shortlist_relevant_filenames(index, pkg_name, fns)
+        else:
+            fns_to_process = fns
+
+        for fn in fns_to_process:
+            record = index[fn]
             try:
-                if _test_patch_yaml(patch_yaml, record, subdir, fn):
-                    _apply_patch_yaml(patch_yaml, record, subdir, fn)
-            except Exception as e:
+                if _test_patch_yaml(
+                    patch_yaml,
+                    record,
+                    subdir,
+                    fn,
+                    debug_package_name=debug_package_name,
+                ):
+                    old_record = copy.deepcopy(record)
+                    _apply_patch_yaml(
+                        patch_yaml,
+                        record,
+                        subdir,
+                        fn,
+                        debug_package_name=debug_package_name,
+                    )
+                    if record != old_record:
+                        patch_yaml_hash_to_fns_apply[patch_yaml_hash].append(fn)
+            except Exception:
                 import traceback
 
                 print(
                     "=" * 80
                     + "\n"
                     + "=" * 80
-                    + "\nError in testing/applying patch yaml from '%s': \n\n%s"
-                    % (fname, yaml.safe_dump(patch_yaml, default_flow_style=False)),
+                    + f"\nError in testing/applying patch yaml from '{fname}': \n\n{yaml.safe_dump(patch_yaml, default_flow_style=False)}",
                     flush=True,
                 )
                 try:
                     PatchYaml(**patch_yaml)
-                except Exception as se:
+                except Exception as se:  # noqa: BLE001
                     print(
                         f"Schema error in '{os.path.basename(fname)}': {se}",
                         flush=True,
@@ -680,6 +841,9 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
                     flush=True,
                 )
                 traceback.print_exc()
-                raise e
+                raise
 
-    return index
+    return {
+        "apply": {k: sorted(v) for k, v in patch_yaml_hash_to_fns_apply.items()},
+        "all_fns": fns,
+    }

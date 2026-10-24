@@ -7,6 +7,7 @@
 #     deps[i] = "cudatoolkit >=11.2,<12.0a0"
 if:
   name: "*"
+  has_depends: cudatoolkit 11.2|11.2.[*]
 then:
   - replace_depends:
       old: cudatoolkit 11.2|11.2.[*]

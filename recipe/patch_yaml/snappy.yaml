@@ -5,6 +5,7 @@
 # See: https://github.com/conda-forge/snappy-feedstock/issues/35
 if:
   name: "*"
+  has_depends: snappy >=1.1.7,<1.1.8.0a0
 then:
   - replace_depends:
       old: snappy >=1.1.7,<1.1.8.0a0
@@ -14,7 +15,7 @@ then:
 # See: https://github.com/conda-forge/snappy-feedstock/issues/35
 if:
   name: "*"
-  has_depends: snappy*
+  has_depends: snappy?( *)
   timestamp_lt: 2024-04-07T14:00:54.329Z
 then:
   - tighten_depends:

@@ -7,5 +7,6 @@
 if:
   name: "*"
   timestamp_lt: 2023-09-07T11:27:37Z
+  has_track_features: openjdk*
 then:
   - remove_track_features: openjdk*

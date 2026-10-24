@@ -430,8 +430,10 @@ def test_apply_patch_yaml_replace_glob_template_next_version(
     patch_yaml = {
         "then": [
             {
-                "replace_"
-                + key: {"old": "numpy 1.0*", "new": "numpy $version,<$next_version"}
+                "replace_" + key: {
+                    "old": "numpy 1.0*",
+                    "new": "numpy $version,<$next_version",
+                }
             }
         ]
     }

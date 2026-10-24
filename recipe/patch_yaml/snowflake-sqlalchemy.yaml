@@ -15,7 +15,7 @@ then:
       new: snowflake-connector-python <3.0.0
   - replace_depends:
       old: sqlalchemy <2
-      new: sqlalchemy >=1.4.0,<2.0.0
+      new: sqlalchemy >=1.4.0,<1.4.42
 ---
 # from this bit of code
 # https://github.com/conda-forge/snowflake-sqlalchemy-feedstock/pull/15

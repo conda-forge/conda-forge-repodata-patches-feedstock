@@ -27,10 +27,24 @@ if:
     - lapack
     - blas-devel
   timestamp_lt: 2023-09-06T10:44:56Z
+  has_depends: liblapack >=3.8.0,<3.9.0a0
 then:
   - replace_depends:
       old: liblapack >=3.8.0,<3.9.0a0
       new: liblapack >=3.8.0,<4.0.0a0
+---
+if:
+  not_name_in:
+    - blas
+    - libblas
+    - libcblas
+    - liblapack
+    - liblapacke
+    - lapack
+    - blas-devel
+  timestamp_lt: 2023-09-06T10:44:56Z
+  has_depends: liblapacke >=3.8.0,<3.9.0a0
+then:
   - replace_depends:
       old: liblapacke >=3.8.0,<3.9.0a0
       new: liblapacke >=3.8.0,<4.0.0a0

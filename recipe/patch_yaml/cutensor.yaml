@@ -12,10 +12,17 @@
 if:
   name: "*"
   timestamp_lt: 2023-09-07T11:27:37Z
+  has_depends: cutensor >=1.2.2.5,<2.0a0
 then:
   - replace_depends:
       old: cutensor >=1.2.2.5,<2.0a0
       new: cutensor ==1.2.2.5
+---
+if:
+  name: "*"
+  timestamp_lt: 2023-09-07T11:27:37Z
+  has_constrains: cutensor >=1.2.2.5,<2.0a0
+then:
   - replace_constrains:
       old: cutensor >=1.2.2.5,<2.0a0
       new: cutensor ==1.2.2.5
