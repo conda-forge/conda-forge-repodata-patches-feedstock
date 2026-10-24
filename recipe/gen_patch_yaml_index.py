@@ -46,7 +46,8 @@ def do_subdir(
         if verbose:
             tqdm.write(f"[{subdir:>13}] processing {index_key}", file=sys.stderr)
         pyindex[index_key] = patch_yaml_gen_hashmap_for_index(
-            index, subdir, verbose=verbose, debug_package_name=debug_package_name)
+            index, subdir, verbose=verbose, debug_package_name=debug_package_name
+        )
 
     return pyindex
 
@@ -136,7 +137,9 @@ if __name__ == "__main__":
             subdir,
             vals,
         )
-        with zstd.open(f"patch_yaml_index_{subdir}.json.zst", "wt", encoding="utf-8") as fp:
+        with zstd.open(
+            f"patch_yaml_index_{subdir}.json.zst", "wt", encoding="utf-8"
+        ) as fp:
             json.dump(vals, fp, sort_keys=True, indent=2)
     else:
         with ProcessPoolExecutor() as exc:
@@ -155,6 +158,7 @@ if __name__ == "__main__":
                     subdir,
                     vals,
                 )
-                with zstd.open(f"patch_yaml_index_{subdir}.json.zst", "wt", encoding="utf-8") as fp:
+                with zstd.open(
+                    f"patch_yaml_index_{subdir}.json.zst", "wt", encoding="utf-8"
+                ) as fp:
                     json.dump(vals, fp, sort_keys=True, indent=2)
-
