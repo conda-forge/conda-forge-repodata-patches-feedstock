@@ -748,13 +748,29 @@ def _name_range(sorted_strs, name):
 
 # idea from @hmaarrfk and Claude (AI) to cut down artifacts by literal
 # prefix in name field
-def get_prefixes_and_fns_sorted_by_prefix(index):
+def _get_prefixes_and_fns_sorted_by_prefix(index):
     prefixes_and_fns = sorted(
         [(_literal_prefix(index[fn]["name"]), fn) for fn in index],
         key=lambda item: item[0],
     )
     return [item[0] for item in prefixes_and_fns], [
         item[1] for item in prefixes_and_fns
+    ]
+
+
+def _timestamp_range(sorted_timestamps, timestamp):
+    # we use right here so that we can pass in values from
+    # timestamp_le
+    return 0, bisect.bisect_right(sorted_timestamps, timestamp)
+
+
+def _get_timestamps_and_fns_sorted_by_timestamps(index):
+    timestamps_and_fns = sorted(
+        [(int(index[fn].get("timestamp", 0)), fn) for fn in index],
+        key=lambda item: item[0],
+    )
+    return [item[0] for item in timestamps_and_fns], [
+        item[1] for item in timestamps_and_fns
     ]
 
 
@@ -768,7 +784,12 @@ def patch_yaml_edit_index(
     else:
         tqdm_iter = iter
 
-    sorted_prefixes, fns_sorted_by_prefix = get_prefixes_and_fns_sorted_by_prefix(index)
+    sorted_prefixes, fns_sorted_by_prefix = _get_prefixes_and_fns_sorted_by_prefix(
+        index
+    )
+    sorted_timestamps, fns_sorted_by_timestamp = (
+        _get_timestamps_and_fns_sorted_by_timestamps(index)
+    )
 
     for patch_yaml, fname in tqdm_iter(ALL_YAMLS):
         if "subdir_in" in patch_yaml["if"] and not _fnmatch_str_or_list(
@@ -776,12 +797,14 @@ def patch_yaml_edit_index(
         ):
             continue
 
+        sets_to_intersect = []
         if "artifact_in" in patch_yaml["if"]:
             fns_to_check = patch_yaml["if"]["artifact_in"]
             if not isinstance(fns_to_check, list):
                 fns_to_check = [fns_to_check]
-            fns_to_check = [fn for fn in fns_to_check if fn in index]
-        elif "name" in patch_yaml["if"]:
+            sets_to_intersect.append({fn for fn in fns_to_check if fn in index})
+
+        if "name" in patch_yaml["if"]:
             name = patch_yaml["if"]["name"]
             prefix = _literal_prefix(name)
             if prefix == name:
@@ -789,8 +812,9 @@ def patch_yaml_edit_index(
             else:
                 start, stop = _prefix_range(sorted_prefixes, prefix)
 
-            fns_to_check = fns_sorted_by_prefix[start:stop]
-        elif "name_in" in patch_yaml["if"]:
+            sets_to_intersect.append(set(fns_sorted_by_prefix[start:stop]))
+
+        if "name_in" in patch_yaml["if"]:
             fns_to_check = set()
 
             v = patch_yaml["if"]["name_in"]
@@ -803,6 +827,23 @@ def patch_yaml_edit_index(
                 else:
                     start, stop = _prefix_range(sorted_prefixes, prefix)
                 fns_to_check.update(fns_sorted_by_prefix[start:stop])
+            if fns_to_check:
+                sets_to_intersect.append(fns_to_check)
+
+        ts_keys = ["timestamp_le", "timestamp_lt"]
+        if any(key in patch_yaml["if"] for key in ts_keys):
+            for key in ts_keys:
+                if key in patch_yaml["if"]:
+                    timestamp = _timestamp_to_ms(patch_yaml["if"][key])
+                    break
+            start, stop = _timestamp_range(sorted_timestamps, timestamp)
+            sets_to_intersect.append(set(fns_sorted_by_timestamp[start:stop]))
+
+        if sets_to_intersect:
+            if len(sets_to_intersect) > 1:
+                fns_to_check = sets_to_intersect[0].intersection(*sets_to_intersect[1:])
+            else:
+                fns_to_check = sets_to_intersect[0]
         else:
             fns_to_check = fns_sorted_by_prefix
 

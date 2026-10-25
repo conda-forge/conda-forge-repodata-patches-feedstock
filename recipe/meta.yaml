@@ -13,7 +13,7 @@ build:
   script:
     - pytest -vv test_patch_yaml_utils.py
     - pytest -vv test_gen_patch_json.py
-    - python -u gen_patch_json.py --verbose
+    - python gen_patch_json.py
 
 requirements:
   build:

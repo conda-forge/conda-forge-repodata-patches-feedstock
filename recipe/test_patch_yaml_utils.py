@@ -6,8 +6,11 @@ from patch_yaml_model import PatchYaml, generate_schema
 from patch_yaml_utils import (
     ALLOWED_TEMPLATE_KEYS,
     _apply_patch_yaml,
+    _name_range,
+    _prefix_range,
     _test_patch_yaml,
     _timestamp_to_ms,
+    get_prefixes_and_fns_sorted_by_prefix,
 )
 
 
@@ -672,3 +675,43 @@ def test_patch_yaml_is_specific():
                 )
 
     assert ok, "Non-specific patches found: run tests with pytest -vvs to see errors!"
+
+
+def test_prefix_ops():
+    fns = [
+        "numpy",
+        "a",
+        "numpy-blah",
+        "b",
+        "b.double",
+        "c",
+        "numpy.again",
+    ]
+    fns = {fn: {"name": fn.split(".")[0]} for fn in fns}
+    sorted_prefixes, fns_sorted_by_prefix = get_prefixes_and_fns_sorted_by_prefix(fns)
+
+    start, stop = _name_range(sorted_prefixes, "numpy")
+    assert all(fns[fn]["name"] == "numpy" for fn in fns_sorted_by_prefix[start:stop])
+    assert len(fns_sorted_by_prefix[start:stop]) == 2
+
+    start, stop = _prefix_range(sorted_prefixes, "numpy")
+    assert all(
+        fns[fn]["name"].startswith("numpy") for fn in fns_sorted_by_prefix[start:stop]
+    )
+    assert len(fns_sorted_by_prefix[start:stop]) == 3
+
+    start, stop = _prefix_range(sorted_prefixes, "b")
+    assert all(
+        fns[fn]["name"].startswith("b") for fn in fns_sorted_by_prefix[start:stop]
+    )
+    assert len(fns_sorted_by_prefix[start:stop]) == 2
+
+    start, stop = _prefix_range(sorted_prefixes, "f")
+    assert not any(
+        fns[fn]["name"].startswith("f") for fn in fns_sorted_by_prefix[start:stop]
+    )
+    assert len(fns_sorted_by_prefix[start:stop]) == 0
+
+    start, stop = _name_range(sorted_prefixes, "f")
+    assert not any(fns[fn]["name"] == "f" for fn in fns_sorted_by_prefix[start:stop])
+    assert len(fns_sorted_by_prefix[start:stop]) == 0

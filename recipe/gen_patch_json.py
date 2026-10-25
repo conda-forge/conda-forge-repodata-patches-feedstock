@@ -1107,7 +1107,7 @@ def main():
         freeze_support()
         tqdm.set_lock(FlushingRLock())
         cpu_count = int(os.environ.get("CPU_COUNT", os.cpu_count()))
-        if "GITHUB_ACTIONS" in os.environ:
+        if "CONDA_BUILD" in os.environ:
             cpu_count = min(cpu_count, MAX_WORKERS)
         with ProcessPoolExecutor(
             max_workers=cpu_count,
