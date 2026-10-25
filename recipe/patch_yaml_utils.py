@@ -688,7 +688,9 @@ class PatchYamlIndex:
             )
 
         all_ops = {list(clause.keys())[0] for clause in patch_yaml["then"]}
-        if not any(op.startswith(("add_", "reset_")) for op in all_ops):
+        if (not any(op.startswith(("add_", "reset_")) for op in all_ops)) and (
+            not sets_to_intersect
+        ):
             fns_for_clauses = []
             for clause in patch_yaml["then"]:
                 op, val = list(clause.items())[0]
