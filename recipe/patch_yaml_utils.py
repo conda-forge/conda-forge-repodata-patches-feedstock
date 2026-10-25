@@ -1,3 +1,4 @@
+import bisect
 import fnmatch as _fnmatch
 import glob
 import os
@@ -629,6 +630,15 @@ def _as_list(v):
     return v if isinstance(v, list) else [v]
 
 
+def _prefix_range(sorted_strs, prefix):
+    """Return the slice of ``sorted_strs`` that starts with ``prefix``."""
+    start = bisect.bisect_left(sorted_strs, prefix)
+    stop = start
+    while stop < len(sorted_strs) and sorted_strs[stop].startswith(prefix):
+        stop += 1
+    return start, stop
+
+
 class _CandidateIndex:
     """Lookup tables to find the records a patch can possibly change.
 
@@ -640,6 +650,10 @@ class _CandidateIndex:
 
     def __init__(self, index):
         self.fns = sorted(index)
+        # sorted by the normalized name so that it can be bisected
+        artifacts = sorted((os.path.normcase(fn), fn) for fn in self.fns)
+        self.artifacts_normcase = [nc for nc, _ in artifacts]
+        self.artifacts = [fn for _, fn in artifacts]
         self.by_name = {}
         self.by_dep_name = {"depends": {}, "constrains": {}}
         for fn in self.fns:
@@ -663,6 +677,16 @@ class _CandidateIndex:
             fns.update(self.by_name.get(pat, ()))
         return fns
 
+    def _artifacts(self, pats):
+        fns = set()
+        for pat in pats:
+            prefix = _literal_prefix(os.path.normcase(str(pat)))
+            if not prefix:
+                return None
+            start, stop = _prefix_range(self.artifacts_normcase, prefix)
+            fns.update(self.artifacts[start:stop])
+        return fns
+
     def _deps(self, subk, pat):
         # every dependency that matches must start with this prefix, so its
         # name (up to the first space) equals it if it has a space
@@ -678,6 +702,13 @@ class _CandidateIndex:
         for k, v in patch_yaml["if"].items():
             if k == "name":
                 narrowed.append(self._names([v]))
+            elif k == "name_in":
+                narrowed.append(self._names(_as_list(v)))
+            elif k == "artifact_in":
+                narrowed.append(self._artifacts(_as_list(v)))
+            elif k == "subdir_in":
+                if not _fnmatch_str_or_list(subdir, v):
+                    return []
             elif k in ("has_depends", "has_constrains"):
                 for _v in _as_list(v):
                     narrowed.append(self._deps(k[len("has_") :], _v))
