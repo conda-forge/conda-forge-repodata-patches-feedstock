@@ -625,6 +625,10 @@ def _literal_prefix(pat):
     return pat
 
 
+def _as_list(v):
+    return v if isinstance(v, list) else [v]
+
+
 class _CandidateIndex:
     """Lookup tables to find the records a patch can possibly change.
 
@@ -675,13 +679,43 @@ class _CandidateIndex:
             if k == "name":
                 narrowed.append(self._names([v]))
             elif k in ("has_depends", "has_constrains"):
-                for _v in v if isinstance(v, list) else [v]:
+                for _v in _as_list(v):
                     narrowed.append(self._deps(k[len("has_") :], _v))
         narrowed = [s for s in narrowed if s is not None]
         if not narrowed:
-            return self.fns
+            # building this set is slow, so only when the ``if`` block did not help
+            narrowed = [self._changed_by(patch_yaml["then"])]
+            if narrowed[0] is None:
+                return self.fns
         narrowed.sort(key=len)
         return sorted(narrowed[0].intersection(*narrowed[1:]))
+
+    def _changed_by(self, then):
+        """Return the records ``then`` can change, or None if any record."""
+        fns = set()
+        for inst in then:
+            for k, v in inst.items():
+                if k in (
+                    "replace_depends",
+                    "replace_constrains",
+                    "remove_depends",
+                    "remove_constrains",
+                ):
+                    subk = k.split("_", 1)[1]
+                    pats = [v["old"]] if k.startswith("replace_") else _as_list(v)
+                elif k in ("tighten_depends", "loosen_depends"):
+                    subk = "depends"
+                    pats = [v["name"]]
+                else:
+                    return None
+                for pat in pats:
+                    if "$" in str(pat):
+                        return None
+                    dep_fns = self._deps(subk, pat)
+                    if dep_fns is None:
+                        return None
+                    fns |= dep_fns
+        return fns
 
 
 def patch_yaml_edit_index(index, subdir, verbose=False):
