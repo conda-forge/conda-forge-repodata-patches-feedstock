@@ -5,6 +5,7 @@ import os
 import re
 import string
 import sys
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 
@@ -27,15 +28,42 @@ from patch_yaml_model import PatchYaml  # noqa
 
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
+
+@dataclass
+class PatchYamlData:
+    patch_yaml: dict[any, any]
+    filename: str
+    ops: set[str] = field(init=False)
+    modifies_depends: bool = field(init=False)
+    modifies_constrains: bool = field(init=False)
+    modifies_track_features: bool = field(init=False)
+
+    def __post_init__(self):
+        self.ops = {list(clause.keys())[0] for clause in self.patch_yaml["then"]}
+        self.modifies_depends = any("depends" in op for op in self.ops)
+        self.modifies_constrains = any("constrains" in op for op in self.ops)
+        self.modifies_track_features = any("track_features" in op for op in self.ops)
+
+
 ALL_YAMLS = []
-for fname in sorted(glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml")):
-    with open(fname, "r") as fp:
-        fname_yamls = [
-            patch_yaml
-            for patch_yaml in yaml.safe_load_all(fp)
-            if patch_yaml is not None
-        ]
-        ALL_YAMLS += [(fy, os.path.basename(fname)) for fy in fname_yamls]
+
+
+def _make_all_patch_yamls():
+    global ALL_YAMLS
+
+    for fname in sorted(glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml")):
+        with open(fname, "r") as fp:
+            fname_yamls = [
+                patch_yaml
+                for patch_yaml in yaml.safe_load_all(fp)
+                if patch_yaml is not None
+            ]
+            ALL_YAMLS += [
+                PatchYamlData(fy, os.path.basename(fname)) for fy in fname_yamls
+            ]
+
+
+_make_all_patch_yamls()
 
 
 @lru_cache(maxsize=32768)
@@ -652,7 +680,9 @@ class PatchYamlIndex:
         self._sorted_con_pre.insert(loc, con_pre)
         self._fns_by_sorted_con_pre.insert(loc, fn)
 
-    def get_fns_to_check(self, patch_yaml):
+    def get_fns_to_check(self, pydata: PatchYamlData):
+        patch_yaml = pydata.patch_yaml
+
         if "subdir_in" in patch_yaml["if"] and not _fnmatch_str_or_list(
             self._subdir, patch_yaml["if"]["subdir_in"]
         ):
@@ -687,8 +717,7 @@ class PatchYamlIndex:
                 )
             )
 
-        all_ops = {list(clause.keys())[0] for clause in patch_yaml["then"]}
-        if not any(op.startswith(("add_", "reset_")) for op in all_ops):
+        if not any(op.startswith(("add_", "reset_")) for op in pydata.ops):
             fns_for_clauses = []
             for clause in patch_yaml["then"]:
                 op, val = list(clause.items())[0]
@@ -827,36 +856,40 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
         tqdm = partial(tqdm, desc="Applying yaml patches", file=sys.stderr)
     else:
         tqdm = iter
-    for patch_yaml, fname in tqdm(ALL_YAMLS):
-        fns_to_process = pyindex.get_fns_to_check(patch_yaml)
+    for pydata in tqdm(ALL_YAMLS):
+        fns_to_process = pyindex.get_fns_to_check(pydata)
 
         for fn in fns_to_process:
             record = index[fn]
             if keep_pkgs is not None and record["name"] not in keep_pkgs:
                 continue
             try:
-                if _test_patch_yaml(patch_yaml, record, subdir, fn):
-                    orig_deps = {
-                        PatchYamlIndex._literal_prefix(dep)
-                        for dep in record.get("depends", []) or []
-                    }
-                    orig_cons = {
-                        PatchYamlIndex._literal_prefix(con)
-                        for con in record.get("constrains", []) or []
-                    }
-                    _apply_patch_yaml(patch_yaml, record, subdir, fn)
-                    final_deps = {
-                        PatchYamlIndex._literal_prefix(dep)
-                        for dep in record.get("depends", []) or []
-                    }
-                    final_cons = {
-                        PatchYamlIndex._literal_prefix(con)
-                        for con in record.get("constrains", []) or []
-                    }
-                    for dep in final_deps - orig_deps:
-                        pyindex.add_dep(dep, fn)
-                    for con in final_cons - orig_cons:
-                        pyindex.add_con(con, fn)
+                if _test_patch_yaml(pydata.patch_yaml, record, subdir, fn):
+                    if pydata.modifies_depends:
+                        orig_deps = {
+                            PatchYamlIndex._literal_prefix(dep)
+                            for dep in record.get("depends", []) or []
+                        }
+                    if pydata.modifies_constrains:
+                        orig_cons = {
+                            PatchYamlIndex._literal_prefix(con)
+                            for con in record.get("constrains", []) or []
+                        }
+                    _apply_patch_yaml(pydata.patch_yaml, record, subdir, fn)
+                    if pydata.modifies_depends:
+                        final_deps = {
+                            PatchYamlIndex._literal_prefix(dep)
+                            for dep in record.get("depends", []) or []
+                        }
+                        for dep in final_deps - orig_deps:
+                            pyindex.add_dep(dep, fn)
+                    if pydata.modifies_constrains:
+                        final_cons = {
+                            PatchYamlIndex._literal_prefix(con)
+                            for con in record.get("constrains", []) or []
+                        }
+                        for con in final_cons - orig_cons:
+                            pyindex.add_con(con, fn)
 
             except Exception as e:
                 import traceback
@@ -866,14 +899,17 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
                     + "\n"
                     + "=" * 80
                     + "\nError in testing/applying patch yaml from '%s': \n\n%s"
-                    % (fname, yaml.safe_dump(patch_yaml, default_flow_style=False)),
+                    % (
+                        pydata.fname,
+                        yaml.safe_dump(pydata.patch_yaml, default_flow_style=False),
+                    ),
                     flush=True,
                 )
                 try:
-                    PatchYaml(**patch_yaml)
+                    PatchYaml(**pydata.patch_yaml)
                 except Exception as se:
                     print(
-                        f"Schema error in '{os.path.basename(fname)}': {se}",
+                        f"Schema error in '{os.path.basename(pydata.fname)}': {se}",
                         flush=True,
                     )
                 print(
