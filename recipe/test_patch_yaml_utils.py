@@ -6,11 +6,11 @@ from patch_yaml_model import PatchYaml, generate_schema
 from patch_yaml_utils import (
     ALLOWED_TEMPLATE_KEYS,
     _apply_patch_yaml,
+    _get_prefixes_and_fns_sorted_by_prefix,
     _name_range,
     _prefix_range,
     _test_patch_yaml,
     _timestamp_to_ms,
-    get_prefixes_and_fns_sorted_by_prefix,
 )
 
 
@@ -688,7 +688,7 @@ def test_prefix_ops():
         "numpy.again",
     ]
     fns = {fn: {"name": fn.split(".")[0]} for fn in fns}
-    sorted_prefixes, fns_sorted_by_prefix = get_prefixes_and_fns_sorted_by_prefix(fns)
+    sorted_prefixes, fns_sorted_by_prefix = _get_prefixes_and_fns_sorted_by_prefix(fns)
 
     start, stop = _name_range(sorted_prefixes, "numpy")
     assert all(fns[fn]["name"] == "numpy" for fn in fns_sorted_by_prefix[start:stop])
