@@ -1,0 +1,56 @@
+# -*- mode: toml -*-
+# This file was generated automatically from conda-smithy. To update this configuration,
+# update the conda-forge.yml and/or the recipe/meta.yaml.
+"$schema" = "https://pixi.sh/v0.59.0/schema/manifest/schema.json"
+
+[workspace]
+name = "conda-forge-repodata-patches-feedstock"
+version = "2026.10.20"  # conda-smithy version used to generate this file
+description = "Pixi configuration for conda-forge/conda-forge-repodata-patches-feedstock"
+authors = ["@conda-forge/conda-forge-repodata-patches"]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "win-64"]
+requires-pixi = ">=0.59.0"
+
+[tasks.build-locally]
+cmd = "pixi exec --force-reinstall --list='^python$' python ./build-locally.py"
+description = "Build packages locally using the same setup scripts used in conda-forge's CI"
+[tasks.smithy]
+cmd = "pixi exec --force-reinstall --list='^conda-smithy$' conda-smithy"
+description = "Run conda-smithy. Pass necessary arguments."
+[tasks.rerender]
+cmd = "pixi exec --force-reinstall --list='^conda-smithy$' conda-smithy rerender"
+description = "Rerender the feedstock."
+
+[tasks.lint]
+cmd = "pixi exec --list='^conda-smithy$' conda-smithy lint --conda-forge recipe"
+description = "Lint the feedstock recipe"
+
+[feature.build.dependencies]
+conda-build = ">=26.3"
+conda-forge-ci-setup = "4.*"
+python = "3.14.*"
+
+[feature.build.tasks.inspect-all]
+cmd = "inspect_artifacts --all-packages"
+description = "List contents of all packages found in conda-build build directory."
+[feature.build.tasks.build]
+cmd = "conda-build build recipe"
+description = "Build conda-forge-repodata-patches-feedstock directly (without setup scripts), no particular variant specified"
+[feature.build.tasks.debug]
+cmd = "conda-build debug recipe"
+description = "Debug conda-forge-repodata-patches-feedstock directly (without setup scripts), no particular variant specified"
+[feature.build.tasks."build-"]
+cmd = "conda-build build recipe -m .ci_support/linux_64_.yaml --suppress-variables --clobber-file .ci_support/clobber_linux_64_.yaml"
+description = "Build conda-forge-repodata-patches-feedstock with variant linux_64_ directly (without setup scripts)"
+[feature.build.tasks."debug-linux_64_"]
+cmd = "conda-build debug recipe -m .ci_support/linux_64_.yaml"
+description = "Debug conda-forge-repodata-patches-feedstock with variant linux_64_ directly (without setup scripts)"
+[feature.build.tasks."inspect-linux_64_"]
+cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_64_.yaml"
+description = "List contents of conda-forge-repodata-patches-feedstock packages built for variant linux_64_"
+
+[environments]
+build = ["build"]
+# This is a copy of 'build', to be enabled by build_steps.sh during Docker builds
+# __PLATFORM_SPECIFIC_ENV__ = ["build"]
