@@ -619,6 +619,10 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
 
 
 class PatchYamlIndex:
+    # most and code and ideas from @hmaarrfk and Claude (AI)
+    # we cut down artifacts by searching for prefixes in name/depends/constrains
+    # fields using sorted lists and bisections
+
     def __init__(self, index, subdir):
         self._subdir = subdir
         self._all_fns = set(index)
@@ -716,10 +720,12 @@ class PatchYamlIndex:
 
         return fns_to_check
 
-    # code from @hmaarrfk and Claude (AI)
     @staticmethod
+    @lru_cache(maxsize=32768)
     def _literal_prefix(pat):
-        """Return the part of an fnmatch pattern before its first wildcard."""
+        """Return the part of an fnmatch pattern before its first wildcard
+        and before any spaces."""
+        pat = pat.split(" ", maxsplit=1)[0]
         for i, c in enumerate(pat):
             if c in r"*?[${}":
                 return pat[:i]
@@ -743,10 +749,6 @@ class PatchYamlIndex:
             stop += 1
         return start, stop
 
-    # end of code from @hmaarrfk and Claude (AI)
-
-    # idea from @hmaarrfk and Claude (AI) to cut down artifacts by literal
-    # prefix in name field
     @staticmethod
     def _get_prefixes_and_fns_sorted_by_prefix(index):
         prefixes_and_fns = sorted(
@@ -757,7 +759,6 @@ class PatchYamlIndex:
             item[1] for item in prefixes_and_fns
         ]
 
-    # same idea applied to deps
     @staticmethod
     def _get_depcon_prefixes_and_fns_sorted_by_depcon_prefix(index, kind):
         prefixes_and_fns = []
@@ -803,8 +804,7 @@ class PatchYamlIndex:
 
         fns_sets = []
         for dc in dc_or_dcs:
-            dc_name = dc.split(" ", 1)[0]
-            prefix = PatchYamlIndex._literal_prefix(dc_name)
+            prefix = PatchYamlIndex._literal_prefix(dc)
             if prefix:
                 start, stop = PatchYamlIndex._prefix_range(sorted_dc_pre, prefix)
                 fns_sets.append(set(fns_by_sorted_dc_pre[start:stop]))
@@ -837,21 +837,21 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
             try:
                 if _test_patch_yaml(patch_yaml, record, subdir, fn):
                     orig_deps = {
-                        PatchYamlIndex._literal_prefix(dep.split(" ", 1)[0])
+                        PatchYamlIndex._literal_prefix(dep)
                         for dep in record.get("depends", []) or []
                     }
                     orig_cons = {
-                        PatchYamlIndex._literal_prefix(dep.split(" ", 1)[0])
-                        for dep in record.get("constrains", []) or []
+                        PatchYamlIndex._literal_prefix(con)
+                        for con in record.get("constrains", []) or []
                     }
                     _apply_patch_yaml(patch_yaml, record, subdir, fn)
                     final_deps = {
-                        PatchYamlIndex._literal_prefix(dep.split(" ", 1)[0])
+                        PatchYamlIndex._literal_prefix(dep)
                         for dep in record.get("depends", []) or []
                     }
                     final_cons = {
-                        PatchYamlIndex._literal_prefix(dep.split(" ", 1)[0])
-                        for dep in record.get("constrains", []) or []
+                        PatchYamlIndex._literal_prefix(con)
+                        for con in record.get("constrains", []) or []
                     }
                     for dep in final_deps - orig_deps:
                         pyindex.add_dep(dep, fn)
