@@ -656,25 +656,37 @@ class _CandidateIndex:
         self.artifacts = [fn for _, fn in artifacts]
         self.by_name = {}
         self.by_dep_name = {"depends": {}, "constrains": {}}
+        self._sorted_dep_names = {}
         for fn in self.fns:
             record = index[fn]
             name = os.path.normcase(record["name"])
             self.by_name.setdefault(name, []).append(fn)
             self.add_deps(fn, record)
+        self.names = sorted(self.by_name)
 
     def add_deps(self, fn, record):
         for subk, by_dep_name in self.by_dep_name.items():
             for dep in record.get(subk) or ():
                 dep_name = os.path.normcase(dep).split(" ", 1)[0]
-                by_dep_name.setdefault(dep_name, set()).add(fn)
+                if dep_name not in by_dep_name:
+                    by_dep_name[dep_name] = set()
+                    self._sorted_dep_names.pop(subk, None)
+                by_dep_name[dep_name].add(fn)
 
     def _names(self, pats):
         fns = set()
         for pat in pats:
             pat = os.path.normcase(str(pat))
-            if _literal_prefix(pat) != pat:
+            prefix = _literal_prefix(pat)
+            if prefix == pat:
+                fns.update(self.by_name.get(pat, ()))
+            elif not prefix:
                 return None
-            fns.update(self.by_name.get(pat, ()))
+            else:
+                start, stop = _prefix_range(self.names, prefix)
+                for name in self.names[start:stop]:
+                    if fnmatch(name, pat):
+                        fns.update(self.by_name[name])
         return fns
 
     def _artifacts(self, pats):
@@ -689,12 +701,22 @@ class _CandidateIndex:
 
     def _deps(self, subk, pat):
         # every dependency that matches must start with this prefix, so its
-        # name (up to the first space) equals it if it has a space
+        # name (up to the first space) does too, or equals it if it has a space
         pat = os.path.normcase(str(pat))
         prefix = _literal_prefix(pat)
+        if not prefix:
+            return None
+        by_dep_name = self.by_dep_name[subk]
         if " " in prefix or prefix == pat:
-            return set(self.by_dep_name[subk].get(prefix.split(" ", 1)[0], ()))
-        return None
+            return set(by_dep_name.get(prefix.split(" ", 1)[0], ()))
+        if subk not in self._sorted_dep_names:
+            self._sorted_dep_names[subk] = sorted(by_dep_name)
+        dep_names = self._sorted_dep_names[subk]
+        start, stop = _prefix_range(dep_names, prefix)
+        fns = set()
+        for dep_name in dep_names[start:stop]:
+            fns.update(by_dep_name[dep_name])
+        return fns
 
     def candidates(self, patch_yaml, subdir):
         """Return the sorted filenames ``patch_yaml`` can possibly change."""

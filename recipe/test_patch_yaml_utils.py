@@ -621,7 +621,7 @@ def test_candidate_index_superset(patch_yaml):
 def test_candidate_index_add_deps():
     index = copy.deepcopy(CANDIDATE_INDEX)
     candidate_index = _CandidateIndex(index)
-    patch_yaml = {"if": {"has_depends": "newdep"}, "then": [{"add_depends": "x"}]}
+    patch_yaml = {"if": {"has_depends": "newdep*"}, "then": [{"add_depends": "x"}]}
     assert candidate_index.candidates(patch_yaml, "linux-64") == []
     index["barbaz-1.0-0.conda"]["depends"] = ["newdep 1.*"]
     candidate_index.add_deps("barbaz-1.0-0.conda", index["barbaz-1.0-0.conda"])
