@@ -4,7 +4,7 @@ github:
   tooling_branch_name: main
 conda_build:
   pkg_format: '2'
-  zstd_compression_level: 3
+  zstd_compression_level: 19
 skip_render:
   - .github/PULL_REQUEST_TEMPLATE.md
 upload_on_branch: main
