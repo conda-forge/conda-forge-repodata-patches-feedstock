@@ -657,13 +657,13 @@ class PatchYamlIndex:
         self._sorted_fn_pre, self._fns_by_sorted_fn_pre = (
             PatchYamlIndex._get_prefixes_and_fns_sorted_by_prefix(index)
         )
-        self._sorted_dep_pre, self._fns_by_sorted_dep_pre = (
+        self._sorted_dep_pre, self._dep_to_fns_map = (
             PatchYamlIndex._get_depcon_prefixes_and_fns_sorted_by_depcon_prefix(
                 index,
                 "depends",
             )
         )
-        self._sorted_con_pre, self._fns_by_sorted_con_pre = (
+        self._sorted_con_pre, self._con_to_fns_map = (
             PatchYamlIndex._get_depcon_prefixes_and_fns_sorted_by_depcon_prefix(
                 index,
                 "constrains",
@@ -671,14 +671,14 @@ class PatchYamlIndex:
         )
 
     def add_dep(self, dep_pre, fn):
-        loc = bisect.bisect_left(self._sorted_dep_pre, dep_pre)
-        self._sorted_dep_pre.insert(loc, dep_pre)
-        self._fns_by_sorted_dep_pre.insert(loc, fn)
+        self._dep_to_fns_map[dep_pre].add(fn)
+        if dep_pre not in self._sorted_dep_pre:
+            self._sorted_dep_pre.add(dep_pre)
 
     def add_con(self, con_pre, fn):
-        loc = bisect.bisect_left(self._sorted_con_pre, con_pre)
-        self._sorted_con_pre.insert(loc, con_pre)
-        self._fns_by_sorted_con_pre.insert(loc, fn)
+        self._con_to_fns_map[con_pre].add(fn)
+        if con_pre not in self._sorted_con_pre:
+            self._sorted_con_pre.add(con_pre)
 
     def get_fns_to_check(self, pydata: PatchYamlData):
         patch_yaml = pydata.patch_yaml
@@ -790,15 +790,15 @@ class PatchYamlIndex:
 
     @staticmethod
     def _get_depcon_prefixes_and_fns_sorted_by_depcon_prefix(index, kind):
-        prefixes_and_fns = []
+        from collections import defaultdict
+        from sortedcontainers import SortedList
+
+        dep_to_fns_map = defaultdict(set)
         for fn in index:
             depends = index[fn].get(kind, [])
             for dep in depends:
-                prefixes_and_fns.append((dep.split(" ", 1)[0], fn))
-        prefixes_and_fns = sorted(prefixes_and_fns, key=lambda item: item[0])
-        return [item[0] for item in prefixes_and_fns], [
-            item[1] for item in prefixes_and_fns
-        ]
+                dep_to_fns_map[dep.split(" ", 1)[0]].add(fn)
+        return SortedList(dep_to_fns_map), dep_to_fns_map
 
     def _extract_fns_by_names(self, name_or_names):
         if not isinstance(name_or_names, list):
@@ -826,17 +826,20 @@ class PatchYamlIndex:
 
         if kind == "depends":
             sorted_dc_pre = self._sorted_dep_pre
-            fns_by_sorted_dc_pre = self._fns_by_sorted_dep_pre
+            dc_to_fns_map = self._dep_to_fns_map
         elif kind == "constrains":
             sorted_dc_pre = self._sorted_con_pre
-            fns_by_sorted_dc_pre = self._fns_by_sorted_con_pre
+            dc_to_fns_map = self._con_to_fns_map
 
         fns_sets = []
         for dc in dc_or_dcs:
             prefix = PatchYamlIndex._literal_prefix(dc)
             if prefix:
                 start, stop = PatchYamlIndex._prefix_range(sorted_dc_pre, prefix)
-                fns_sets.append(set(fns_by_sorted_dc_pre[start:stop]))
+                fn_set = set()
+                for dc_pre in sorted_dc_pre[start:stop]:
+                    fn_set.update(dc_to_fns_map[dc_pre])
+                fns_sets.append(fn_set)
             else:
                 return [self._all_fns]
 
