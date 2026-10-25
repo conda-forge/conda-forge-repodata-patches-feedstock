@@ -27,6 +27,7 @@ requirements:
     - pytest
     - conda-build
     - zstandard
+    - sortedcontainers
   host:
   run:
 
