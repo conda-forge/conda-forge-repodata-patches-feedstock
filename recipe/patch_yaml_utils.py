@@ -672,13 +672,11 @@ class PatchYamlIndex:
 
     def add_dep(self, dep_pre, fn):
         self._dep_to_fns_map[dep_pre].add(fn)
-        if dep_pre not in self._sorted_dep_pre:
-            self._sorted_dep_pre.add(dep_pre)
+        self._sorted_dep_pre.add(dep_pre)
 
     def add_con(self, con_pre, fn):
         self._con_to_fns_map[con_pre].add(fn)
-        if con_pre not in self._sorted_con_pre:
-            self._sorted_con_pre.add(con_pre)
+        self._sorted_con_pre.add(con_pre)
 
     def get_fns_to_check(self, pydata: PatchYamlData):
         patch_yaml = pydata.patch_yaml
@@ -791,14 +789,14 @@ class PatchYamlIndex:
     @staticmethod
     def _get_depcon_prefixes_and_fns_sorted_by_depcon_prefix(index, kind):
         from collections import defaultdict
-        from sortedcontainers import SortedList
+        from sortedcontainers import SortedSet
 
         dep_to_fns_map = defaultdict(set)
         for fn in index:
             depends = index[fn].get(kind, [])
             for dep in depends:
                 dep_to_fns_map[dep.split(" ", 1)[0]].add(fn)
-        return SortedList(dep_to_fns_map), dep_to_fns_map
+        return SortedSet(dep_to_fns_map), dep_to_fns_map
 
     def _extract_fns_by_names(self, name_or_names):
         if not isinstance(name_or_names, list):
