@@ -617,24 +617,78 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 raise KeyError("Unrecognized 'then' key '%s'!" % k)
 
 
-CONDA_PKG_NAME_RE = re.compile(r"^[a-z0-9_.-]+$")
+def _literal_prefix(pat):
+    """Return the part of an fnmatch pattern before its first wildcard."""
+    for i, c in enumerate(pat):
+        if c in "*?[":
+            return pat[:i]
+    return pat
 
 
-def shortlist_relevant_filenames(fns_by_name, fns, package_name_selector):
-    if CONDA_PKG_NAME_RE.match(package_name_selector) is not None:
-        # package name does not contain wildcards
-        return fns_by_name.get(package_name_selector, [])
-    return fns
+class _CandidateIndex:
+    """Lookup tables to find the records a patch can possibly change.
+
+    ``candidates`` only narrows the records down; each candidate is still
+    checked with ``_test_patch_yaml``. The tables must therefore return a
+    superset of the matching records, which is why the dependency table is
+    extended whenever a patch adds dependencies to a record.
+    """
+
+    def __init__(self, index):
+        self.fns = sorted(index)
+        self.by_name = {}
+        self.by_dep_name = {"depends": {}, "constrains": {}}
+        for fn in self.fns:
+            record = index[fn]
+            name = os.path.normcase(record["name"])
+            self.by_name.setdefault(name, []).append(fn)
+            self.add_deps(fn, record)
+
+    def add_deps(self, fn, record):
+        for subk, by_dep_name in self.by_dep_name.items():
+            for dep in record.get(subk) or ():
+                dep_name = os.path.normcase(dep).split(" ", 1)[0]
+                by_dep_name.setdefault(dep_name, set()).add(fn)
+
+    def _names(self, pats):
+        fns = set()
+        for pat in pats:
+            pat = os.path.normcase(str(pat))
+            if _literal_prefix(pat) != pat:
+                return None
+            fns.update(self.by_name.get(pat, ()))
+        return fns
+
+    def _deps(self, subk, pat):
+        # every dependency that matches must start with this prefix, so its
+        # name (up to the first space) equals it if it has a space
+        pat = os.path.normcase(str(pat))
+        prefix = _literal_prefix(pat)
+        if " " in prefix or prefix == pat:
+            return set(self.by_dep_name[subk].get(prefix.split(" ", 1)[0], ()))
+        return None
+
+    def candidates(self, patch_yaml, subdir):
+        """Return the sorted filenames ``patch_yaml`` can possibly change."""
+        narrowed = []
+        for k, v in patch_yaml["if"].items():
+            if k == "name":
+                narrowed.append(self._names([v]))
+            elif k in ("has_depends", "has_constrains"):
+                for _v in v if isinstance(v, list) else [v]:
+                    narrowed.append(self._deps(k[len("has_") :], _v))
+        narrowed = [s for s in narrowed if s is not None]
+        if not narrowed:
+            return self.fns
+        narrowed.sort(key=len)
+        return sorted(narrowed[0].intersection(*narrowed[1:]))
 
 
 def patch_yaml_edit_index(index, subdir, verbose=False):
     keep_pkgs = os.environ.get("CF_PKGS", None)
     if keep_pkgs is not None:
         keep_pkgs = set(keep_pkgs.split(";"))
-    fns = sorted(index)
-    fns_by_name = {}
-    for fn in fns:
-        fns_by_name.setdefault(index[fn]["name"], []).append(fn)
+    candidate_index = _CandidateIndex(index)
     if verbose:
         from tqdm import tqdm
         from functools import partial
@@ -643,11 +697,7 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
     else:
         tqdm = iter
     for patch_yaml, fname in tqdm(ALL_YAMLS):
-        if "name" in patch_yaml["if"]:
-            pkg_name = patch_yaml["if"]["name"]
-            fns_to_process = shortlist_relevant_filenames(fns_by_name, fns, pkg_name)
-        else:
-            fns_to_process = fns
+        fns_to_process = candidate_index.candidates(patch_yaml, subdir)
 
         for fn in fns_to_process:
             record = index[fn]
@@ -656,6 +706,7 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
             try:
                 if _test_patch_yaml(patch_yaml, record, subdir, fn):
                     _apply_patch_yaml(patch_yaml, record, subdir, fn)
+                    candidate_index.add_deps(fn, record)
             except Exception as e:
                 import traceback
 
