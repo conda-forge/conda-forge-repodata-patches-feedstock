@@ -1,3 +1,4 @@
+import bisect
 import fnmatch as _fnmatch
 import glob
 import hashlib
@@ -664,7 +665,8 @@ def _process_record_test_and_apply(
             "=" * 80
             + "\n"
             + "=" * 80
-            + f"\nError in testing/applying patch yaml from '{fname}': \n\n{yaml.safe_dump(patch_yaml, default_flow_style=False)}",
+            + f"\nError in testing/applying patch yaml from '{fname}': \n\n{yaml.safe_dump(patch_yaml, default_flow_style=False)}"
+            + f"to record:\n\n{yaml.safe_dump(record, default_flow_style=False)}",
             flush=True,
         )
         try:
@@ -714,10 +716,42 @@ def _process_record_apply(
         raise
 
 
+# code from @hmaarrfk and Claude (AI)
+def _literal_prefix(pat):
+    """Return the part of an fnmatch pattern before its first wildcard."""
+    for i, c in enumerate(pat):
+        if c in "*?[":
+            return pat[:i]
+    return pat
+
+
+def _prefix_range(sorted_strs, prefix):
+    """Return the slice of ``sorted_strs`` that starts with ``prefix``."""
+    start = bisect.bisect_left(sorted_strs, prefix)
+    stop = start
+    while stop < len(sorted_strs) and sorted_strs[stop].startswith(prefix):
+        stop += 1
+    return start, stop
+
+
+# end of code from @hmaarrfk and Claude (AI)
+
+
+# idea from @hmaarrfk and Claude (AI) to cut down artifacts by literal
+# prefix in name field
+def get_prefixes_and_fns_sorted_by_prefix(index):
+    prefixes_and_fns = sorted(
+        [(_literal_prefix(index[fn]["name"]), fn) for fn in index],
+        key=lambda item: item[0],
+    )
+    return [item[0] for item in prefixes_and_fns], [
+        item[1] for item in prefixes_and_fns
+    ]
+
+
 def patch_yaml_edit_index(
     index, subdir, patch_yaml_index, verbose=False, debug_package_name=None
 ):
-    fns = sorted(index)
     if verbose:
         tqdm_iter = partial(
             tqdm, desc=f"[{subdir:>13}] applying patches", file=sys.stderr, ncols=80
@@ -725,77 +759,43 @@ def patch_yaml_edit_index(
     else:
         tqdm_iter = iter
 
-    all_fns_in_index = set(patch_yaml_index["all_fns"])
-    new_fns = set(fns) - all_fns_in_index
+    sorted_prefixes, fns_sorted_by_prefix = get_prefixes_and_fns_sorted_by_prefix(index)
 
     for patch_yaml, fname in tqdm_iter(ALL_YAMLS):
-        patch_yaml_hash = _sha1_hash_patch_yaml(patch_yaml, fname)
-        if patch_yaml_hash in patch_yaml_index["apply"]:
-            apply_fns = set(patch_yaml_index["apply"][patch_yaml_hash])
+        if "subdir_in" in patch_yaml["if"] and not _fnmatch_str_or_list(
+            subdir, patch_yaml["if"]["subdir_in"]
+        ):
+            continue
 
-            for fn in apply_fns:
-                if fn not in index:
-                    continue
-
-                record = index[fn]
-
-                if (
-                    debug_package_name is not None
-                    and record["name"] != debug_package_name
-                ):
-                    continue
-
-                _process_record_apply(
-                    record,
-                    patch_yaml,
-                    fname,
-                    subdir,
-                    fn,
-                    debug_package_name=debug_package_name,
-                )
-
-            for fn in new_fns:
-                record = index[fn]
-
-                if (
-                    debug_package_name is not None
-                    and record["name"] != debug_package_name
-                ):
-                    continue
-
-                _process_record_test_and_apply(
-                    record,
-                    patch_yaml,
-                    fname,
-                    subdir,
-                    fn,
-                    debug_package_name=debug_package_name,
-                )
-
+        if "artifact_in" in patch_yaml["if"]:
+            fns_to_check = patch_yaml["if"]["artifact_in"]
+            if not isinstance(fns_to_check, list):
+                fns_to_check = [fns_to_check]
+            fns_to_check = [fn for fn in fns_to_check if fn in index]
         else:
-            if "name" in patch_yaml["if"]:
-                pkg_name = patch_yaml["if"]["name"]
-                fns_to_process = shortlist_relevant_filenames(index, pkg_name, fns)
+            prefix = _literal_prefix(patch_yaml["if"].get("name", "") or "")
+            if prefix:
+                start, stop = _prefix_range(sorted_prefixes, prefix)
             else:
-                fns_to_process = fns
+                start = 0
+                stop = len(fns_sorted_by_prefix)
 
-            for fn in fns_to_process:
-                record = index[fn]
+            fns_to_check = fns_sorted_by_prefix[start:stop]
 
-                if (
-                    debug_package_name is not None
-                    and record["name"] != debug_package_name
-                ):
-                    continue
+        for fn in fns_to_check:
+            record = index[fn]
 
-                _process_record_test_and_apply(
-                    record,
-                    patch_yaml,
-                    fname,
-                    subdir,
-                    fn,
-                    debug_package_name=debug_package_name,
-                )
+            if debug_package_name is not None and record["name"] != debug_package_name:
+                continue
+
+            _process_record_test_and_apply(
+                record,
+                patch_yaml,
+                fname,
+                subdir,
+                fn,
+                debug_package_name=debug_package_name,
+            )
 
     return index
 

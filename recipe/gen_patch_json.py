@@ -875,25 +875,25 @@ def _gen_new_index_per_key(index, subdir, index_key=""):
 
 
 def _patch_indexes(repodata, subdir, verbose=False, debug_package_name=None):
-    import json
+    # import json
 
-    index_fname = f"patch_yaml_index_{subdir}.json.zst"
-    if os.path.exists(index_fname):
-        if verbose:
-            tqdm.write(f"[{subdir:>13}] using patch yaml index", file=sys.stderr)
-        with zstandard.open(f"patch_yaml_index_{subdir}.json.zst") as fp:
-            patch_yaml_index = json.load(fp)
-    else:
-        patch_yaml_index = {
-            "packages": {
-                "apply": {},
-                "all_fns": [],
-            },
-            "packages.conda": {
-                "apply": {},
-                "all_fns": [],
-            },
-        }
+    # index_fname = f"patch_yaml_index_{subdir}.json.zst"
+    # if os.path.exists(index_fname):
+    #     if verbose:
+    #         tqdm.write(f"[{subdir:>13}] using patch yaml index", file=sys.stderr)
+    #     with zstandard.open(f"patch_yaml_index_{subdir}.json.zst") as fp:
+    #         patch_yaml_index = json.load(fp)
+    # else:
+    patch_yaml_index = {
+        "packages": {
+            "apply": {},
+            "all_fns": [],
+        },
+        "packages.conda": {
+            "apply": {},
+            "all_fns": [],
+        },
+    }
 
     for index_key in ["packages", "packages.conda"]:
         index = repodata[index_key]
