@@ -58,7 +58,10 @@ if:
   build_number: 1
   subdir_in: [win-32, win-64]
 then:
-  - add_depends: libpython >=2.2
+  - add_depends: distutils-activate-mingw
+  # used to be libpython, but then
+  # https://github.com/conda-forge/libpython-feedstock/issues/20
+  # - add_depends: libpython >=2.2
 ---
 # from the previous code snippet
 if:

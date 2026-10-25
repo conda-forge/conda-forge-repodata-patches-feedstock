@@ -750,7 +750,7 @@ def _name_range(sorted_strs, name):
 # prefix in name field
 def _get_prefixes_and_fns_sorted_by_prefix(index):
     prefixes_and_fns = sorted(
-        [(_literal_prefix(index[fn]["name"]), fn) for fn in index],
+        [(index[fn]["name"], fn) for fn in index],
         key=lambda item: item[0],
     )
     return [item[0] for item in prefixes_and_fns], [
@@ -758,19 +758,15 @@ def _get_prefixes_and_fns_sorted_by_prefix(index):
     ]
 
 
-def _timestamp_range(sorted_timestamps, timestamp):
-    # we use right here so that we can pass in values from
-    # timestamp_le
-    return 0, bisect.bisect_right(sorted_timestamps, timestamp)
-
-
-def _get_timestamps_and_fns_sorted_by_timestamps(index):
-    timestamps_and_fns = sorted(
-        [(int(index[fn].get("timestamp", 0)), fn) for fn in index],
-        key=lambda item: item[0],
-    )
-    return [item[0] for item in timestamps_and_fns], [
-        item[1] for item in timestamps_and_fns
+def _get_dep_prefixes_and_fns_sorted_by_dep_prefix(index):
+    prefixes_and_fns = []
+    for fn in index:
+        depends = index[fn].get("depends", [])
+        for dep in depends:
+            prefixes_and_fns.append((dep.split(" ", 1)[0], fn))
+    prefixes_and_fns = sorted(prefixes_and_fns, key=lambda item: item[0])
+    return [item[0] for item in prefixes_and_fns], [
+        item[1] for item in prefixes_and_fns
     ]
 
 
@@ -787,8 +783,8 @@ def patch_yaml_edit_index(
     sorted_prefixes, fns_sorted_by_prefix = _get_prefixes_and_fns_sorted_by_prefix(
         index
     )
-    sorted_timestamps, fns_sorted_by_timestamp = (
-        _get_timestamps_and_fns_sorted_by_timestamps(index)
+    sorted_dep_prefixes, fns_sorted_by_dep_prefix = (
+        _get_dep_prefixes_and_fns_sorted_by_dep_prefix(index)
     )
 
     for patch_yaml, fname in tqdm_iter(ALL_YAMLS):
@@ -830,14 +826,18 @@ def patch_yaml_edit_index(
             if fns_to_check:
                 sets_to_intersect.append(fns_to_check)
 
-        ts_keys = ["timestamp_le", "timestamp_lt"]
-        if any(key in patch_yaml["if"] for key in ts_keys):
-            for key in ts_keys:
-                if key in patch_yaml["if"]:
-                    timestamp = _timestamp_to_ms(patch_yaml["if"][key])
-                    break
-            start, stop = _timestamp_range(sorted_timestamps, timestamp)
-            sets_to_intersect.append(set(fns_sorted_by_timestamp[start:stop]))
+        if "has_depends" in patch_yaml["if"]:
+            has_depends = patch_yaml["if"]["has_depends"]
+            if not isinstance(has_depends, list):
+                has_depends = [has_depends]
+            for dep in has_depends:
+                dep_name = dep.split(" ", 1)[0]
+                prefix = _literal_prefix(dep_name)
+                if prefix == dep_name:
+                    start, stop = _name_range(sorted_dep_prefixes, dep_name)
+                else:
+                    start, stop = _prefix_range(sorted_dep_prefixes, prefix)
+                sets_to_intersect.append(set(fns_sorted_by_dep_prefix[start:stop]))
 
         if sets_to_intersect:
             if len(sets_to_intersect) > 1:
