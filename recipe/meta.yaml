@@ -14,6 +14,7 @@ build:
     - pytest -vv test_patch_yaml_utils.py
     - pytest -vv test_gen_patch_json.py
     - python gen_patch_json.py
+  ignore_prefix_files: True
 
 requirements:
   build:

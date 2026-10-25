@@ -5,7 +5,7 @@ import os
 import sys
 import urllib.request
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from multiprocessing import RLock, freeze_support
+from multiprocessing import freeze_support
 
 import zstandard
 from compression import zstd
@@ -143,8 +143,10 @@ if __name__ == "__main__":
         ) as fp:
             json.dump(vals, fp, sort_keys=True, indent=2)
     else:
+        from gen_patch_json import FlushingRLock
+
         freeze_support()
-        tqdm.set_lock(RLock())
+        tqdm.set_lock(FlushingRLock())
         with ProcessPoolExecutor(
             max_workers=os.cpu_count(),
             initializer=tqdm.set_lock,

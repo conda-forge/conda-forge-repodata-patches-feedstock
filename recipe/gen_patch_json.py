@@ -1039,6 +1039,31 @@ def _do_subdir(subdir, verbose=False):
         )
 
 
+class FlushingRLock:
+    def __init__(self):
+        self._lock = RLock()
+
+    def acquire(self, block=True, timeout=None):
+        return self._lock.acquire(block=block, timeout=timeout)
+
+    def release(self):
+        return self._lock.release()
+
+    def locked(self):
+        return self._lock.locked()
+
+    def __enter__(self):
+        self._lock.acquire()
+        sys.__stderr__.flush()
+        sys.__stdout__.flush()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.__stderr__.flush()
+        sys.__stdout__.flush()
+        self._lock.release()
+
+
 def _show_result(subdir, vals):
     msg = [
         "=" * 80,
@@ -1080,7 +1105,7 @@ def main():
             _show_result(subdir, vals)
     else:
         freeze_support()
-        tqdm.set_lock(RLock())
+        tqdm.set_lock(FlushingRLock())
         cpu_count = int(os.environ.get("CPU_COUNT", os.cpu_count()))
         if "GITHUB_ACTIONS" in os.environ:
             cpu_count = min(cpu_count, MAX_WORKERS)
