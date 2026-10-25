@@ -1,7 +1,6 @@
 import bisect
 import fnmatch as _fnmatch
 import glob
-import hashlib
 import os
 import re
 import string
@@ -640,16 +639,6 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn, debug_package_name=None):
         )
 
 
-CONDA_PKG_NAME_RE = re.compile(r"^[a-z0-9_.-]+$")
-
-
-def shortlist_relevant_filenames(index, package_name_selector, sorted_fns):
-    if CONDA_PKG_NAME_RE.match(package_name_selector) is not None:
-        # package name does not contain wildcards
-        return [fn for fn in sorted_fns if index[fn]["name"] == package_name_selector]
-    return sorted_fns
-
-
 def _process_record_test_and_apply(
     record, patch_yaml, fname, subdir, fn, debug_package_name=None
 ):
@@ -667,38 +656,6 @@ def _process_record_test_and_apply(
             + "=" * 80
             + f"\nError in testing/applying patch yaml from '{fname}': \n\n{yaml.safe_dump(patch_yaml, default_flow_style=False)}"
             + f"to record:\n\n{yaml.safe_dump(record, default_flow_style=False)}",
-            flush=True,
-        )
-        try:
-            PatchYaml(**patch_yaml)
-        except Exception as se:  # noqa: BLE001
-            print(
-                f"Schema error in '{os.path.basename(fname)}': {se}",
-                flush=True,
-            )
-        print(
-            "=" * 80 + "\n" + "=" * 80,
-            flush=True,
-        )
-        traceback.print_exc()
-        raise
-
-
-def _process_record_apply(
-    record, patch_yaml, fname, subdir, fn, debug_package_name=None
-):
-    try:
-        _apply_patch_yaml(
-            patch_yaml, record, subdir, fn, debug_package_name=debug_package_name
-        )
-    except Exception:
-        import traceback
-
-        print(
-            "=" * 80
-            + "\n"
-            + "=" * 80
-            + f"\nError in testing/applying patch yaml from '{fname}': \n\n{yaml.safe_dump(patch_yaml, default_flow_style=False)}",
             flush=True,
         )
         try:
@@ -770,9 +727,7 @@ def _get_dep_prefixes_and_fns_sorted_by_dep_prefix(index):
     ]
 
 
-def patch_yaml_edit_index(
-    index, subdir, patch_yaml_index, verbose=False, debug_package_name=None
-):
+def patch_yaml_edit_index(index, subdir, verbose=False, debug_package_name=None):
     if verbose:
         tqdm_iter = partial(
             tqdm, desc=f"[{subdir:>13}] applying patches", file=sys.stderr, ncols=80
@@ -863,83 +818,3 @@ def patch_yaml_edit_index(
             )
 
     return index
-
-
-def _sha1_hash_patch_yaml(patch_yaml, fname):
-    str_to_hash = yaml.safe_dump(patch_yaml) + "\n" + fname
-    return hashlib.sha1(str_to_hash.encode("utf-8")).hexdigest()
-
-
-def patch_yaml_gen_hashmap_for_index(
-    index, subdir, verbose=False, debug_package_name=None
-):
-    import copy
-
-    patch_yaml_hash_to_fns_apply = {}
-    for patch_yaml, fname in ALL_YAMLS:
-        patch_yaml_hash = _sha1_hash_patch_yaml(patch_yaml, fname)
-        patch_yaml_hash_to_fns_apply[patch_yaml_hash] = []
-
-    fns = sorted(index)
-    if verbose:
-        tqdm_iter = partial(
-            tqdm, desc=f"[{subdir:>13}] generating index", file=sys.stderr, ncols=80
-        )
-    else:
-        tqdm_iter = iter
-    for patch_yaml, fname in tqdm_iter(ALL_YAMLS):
-        patch_yaml_hash = _sha1_hash_patch_yaml(patch_yaml, fname)
-        if "name" in patch_yaml["if"]:
-            pkg_name = patch_yaml["if"]["name"]
-            fns_to_process = shortlist_relevant_filenames(index, pkg_name, fns)
-        else:
-            fns_to_process = fns
-
-        for fn in fns_to_process:
-            record = index[fn]
-            try:
-                if _test_patch_yaml(
-                    patch_yaml,
-                    record,
-                    subdir,
-                    fn,
-                    debug_package_name=debug_package_name,
-                ):
-                    old_record = copy.deepcopy(record)
-                    _apply_patch_yaml(
-                        patch_yaml,
-                        record,
-                        subdir,
-                        fn,
-                        debug_package_name=debug_package_name,
-                    )
-                    if record != old_record:
-                        patch_yaml_hash_to_fns_apply[patch_yaml_hash].append(fn)
-            except Exception:
-                import traceback
-
-                print(
-                    "=" * 80
-                    + "\n"
-                    + "=" * 80
-                    + f"\nError in testing/applying patch yaml from '{fname}': \n\n{yaml.safe_dump(patch_yaml, default_flow_style=False)}",
-                    flush=True,
-                )
-                try:
-                    PatchYaml(**patch_yaml)
-                except Exception as se:  # noqa: BLE001
-                    print(
-                        f"Schema error in '{os.path.basename(fname)}': {se}",
-                        flush=True,
-                    )
-                print(
-                    "=" * 80 + "\n" + "=" * 80,
-                    flush=True,
-                )
-                traceback.print_exc()
-                raise
-
-    return {
-        "apply": {k: sorted(v) for k, v in patch_yaml_hash_to_fns_apply.items()},
-        "all_fns": fns,
-    }
