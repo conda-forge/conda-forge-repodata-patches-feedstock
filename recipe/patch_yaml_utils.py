@@ -734,6 +734,15 @@ def _prefix_range(sorted_strs, prefix):
     return start, stop
 
 
+def _name_range(sorted_strs, name):
+    """Return the slice of ``sorted_strs`` that is equal to ``name``."""
+    start = bisect.bisect_left(sorted_strs, name)
+    stop = start
+    while stop < len(sorted_strs) and sorted_strs[stop] == name:
+        stop += 1
+    return start, stop
+
+
 # end of code from @hmaarrfk and Claude (AI)
 
 
@@ -772,15 +781,30 @@ def patch_yaml_edit_index(
             if not isinstance(fns_to_check, list):
                 fns_to_check = [fns_to_check]
             fns_to_check = [fn for fn in fns_to_check if fn in index]
-        else:
-            prefix = _literal_prefix(patch_yaml["if"].get("name", "") or "")
-            if prefix:
-                start, stop = _prefix_range(sorted_prefixes, prefix)
+        elif "name" in patch_yaml["if"]:
+            name = patch_yaml["if"]["name"]
+            prefix = _literal_prefix(name)
+            if prefix == name:
+                start, stop = _name_range(sorted_prefixes, name)
             else:
-                start = 0
-                stop = len(fns_sorted_by_prefix)
+                start, stop = _prefix_range(sorted_prefixes, prefix)
 
             fns_to_check = fns_sorted_by_prefix[start:stop]
+        elif "name_in" in patch_yaml["if"]:
+            fns_to_check = set()
+
+            v = patch_yaml["if"]["name_in"]
+            if not isinstance(v, list):
+                v = [v]
+            for name in v:
+                prefix = _literal_prefix(name)
+                if prefix == name:
+                    start, stop = _name_range(sorted_prefixes, name)
+                else:
+                    start, stop = _prefix_range(sorted_prefixes, prefix)
+                fns_to_check.update(fns_sorted_by_prefix[start:stop])
+        else:
+            fns_to_check = fns_sorted_by_prefix
 
         for fn in fns_to_check:
             record = index[fn]

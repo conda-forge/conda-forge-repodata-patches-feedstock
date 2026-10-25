@@ -28,17 +28,17 @@ CHANNEL_NAME = "conda-forge"
 CHANNEL_ALIAS = "https://conda.anaconda.org"
 BASE_URL = os.path.join(CHANNEL_ALIAS, CHANNEL_NAME)
 SUBDIRS = (
-    "noarch",
     "linux-64",
-    "linux-armv7l",
+    "noarch",
+    "osx-64",
+    "win-64",
     "linux-aarch64",
     "linux-ppc64le",
-    "linux-riscv64",
-    "osx-64",
     "osx-arm64",
     "win-32",
-    "win-64",
     "win-arm64",
+    "linux-armv7l",
+    "linux-riscv64",
 )
 # Each worker peaks at ~4.6 GiB of memory for linux-64 (as of 2026-10), so running
 # one worker per CPU on the 4 CPU / 16 GB GitHub Actions runner gets OOM killed.
