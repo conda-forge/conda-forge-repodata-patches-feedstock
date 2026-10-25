@@ -620,15 +620,11 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
 CONDA_PKG_NAME_RE = re.compile(r"^[a-z0-9_.-]+$")
 
 
-def shortlist_relevant_filenames(index, package_name_selector):
+def shortlist_relevant_filenames(fns_by_name, fns, package_name_selector):
     if CONDA_PKG_NAME_RE.match(package_name_selector) is not None:
         # package name does not contain wildcards
-        return [
-            fn
-            for fn, record in index.items()
-            if record["name"] == package_name_selector
-        ]
-    return index.keys()
+        return fns_by_name.get(package_name_selector, [])
+    return fns
 
 
 def patch_yaml_edit_index(index, subdir, verbose=False):
@@ -636,6 +632,9 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
     if keep_pkgs is not None:
         keep_pkgs = set(keep_pkgs.split(";"))
     fns = sorted(index)
+    fns_by_name = {}
+    for fn in fns:
+        fns_by_name.setdefault(index[fn]["name"], []).append(fn)
     if verbose:
         from tqdm import tqdm
         from functools import partial
@@ -646,7 +645,7 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
     for patch_yaml, fname in tqdm(ALL_YAMLS):
         if "name" in patch_yaml["if"]:
             pkg_name = patch_yaml["if"]["name"]
-            fns_to_process = shortlist_relevant_filenames(index, pkg_name)
+            fns_to_process = shortlist_relevant_filenames(fns_by_name, fns, pkg_name)
         else:
             fns_to_process = fns
 
