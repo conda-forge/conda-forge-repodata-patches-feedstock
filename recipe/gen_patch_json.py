@@ -573,7 +573,16 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
             if record_name == "python" and "pypy" not in record["build"]:
                 # remove the track_features key
                 if "track_features" in record:
-                    record["track_features"] = None
+                    list_of_features = record["track_features"].split()
+                    list_of_features = [
+                        trfeat
+                        for trfeat in list_of_features
+                        if not trfeat.startswith("vc")
+                    ]
+                    if list_of_features:
+                        record["track_features"] = " ".join(list_of_features)
+                    else:
+                        record["track_features"] = None
                 # add a vc dependency
                 if not any(d.startswith("vc") for d in record["depends"]):
                     depends = record["depends"]
