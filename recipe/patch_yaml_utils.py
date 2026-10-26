@@ -1,9 +1,11 @@
+import bisect
 import fnmatch as _fnmatch
 import glob
 import os
 import re
 import string
 import sys
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 
@@ -26,15 +28,42 @@ from patch_yaml_model import PatchYaml  # noqa
 
 OPERATORS = ["==", ">=", "<=", ">", "<", "!="]
 
+
+@dataclass
+class PatchYamlData:
+    patch_yaml: dict[any, any]
+    filename: str
+    ops: set[str] = field(init=False)
+    modifies_depends: bool = field(init=False)
+    modifies_constrains: bool = field(init=False)
+    modifies_track_features: bool = field(init=False)
+
+    def __post_init__(self):
+        self.ops = {list(clause.keys())[0] for clause in self.patch_yaml["then"]}
+        self.modifies_depends = any("depends" in op for op in self.ops)
+        self.modifies_constrains = any("constrains" in op for op in self.ops)
+        self.modifies_track_features = any("track_features" in op for op in self.ops)
+
+
 ALL_YAMLS = []
-for fname in sorted(glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml")):
-    with open(fname, "r") as fp:
-        fname_yamls = [
-            patch_yaml
-            for patch_yaml in yaml.safe_load_all(fp)
-            if patch_yaml is not None
-        ]
-        ALL_YAMLS += [(fy, os.path.basename(fname)) for fy in fname_yamls]
+
+
+def _make_all_patch_yamls():
+    global ALL_YAMLS
+
+    for fname in sorted(glob.glob(os.path.dirname(__file__) + "/patch_yaml/*.yaml")):
+        with open(fname, "r") as fp:
+            fname_yamls = [
+                patch_yaml
+                for patch_yaml in yaml.safe_load_all(fp)
+                if patch_yaml is not None
+            ]
+            ALL_YAMLS += [
+                PatchYamlData(fy, os.path.basename(fname)) for fy in fname_yamls
+            ]
+
+
+_make_all_patch_yamls()
 
 
 @lru_cache(maxsize=32768)
@@ -617,25 +646,210 @@ def _apply_patch_yaml(patch_yaml, record, subdir, fn):
                 raise KeyError("Unrecognized 'then' key '%s'!" % k)
 
 
-CONDA_PKG_NAME_RE = re.compile(r"^[a-z0-9_.-]+$")
+class PatchYamlIndex:
+    # most and code and ideas from @hmaarrfk and Claude (AI)
+    # we cut down artifacts by searching for prefixes in name/depends/constrains
+    # fields using sorted lists and bisections
 
+    def __init__(self, index, subdir):
+        self._subdir = subdir
+        self._all_fns = set(index)
+        self._sorted_fn_pre, self._fns_by_sorted_fn_pre = (
+            PatchYamlIndex._get_prefixes_and_fns_sorted_by_prefix(index)
+        )
+        self._sorted_dep_pre, self._dep_to_fns_map = (
+            PatchYamlIndex._get_depcon_prefixes_and_fns_sorted_by_depcon_prefix(
+                index,
+                "depends",
+            )
+        )
+        self._sorted_con_pre, self._con_to_fns_map = (
+            PatchYamlIndex._get_depcon_prefixes_and_fns_sorted_by_depcon_prefix(
+                index,
+                "constrains",
+            )
+        )
 
-def shortlist_relevant_filenames(index, package_name_selector):
-    if CONDA_PKG_NAME_RE.match(package_name_selector) is not None:
-        # package name does not contain wildcards
-        return [
-            fn
-            for fn, record in index.items()
-            if record["name"] == package_name_selector
+    def add_dep(self, dep_pre, fn):
+        self._dep_to_fns_map[dep_pre].add(fn)
+        self._sorted_dep_pre.add(dep_pre)
+
+    def add_con(self, con_pre, fn):
+        self._con_to_fns_map[con_pre].add(fn)
+        self._sorted_con_pre.add(con_pre)
+
+    def get_fns_to_check(self, pydata: PatchYamlData):
+        patch_yaml = pydata.patch_yaml
+
+        if "subdir_in" in patch_yaml["if"] and not _fnmatch_str_or_list(
+            self._subdir, patch_yaml["if"]["subdir_in"]
+        ):
+            return set()
+
+        if "artifact_in" in patch_yaml["if"]:
+            fns_to_check = patch_yaml["if"]["artifact_in"]
+            if not isinstance(fns_to_check, list):
+                fns_to_check = [fns_to_check]
+            return {fn for fn in fns_to_check if fn in self._all_fns}
+
+        sets_to_intersect = []
+        if "name" in patch_yaml["if"]:
+            sets_to_intersect.append(
+                self._extract_fns_by_names(patch_yaml["if"]["name"])
+            )
+
+        if "name_in" in patch_yaml["if"]:
+            sets_to_intersect.append(
+                self._extract_fns_by_names(patch_yaml["if"]["name_in"])
+            )
+
+        if "has_depends" in patch_yaml["if"]:
+            sets_to_intersect.extend(
+                self._extract_fns_by_depcon(patch_yaml["if"]["has_depends"], "depends")
+            )
+
+        if "has_constrains" in patch_yaml["if"]:
+            sets_to_intersect.extend(
+                self._extract_fns_by_depcon(
+                    patch_yaml["if"]["has_constrains"], "constrains"
+                )
+            )
+
+        if not any(op.startswith(("add_", "reset_")) for op in pydata.ops):
+            fns_for_clauses = []
+            for clause in patch_yaml["then"]:
+                op, val = list(clause.items())[0]
+                if op in ["remove_depends"]:
+                    fns_for_clauses.extend(self._extract_fns_by_depcon(val, "depends"))
+                elif op in ["replace_depends", "rename_depends"]:
+                    fns_for_clauses.extend(
+                        self._extract_fns_by_depcon(val["old"], "depends")
+                    )
+                elif op in ["relax_exact_depends", "tighten_depends", "loosen_depends"]:
+                    fns_for_clauses.extend(
+                        self._extract_fns_by_depcon(val["name"], "depends")
+                    )
+                if op in ["remove_constrains"]:
+                    fns_for_clauses.extend(
+                        self._extract_fns_by_depcon(val, "constrains")
+                    )
+                elif op in ["replace_constrains", "rename_constrains"]:
+                    fns_for_clauses.extend(
+                        self._extract_fns_by_depcon(val["old"], "constrains")
+                    )
+            if fns_for_clauses:
+                sets_to_intersect.append(set.union(*fns_for_clauses))
+
+        if sets_to_intersect:
+            fns_to_check = set.intersection(*sets_to_intersect)
+        else:
+            fns_to_check = self._all_fns
+
+        return fns_to_check
+
+    @staticmethod
+    @lru_cache(maxsize=32768)
+    def _literal_prefix(pat):
+        """Return the part of an fnmatch pattern before its first wildcard
+        and before any spaces."""
+        pat = pat.split(" ", maxsplit=1)[0]
+        for i, c in enumerate(pat):
+            if c in r"*?[${}":
+                return pat[:i]
+        return pat
+
+    @staticmethod
+    def _prefix_range(sorted_strs, prefix):
+        """Return the slice of ``sorted_strs`` that starts with ``prefix``."""
+        start = bisect.bisect_left(sorted_strs, prefix)
+        stop = start
+        while stop < len(sorted_strs) and sorted_strs[stop].startswith(prefix):
+            stop += 1
+        return start, stop
+
+    @staticmethod
+    def _name_range(sorted_strs, name):
+        """Return the slice of ``sorted_strs`` that is equal to ``name``."""
+        start = bisect.bisect_left(sorted_strs, name)
+        stop = start
+        while stop < len(sorted_strs) and sorted_strs[stop] == name:
+            stop += 1
+        return start, stop
+
+    @staticmethod
+    def _get_prefixes_and_fns_sorted_by_prefix(index):
+        prefixes_and_fns = sorted(
+            [(index[fn]["name"], fn) for fn in index],
+            key=lambda item: item[0],
+        )
+        return [item[0] for item in prefixes_and_fns], [
+            item[1] for item in prefixes_and_fns
         ]
-    return index.keys()
+
+    @staticmethod
+    def _get_depcon_prefixes_and_fns_sorted_by_depcon_prefix(index, kind):
+        from collections import defaultdict
+        from sortedcontainers import SortedSet
+
+        dep_to_fns_map = defaultdict(set)
+        for fn in index:
+            depends = index[fn].get(kind, [])
+            for dep in depends:
+                dep_to_fns_map[dep.split(" ", 1)[0]].add(fn)
+        return SortedSet(dep_to_fns_map), dep_to_fns_map
+
+    def _extract_fns_by_names(self, name_or_names):
+        if not isinstance(name_or_names, list):
+            name_or_names = [name_or_names]
+
+        fns_to_check = set()
+        for name in name_or_names:
+            prefix = PatchYamlIndex._literal_prefix(name)
+            if prefix:
+                if prefix == name:
+                    start, stop = PatchYamlIndex._name_range(self._sorted_fn_pre, name)
+                else:
+                    start, stop = PatchYamlIndex._prefix_range(
+                        self._sorted_fn_pre, prefix
+                    )
+                fns_to_check.update(self._fns_by_sorted_fn_pre[start:stop])
+            else:
+                return self._all_fns
+
+        return fns_to_check
+
+    def _extract_fns_by_depcon(self, dc_or_dcs, kind):
+        if not isinstance(dc_or_dcs, list):
+            dc_or_dcs = [dc_or_dcs]
+
+        if kind == "depends":
+            sorted_dc_pre = self._sorted_dep_pre
+            dc_to_fns_map = self._dep_to_fns_map
+        elif kind == "constrains":
+            sorted_dc_pre = self._sorted_con_pre
+            dc_to_fns_map = self._con_to_fns_map
+
+        fns_sets = []
+        for dc in dc_or_dcs:
+            prefix = PatchYamlIndex._literal_prefix(dc)
+            if prefix:
+                start, stop = PatchYamlIndex._prefix_range(sorted_dc_pre, prefix)
+                fn_set = set()
+                for dc_pre in sorted_dc_pre[start:stop]:
+                    fn_set.update(dc_to_fns_map[dc_pre])
+                fns_sets.append(fn_set)
+            else:
+                return [self._all_fns]
+
+        return fns_sets
 
 
 def patch_yaml_edit_index(index, subdir, verbose=False):
     keep_pkgs = os.environ.get("CF_PKGS", None)
     if keep_pkgs is not None:
         keep_pkgs = set(keep_pkgs.split(";"))
-    fns = sorted(index)
+    pyindex = PatchYamlIndex(index, subdir)
+
     if verbose:
         from tqdm import tqdm
         from functools import partial
@@ -643,20 +857,41 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
         tqdm = partial(tqdm, desc="Applying yaml patches", file=sys.stderr)
     else:
         tqdm = iter
-    for patch_yaml, fname in tqdm(ALL_YAMLS):
-        if "name" in patch_yaml["if"]:
-            pkg_name = patch_yaml["if"]["name"]
-            fns_to_process = shortlist_relevant_filenames(index, pkg_name)
-        else:
-            fns_to_process = fns
+    for pydata in tqdm(ALL_YAMLS):
+        fns_to_process = pyindex.get_fns_to_check(pydata)
 
         for fn in fns_to_process:
             record = index[fn]
             if keep_pkgs is not None and record["name"] not in keep_pkgs:
                 continue
             try:
-                if _test_patch_yaml(patch_yaml, record, subdir, fn):
-                    _apply_patch_yaml(patch_yaml, record, subdir, fn)
+                if _test_patch_yaml(pydata.patch_yaml, record, subdir, fn):
+                    if pydata.modifies_depends:
+                        orig_deps = {
+                            PatchYamlIndex._literal_prefix(dep)
+                            for dep in record.get("depends", []) or []
+                        }
+                    if pydata.modifies_constrains:
+                        orig_cons = {
+                            PatchYamlIndex._literal_prefix(con)
+                            for con in record.get("constrains", []) or []
+                        }
+                    _apply_patch_yaml(pydata.patch_yaml, record, subdir, fn)
+                    if pydata.modifies_depends:
+                        final_deps = {
+                            PatchYamlIndex._literal_prefix(dep)
+                            for dep in record.get("depends", []) or []
+                        }
+                        for dep in final_deps - orig_deps:
+                            pyindex.add_dep(dep, fn)
+                    if pydata.modifies_constrains:
+                        final_cons = {
+                            PatchYamlIndex._literal_prefix(con)
+                            for con in record.get("constrains", []) or []
+                        }
+                        for con in final_cons - orig_cons:
+                            pyindex.add_con(con, fn)
+
             except Exception as e:
                 import traceback
 
@@ -665,14 +900,17 @@ def patch_yaml_edit_index(index, subdir, verbose=False):
                     + "\n"
                     + "=" * 80
                     + "\nError in testing/applying patch yaml from '%s': \n\n%s"
-                    % (fname, yaml.safe_dump(patch_yaml, default_flow_style=False)),
+                    % (
+                        pydata.fname,
+                        yaml.safe_dump(pydata.patch_yaml, default_flow_style=False),
+                    ),
                     flush=True,
                 )
                 try:
-                    PatchYaml(**patch_yaml)
+                    PatchYaml(**pydata.patch_yaml)
                 except Exception as se:
                     print(
-                        f"Schema error in '{os.path.basename(fname)}': {se}",
+                        f"Schema error in '{os.path.basename(pydata.fname)}': {se}",
                         flush=True,
                     )
                 print(
