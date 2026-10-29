@@ -1,0 +1,30 @@
+# simdjson 5.0.7 changed ABI without changing SONAME 34, and 5.0.8 moved to
+# SONAME 35, so binaries built against 5.0.0-5.0.6 can only use <5.0.7.
+# libmamba is handled in mamba.yaml; this covers the remaining consumers
+# (e.g. libarrow, libparquet 26.0.0).
+# https://github.com/simdjson/simdjson/issues/2989
+if:
+  has_depends: simdjson >=5.0.*,<5.1.0a0
+  timestamp_le: 2026-10-29T08:07:45Z
+then:
+  - replace_depends:
+      old: simdjson >=5.0.0,<5.1.0a0
+      new: simdjson >=5.0.0,<5.0.7a0
+  - replace_depends:
+      old: simdjson >=5.0.1,<5.1.0a0
+      new: simdjson >=5.0.1,<5.0.7a0
+  - replace_depends:
+      old: simdjson >=5.0.2,<5.1.0a0
+      new: simdjson >=5.0.2,<5.0.7a0
+  - replace_depends:
+      old: simdjson >=5.0.3,<5.1.0a0
+      new: simdjson >=5.0.3,<5.0.7a0
+  - replace_depends:
+      old: simdjson >=5.0.4,<5.1.0a0
+      new: simdjson >=5.0.4,<5.0.7a0
+  - replace_depends:
+      old: simdjson >=5.0.5,<5.1.0a0
+      new: simdjson >=5.0.5,<5.0.7a0
+  - replace_depends:
+      old: simdjson >=5.0.6,<5.1.0a0
+      new: simdjson >=5.0.6,<5.0.7a0
