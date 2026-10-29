@@ -6,6 +6,11 @@ conda_build:
   pkg_format: '2'
   zstd_compression_level: 12
 conda_install_tool: pixi
+# Bootstrap the repodata hotfix with the ABI-compatible simdjson library.
+remote_ci_setup:
+  - conda-forge-ci-setup=4
+  - conda-build>=26.3
+  - simdjson<5.0.7a0
 skip_render:
   - .github/PULL_REQUEST_TEMPLATE.md
 upload_on_branch: main
