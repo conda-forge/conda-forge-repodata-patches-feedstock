@@ -21,3 +21,29 @@ then:
   # in the older builds of libopencv
   # https://github.com/conda-forge/opencv-feedstock/issues/486
   - add_constrains: imath<3.2.0a0
+
+---
+
+# The win-64 abi3 py-opencv builds (cpython >=3.1x, built once on python_min)
+# do not work on python >= 3.15. The cv2 loader (cv2/config-3.py) records the
+# build python's absolute site-packages (Lib/site-packages), but conda-forge
+# python 3.15 on Windows moved site-packages to lib/python/site-packages
+# https://github.com/conda-forge/python-feedstock/issues/860
+# so `import cv2` fails with "recursion is detected during loading of "cv2"
+# binary extensions"
+# https://github.com/conda-forge/opencv-feedstock/issues/557
+# Windows python >= 3.15 gets a dedicated (non abi3) build instead
+# https://github.com/conda-forge/opencv-feedstock/pull/558
+if:
+  name: py-opencv
+  subdir_in: win-64
+  version_ge: 4.0.0
+  has_depends: cpython >=3.1*
+  timestamp_lt: 1791767625000
+then:
+  - replace_depends:
+      old: python >=3.10
+      new: python >=3.10,<3.15.0a0
+  - replace_depends:
+      old: python >=3.11
+      new: python >=3.11,<3.15.0a0
