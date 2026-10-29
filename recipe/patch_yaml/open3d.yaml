@@ -1,0 +1,23 @@
+# Fixes open3d builds, see conda-forge/filament-feedstock#28.
+# filament 1.77.2 removed exported symbols used by open3d 0.20.0
+# (Material::Builder::package(void const*, size_t), EntityManager::create/destroy
+# became inline wrappers around new Slice APIs, google/filament#10410), but the
+# run_export was x.x, so open3d builds made against 1.77.0/1.77.1 fail to import
+# with an undefined symbol on linux-64, linux-aarch64 and osx-64.
+if:
+  name: open3d
+  version: 0.20.0
+  has_depends: filament >=1.77.0,<1.78.0a0 x11_[*]
+then:
+  - replace_depends:
+      old: filament >=1.77.0,<1.78.0a0 x11_[*]
+      new: filament >=1.77.0,<1.77.2.0a0 x11_*
+---
+if:
+  name: open3d
+  version: 0.20.0
+  has_depends: filament >=1.77.0,<1.78.0a0 native_[*]
+then:
+  - replace_depends:
+      old: filament >=1.77.0,<1.78.0a0 native_[*]
+      new: filament >=1.77.0,<1.77.2.0a0 native_*
