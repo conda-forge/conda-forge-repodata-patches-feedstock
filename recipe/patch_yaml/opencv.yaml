@@ -21,3 +21,29 @@ then:
   # in the older builds of libopencv
   # https://github.com/conda-forge/opencv-feedstock/issues/486
   - add_constrains: imath<3.2.0a0
+
+---
+
+# libopencv (libopencv_dnn) links libabseil directly, through protobuf's
+# headers, but libabseil was not in the recipe's host section, so these builds
+# do not depend on it. They only pin libprotobuf to a patch version, and
+# libprotobuf was later rebuilt for a newer abseil, so a solver can pair them
+# with an abseil that has a different soname ("Library not loaded:
+# libabsl_*.2605.0.0.dylib" on import). Pin the abseil each build was linked
+# against (the abseil of the libprotobuf builds available at its build time;
+# checked against the linked sonames).
+if:
+  name: libopencv
+  has_depends: libprotobuf >=6.31.1,<6.31.2.0a0
+  timestamp_lt: 2026-07-04T12:35:00Z
+then:
+  - add_depends: libabseil >=20250512.1,<20250513.0a0
+
+---
+
+if:
+  name: libopencv
+  has_depends: libprotobuf >=7.35.1,<7.35.2.0a0
+  timestamp_lt: 2026-10-27T03:45:00Z
+then:
+  - add_depends: libabseil >=20260526.0,<20260527.0a0
