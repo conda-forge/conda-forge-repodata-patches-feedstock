@@ -1,0 +1,56 @@
+# patches for gfortran module file compat
+# see https://www.mjr19.org.uk/sw/gfortran.html
+# gfortran 9-14.* used format version 15
+# gfortran 15 onwards uses 16, but can read format 15
+# So if we are built with gfortran 15 or above, we need
+# at least 15. Anything in 9-14 is compatible with
+# gfortran 9 or above.
+if:
+  name: cosmosis
+  has_depends: libgfortran5 >=9.*
+  not_has_constrains: gfortran_${subdir}?( *)
+then:
+  - add_constrains: gfortran_${subdir} >=9
+---
+if:
+  name: cosmosis
+  has_depends: libgfortran5 >=10.*
+  not_has_constrains: gfortran_${subdir}?( *)
+then:
+  - add_constrains: gfortran_${subdir} >=9
+---
+if:
+  name: cosmosis
+  has_depends: libgfortran5 >=11.*
+  not_has_constrains: gfortran_${subdir}?( *)
+then:
+  - add_constrains: gfortran_${subdir} >=9
+---
+if:
+  name: cosmosis
+  has_depends: libgfortran5 >=12.*
+  not_has_constrains: gfortran_${subdir}?( *)
+then:
+  - add_constrains: gfortran_${subdir} >=9
+---
+if:
+  name: cosmosis
+  has_depends: libgfortran5 >=13.*
+  not_has_constrains: gfortran_${subdir}?( *)
+then:
+  - add_constrains: gfortran_${subdir} >=9
+---
+if:
+  name: cosmosis
+  has_depends: libgfortran5 >=14.*
+  not_has_constrains: gfortran_${subdir}?( *)
+then:
+  - add_constrains: gfortran_${subdir} >=9
+---
+if:
+  name: cosmosis
+  has_depends: libgfortran5 >=15.*
+  not_has_constrains: gfortran_${subdir}?( *)
+  not_has_depends: libgfortran5 >=1[01234].*
+then:
+  - add_constrains: gfortran_${subdir} >=15
