@@ -1,0 +1,12 @@
+# libnvtiff 0.9 dlopens libnvcomp.so.6 / nvcomp64_6.dll and does not support nvCOMP < 6,
+# but the initial builds were published with a libnvcomp >=5,<6 run dependency.
+# See: https://github.com/conda-forge/libnvtiff-feedstock/issues/24
+if:
+  name: libnvtiff0
+  version: 0.9.0.86
+  build_number: 0
+  timestamp_lt: 2026-10-29T23:41:08-05:00
+then:
+  - replace_depends:
+      old: libnvcomp >=5,<6
+      new: libnvcomp >=6,<7
