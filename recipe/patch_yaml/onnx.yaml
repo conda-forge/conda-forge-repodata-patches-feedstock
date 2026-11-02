@@ -24,3 +24,31 @@ if:
   timestamp_lt: 2026-09-21T01:14:49Z
 then:
   - add_constrains: onnx ==${version} *_${build_number}
+---
+# libonnx on win-64 imports absl::lts_20260526 symbols, from libprotobuf.dll on
+# all versions and also from abseil_dll.dll on 1.23, but libabseil was not in
+# the recipe's host section, so these builds do not depend on it. They only pin
+# libprotobuf to a patch version, and libprotobuf 7.35.1 was later rebuilt for
+# abseil 20260817, so a solver can pair them with the new abseil ("DLL load
+# failed while importing onnx_cpp2py_export: The specified procedure could not
+# be found"). libonnx on linux and macOS has no undefined abseil symbols.
+# Added to the recipe in conda-forge/onnx-feedstock#173.
+if:
+  name: libonnx
+  subdir_in: win-64
+  has_depends: libprotobuf >=7.35.1,<7.35.2.0a0
+  timestamp_lt: 2026-10-27T03:45:00Z
+then:
+  - add_depends: libabseil >=20260526.0,<20260527.0a0
+---
+# onnx 1.22.0 build 1 predates libonnx and has the same problem, through its own
+# imports from libprotobuf-lite.dll.
+if:
+  name: onnx
+  subdir_in: win-64
+  version: 1.22.0
+  build_number: 1
+  has_depends: libprotobuf >=7.35.1,<7.35.2.0a0
+  timestamp_lt: 2026-10-27T03:45:00Z
+then:
+  - add_depends: libabseil >=20260526.0,<20260527.0a0
