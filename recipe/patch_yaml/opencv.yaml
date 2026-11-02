@@ -47,3 +47,21 @@ if:
   timestamp_lt: 2026-10-27T03:45:00Z
 then:
   - add_depends: libabseil >=20260526.0,<20260527.0a0
+
+---
+
+# The 4.x branch rebuild for abseil 20260817 (conda-forge/opencv-feedstock#565)
+# has the same gap as the builds above: libabseil is not in that branch's host
+# section, so libopencv 4.13.0 builds 20 (headless) and 620 (qt6) link abseil
+# 20260817 without depending on it. libprotobuf 7.35.1 has builds for both
+# abseil 20260526 and 20260817, so a solver can pair them with 20260526
+# ("libabsl_log_internal_message.so.2608.0.0: cannot open shared object file"
+# on import). Checked against the linked sonames.
+if:
+  name: libopencv
+  version: 4.13.0
+  build_number_in: [20, 620]
+  has_depends: libprotobuf >=7.35.1,<7.35.2.0a0
+  timestamp_lt: 2026-11-01T00:00:00Z
+then:
+  - add_depends: libabseil >=20260817.0,<20260818.0a0
