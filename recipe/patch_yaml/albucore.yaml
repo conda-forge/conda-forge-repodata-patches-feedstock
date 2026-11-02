@@ -1,0 +1,11 @@
+# albucore (<0.1) imports simsimd and calls simsimd.wsum. simsimd 7.x is the renamed NumKong project and ships
+# no `simsimd` module (https://github.com/conda-forge/simsimd-feedstock), so `import albucore` (and with it
+# albumentations 2.0.8, which pins albucore 0.0.24) fails when the solver picks simsimd 7.
+if:
+  name: albucore
+  version_lt: "0.1.0"
+  has_depends: simsimd*
+then:
+  - tighten_depends:
+      name: simsimd
+      upper_bound: "7.0.0a0"
