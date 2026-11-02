@@ -29,3 +29,19 @@ then:
       name: numpy
       max_pin: x
       upper_bound: "1.20"
+---
+# pyarrow 26 requires NumPy >=2.0 when numpy is installed (numpy stays optional):
+# pyarrow/lib.pyx raises "ImportError: pyarrow requires NumPy 2.0 or newer".
+# The pyarrow-feedstock recipe ignores numpy's run-export and hard-codes the
+# run_constrained `numpy >=1.23,<3`, which the 26.0.0 builds kept. Solvers
+# therefore pair pyarrow-core 26.0.0 with numpy 1.x and `import pyarrow` fails.
+# https://github.com/apache/arrow/issues/48473
+# https://github.com/apache/arrow/blob/apache-arrow-26.0.0/python/pyarrow/lib.pyx#L40-L44
+if:
+  name: pyarrow-core
+  version: 26.0.0
+  timestamp_le: 2026-11-02T21:10:01+01:00
+then:
+  - replace_constrains:
+      old: numpy >=1.23,<3
+      new: numpy >=2.0,<3
