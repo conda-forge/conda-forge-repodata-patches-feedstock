@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# conda-auth <=0.2.1 imports plugin types removed from conda.plugins in 26.9.
+# https://github.com/conda-incubator/conda-auth/issues/78
+if:
+  name: conda-auth
+  subdir_in: noarch
+  version_le: "0.2.1"
+  timestamp_lt: 2026-11-02T11:36:03Z
+then:
+  - tighten_depends:
+      name: conda
+      upper_bound: "26.9.0"
