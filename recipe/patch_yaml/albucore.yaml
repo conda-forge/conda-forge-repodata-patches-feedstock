@@ -5,7 +5,8 @@ if:
   name: albucore
   version_lt: "0.1.0"
   has_depends: simsimd*
+  timestamp_le: 1793652993000
 then:
   - tighten_depends:
       name: simsimd
-      upper_bound: "7.0.0a0"
+      upper_bound: "7"
