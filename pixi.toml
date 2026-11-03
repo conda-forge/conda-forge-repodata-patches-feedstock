@@ -31,6 +31,7 @@ conda-build = ">=26.3"
 conda-forge-ci-setup = "4.*"
 python = "3.14.*"
 simdjson = "<5.0.7a0"
+anaconda-client = "<1.15.0a0"
 
 [feature.build.tasks.inspect-all]
 cmd = "inspect_artifacts --all-packages"
