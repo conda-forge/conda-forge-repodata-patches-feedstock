@@ -32,3 +32,15 @@ then:
   - tighten_depends:
       name: rattler-build-conda-compat
       max_pin: "x"
+---
+# anaconda client >=1.15 is breaking due to CLI changes around labels
+# https://github.com/anaconda/anaconda-client/pull/942
+# https://github.com/conda-forge/anaconda-client-feedstock/pull/67
+if:
+  name: conda-forge-ci-setup
+  has_depends: anaconda-client?( *)
+  timestamp_lt: 2026-11-03T12:00:00Z
+then:
+  - tighten_depends:
+      name: anaconda-client
+      upper_bound: 1.15.0
