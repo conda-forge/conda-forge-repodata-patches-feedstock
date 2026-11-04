@@ -46,7 +46,7 @@ SUBDIRS = (
 # Each worker peaks at ~2.7-3 GiB of memory for linux-64 (as of 2026-11), so running
 # one worker per CPU on the 4 CPU / 16 GB GitHub Actions runner can be OOM killed
 # once the other large subdirs are processed alongside it.
-MAX_WORKERS = 2
+MAX_WORKERS = 3
 
 REMOVALS = {
     "noarch": (
