@@ -7,8 +7,8 @@ import sys
 import urllib.request
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
-import zstandard
 from conda_index.index import _apply_instructions
+from repodata_io import copy_repodata, load_repodata
 
 CACHE_DIR = os.environ.get(
     "CACHE_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
@@ -130,19 +130,16 @@ def do_subdir(
 
     if verbose:
         print(f"Decompressing raw repodata for {subdir}", file=sys.stderr, flush=True)
-    with zstandard.open(raw_repodata_path) as fh:
-        raw_repodata = json.load(fh)
+    # Strings are shared between all copies of the repodata through this memo.
+    memo = {}
+    raw_repodata = load_repodata(raw_repodata_path, memo)
     if debug_package_name is not None:
         raw_repodata = _cut_index_to_name(raw_repodata, debug_package_name)
 
     if verbose:
         print(f"Decompressing new repodata for {subdir}", file=sys.stderr, flush=True)
-    # The repodata is so large, that copying a giant pyton dictionary
-    # is like way too slow, it is faster to read the repodata twice..
-    with zstandard.open(raw_repodata_path) as fh:
-        new_index = json.load(fh)
-    if debug_package_name is not None:
-        new_index = _cut_index_to_name(new_index, debug_package_name)
+    # only containers are copied, strings are shared with raw_repodata
+    new_index = copy_repodata(raw_repodata)
 
     _patch_indexes(new_index, subdir, verbose=verbose)
     instructions = _gen_patch_instructions(
@@ -151,15 +148,14 @@ def do_subdir(
         subdir,
         package_removal_keeplist=package_removal_keeplist,
     )
-    # Free new_index before ref_repodata is loaded so that at most two parsed
-    # copies of the repodata are held in memory at once.
+    # Free some memory, although most of it is already deduped
     del new_index
     new_repodata = _apply_instructions(subdir, raw_repodata, instructions)
 
     if verbose:
         print(f"Decompressing ref repodata for {subdir}", file=sys.stderr, flush=True)
-    with zstandard.open(ref_repodata_path) as fh:
-        ref_repodata = json.load(fh)
+    ref_repodata = load_repodata(ref_repodata_path, memo)
+    del memo
     if debug_package_name is not None:
         ref_repodata = _cut_index_to_name(ref_repodata, debug_package_name)
 
@@ -282,7 +278,7 @@ if __name__ == "__main__":
         if args.package_removal_keeplist
         else None
     )
-    # Single threaded option to help with insertering breakpoints and debugging
+    # Single threaded option to help with inserting breakpoints and debugging
     if len(subdirs) <= 1:
         subdir, vals = _process_subdir(
             subdirs[0],
@@ -300,7 +296,12 @@ if __name__ == "__main__":
             no_group_diffs=args.no_group_diffs,
         )
     else:
-        with ProcessPoolExecutor() as exc:
+        from gen_patch_json import MAX_WORKERS
+
+        cpu_count = int(os.environ.get("CPU_COUNT", os.cpu_count()))
+        with ProcessPoolExecutor(
+            max_workers=min(cpu_count, MAX_WORKERS), max_tasks_per_child=1
+        ) as exc:
             futs = [
                 exc.submit(
                     _process_subdir,
