@@ -299,7 +299,9 @@ if __name__ == "__main__":
         from gen_patch_json import MAX_WORKERS
 
         cpu_count = int(os.environ.get("CPU_COUNT", os.cpu_count()))
-        with ProcessPoolExecutor(max_workers=min(cpu_count, MAX_WORKERS)) as exc:
+        with ProcessPoolExecutor(
+            max_workers=min(cpu_count, MAX_WORKERS), max_tasks_per_child=1
+        ) as exc:
             futs = [
                 exc.submit(
                     _process_subdir,
