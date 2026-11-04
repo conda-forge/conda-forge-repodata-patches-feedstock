@@ -1,0 +1,8 @@
+if:
+  name: opentelemetry-proto
+  version_lt: 1.12.0
+  timestamp_lt: 2026-11-04T13:36:50+01:00
+then:
+  - replace_depends:
+      old: protobuf >=3.13.0
+      new: protobuf >=3.13.0,<4.0
