@@ -922,7 +922,7 @@ def _add_removals(instructions, subdir, package_removal_keeplist=None):
                     continue
             currvals.append(pkg_name)
 
-    instructions["remove"].extend(tuple(set(currvals)))
+    instructions["remove"].extend(sorted(set(currvals)))
 
 
 def _gen_patch_instructions(
