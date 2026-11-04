@@ -15,7 +15,6 @@ from functools import partial
 
 
 import requests
-import zstandard
 from conda_index.index import _apply_instructions
 from get_license_family import get_license_family
 from packaging.version import parse as parse_version
@@ -25,6 +24,7 @@ from patch_yaml_utils import (
     pad_list,
     patch_yaml_edit_index,
 )
+from repodata_io import copy_repodata, load_repodata
 from show_diff import show_record_diffs
 
 CHANNEL_NAME = "conda-forge"
@@ -992,12 +992,11 @@ def _do_subdir(subdir, verbose=False):
         ref_url = f"{BASE_URL}/{subdir}/repodata.json.zst"
         urllib.request.urlretrieve(ref_url, ref_repodata_path)
 
-        with zstandard.open(raw_repodata_path) as fh:
-            repodata = json.load(fh)
-
-        # Copying large python dictionaries is slow, just reload the repodata
-        with zstandard.open(raw_repodata_path) as fh:
-            new_index = json.load(fh)
+        # Strings are shared between repodata, new_index and ref_repodata
+        # through this memo, which greatly reduces peak memory.
+        memo = {}
+        repodata = load_repodata(raw_repodata_path, memo)
+        new_index = copy_repodata(repodata)
 
         prefix_dir = os.getenv("PREFIX", "tmp")
         prefix_subdir = join(prefix_dir, subdir)
@@ -1011,8 +1010,7 @@ def _do_subdir(subdir, verbose=False):
         instructions = _gen_patch_instructions(
             repodata, new_index, subdir, verbose=verbose
         )
-        # Free new_index before ref_repodata is loaded so that at most two parsed
-        # copies of the repodata are held in memory at once.
+        # Free some memory, although most of it is already deduped
         del new_index
 
         # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
@@ -1024,8 +1022,8 @@ def _do_subdir(subdir, verbose=False):
 
         # Step 3. Show the diff
         new_repodata = _apply_instructions(subdir, repodata, instructions)
-        with zstandard.open(ref_repodata_path) as fh:
-            ref_repodata = json.load(fh)
+        ref_repodata = load_repodata(ref_repodata_path, memo)
+        del memo  # no need to keep this around anymore
         return subdir, show_record_diffs(
             subdir, ref_repodata, new_repodata, False, group_diffs=True
         )
