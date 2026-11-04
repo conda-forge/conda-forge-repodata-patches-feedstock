@@ -1,0 +1,10 @@
+# robotframework version 7 needs at least Python 3.8
+#  see https://github.com/robotframework/robotframework/blob/v7.0/README.rst
+if:
+  name: robotframework
+  version_gte: 7.0
+  version_lt: 7.1
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.8
