@@ -278,7 +278,7 @@ if __name__ == "__main__":
         if args.package_removal_keeplist
         else None
     )
-    # Single threaded option to help with insertering breakpoints and debugging
+    # Single threaded option to help with inserting breakpoints and debugging
     if len(subdirs) <= 1:
         subdir, vals = _process_subdir(
             subdirs[0],
@@ -296,7 +296,10 @@ if __name__ == "__main__":
             no_group_diffs=args.no_group_diffs,
         )
     else:
-        with ProcessPoolExecutor() as exc:
+        from gen_patch_json import MAX_WORKERS
+
+        cpu_count = int(os.environ.get("CPU_COUNT", os.cpu_count()))
+        with ProcessPoolExecutor(max_workers=min(cpu_count, MAX_WORKERS)) as exc:
             futs = [
                 exc.submit(
                     _process_subdir,
