@@ -11,7 +11,6 @@ build:
   noarch: generic
   number: 1
   script:
-    - pre-commit run -a
     - pytest -vv test_patch_yaml_utils.py
     - pytest -vv test_gen_patch_json.py
     - python gen_patch_json.py
@@ -29,7 +28,6 @@ requirements:
     - conda-build
     - zstandard
     - sortedcontainers
-    - pre-commit
   host:
   run:
 
