@@ -20,7 +20,15 @@ cmd = "python -c \"import datetime; print(datetime.datetime.now().astimezone().i
 description = "Generate the current local time as an RFC 3339 timestamp."
 
 [dependencies]
-conda-build = "*"
+python = "3.14.*"
+requests = "*"
+tqdm = "*"
 license-expression = "*"
+packaging = "*"
+pyyaml = "*"
+pydantic = "!=2.9.*"
+pytest = "*"
+conda-build = "*"
+zstandard = "*"
+sortedcontainers = "*"
 pre-commit = "*"
-pydantic = "*"
