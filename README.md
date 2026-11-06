@@ -13,7 +13,6 @@ See the [recipe/README.md](recipe/README.md) for how generate patches from stati
 This mechanism should work for most things. If it does not work for your specific case, you
 can write custom code in `generate_patch_json.py`.
 
-
 Current build status
 ====================
 

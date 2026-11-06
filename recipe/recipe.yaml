@@ -1,15 +1,18 @@
-{% set version = datetime.datetime.utcnow().strftime('%Y%m%d.%H.%M.%S') %}
+schema_version: 1
+
+context:
+  version: "${{ now() }}" #| datetimeformat(format='%Y%m%d.%H.%M.%S', tz='UTC') }}"
 
 package:
   name: conda-forge-repodata-patches
-  version: {{ version }}
+  version: "${{ version }}"
 
 source:
   path: .
 
 build:
+  number: 0
   noarch: generic
-  number: 1
   script:
     - pytest -vv test_patch_yaml_utils.py
     - pytest -vv test_gen_patch_json.py
@@ -23,7 +26,7 @@ requirements:
     - license-expression
     - packaging
     - pyyaml
-    - pydantic !=2.9.*
+    - pydantic !=2.9
     - pytest
     - conda-build
     - zstandard
@@ -31,26 +34,27 @@ requirements:
   host:
   run:
 
-test:
-  commands:
-    - test -e $PREFIX/noarch/patch_instructions.json
-    - test -e $PREFIX/linux-64/patch_instructions.json
-    - test -e $PREFIX/linux-armv7l/patch_instructions.json
-    - test -e $PREFIX/linux-ppc64le/patch_instructions.json
-    - test -e $PREFIX/osx-64/patch_instructions.json
-    - test -e $PREFIX/osx-arm64/patch_instructions.json
-    - test -e $PREFIX/win-32/patch_instructions.json
-    - test -e $PREFIX/win-64/patch_instructions.json
+tests:
+  - script:
+      - test -e $PREFIX/noarch/patch_instructions.json
+      - test -e $PREFIX/linux-64/patch_instructions.json
+      - test -e $PREFIX/linux-armv7l/patch_instructions.json
+      - test -e $PREFIX/linux-ppc64le/patch_instructions.json
+      - test -e $PREFIX/osx-64/patch_instructions.json
+      - test -e $PREFIX/osx-arm64/patch_instructions.json
+      - test -e $PREFIX/win-32/patch_instructions.json
+      - test -e $PREFIX/win-64/patch_instructions.json
 
 about:
   summary: generate tweaks to index metadata, hosted separately from anaconda.org index
-  home: https://github.com/conda-forge/conda-forge-repodata-patches-feedstock
   license: CC-PDDC
   description: |
     See the [recipe/README.md](recipe/README.md) for how generate patches from static YAML files.
     This mechanism should work for most things. If it does not work for your specific case, you
     can write custom code in `generate_patch_json.py`.
+  homepage: https://github.com/conda-forge/conda-forge-repodata-patches-feedstock
 
 extra:
   recipe-maintainers:
     - conda-forge/core
+

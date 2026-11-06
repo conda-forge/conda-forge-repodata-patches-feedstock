@@ -5,6 +5,7 @@ github:
 conda_build:
   pkg_format: '2'
   zstd_compression_level: 12
+conda_build_tool: rattler-build
 conda_install_tool: pixi
 # Bootstrap the repodata hotfix with the ABI-compatible simdjson library.
 remote_ci_setup:
