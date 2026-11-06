@@ -1,0 +1,26 @@
+# identify <2 (2017-2021) is a noarch: python package without a python upper bound.
+# identify >=2.1 depends on ukkonen, which is compiled per Python version. While a new
+# Python's ukkonen builds are missing, solvers fall back to identify 1.2.2 (2019), the
+# newest build with no compiled dependency, instead of failing. pre-commit accepts it
+# (identify >=1.0.0), but its file-type tags are out of date: hook configs using newer
+# tags fail validation, and files that 1.x can't classify are skipped silently.
+# Cap these builds at python <3.10 (identify 2.0 was released before Python 3.10).
+if:
+  name: identify
+  version_lt: 2.0.0
+  has_depends: python
+  timestamp_lt: 2026-11-01T13:00:00Z
+then:
+  - replace_depends:
+      old: python
+      new: python <3.10
+---
+if:
+  name: identify
+  version_lt: 2.0.0
+  has_depends: python >=3.6
+  timestamp_lt: 2026-11-01T13:00:00Z
+then:
+  - replace_depends:
+      old: python >=3.6
+      new: python >=3.6,<3.10
