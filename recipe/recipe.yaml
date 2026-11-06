@@ -1,7 +1,7 @@
 schema_version: 1
 
 context:
-  version: "${{ now() | datetimeformat(format='%Y%m%d.%H.%M.%S', tz='UTC') }}"
+  version: "${{ now() | datetimeformat(format='%Y%m%d.%H.%M.%S', tz='Etc/UTC') }}"
 
 package:
   name: conda-forge-repodata-patches
