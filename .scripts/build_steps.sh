@@ -92,15 +92,17 @@ if [[ "${BUILD_WITH_CONDA_DEBUG:-0}" == 1 ]]; then
     #   - --output-id vs. --output-name
     #   - --clobber-file vs. none
     #   - none vs. --target-platform
-    CONDA_SUBDIR="${BUILD_PLATFORM}" conda debug \
-        "${RECIPE_ROOT}" \
+    export CONDA_BLD_PATH="${CONDA_BLD_PATH:-${FEEDSTOCK_ROOT}/build_artifacts}"
+    rattler-build debug setup \
+        --recipe "${RECIPE_ROOT}" \
         -m "${CONFIG_FILE}" \
         ${EXTRA_CB_OPTIONS:-} \
-        ${BUILD_OUTPUT_ID:+--output-id "${BUILD_OUTPUT_ID}"} \
-        --clobber-file "${CI_SUPPORT}/clobber_${CONFIG}.yaml"
+        ${BUILD_OUTPUT_ID:+--output-name "${BUILD_OUTPUT_ID}"} \
+        --build-platform "${BUILD_PLATFORM}" \
+        --target-platform "${HOST_PLATFORM}"
 
-    # Drop into an interactive shell
-    /bin/bash
+    rattler-build debug shell
+    exit 0
 fi
 
 # Build the recipe
@@ -113,13 +115,15 @@ echo Building recipe
 #   - none vs. --target-platform
 #   - --extra-meta a=b c=d vs. --extra-meta a=b --extra-meta c=d
 
-CONDA_SUBDIR="${BUILD_PLATFORM}" conda-build \
-    "${RECIPE_ROOT}" \
+rattler-build build \
+    --recipe "${RECIPE_ROOT}" \
     -m "${CONFIG_FILE}" \
     ${EXTRA_CB_OPTIONS:-} \
-    --suppress-variables \
-    --clobber-file "${CI_SUPPORT}/clobber_${CONFIG}.yaml" \
-    --extra-meta flow_run_id="${flow_run_id:-}" remote_url="${remote_url:-}" sha="${sha:-}"
+    --build-platform "${BUILD_PLATFORM}" \
+    --target-platform "${HOST_PLATFORM}" \
+    --extra-meta flow_run_id="${flow_run_id:-}" \
+    --extra-meta remote_url="${remote_url:-}" \
+    --extra-meta sha="${sha:-}"
 
 ( startgroup "Inspecting artifacts" ) 2> /dev/null
 
