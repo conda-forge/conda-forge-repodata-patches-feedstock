@@ -53,6 +53,7 @@ about:
     This mechanism should work for most things. If it does not work for your specific case, you
     can write custom code in `generate_patch_json.py`.
   homepage: https://github.com/conda-forge/conda-forge-repodata-patches-feedstock
+  license_file: LICENSE
 
 extra:
   recipe-maintainers:
