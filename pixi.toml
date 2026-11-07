@@ -5,7 +5,7 @@
 
 [workspace]
 name = "conda-forge-repodata-patches-feedstock"
-version = "2026.10.24"  # conda-smithy version used to generate this file
+version = "2026.11.6"  # conda-smithy version used to generate this file
 description = "Pixi configuration for conda-forge/conda-forge-repodata-patches-feedstock"
 authors = ["@conda-forge/conda-forge-repodata-patches"]
 channels = ["conda-forge"]
@@ -30,23 +30,20 @@ description = "Lint the feedstock recipe"
 conda-build = ">=26.3"
 conda-forge-ci-setup = "4.*"
 python = "3.14.*"
+rattler-build = "*"
 simdjson = "<5.0.7a0"
-anaconda-client = "<1.15.0a0"
 
 [feature.build.tasks.inspect-all]
 cmd = "inspect_artifacts --all-packages"
-description = "List contents of all packages found in conda-build build directory."
+description = "List contents of all packages found in rattler-build build directory."
 [feature.build.tasks.build]
-cmd = "conda-build build recipe"
+cmd = "rattler-build build --recipe recipe"
 description = "Build conda-forge-repodata-patches-feedstock directly (without setup scripts), no particular variant specified"
-[feature.build.tasks.debug]
-cmd = "conda-build debug recipe"
-description = "Debug conda-forge-repodata-patches-feedstock directly (without setup scripts), no particular variant specified"
-[feature.build.tasks."build-"]
-cmd = "conda-build build recipe -m .ci_support/linux_64_.yaml --suppress-variables --clobber-file .ci_support/clobber_linux_64_.yaml"
+[feature.build.tasks."build-linux_64_"]
+cmd = "rattler-build build --recipe recipe -m .ci_support/linux_64_.yaml "
 description = "Build conda-forge-repodata-patches-feedstock with variant linux_64_ directly (without setup scripts)"
 [feature.build.tasks."debug-linux_64_"]
-cmd = "conda-build debug recipe -m .ci_support/linux_64_.yaml"
+cmd = "rattler-build debug setup --recipe recipe -m .ci_support/linux_64_.yaml "
 description = "Debug conda-forge-repodata-patches-feedstock with variant linux_64_ directly (without setup scripts)"
 [feature.build.tasks."inspect-linux_64_"]
 cmd = "inspect_artifacts --recipe-dir recipe -m .ci_support/linux_64_.yaml"
