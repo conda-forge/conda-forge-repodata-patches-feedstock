@@ -13,3 +13,44 @@ then:
   - tighten_depends:
       name: azure-core-cpp
       upper_bound: 1.11.0
+---
+# tiledb links to aws-c-s3 on linux-64 only. The recipe did not list it in its
+# host requirements (overlinking). Instead it was installed as a recursive
+# dependency of aws-crt-cpp. Thus an incompatible aws-c-s3 could be installed at
+# runtime.
+#
+# * Reported: https://github.com/conda-forge/tiledb-feedstock/issues/514
+# * Fixed: https://github.com/conda-forge/tiledb-feedstock/pull/517
+#
+# This has led to problems since the release of aws-c-s3 1.0 and 1.1, as well as
+# the migrations through aws-crt-cpp 0.43.8. All these events all occurred in a
+# single day: 2026-10-02.
+#
+# https://github.com/conda-forge/aws-crt-cpp-feedstock/pull/684
+# https://github.com/conda-forge/aws-crt-cpp-feedstock/pull/685
+# https://github.com/conda-forge/aws-c-s3-feedstock/pull/478
+# https://github.com/conda-forge/aws-c-s3-feedstock/pull/479
+# https://github.com/conda-forge/aws-c-s3-feedstock/pull/480
+#
+# Fortunately, there were no tiledb-feedstock builds between 2026-09-25 and
+# 2026-10-25. Thus the tiledb binaries built before 2026-10-25 linked against
+# aws-c-s3 <1.0. And the tiledb binaries built after 2026-10-25 were linked
+# against aws-c-s3 1.1.3.
+#
+# The problem occurs when a recent tiledb conda binary (built against aws-c-s3
+# 1.1.3) is installed into a conda env where other dependencies requires
+# aws-c-s3 1.0. This breaks the tiledb binary.
+#
+# Fortunately aws-c-s3 is properly pinned by aws-crt-cpp, so problems only arose
+# when a given aws-crt-cpp version is built against multiple versions of
+# aws-c-s3, as was the case for aws-crt-cpp 0.43.8.
+if:
+  name: tiledb
+  subdir_in: linux-64
+  has_depends: aws-crt-cpp?( *)
+  not_has_depends: aws-c-s3
+  version: 2.30.1
+  timestamp_gt: 2026-10-25T00:00:00Z
+  timestamp_lt: 2026-11-12T00:00:00Z
+then:
+  - add_depends: aws-c-s3 >=1.1.3,<1.2.0a0
