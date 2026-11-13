@@ -23,8 +23,8 @@ then:
 # * Fixed: https://github.com/conda-forge/tiledb-feedstock/pull/517
 #
 # This has led to problems since the release of aws-c-s3 1.0 and 1.1, as well as
-# the migrations through aws-crt-cpp. All these events all occurred in a single
-# day: 2026-10-02.
+# the migrations through aws-crt-cpp 0.43.8. All these events all occurred in a
+# single day: 2026-10-02.
 #
 # https://github.com/conda-forge/aws-crt-cpp-feedstock/pull/684
 # https://github.com/conda-forge/aws-crt-cpp-feedstock/pull/685
@@ -41,24 +41,15 @@ then:
 # 1.1.3) is installed into a conda env where other dependencies requires
 # aws-c-s3 1.0. This breaks the tiledb binary.
 #
-# The repodata patches below restrict the tiledb binaries based on the aws-c-s3
-# they were linked against when built. No binaries were built against aws-c-s3
-# 1.0, so if this is needed, a dedicated branch will be needed to create these
-# backport builds.
+# Fortunately aws-c-s3 is properly pinned by aws-crt-cpp, so problems only arose
+# when a given aws-crt-cpp version is built against multiple versions of
+# aws-c-s3, as was the case for aws-crt-cpp 0.43.8.
 if:
   name: tiledb
   subdir_in: linux-64
   has_depends: aws-crt-cpp?( *)
   not_has_depends: aws-c-s3
-  timestamp_lt: 2026-10-25T00:00:00Z
-then:
-  - add_depends: aws-c-s3 <1.0.0a0
----
-if:
-  name: tiledb
-  subdir_in: linux-64
-  has_depends: aws-crt-cpp?( *)
-  not_has_depends: aws-c-s3
+  version: 2.30.1
   timestamp_gt: 2026-10-25T00:00:00Z
   timestamp_lt: 2026-11-12T00:00:00Z
 then:
