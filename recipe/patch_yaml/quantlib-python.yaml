@@ -1,0 +1,13 @@
+# quantlib changes its C++ ABI between minor releases but keeps the
+# libQuantLib.so.0 SONAME, and its run_exports used upper_bound='x'.
+# quantlib-python 1.43 then accepts quantlib 1.44 and fails at import:
+#   undefined symbol: _ZNK8QuantLib20AnalyticHestonEngine11Integration19numberOfEvaluationsEv
+# The run_exports were tightened to 'x.x' in quantlib-feedstock.
+if:
+  name: quantlib-python
+  has_depends: quantlib >=*,<2.0a0
+  timestamp_lt: 1792014842000
+then:
+  - tighten_depends:
+      name: quantlib
+      max_pin: "x.x"
