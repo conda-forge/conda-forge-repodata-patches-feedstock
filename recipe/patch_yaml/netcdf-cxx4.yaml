@@ -1,0 +1,19 @@
+# netcdf-cxx4 4.3.2 broke ABI, but builds before it had a run_export of
+# `<4.4`, so packages built against 4.3.0 or 4.3.1 need `<4.3.2` instead.
+# https://github.com/conda-forge/netcdf-cxx4-feedstock/issues/73
+if:
+  timestamp_lt: 2026-11-13T16:51:50Z
+  has_depends: netcdf-cxx4 >=4.3.[01],<4.4.0a0*
+then:
+  - tighten_depends:
+      name: netcdf-cxx4
+      upper_bound: 4.3.2
+---
+# old libradolan builds pinned `netcdf-cxx4 4.3.*`
+if:
+  timestamp_lt: 2026-11-13T16:51:50Z
+  has_depends: netcdf-cxx4 4.3.[*]
+then:
+  - replace_depends:
+      old: netcdf-cxx4 4.3.[*]
+      new: netcdf-cxx4 >=4.3,<4.3.2.0a0
