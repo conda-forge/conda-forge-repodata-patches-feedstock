@@ -1,0 +1,9 @@
+# epicscorelibs before 7.0.10.99.0.1 bundles its own copy of the EPICS
+# libraries, so it must not be installed together with epics-base.
+# https://github.com/conda-forge/epicscorelibs-feedstock/issues/43
+if:
+  name: epicscorelibs
+  version_lt: 7.0.10.99.0.1
+  timestamp_lt: 2026-11-18T09:47:33Z
+then:
+  - add_constrains: epics-base <0a0
