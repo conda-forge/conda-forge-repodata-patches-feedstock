@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../patch_yaml_model.json
+# From phlex 0.4.0, the public header core/registration_api.hpp constructs a
+# std::vector with std::from_range, which libstdc++ only provides from GCC 15.
+# Plugins built against these packages therefore need GCC 15, but the packages
+# did not constrain the compiler, so an environment locked to GCC 14 installed
+# them and then failed to compile its plugins. Fixed for build_number 1 in
+# https://github.com/conda-forge/phlex-feedstock/pull/21
+if:
+  name: phlex
+  subdir_in:
+    - linux-64
+    - linux-aarch64
+  version_ge: 0.4.0
+  version_le: 0.4.3
+  build_number: 0
+  timestamp_lt: 1794960057000
+then:
+  - add_constrains: libstdcxx-devel_${subdir} >=15
