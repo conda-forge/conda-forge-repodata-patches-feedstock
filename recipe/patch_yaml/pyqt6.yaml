@@ -1,0 +1,11 @@
+# PyQt6 uses Qt's private QMetaObjectBuilder API, which is not ABI stable across
+# Qt patch releases: Qt 6.11.2 added a member to QMetaMethodBuilder
+# (qt/qtbase@a598cc13db), so PyQt6 builds compiled against Qt <6.11.2 register
+# pyqtSlot(result=...) return types as void (or randomly) when run with 6.11.2.
+# See https://github.com/conda-forge/pyqt-feedstock/issues/201
+if:
+  name: pyqt6
+  version: 6.11.0
+  timestamp_lt: 2026-10-10T02:40:00Z
+then:
+  - add_depends: qt6-main <6.11.2

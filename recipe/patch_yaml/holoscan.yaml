@@ -1,6 +1,6 @@
 if:
   name: libholoscan-dev
-  timestamp_lt: 1761009475000
+  timestamp_lt: 2025-10-21T01:17:55Z
   version_ge: 3.3.0.1
   version_le: 3.7.0.1
   has_depends: yaml-cpp

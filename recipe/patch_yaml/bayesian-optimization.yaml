@@ -17,7 +17,7 @@
 #             _replace_pin(pinning, 'colorama >=0.4.6', record['depends'], record)
 if:
   name: bayesian-optimization
-  timestamp_lt: 1676994963000
+  timestamp_lt: 2023-02-21T15:56:03Z
   version: 1.4.1
 then:
   - replace_depends:
@@ -46,7 +46,7 @@ then:
 #             _replace_pin(pinning, 'colorama >=0.4.6', record['depends'], record)
 if:
   name: bayesian-optimization
-  timestamp_lt: 1676994963000
+  timestamp_lt: 2023-02-21T15:56:03Z
   version: 1.4.2
   build_number: 0
 then:

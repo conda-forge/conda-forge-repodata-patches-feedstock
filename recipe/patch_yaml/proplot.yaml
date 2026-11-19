@@ -12,7 +12,7 @@
 #         record["depends"] = depends
 if:
   name: proplot
-  timestamp_lt: 1634670686970
+  timestamp_lt: 2021-10-19T19:11:26.970Z
 then:
   - tighten_depends:
       name: matplotlib*

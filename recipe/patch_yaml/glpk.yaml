@@ -3,7 +3,7 @@
 #     if any(dep.startswith("glpk >=5") for dep in deps):
 #         _pin_looser(fn, record, "glpk", max_pin="x")
 if:
-  timestamp_lt: 1663795137000
+  timestamp_lt: 2022-09-21T21:18:57Z
   has_depends:
     - glpk >=5*
 then:

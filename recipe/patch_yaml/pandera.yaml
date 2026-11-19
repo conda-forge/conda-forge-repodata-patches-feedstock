@@ -3,7 +3,7 @@ if:
   name: pandera*
   version: 0.24.0
   build: hd8ed1ab_0
-  timestamp_lt: 1749288107000
+  timestamp_lt: 2025-06-07T09:21:47Z
 then:
   - replace_depends:
       old: pandera-base >=0.24.0,<0.24.1.0a0
@@ -16,7 +16,7 @@ if:
   name: pandera*
   version: 0.24.0
   build: hd8ed1ab_1
-  timestamp_lt: 1749288107000
+  timestamp_lt: 2025-06-07T09:21:47Z
 then:
   - replace_depends:
       old: pandera-base >=0.24.0,<0.24.1.0a0

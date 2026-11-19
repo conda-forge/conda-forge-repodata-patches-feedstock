@@ -3,7 +3,7 @@ if:
   name: conda-smithy
   version: "3.54.2"
   build_number: 0
-  timestamp_lt: 1769815887000
+  timestamp_lt: 2026-01-30T23:31:27Z
 then:
   - tighten_depends:
       name: py-rattler

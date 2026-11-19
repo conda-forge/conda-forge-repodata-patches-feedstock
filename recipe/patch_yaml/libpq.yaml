@@ -2,7 +2,7 @@
 # and https://github.com/conda-forge/postgresql-feedstock/issues/191
 if:
   name: libpq
-  timestamp_lt: 1701916042000
+  timestamp_lt: 2023-12-07T02:27:22Z
 then:
   - tighten_depends:
       name: openssl

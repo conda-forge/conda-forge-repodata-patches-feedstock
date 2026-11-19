@@ -11,7 +11,7 @@
 if:
   name: connexion
   version: "2*"
-  timestamp_le: 1680300000000
+  timestamp_le: 2023-03-31T22:00:00Z
 then:
   - replace_depends:
       old: flask >=1.0.4,<3
@@ -32,7 +32,7 @@ if:
   name: connexion
   version: "2.14.2"
   build_number: 0
-  timestamp_lt: 1684322706000
+  timestamp_lt: 2023-05-17T11:25:06Z
 then:
   - replace_depends:
       old: python >=3.6

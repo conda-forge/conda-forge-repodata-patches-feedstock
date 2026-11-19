@@ -2,7 +2,7 @@
 # Fixed in https://github.com/conda-forge/chromadb-feedstock/pull/51
 if:
   name: chromadb
-  timestamp_lt: 1727439944000
+  timestamp_lt: 2024-09-27T12:25:44Z
 then:
   - rename_depends:
       old: uvicorn

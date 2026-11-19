@@ -1,0 +1,13 @@
+# OpenVDB encodes the minor version in its exported namespace
+# (e.g. openvdb::v13_1, openvdb::v13_2). This can lead to ABI
+# incompatibilities between minor releases. The openvdb-feedstock
+# run_exports were updated from x to x.x pinning; this patch applies
+# the corrected dependency constraints to packages published before
+# that change.
+if:
+  has_depends: openvdb?( *)
+  timestamp_le: 2026-11-03T13:42:19+01:00
+then:
+  - tighten_depends:
+      name: openvdb
+      max_pin: 'x.x'

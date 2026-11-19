@@ -6,3 +6,19 @@ then:
       new: >-
         protobuf
         >=4.25.8,!=5.26.*,!=5.27.*,!=5.28.*,!=5.29.0,!=5.29.1,!=5.29.2,!=5.29.3,!=5.29.4,!=6.30.0,!=6.30.1,!=6.31.0,<7.0
+---
+if:
+  timestamp_le: 2026-11-12T15:14:31-07:00
+  artifact_in:
+    - databricks-sdk-0.73.0-pyhd8ed1ab_0.conda
+    - databricks-sdk-0.72.0-pyhd8ed1ab_0.conda
+    - databricks-sdk-0.71.0-pyhd8ed1ab_0.conda
+    - databricks-sdk-0.70.0-pyhd8ed1ab_0.conda
+    - databricks-sdk-0.69.0-pyhd8ed1ab_0.conda
+    - databricks-sdk-0.68.0-pyhd8ed1ab_0.conda
+then:
+  - replace_depends:
+      old: protobuf
+      new: >-
+        protobuf
+        >=4.25.8,!=5.26.*,!=5.27.*,!=5.28.*,!=5.29.0,!=5.29.1,!=5.29.2,!=5.29.3,!=5.29.4,!=6.30.0,!=6.30.1,!=6.31.0,<7.0

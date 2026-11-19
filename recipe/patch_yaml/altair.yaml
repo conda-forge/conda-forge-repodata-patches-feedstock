@@ -21,7 +21,7 @@ if:
   name: altair
   version_ge: "4.0.0"
   version_lt: "4.2.0"
-  timestamp_lt: 1673569551000
+  timestamp_lt: 2023-01-13T00:25:51Z
 then:
   - replace_depends:
       old: jsonschema
@@ -30,7 +30,7 @@ then:
 if:
   name: altair
   version: "4.2.0"
-  timestamp_lt: 1673569551000
+  timestamp_lt: 2023-01-13T00:25:51Z
 then:
   - replace_depends:
       old: jsonschema >=3.0
@@ -46,7 +46,7 @@ then:
 if:
   name: altair
   version: "5.0.1"
-  timestamp_lt: 1689170816000
+  timestamp_lt: 2023-07-12T14:06:56Z
 then:
   - replace_depends:
       old: jsonschema >=3.0
@@ -56,7 +56,7 @@ then:
 if:
   name: altair
   version_le: "5.5.0"
-  timestamp_lt: 1763123472000
+  timestamp_lt: 2025-11-14T12:31:12Z
 then:
   - tighten_depends:
       name: python

@@ -5,7 +5,7 @@
 #     record['depends'][i] = 'pythia8 >=8.240,<8.300.0a0'
 if:
   has_depends: pythia8
-  timestamp_lt: 1584264455759
+  timestamp_lt: 2020-03-15T09:27:35.759Z
 then:
   - replace_depends:
       old: pythia8

@@ -16,7 +16,7 @@ then:
 #     record["constrains"] = new_constrains
 if:
   name: libabseil
-  timestamp_le: 1661962873884
+  timestamp_le: 2022-08-31T16:21:13.884Z
 then:
   - add_constrains: libabseil-static ==99999999999
 ---
@@ -27,7 +27,7 @@ then:
 #     record["constrains"] = new_constrains
 if:
   name: libabseil-static
-  timestamp_le: 1661962873884
+  timestamp_le: 2022-08-31T16:21:13.884Z
 then:
   - add_constrains: libabseil ==99999999999
 ---
@@ -43,7 +43,7 @@ then:
 #     i = record["depends"].index("libabseil 20230125.0 cxx17*")
 #     record["depends"][i] = "libabseil 20230125 cxx17*"
 if:
-  timestamp_lt: 1684087258848
+  timestamp_lt: 2023-05-14T18:00:58.848Z
   has_depends: libabseil 20230125.0 cxx17[*]*
 then:
   - replace_depends:
@@ -60,7 +60,7 @@ then:
 if:
   name: libabseil-tests
   version_in: ["20230125.2", "20230125.3"]
-  timestamp_lt: 1691710285000
+  timestamp_lt: 2023-08-10T23:31:25Z
 then:
   - replace_depends:
       old: gtest

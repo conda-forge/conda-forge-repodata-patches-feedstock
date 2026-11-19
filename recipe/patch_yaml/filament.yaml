@@ -1,0 +1,22 @@
+# filament changes its ABI in patch releases (e.g. 1.77.2 removed
+# filament::Material::Builder::package(void const*, size_t) and
+# utils::EntityManager::create/destroy(size_t, Entity*), google/filament#10410),
+# but its run_exports only pinned x.x. Downstream builds made against an older
+# patch release then fail to import with an undefined symbol (open3d 0.20.0).
+# Pin everything built before the run_export fix to the patch release it was
+# built against, like the fixed run_export (conda-forge/filament-feedstock#28).
+if:
+  has_depends: filament?( *)
+  timestamp_le: 1793245951000
+then:
+  - tighten_depends:
+      name: filament
+      max_pin: 'x.x.x'
+---
+if:
+  has_depends: filament-gltfio?( *)
+  timestamp_le: 1793245951000
+then:
+  - tighten_depends:
+      name: filament-gltfio
+      max_pin: 'x.x.x'

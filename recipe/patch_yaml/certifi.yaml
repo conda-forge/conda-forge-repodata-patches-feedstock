@@ -1,0 +1,13 @@
+# Allow Python 3.10 to use the refreshed CA bundle required by #1289.
+# Upstream certifi 2026.10.19 supports Python >=3.7:
+# https://github.com/certifi/python-certifi/blob/2026.10.19/setup.py
+if:
+  name: certifi
+  subdir_in: noarch
+  artifact_in: certifi-2026.10.19-pyhd8ed1ab_0.conda
+  timestamp_le: 2026-10-20T09:20:39.424Z
+  has_depends: python >=3.11
+then:
+  - replace_depends:
+      old: python >=3.11
+      new: python >=3.10

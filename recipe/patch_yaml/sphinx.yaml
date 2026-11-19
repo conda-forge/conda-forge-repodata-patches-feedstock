@@ -22,7 +22,7 @@ then:
 if:
   name: sphinx
   version: "6.0.0"
-  timestamp_lt: 1672386194000
+  timestamp_lt: 2022-12-30T07:43:14Z
 then:
   - replace_depends:
       old: docutils >=0.14,<0.20

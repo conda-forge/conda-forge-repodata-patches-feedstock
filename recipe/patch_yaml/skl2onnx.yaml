@@ -11,7 +11,7 @@
 if:
   name: skl2onnx
   version_lt: "1.14.1"
-  timestamp_lt: 1686557425000
+  timestamp_lt: 2023-06-12T08:10:25Z
 then:
   - replace_depends:
       old: onnx >=1.2.1

@@ -3,7 +3,7 @@ if:
   name: aiohttp-jinja2
   version: "1.6"
   build: pyhd8ed1ab_0
-  timestamp_lt: 1702421347000
+  timestamp_lt: 2023-12-12T22:49:07Z
 then:
   - replace_depends:
       old: aiohttp >=3.6.3

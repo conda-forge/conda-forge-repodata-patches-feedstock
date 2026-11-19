@@ -16,6 +16,6 @@ if:
   version: "1.22.0"
   build_number: 1
   has_depends: "libjpeg-turbo*"
-  timestamp_lt: 1678151067000
+  timestamp_lt: 2023-03-07T01:04:27Z
 then:
   - add_constrains: "jpeg <0.0.0a"

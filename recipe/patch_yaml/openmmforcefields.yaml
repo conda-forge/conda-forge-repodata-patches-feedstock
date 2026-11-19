@@ -3,7 +3,7 @@
 if:
   subdir_in: noarch
   name: openmmforcefields
-  timestamp_lt: 1714412049000
+  timestamp_lt: 2024-04-29T17:34:09Z
   version_lt: 0.12.0
 then:
   - replace_depends:

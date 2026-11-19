@@ -24,7 +24,7 @@ if:
   name: numpydoc
   version_ge: 1.7.0
   version_le: 1.7.1
-  timestamp_le: 1717504915000
+  timestamp_le: 2024-06-04T12:41:55Z
 then:
   - add_depends: tomli >=1.1.0
   - replace_depends:

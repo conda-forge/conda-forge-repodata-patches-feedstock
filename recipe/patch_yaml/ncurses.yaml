@@ -2,7 +2,7 @@
 # if record.get('timestamp', 0) < 1641975772000:
 #     _pin_looser(fn, record, "ncurses", max_pin="x")
 if:
-  timestamp_lt: 1641975772000
+  timestamp_lt: 2022-01-12T08:22:52Z
 then:
   - loosen_depends:
       name: ncurses

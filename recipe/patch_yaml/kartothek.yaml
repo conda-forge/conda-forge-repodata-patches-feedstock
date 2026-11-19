@@ -6,7 +6,7 @@
 #         record['depends'][i] = 'zstandard <0.15'
 if:
   name: "kartothek"
-  timestamp_lt: 1611565264000
+  timestamp_lt: 2021-01-25T09:01:04Z
   has_depends: "zstandard"
 then:
   - replace_depends:

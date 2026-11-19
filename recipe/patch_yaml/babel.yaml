@@ -13,7 +13,7 @@ if:
   name: babel
   version_in: ["2.12.0", "2.12.1"]
   build_number: 0
-  timestamp_lt: 1677771669000
+  timestamp_lt: 2023-03-02T15:41:09Z
 then:
   - replace_depends:
       old: python >=3.6

@@ -1,0 +1,10 @@
+# We made a special cuda-arch variant for package managers without __cuda_arch.
+# We need to disallow managers with __cuda_arch from using it.
+if:
+  subdir_in: noarch
+  artifact_in:
+    - cuda-arch-7.5-cuda13_h4510743_2.conda
+    - cuda-arch-5.0-cuda12_h0b522ae_2.conda
+  timestamp_lt: 1792432683000
+then:
+  - add_constrains: __cuda_arch <0.0a0

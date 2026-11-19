@@ -10,7 +10,7 @@
 #     _replace_pin("tzlocal >=2.0,<3.0", "tzlocal >=2.0,!=3.*", record["depends"], record)
 if:
   name: apscheduler
-  timestamp_lt: 1689345788000
+  timestamp_lt: 2023-07-14T14:43:08Z
   version_ge: "3.8.1"
   version_le: "3.10.1"
 then:

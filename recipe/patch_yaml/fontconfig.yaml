@@ -12,7 +12,7 @@
 #             pass
 if:
   subdir_in: ["osx-64", "osx-arm64"]
-  timestamp_lt: 1646796600000
+  timestamp_lt: 2022-03-09T03:30:00Z
   has_depends: fontconfig >=2.13*
   not_has_depends: fontconfig >=2.13.96*
 then:

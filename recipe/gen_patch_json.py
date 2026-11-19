@@ -15,7 +15,6 @@ from functools import partial
 
 
 import requests
-import zstandard
 from conda_index.index import _apply_instructions
 from get_license_family import get_license_family
 from packaging.version import parse as parse_version
@@ -25,6 +24,7 @@ from patch_yaml_utils import (
     pad_list,
     patch_yaml_edit_index,
 )
+from repodata_io import copy_repodata, load_repodata
 from show_diff import show_record_diffs
 
 CHANNEL_NAME = "conda-forge"
@@ -36,11 +36,17 @@ SUBDIRS = (
     "linux-armv7l",
     "linux-aarch64",
     "linux-ppc64le",
+    "linux-riscv64",
     "osx-64",
     "osx-arm64",
     "win-32",
     "win-64",
+    "win-arm64",
 )
+# Each worker peaks at ~2.7-3 GiB of memory for linux-64 (as of 2026-11), so running
+# one worker per CPU on the 4 CPU / 16 GB GitHub Actions runner can be OOM killed
+# once the other large subdirs are processed alongside it.
+MAX_WORKERS = 3
 
 REMOVALS = {
     "noarch": (
@@ -568,7 +574,16 @@ def _gen_new_index_per_key(index, subdir, index_key="", verbose=False):
             if record_name == "python" and "pypy" not in record["build"]:
                 # remove the track_features key
                 if "track_features" in record:
-                    record["track_features"] = None
+                    list_of_features = record["track_features"].split()
+                    list_of_features = [
+                        trfeat
+                        for trfeat in list_of_features
+                        if not trfeat.startswith("vc")
+                    ]
+                    if list_of_features:
+                        record["track_features"] = " ".join(list_of_features)
+                    else:
+                        record["track_features"] = None
                 # add a vc dependency
                 if not any(d.startswith("vc") for d in record["depends"]):
                     depends = record["depends"]
@@ -908,7 +923,7 @@ def _add_removals(instructions, subdir, package_removal_keeplist=None):
                     continue
             currvals.append(pkg_name)
 
-    instructions["remove"].extend(tuple(set(currvals)))
+    instructions["remove"].extend(sorted(set(currvals)))
 
 
 def _gen_patch_instructions(
@@ -978,14 +993,11 @@ def _do_subdir(subdir, verbose=False):
         ref_url = f"{BASE_URL}/{subdir}/repodata.json.zst"
         urllib.request.urlretrieve(ref_url, ref_repodata_path)
 
-        with zstandard.open(raw_repodata_path) as fh:
-            repodata = json.load(fh)
-        with zstandard.open(ref_repodata_path) as fh:
-            ref_repodata = json.load(fh)
-
-        # Copying large python dictionaries is slow, just reload the repodata
-        with zstandard.open(raw_repodata_path) as fh:
-            new_index = json.load(fh)
+        # Strings are shared between repodata, new_index and ref_repodata
+        # through this memo, which greatly reduces peak memory.
+        memo = {}
+        repodata = load_repodata(raw_repodata_path, memo)
+        new_index = copy_repodata(repodata)
 
         prefix_dir = os.getenv("PREFIX", "tmp")
         prefix_subdir = join(prefix_dir, subdir)
@@ -999,6 +1011,8 @@ def _do_subdir(subdir, verbose=False):
         instructions = _gen_patch_instructions(
             repodata, new_index, subdir, verbose=verbose
         )
+        # Free some memory, although most of it is already deduped
+        del new_index
 
         # Step 2c. Output this to $PREFIX so that we bundle the JSON files.
         patch_instructions_path = join(prefix_subdir, "patch_instructions.json")
@@ -1009,6 +1023,8 @@ def _do_subdir(subdir, verbose=False):
 
         # Step 3. Show the diff
         new_repodata = _apply_instructions(subdir, repodata, instructions)
+        ref_repodata = load_repodata(ref_repodata_path, memo)
+        del memo  # no need to keep this around anymore
         return subdir, show_record_diffs(
             subdir, ref_repodata, new_repodata, False, group_diffs=True
         )
@@ -1021,8 +1037,9 @@ def main():
     else:
         subdirs = SUBDIRS
 
+    cpu_count = int(os.environ.get("CPU_COUNT", os.cpu_count()))
     with ProcessPoolExecutor(
-        max_workers=int(os.environ["CPU_COUNT"]) if "CPU_COUNT" in os.environ else None
+        max_workers=min(cpu_count, MAX_WORKERS), max_tasks_per_child=1
     ) as exc:
         futs = [exc.submit(_do_subdir, subdir) for subdir in subdirs]
         for fut in tqdm(

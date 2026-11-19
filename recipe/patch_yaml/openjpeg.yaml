@@ -3,7 +3,7 @@
 #     if any(dep.startswith("openjpeg >=2.4") for dep in deps):
 #         _pin_looser(fn, record, "openjpeg", max_pin="x")
 if:
-  timestamp_lt: 1663795137000
+  timestamp_lt: 2022-09-21T21:18:57Z
   has_depends:
     - openjpeg >=2.4*
 then:

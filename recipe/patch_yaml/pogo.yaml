@@ -2,7 +2,7 @@ if:
   name: pogo
   version_ge: 9.9.0
   version_le: 9.9.2
-  timestamp_le: 1727768204000
+  timestamp_le: 2024-10-01T07:36:44Z
 then:
   - replace_depends:
       old: openjdk >=17

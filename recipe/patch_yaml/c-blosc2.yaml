@@ -3,7 +3,7 @@
 # 2.0-2.12 pin <2.13
 if:
   has_depends: c-blosc2 >=2.[0123456789].*
-  timestamp_lt: 1712848295774
+  timestamp_lt: 2024-04-11T15:11:35.774Z
 then:
   - tighten_depends:
       name: c-blosc2
@@ -11,7 +11,7 @@ then:
 ---
 if:
   has_depends: c-blosc2 >=2.1[012].*
-  timestamp_lt: 1712848295774
+  timestamp_lt: 2024-04-11T15:11:35.774Z
 then:
   - tighten_depends:
       name: c-blosc2
@@ -20,7 +20,7 @@ then:
 # next range: 2.13.0 - 2.14.3
 if:
   has_depends: c-blosc2 >=2.13.*
-  timestamp_lt: 1712848295774
+  timestamp_lt: 2024-04-11T15:11:35.774Z
 then:
   - tighten_depends:
       name: c-blosc2
@@ -28,7 +28,7 @@ then:
 ---
 if:
   has_depends: c-blosc2 >=2.14.[0-3]*
-  timestamp_lt: 1712848295774
+  timestamp_lt: 2024-04-11T15:11:35.774Z
 then:
   - tighten_depends:
       name: c-blosc2
@@ -37,7 +37,7 @@ then:
 # minor pin for 2.14.4+, which is in run_exports going forward
 if:
   has_depends: c-blosc2 >=2.14.4,*
-  timestamp_lt: 1712848295774
+  timestamp_lt: 2024-04-11T15:11:35.774Z
 then:
   - tighten_depends:
       name: c-blosc2

@@ -694,38 +694,74 @@
           "title": "Not Timestamp"
         },
         "not_timestamp_lt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
+            }
+          ],
           "default": null,
           "description": "Negated condition: 'timestamp' value to compare against with `lt` operator",
-          "minimum": 0,
-          "title": "Not Timestamp Lt",
-          "type": "integer"
+          "title": "Not Timestamp Lt"
         },
         "not_timestamp_le": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
+            }
+          ],
           "default": null,
           "description": "Negated condition: 'timestamp' value to compare against with `le` operator",
-          "minimum": 0,
-          "title": "Not Timestamp Le",
-          "type": "integer"
+          "title": "Not Timestamp Le"
         },
         "not_timestamp_gt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
+            }
+          ],
           "default": null,
           "description": "Negated condition: 'timestamp' value to compare against with `gt` operator",
-          "minimum": 0,
-          "title": "Not Timestamp Gt",
-          "type": "integer"
+          "title": "Not Timestamp Gt"
         },
         "not_timestamp_ge": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
+            }
+          ],
           "default": null,
           "description": "Negated condition: 'timestamp' value to compare against with `ge` operator",
-          "minimum": 0,
-          "title": "Not Timestamp Ge",
-          "type": "integer"
+          "title": "Not Timestamp Ge"
         },
         "not_timestamp_eq": {
           "anyOf": [
             {
               "minimum": 0,
               "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
             },
             {
               "minLength": 1,
@@ -741,6 +777,10 @@
             {
               "minimum": 0,
               "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
             },
             {
               "minLength": 1,
@@ -1538,38 +1578,74 @@
           "title": "Timestamp"
         },
         "timestamp_lt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
+            }
+          ],
           "default": null,
           "description": "'timestamp' value to compare against with `lt` operator",
-          "minimum": 0,
-          "title": "Timestamp Lt",
-          "type": "integer"
+          "title": "Timestamp Lt"
         },
         "timestamp_le": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
+            }
+          ],
           "default": null,
           "description": "'timestamp' value to compare against with `le` operator",
-          "minimum": 0,
-          "title": "Timestamp Le",
-          "type": "integer"
+          "title": "Timestamp Le"
         },
         "timestamp_gt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
+            }
+          ],
           "default": null,
           "description": "'timestamp' value to compare against with `gt` operator",
-          "minimum": 0,
-          "title": "Timestamp Gt",
-          "type": "integer"
+          "title": "Timestamp Gt"
         },
         "timestamp_ge": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
+            }
+          ],
           "default": null,
           "description": "'timestamp' value to compare against with `ge` operator",
-          "minimum": 0,
-          "title": "Timestamp Ge",
-          "type": "integer"
+          "title": "Timestamp Ge"
         },
         "timestamp_eq": {
           "anyOf": [
             {
               "minimum": 0,
               "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
             },
             {
               "minLength": 1,
@@ -1585,6 +1661,10 @@
             {
               "minimum": 0,
               "type": "integer"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
             },
             {
               "minLength": 1,

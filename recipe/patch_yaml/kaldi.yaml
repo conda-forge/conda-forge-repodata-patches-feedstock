@@ -2,7 +2,7 @@
 # https://github.com/conda-forge/kaldi-feedstock/pull/66
 if:
   name: kaldi
-  timestamp_lt: 1770619150000
+  timestamp_lt: 2026-02-09T06:39:10Z
   # works for both CUDA 11&12 builds; CPU builds don't have this
   has_depends: magma
 then:

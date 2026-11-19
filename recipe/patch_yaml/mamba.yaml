@@ -115,7 +115,7 @@ if:
     - 1.2.0
     - 1.3.0
     - 1.3.1
-  timestamp_lt: 1678096271000
+  timestamp_lt: 2023-03-06T09:51:11Z
 then:
   - replace_depends:
       old: conda >=4.8,<23.4
@@ -137,7 +137,7 @@ if:
   name: mamba
   version_ge: 1.5.2
   version_le: 1.5.3
-  timestamp_lt: 1701773340000
+  timestamp_lt: 2023-12-05T10:49:00Z
 then:
   - replace_depends:
       old: conda >=23.9,<24
@@ -148,7 +148,7 @@ then:
 if:
   name: mamba
   version_in: ["1.5.7", "1.5.8"]
-  timestamp_lt: 1727886892000  # 2024-10-02
+  timestamp_lt: 2024-10-02T16:34:52Z
 then:
   - replace_depends:
       old: "conda >=24,<25"
@@ -161,8 +161,46 @@ then:
 if:
   name: mamba
   version_in: ["1.5.9", "1.5.10", "1.5.11"]
-  timestamp_lt: 1735926001000  # 2025-01-03 17:40 UTC
+  timestamp_lt: 2025-01-03T17:40:01Z
 then:
   - replace_depends:
       old: "conda >=24,<25"
       new: "conda >=24,<24.11.0"
+---
+# Require refreshed CA bundles without replacing existing requirements.
+if:
+  name_in:
+    - libmamba
+    - mamba
+  timestamp_le: 2026-10-15T09:43:22.332Z
+  not_has_depends: ca-certificates?( *)
+  not_has_constrains: ca-certificates?( *)
+then:
+  - add_constrains: ca-certificates >=2026.10.19
+---
+# Mamba 1.x delegates explicit installs to conda Python downloads.
+# https://github.com/mamba-org/mamba/blob/771663cd9bfa1a9155c8175d29b243b8e9516a77/mamba/mamba/mamba.py#L313
+if:
+  name: mamba
+  version_lt: "2.0"
+  timestamp_le: 2026-10-15T09:43:22.332Z
+  not_has_depends: certifi?( *)
+  not_has_constrains: certifi?( *)
+then:
+  - add_constrains: certifi >=2026.10.19
+---
+# simdjson 5.0.7 changed ABI without changing SONAME 34.
+# simdjson 5.0.8 uses SONAME 35, so these existing binaries cannot use it either.
+# https://github.com/simdjson/simdjson/issues/2989
+# https://github.com/conda-forge/mamba-feedstock/issues/409
+if:
+  name: libmamba
+  has_depends: simdjson >=5.0.*,<5.1.0a0
+  timestamp_le: 2026-10-25T19:05:40.545Z
+then:
+  - replace_depends:
+      old: simdjson >=5.0.4,<5.1.0a0
+      new: simdjson >=5.0.4,<5.0.7a0
+  - replace_depends:
+      old: simdjson >=5.0.5,<5.1.0a0
+      new: simdjson >=5.0.5,<5.0.7a0

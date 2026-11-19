@@ -3,6 +3,6 @@
 #     record["depends"].append("glibmm-2.4 >=2.58.1")
 if:
   name: nordugrid-arc
-  timestamp_lt: 1666690884000
+  timestamp_lt: 2022-10-25T09:41:24Z
 then:
   - add_depends: glibmm-2.4 >=2.58.1

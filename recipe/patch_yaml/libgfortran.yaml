@@ -1,5 +1,5 @@
 if:
-  timestamp_lt: 1743886623000
+  timestamp_lt: 2025-04-05T20:57:03Z
   has_depends: libgfortran 5.*
 then:
   - replace_depends:

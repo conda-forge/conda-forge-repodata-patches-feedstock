@@ -14,7 +14,7 @@
 #         record["depends"].append("bottleneck")
 if:
   name: calliope
-  timestamp_le: 1673531497000
+  timestamp_le: 2023-01-12T13:51:37Z
   build_number: 0
   version: "0.6.9"
 then:
@@ -39,7 +39,7 @@ then:
 #             )
 if:
   name: calliope
-  timestamp_le: 1677053718000
+  timestamp_le: 2023-02-22T08:15:18Z
   version_lt: "0.6.10"
 then:
   - replace_depends:
@@ -48,7 +48,7 @@ then:
 ---
 if:
   name: calliope
-  timestamp_le: 1677053718000
+  timestamp_le: 2023-02-22T08:15:18Z
   version: "0.6.10"
   build_number: 0
 then:

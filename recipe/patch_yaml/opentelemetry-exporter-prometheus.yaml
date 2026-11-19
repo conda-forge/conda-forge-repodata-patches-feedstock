@@ -2,7 +2,7 @@ if:
   name: opentelemetry-exporter-prometheus
   version: 0.56b0
   build_number: 0
-  timestamp_lt: 1754204438000
+  timestamp_lt: 2025-08-03T07:00:38Z
 then:
   - replace_depends:
       old: opentelemetry-sdk >=1.35.0

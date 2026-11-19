@@ -14,7 +14,7 @@ if:
   name: tensorly
   version_in: ["0.8.0", "0.8.1"]
   build_number: 0
-  timestamp_lt: 1678253357320
+  timestamp_lt: 2023-03-08T05:29:17.320Z
 then:
   - replace_depends:
       old: "python >=3.6"

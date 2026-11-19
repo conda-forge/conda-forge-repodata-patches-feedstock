@@ -6,7 +6,7 @@
 # https://github.com/conda-forge/azure-storage-queues-cpp-feedstock/pull/6
 if:
   has_depends: azure-storage-queues-cpp*
-  timestamp_lt: 1709048999000
+  timestamp_lt: 2024-02-27T15:49:59Z
 then:
   - tighten_depends:
       name: azure-storage-queues-cpp

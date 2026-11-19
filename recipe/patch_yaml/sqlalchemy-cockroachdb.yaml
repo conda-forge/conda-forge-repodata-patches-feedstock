@@ -11,7 +11,7 @@ if:
   name: sqlalchemy-cockroachdb
   version: "2.0.0"
   build_number: 0
-  timestamp_le: 1680784303548
+  timestamp_le: 2023-04-06T12:31:43.548Z
 then:
   - replace_depends:
       old: sqlalchemy <2.0.0

@@ -1,0 +1,8 @@
+if:
+  subdir_in: noarch
+  artifact_in:
+    - anaconda-cli-base-0.8.0-pyhcf101f3_0.conda
+    - anaconda-cli-base-0.8.1-pyhcf101f3_0.conda
+  timestamp_lt: 2026-03-02T18:47:37Z
+then:
+  - add_depends: pydantic >=2.12

@@ -4,7 +4,7 @@ if:
   name: grayskull
   version_eq: "2.3.0"
   build_number_eq: 0
-  timestamp_lt: 1723758527000
+  timestamp_lt: 2024-08-15T21:48:47Z
 then:
   - replace_depends:
       old: semver
@@ -16,7 +16,7 @@ if:
   name: grayskull
   version_ge: "2.3.1"
   version_lt: "2.6.0"
-  timestamp_lt: 1723758527000
+  timestamp_lt: 2024-08-15T21:48:47Z
 then:
   - replace_depends:
       old: semver >=3.0.0,<4.0.0
@@ -28,7 +28,7 @@ if:
   name: grayskull
   version_eq: "2.6.0"
   build_number_eq: 0
-  timestamp_lt: 1723758527000
+  timestamp_lt: 2024-08-15T21:48:47Z
 then:
   - replace_depends:
       old: semver >=3.0.0,<4.0.0

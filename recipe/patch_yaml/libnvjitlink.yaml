@@ -1,7 +1,7 @@
 # Relax cuda-version lower bound
 if:
   name: libnvjitlink
-  timestamp_lt: 1751470107000
+  timestamp_lt: 2025-07-02T15:28:27Z
   version: 12.1.105
 then:
   - replace_depends:
@@ -10,7 +10,7 @@ then:
 ---
 if:
   name: libnvjitlink
-  timestamp_lt: 1751470107000
+  timestamp_lt: 2025-07-02T15:28:27Z
   version: 12.2.140
 then:
   - replace_depends:
@@ -19,7 +19,7 @@ then:
 ---
 if:
   name: libnvjitlink
-  timestamp_lt: 1751470107000
+  timestamp_lt: 2025-07-02T15:28:27Z
   version: 12.3.101
 then:
   - replace_depends:
@@ -28,7 +28,7 @@ then:
 ---
 if:
   name: libnvjitlink
-  timestamp_lt: 1751470107000
+  timestamp_lt: 2025-07-02T15:28:27Z
   version: 12.4.127
 then:
   - replace_depends:
@@ -37,7 +37,7 @@ then:
 ---
 if:
   name: libnvjitlink
-  timestamp_lt: 1751470107000
+  timestamp_lt: 2025-07-02T15:28:27Z
   version: 12.5.40
 then:
   - replace_depends:
@@ -46,9 +46,26 @@ then:
 ---
 if:
   name: libnvjitlink
-  timestamp_lt: 1751470107000
+  timestamp_lt: 2025-07-02T15:28:27Z
   version: 12.5.82
 then:
   - replace_depends:
       old: cuda-version*
       new: cuda-version>=12.0.0,<12.6.0a0
+---
+# See https://github.com/conda-forge/libnvjitlink-feedstock/pull/34
+if:
+  name: libnvjitlink-dev
+  version_in: [13.1.115, 13.1.80]
+then:
+  - replace_depends:
+      old: cuda-version*
+      new: cuda-version>=13.0,<13.2.0a0
+---
+if:
+  name: libnvjitlink-static
+  version_in: [13.1.115, 13.1.80]
+then:
+  - replace_depends:
+      old: cuda-version*
+      new: cuda-version>=13.0,<13.2.0a0

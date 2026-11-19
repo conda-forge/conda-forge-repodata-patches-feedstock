@@ -2,7 +2,7 @@
 if:
   name: prefect
   version_lt: "2.11.0"
-  timestamp_lt: 1722325657000
+  timestamp_lt: 2024-07-30T07:47:37Z
 then:
   - replace_depends:
       old: pydantic >=1.8.2

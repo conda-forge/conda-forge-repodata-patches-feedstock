@@ -3,7 +3,7 @@
 # alongside the new plugin implementation.
 if:
   artifact_in: anaconda-cloud-cli-0.1.0-pyhd8ed1ab_0.conda
-  timestamp_lt: 1724944679000
+  timestamp_lt: 2024-08-29T15:17:59Z
 then:
   - replace_depends:
       old: anaconda-cli-base
@@ -14,7 +14,7 @@ then:
 ---
 if:
   artifact_in: anaconda-cloud-cli-0.2.0-pyhd8ed1ab_0.conda
-  timestamp_lt: 1724944679000
+  timestamp_lt: 2024-08-29T15:17:59Z
 then:
   - replace_depends:
       old: anaconda-cli-base >=0.2

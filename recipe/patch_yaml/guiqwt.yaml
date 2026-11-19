@@ -19,7 +19,7 @@ then:
 if:
   name: guiqwt
   version_le: 3.0.4
-  timestamp_lt: 1745676356000
+  timestamp_lt: 2025-04-26T14:05:56Z
 then:
   - replace_depends:
       old: pythonqwt
@@ -28,7 +28,7 @@ then:
 if:
   name: guiqwt
   version_le: 3.0.7
-  timestamp_lt: 1745676356000
+  timestamp_lt: 2025-04-26T14:05:56Z
 then:
   - replace_depends:
       old: pythonqwt >=0.5.0
@@ -36,7 +36,7 @@ then:
 ---
 if:
   name: guiqwt
-  timestamp_lt: 1745676356000
+  timestamp_lt: 2025-04-26T14:05:56Z
   version_le: 4.4.5
 then:
   - replace_depends:

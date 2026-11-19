@@ -7,7 +7,7 @@
 #             _replace_pin(dep, f"{dep},<2.0a0", record.get("depends", []), record)
 if:
   name: qcportal
-  timestamp_lt: 1691162578000
+  timestamp_lt: 2023-08-04T15:22:58Z
 then:
   - replace_depends:
       old: pydantic?( *)
@@ -19,7 +19,7 @@ then:
 # https://github.com/conda-forge/qcfractal-feedstock/pull/52
 if:
   name: qcportal
-  timestamp_lt: 1727210616000
+  timestamp_lt: 2024-09-24T20:43:36Z
 then:
   - replace_depends:
       old: apsw

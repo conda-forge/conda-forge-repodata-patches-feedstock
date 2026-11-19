@@ -18,7 +18,7 @@
 #                 record["depends"][i] = record["depends"][i] + ",<0.7.0.a0"
 if:
   name: des-pizza-cutter-metadetect
-  timestamp_le: 1651245289563
+  timestamp_le: 2022-04-29T15:14:49.563Z
 then:
   - tighten_depends:
       name: metadetect

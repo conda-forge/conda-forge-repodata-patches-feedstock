@@ -3,7 +3,7 @@
 # see https://github.com/conda-forge/astunparse-feedstock/pull/15
 if:
   name: astunparse
-  timestamp_lt: 1728568536000
+  timestamp_lt: 2024-10-10T13:55:36Z
   version_eq: 1.6.3
   build_number_lt: 2
 then:
@@ -11,7 +11,7 @@ then:
 ---
 if:
   name: astunparse
-  timestamp_lt: 1728568536000
+  timestamp_lt: 2024-10-10T13:55:36Z
   version_lt: 1.6.3
 then:
   - add_depends: wheel >=0.23.0,<1.0

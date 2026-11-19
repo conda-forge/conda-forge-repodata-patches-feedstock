@@ -1,0 +1,10 @@
+# Prevent ABI breaks when dlopening MKL with old nvmath-python versions
+if:
+  timestamp_lt: 2026-04-28T17:59:20Z
+  version_lt: 0.9.0
+  name: nvmath-python-cpu
+  subdir_in:
+    - linux-64
+    - win-64
+then:
+  - add_constrains: mkl <2026

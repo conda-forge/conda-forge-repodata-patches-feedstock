@@ -10,7 +10,7 @@
 #         record["depends"] = new_depends
 if:
   name: dask-cuda
-  timestamp_le: 1645130882435
+  timestamp_le: 2022-02-17T20:48:02.435Z
 then:
   - add_depends:
       - click ==8.0.4
@@ -27,7 +27,7 @@ then:
 #         record["depends"] = new_depends
 if:
   name: dask-cuda
-  timestamp_le: 1676966400000
+  timestamp_le: 2023-02-21T08:00:00Z
 then:
   - tighten_depends:
       name: pynvml*
@@ -45,8 +45,8 @@ then:
 #         )
 if:
   name: dask-cuda
-  timestamp_le: 1677122851413
-  timestamp_ge: 1670873028930
+  timestamp_le: 2023-02-23T03:27:31.413Z
+  timestamp_ge: 2022-12-12T19:23:48.930Z
 then:
   - replace_depends:
       old: pandas >=1.0

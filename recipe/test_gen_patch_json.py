@@ -126,3 +126,50 @@ def test_add_python_abi():
     }
     add_python_abi(exact_record, "osx-64")
     assert exact_record["constrains"] == []
+
+
+def test_load_and_copy_repodata(tmp_path):
+    import json
+
+    import zstandard
+
+    from repodata_io import copy_repodata, load_repodata
+
+    data = {
+        "info": {"subdir": "linux-64"},
+        "packages": {
+            "a-1-0.tar.bz2": {
+                "name": "a",
+                "depends": ["python >=3.10", "numpy"],
+                "extra_depends": {"x": ["python >=3.10"]},
+                "size": 1,
+            },
+            "b-1-0.tar.bz2": {"name": "b", "depends": ["python >=3.10"], "size": 2},
+        },
+        "packages.conda": {},
+    }
+    path = tmp_path / "repodata.json.zst"
+    path.write_bytes(zstandard.compress(json.dumps(data).encode()))
+
+    memo = {}
+    repodata = load_repodata(str(path), memo)
+    ref_repodata = load_repodata(str(path), memo)
+    assert repodata == data
+    assert ref_repodata == data
+
+    # equal strings are shared, within and across loaded objects
+    pkgs, ref_pkgs = repodata["packages"], ref_repodata["packages"]
+    dep = pkgs["a-1-0.tar.bz2"]["depends"][0]
+    assert dep is pkgs["b-1-0.tar.bz2"]["depends"][0]
+    assert dep is pkgs["a-1-0.tar.bz2"]["extra_depends"]["x"][0]
+    assert dep is ref_pkgs["a-1-0.tar.bz2"]["depends"][0]
+
+    new_index = copy_repodata(repodata)
+    assert new_index == data
+    rec = new_index["packages"]["a-1-0.tar.bz2"]
+    rec["depends"].append("libfoo")
+    rec["extra_depends"]["x"].append("libfoo")
+    rec["name"] = "c"
+    new_index["packages"]["d-1-0.tar.bz2"] = {}
+    # mutating the copy does not touch the original
+    assert repodata == data

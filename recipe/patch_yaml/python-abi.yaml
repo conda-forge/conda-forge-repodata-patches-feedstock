@@ -1,9 +1,29 @@
+# for https://github.com/conda-forge/python_abi-feedstock/pull/33
+if:
+  name_in:
+    - python_abi
+  build: "*cp315t"
+  timestamp_lt: 2026-09-01T22:33:16Z
+then:
+  - add_track_features:
+      - freethreading
+---
+# for https://github.com/conda-forge/python_abi-feedstock/pull/33
+if:
+  name_in:
+    - python_abi
+  build: "*cp314t"
+  timestamp_lt: 2026-09-01T22:33:16Z
+then:
+  - add_track_features:
+      - freethreading
+---
 # backport https://github.com/conda-forge/python_abi-feedstock/pull/28
 if:
   name_in:
     - python_abi
   build: "*cp313t"
-  timestamp_lt: 1736113896000
+  timestamp_lt: 2025-01-05T21:51:36Z
 then:
   - add_track_features:
       - freethreading

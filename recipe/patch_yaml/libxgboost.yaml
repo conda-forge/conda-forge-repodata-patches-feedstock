@@ -1,7 +1,7 @@
 if:
   name: libxgboost
-  timestamp_gt: 1697007600000
-  timestamp_lt: 1697180400000
+  timestamp_gt: 2023-10-11T07:00:00Z
+  timestamp_lt: 2023-10-13T07:00:00Z
   version: "1.7.6"
   build_number: 4
   build: "cuda118*"

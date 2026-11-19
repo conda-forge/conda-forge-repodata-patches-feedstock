@@ -2,7 +2,7 @@ if:
   name: py-opencv
   version: 4.10.0
   build_number_in: [0, 500, 600]
-  timestamp_lt: 1718160989000
+  timestamp_lt: 2024-06-12T02:56:29Z
 
 then:
   - replace_depends:
@@ -14,10 +14,54 @@ then:
 if:
   name: libopencv
   version_le: 4.12.0
-  timestamp_lt: 1755656470000
+  timestamp_lt: 2025-08-20T02:21:10Z
 then:
   # For some reason imath was not caught in the package inspector
   # and thus missed as a run_export
   # in the older builds of libopencv
   # https://github.com/conda-forge/opencv-feedstock/issues/486
   - add_constrains: imath<3.2.0a0
+
+---
+
+# libopencv (libopencv_dnn) links libabseil directly, through protobuf's
+# headers, but libabseil was not in the recipe's host section, so these builds
+# do not depend on it. They only pin libprotobuf to a patch version, and
+# libprotobuf was later rebuilt for a newer abseil, so a solver can pair them
+# with an abseil that has a different soname ("Library not loaded:
+# libabsl_*.2605.0.0.dylib" on import). Pin the abseil each build was linked
+# against (the abseil of the libprotobuf builds available at its build time;
+# checked against the linked sonames).
+if:
+  name: libopencv
+  has_depends: libprotobuf >=6.31.1,<6.31.2.0a0
+  timestamp_lt: 2026-07-04T12:35:00Z
+then:
+  - add_depends: libabseil >=20250512.1,<20250513.0a0
+
+---
+
+if:
+  name: libopencv
+  has_depends: libprotobuf >=7.35.1,<7.35.2.0a0
+  timestamp_lt: 2026-10-27T03:45:00Z
+then:
+  - add_depends: libabseil >=20260526.0,<20260527.0a0
+
+---
+
+# The 4.x branch rebuild for abseil 20260817 (conda-forge/opencv-feedstock#565)
+# has the same gap as the builds above: libabseil is not in that branch's host
+# section, so libopencv 4.13.0 builds 20 (headless) and 620 (qt6) link abseil
+# 20260817 without depending on it. libprotobuf 7.35.1 has builds for both
+# abseil 20260526 and 20260817, so a solver can pair them with 20260526
+# ("libabsl_log_internal_message.so.2608.0.0: cannot open shared object file"
+# on import). Checked against the linked sonames.
+if:
+  name: libopencv
+  version: 4.13.0
+  build_number_in: [20, 620]
+  has_depends: libprotobuf >=7.35.1,<7.35.2.0a0
+  timestamp_lt: 2026-11-01T00:00:00Z
+then:
+  - add_depends: libabseil >=20260817.0,<20260818.0a0

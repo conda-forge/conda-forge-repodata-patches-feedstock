@@ -2,7 +2,7 @@
 # importing deleted constant.
 if:
   name: xugrid
-  timestamp_le: 1744901701000
+  timestamp_le: 2025-04-17T14:55:01Z
   version_le: "0.12.4"
 then:
   - tighten_depends:

@@ -10,7 +10,7 @@ if:
   # The last `imp` package using SWIG runtime 4 was in Jul 2025. Packages
   # built after Oct 31 2025 use runtime 5. So don't touch packages built
   # after Oct 24th to be safe:
-  timestamp_lt: 1761341824000
+  timestamp_lt: 2025-10-24T21:37:04Z
   not_has_depends: swig-abi*
 then:
   - add_depends: swig-abi ==4

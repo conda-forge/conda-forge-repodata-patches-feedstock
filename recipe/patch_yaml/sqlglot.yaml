@@ -1,6 +1,6 @@
 if:
   name: sqlglot
-  timestamp_lt: 1712352563000
+  timestamp_lt: 2024-04-05T21:29:23Z
   version_ge: 20.10.0
   version_le: 21.0.1
 then:
@@ -12,7 +12,7 @@ then:
 ---
 if:
   name: sqlglot
-  timestamp_lt: 1712352563000
+  timestamp_lt: 2024-04-05T21:29:23Z
   version_ge: 21.0.2
   version_le: 22.0.1
 then:
@@ -24,7 +24,7 @@ then:
 ---
 if:
   name: sqlglot
-  timestamp_lt: 1712352563000
+  timestamp_lt: 2024-04-05T21:29:23Z
   version_ge: 22.1.0
   version_le: 23.0.5
 then:
@@ -36,7 +36,7 @@ then:
 ---
 if:
   name: sqlglot
-  timestamp_lt: 1712352563000
+  timestamp_lt: 2024-04-05T21:29:23Z
   version_ge: 23.2.0
   version_le: 23.3.0
 then:
@@ -49,7 +49,7 @@ then:
 ---
 if:
   name: sqlglot
-  timestamp_lt: 1712352563000
+  timestamp_lt: 2024-04-05T21:29:23Z
   version_ge: 23.6.3
   version_le: 23.7.0
 then:

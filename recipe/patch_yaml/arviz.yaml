@@ -2,7 +2,7 @@ if:
   name: arviz
   version: 0.11.2
   artifact_in: arviz-0.11.2-pyhd8ed1ab_0.tar.bz2
-  timestamp_lt: 1717950401000
+  timestamp_lt: 2024-06-09T16:26:41Z
 then:
   - add_depends: setuptools >=38.4
   - replace_depends:
@@ -25,7 +25,7 @@ if:
   name: arviz
   version: 0.13.0
   artifact_in: arviz-0.13.0-pyhd8ed1ab_0.tar.bz2
-  timestamp_lt: 1717950401000
+  timestamp_lt: 2024-06-09T16:26:41Z
 then:
   - replace_depends:
       old: setuptools >=38.4
@@ -58,7 +58,7 @@ if:
   name: arviz
   version: 0.16.1
   artifact_in: arviz-0.16.1-pyhd8ed1ab_0.conda
-  timestamp_lt: 1717950401000
+  timestamp_lt: 2024-06-09T16:26:41Z
 then:
   - replace_depends:
       old: matplotlib-base >=3.2
@@ -69,7 +69,7 @@ then:
 # ArviZ <=0.17.1 uses scipy.signal.gaussian which was moved to scipy.signal.windows.gaussian in scipy 1.13
 if:
   name: arviz
-  timestamp_le: 1712866805000
+  timestamp_le: 2024-04-11T20:20:05Z
   version_le: "0.17.1"
 then:
   - add_depends: scipy <1.13

@@ -6,7 +6,7 @@
 #             for dep in deps):
 #         _pin_stricter(fn, record, "libtiff", "x", upper_bound="4.5.0")
 if:
-  timestamp_lt: 1671301008000
+  timestamp_lt: 2022-12-17T18:16:48Z
   has_depends: libtiff >=4.[01234]*<5.0*
 then:
   - tighten_depends:
@@ -29,7 +29,7 @@ if:
   version: "4.5.0"
   build_number: 3
   has_depends: "libjpeg-turbo*"
-  timestamp_lt: 1678151067000
+  timestamp_lt: 2023-03-07T01:04:27Z
 then:
   - add_constrains: jpeg <0.0.0a
 
@@ -39,7 +39,7 @@ then:
 # https://github.com/conda-forge/conda-forge-pinning-feedstock/pull/6432
 if:
   has_depends: libtiff >=4.6.0,<4.7.0a0?( *)
-  timestamp_lt: 1726703338000
+  timestamp_lt: 2024-09-18T23:48:58Z
 then:
   - loosen_depends:
       name: libtiff

@@ -11,7 +11,7 @@
 # )
 if:
   name: "*"
-  timestamp_lt: 1694086057000
+  timestamp_lt: 2023-09-07T11:27:37Z
 then:
   - replace_depends:
       old: cutensor >=1.2.2.5,<2.0a0

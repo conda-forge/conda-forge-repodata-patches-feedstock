@@ -7,7 +7,7 @@
 if:
   name: pystac
   version: "1.6.0"
-  timestamp_lt: 1681128912000
+  timestamp_lt: 2023-04-10T12:15:12Z
 then:
   - replace_depends:
       old: python >=3.6
