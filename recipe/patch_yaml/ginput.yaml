@@ -24,3 +24,16 @@ then:
   - tighten_depends:
       name: pandas
       upper_bound: '3.0.0'
+---
+# pydap 3.5.11 is incompatible with ginput, so cap pydap below
+# that version for all ginput releases published to conda-forge
+# so far (1.6.1, 1.6.2, and 1.6.3).
+if:
+  name: ginput
+  version_in: ["1.6.1", "1.6.2", "1.6.3"]
+  # Only affect builds before 19 Nov 2026
+  timestamp_lt: 1795131373000
+then:
+  - tighten_depends:
+      name: pydap
+      upper_bound: '3.5.11'
