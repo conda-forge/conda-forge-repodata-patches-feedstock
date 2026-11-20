@@ -1,0 +1,16 @@
+# livvkit v3.2.0 introduced new dependencies on nodejs and rumel.yaml, as well as a new minimum bound on pandas.
+# The feedstock PR was merged without catching these dependencies changes, but was fixed for build number 1:
+# https://github.com/conda-forge/livvkit-feedstock/pull/8
+# This patch is to fix build number 0.
+if:
+  name: livvkit
+  version_eq: "3.2.0"
+  build_number_eq: 0
+  timestamp_lt: 1757522634000
+then:
+  - add_depends:
+      - nodejs
+      - ruamel.yaml
+  - replace_depends:
+      old: pandas
+      new: pandas >=2.1.0
