@@ -1,0 +1,50 @@
+# Match the runtime requirements published in each Cohere release's PyPI metadata.
+# httpx-sse was removed starting with 5.20.1.
+# https://pypi.org/pypi/cohere/5.20.1/json
+if:
+  name: cohere
+  subdir_in: noarch
+  version_ge: 5.20.1
+  version_le: 7.3.2
+  timestamp_lt: 2026-11-19T22:19:56Z
+then:
+  - remove_depends: httpx-sse?( *)
+---
+# These releases specify pydantic-core >=2.18.2 without an upper bound.
+# https://pypi.org/pypi/cohere/5.21.1/json
+if:
+  name: cohere
+  subdir_in: noarch
+  version_ge: 5.20.1
+  version_le: 5.21.1
+  timestamp_lt: 2026-11-19T22:19:56Z
+then:
+  - replace_depends:
+      old: pydantic-core >=2.18.2,<3.0.0
+      new: pydantic-core >=2.18.2
+---
+# The 6.x releases require pydantic-core <2.44.0.
+# https://pypi.org/pypi/cohere/6.0.0/json
+# https://pypi.org/pypi/cohere/6.1.0/json
+if:
+  name: cohere
+  subdir_in: noarch
+  version_in: [6.0.0, 6.1.0]
+  timestamp_lt: 2026-11-19T22:19:56Z
+then:
+  - replace_depends:
+      old: pydantic-core >=2.18.2,<3.0.0
+      new: pydantic-core >=2.18.2,<2.44.0
+---
+# The httpx minimum was raised starting with 7.0.6.
+# https://pypi.org/pypi/cohere/7.0.6/json
+if:
+  name: cohere
+  subdir_in: noarch
+  version_ge: 7.0.6
+  version_le: 7.3.2
+  timestamp_lt: 2026-11-19T22:19:56Z
+then:
+  - replace_depends:
+      old: httpx >=0.21.2
+      new: httpx >=0.25.0
