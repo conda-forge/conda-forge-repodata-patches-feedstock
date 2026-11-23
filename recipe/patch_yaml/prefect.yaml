@@ -7,3 +7,16 @@ then:
   - replace_depends:
       old: pydantic >=1.8.2
       new: pydantic >=1.8.2,<2
+---
+# prefect 3 requires sqlalchemy[asyncio] (see its PyPI metadata), but the
+# conda-forge builds depend on plain sqlalchemy, so greenlet is never installed
+# and the async engine fails at runtime. Switch to sqlalchemy-with-asyncio,
+# which pulls in greenlet.
+if:
+  name: prefect
+  version_ge: "3.0.0"
+  timestamp_lt: 1791202454000
+then:
+  - rename_depends:
+      old: sqlalchemy
+      new: sqlalchemy-with-asyncio
