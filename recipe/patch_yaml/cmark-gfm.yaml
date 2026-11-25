@@ -1,0 +1,32 @@
+# cmark-gfm: the shared library's file name carries the whole version
+# (libcmark-gfm.so.0.29.0.gfm.13, libcmark-gfm.0.29.0.gfm.13.dylib), but the
+# feedstock's run_exports only gave dependents ">=X,<1.0a0". A package built
+# against one release therefore resolves a later one and fails to load it:
+#   ImportError: libcmark-gfm.so.0.29.0.gfm.13: cannot open shared object file
+# See https://github.com/conda-forge/cmark-gfm-feedstock/issues/17
+# Windows is not affected: cmark-gfm.dll has no version in its name.
+
+# Built against 0.29.0.gfm.13; broken since 0.29.0.gfm.14 (2026-11-19).
+if:
+  not_subdir_in: [win-64, win-arm64]
+  # only packages already published: later builds get an exact pin from the
+  # feedstock's run_exports
+  timestamp_le: 2026-11-20T15:06:09Z
+  has_depends: cmark-gfm >=0.29.0.gfm.13,<1.0a0
+then:
+  - replace_depends:
+      old: cmark-gfm >=0.29.0.gfm.13,<1.0a0
+      new: cmark-gfm 0.29.0.gfm.13
+---
+# Built against 0.29.0.gfm.8 (older multimark builds); broken by every later
+# cmark-gfm release for the same reason.
+if:
+  not_subdir_in: [win-64, win-arm64]
+  # only packages already published: later builds get an exact pin from the
+  # feedstock's run_exports
+  timestamp_le: 2026-11-20T15:06:09Z
+  has_depends: cmark-gfm >=0.29.0.gfm.8,<1.0a0
+then:
+  - replace_depends:
+      old: cmark-gfm >=0.29.0.gfm.8,<1.0a0
+      new: cmark-gfm 0.29.0.gfm.8
