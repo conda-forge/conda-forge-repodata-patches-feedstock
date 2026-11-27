@@ -6,6 +6,9 @@
 # packages published before that change at the first VSG release with a
 # different SOVERSION than the one they were built against.
 #
+# The cutoff also covers vsgimgui 0.9.0 build 0, which was built against
+# VSG 1.1.16 after the first cutoff of this patch.
+#
 # VSG_SOVERSION per upstream tag (CMakeLists.txt):
 #   1.1.8 - 1.1.11: 14, 1.1.12 - 1.1.13: 15, 1.1.14: 16, 1.1.15 - 1.1.16: 17,
 #   1.1.17: 18
@@ -13,7 +16,7 @@
 # built against 1.1.8 or 1.1.9 (SOVERSION 14)
 if:
   has_depends: "vulkanscenegraph >=1.1.[89],<1.2.0a0"
-  timestamp_le: 2026-11-24T04:53:44-08:00
+  timestamp_le: 2026-11-26T07:43:20-08:00
 then:
   - tighten_depends:
       name: vulkanscenegraph
@@ -22,7 +25,7 @@ then:
 # built against 1.1.10 or 1.1.11 (SOVERSION 14)
 if:
   has_depends: "vulkanscenegraph >=1.1.1[01],<1.2.0a0"
-  timestamp_le: 2026-11-24T04:53:44-08:00
+  timestamp_le: 2026-11-26T07:43:20-08:00
 then:
   - tighten_depends:
       name: vulkanscenegraph
@@ -31,7 +34,7 @@ then:
 # built against 1.1.12 or 1.1.13 (SOVERSION 15)
 if:
   has_depends: "vulkanscenegraph >=1.1.1[23],<1.2.0a0"
-  timestamp_le: 2026-11-24T04:53:44-08:00
+  timestamp_le: 2026-11-26T07:43:20-08:00
 then:
   - tighten_depends:
       name: vulkanscenegraph
@@ -40,7 +43,7 @@ then:
 # built against 1.1.14 (SOVERSION 16)
 if:
   has_depends: "vulkanscenegraph >=1.1.14,<1.2.0a0"
-  timestamp_le: 2026-11-24T04:53:44-08:00
+  timestamp_le: 2026-11-26T07:43:20-08:00
 then:
   - tighten_depends:
       name: vulkanscenegraph
@@ -49,7 +52,7 @@ then:
 # built against 1.1.15 or 1.1.16 (SOVERSION 17)
 if:
   has_depends: "vulkanscenegraph >=1.1.1[56],<1.2.0a0"
-  timestamp_le: 2026-11-24T04:53:44-08:00
+  timestamp_le: 2026-11-26T07:43:20-08:00
 then:
   - tighten_depends:
       name: vulkanscenegraph
