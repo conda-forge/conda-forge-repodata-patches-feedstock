@@ -1,0 +1,11 @@
+# Bazel <=9.2 passes -Xverify:none to the server JVM, which was removed in
+# JDK 27 (JDK-8373481; replaced upstream in bazelbuild/bazel@5cf14d47a).
+# Cap published bazel 7.x-9.2.x builds to openjdk <27.
+if:
+  name: bazel
+  has_depends: openjdk >=21
+  timestamp_lt: 2026-11-26T22:02:39Z
+then:
+  - replace_depends:
+      old: openjdk >=21
+      new: openjdk >=21,<27
